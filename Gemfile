@@ -69,6 +69,7 @@ gem 'unread', :git => 'https://github.com/peatio/unread'
 gem 'carrierwave', '~> 0.10.0'
 gem 'simple_captcha2', require: 'simple_captcha'
 gem 'rest-client', '~> 1.6.8'
+gem 'therubyracer'
 
 group :development, :test do
   gem 'factory_girl_rails'
@@ -99,4 +100,5 @@ group :test do
   # rspec-rails rely on test-unit if rails version less then 4.1.0
   # but test-unit has been removed from ruby core since 2.2.0
   gem 'test-unit'
+  gem 'simplecov'
 end
