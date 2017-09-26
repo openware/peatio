@@ -1,3 +1,25 @@
+if ENV["COVERAGE"] == "true"
+  require 'simplecov'
+  SimpleCov.start do
+    load_profile "test_frameworks"
+
+    add_filter "/config/"
+    add_filter "/db/"
+
+    add_group "Controllers", "app/controllers"
+    add_group "Channels", "app/channels" if defined?(ActionCable)
+    add_group "Models", "app/models"
+    add_group "Mailers", "app/mailers"
+    add_group "Helpers", "app/helpers"
+    add_group "Grids", %w(app/grids)
+    add_group "Observers", %w(app/observers)
+    add_group "Services", %w(app/services)
+    add_group "Validators", "validators"
+
+    track_files "{app,lib}/**/*.rb"
+  end
+end
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 ENV["ADMIN"] ||= 'admin@peatio.dev'
