@@ -65,16 +65,17 @@ gem 'rack-attack', '~> 3.0.0'
 gem 'easy_table'
 gem 'phonelib', '~> 0.3.5'
 gem 'twilio-ruby', '~> 3.11'
-gem 'unread', github: 'peatio/unread'
+gem 'unread', :git => 'https://github.com/peatio/unread'
 gem 'carrierwave', '~> 0.10.0'
 gem 'simple_captcha2', require: 'simple_captcha'
 gem 'rest-client', '~> 1.6.8'
+gem 'therubyracer'
 
 group :development, :test do
   gem 'factory_girl_rails'
   gem 'faker', '~> 1.4.3'
   gem 'mina'
-  gem 'mina-slack', github: 'peatio/mina-slack'
+  gem 'mina-slack', :git => 'https://github.com/peatio/mina-slack'
   gem 'meta_request'
   gem 'better_errors'
   gem 'binding_of_caller'
@@ -99,4 +100,5 @@ group :test do
   # rspec-rails rely on test-unit if rails version less then 4.1.0
   # but test-unit has been removed from ruby core since 2.2.0
   gem 'test-unit'
+  gem 'simplecov'
 end
