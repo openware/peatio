@@ -20,6 +20,8 @@ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 
 ## 2. Install Ruby
 
+Install rbenv:
+
 ```shell
 brew install rbenv ruby-build
 ```

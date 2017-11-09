@@ -1,6 +1,6 @@
 # Peatio - an open-source crypto currency exchange
 
-### peatio.tech fork
+### [peatio.tech](https://www.peatio.tech) fork
 
 Peatio is a free and open-source crypto currency exchange implementation with the Rails framework and other cutting-edge technology.
 
@@ -28,26 +28,26 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 
 ## Features
 
-* Designed as high performance crypto currency exchange.
-* Built-in high performance matching-engine.
-* Built-in [Proof of Solvency](https://iwilcox.me.uk/2014/proving-bitcoin-reserves) Audit.
-* Built-in ticket system for customer support.
-* Usability and scalibility.
-* Websocket API and high frequency trading support.
-* Support multiple digital currencies (eg. Bitcoin, Litecoin, Dogecoin etc.).
-* Easy customization of payment processing for both fiat and digital currencies.
-* SMS and Google Two-Factor authenticaton.
-* [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer).
-* Powerful admin dashboard and management tools.
-* Highly configurable and extendable.
-* Industry standard security out of box.
-* Active community behind.
-* Free and open-source.
-* Maintained by [peatio.tech](https://peatio.tech).
+* Designed as high performance crypto currency exchange
+* Built-in high performance matching-engine
+* Built-in [Proof of Solvency](https://iwilcox.me.uk/2014/proving-bitcoin-reserves) Audit
+* Built-in ticket system for customer support
+* Usability and scalibility
+* Websocket API and high frequency trading support
+* Support multiple digital currencies (eg. Bitcoin, Litecoin, Dogecoin etc.)
+* Easy customization of payment processing for both fiat and digital currencies
+* SMS and Google Two-Factor authenticaton
+* [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer)
+* Powerful admin dashboard and management tools
+* Highly configurable and extendable
+* Industry standard security out of box
+* Active community behind
+* Free and open-source
+* Maintained by [peatio.tech](https://www.peatio.tech)
 
 ## Known Exchanges using Peatio
 
-* **[peatio.tech](https://peatio.tech)** - provides Peatio support (add custom features, deploy to the cloud, etc)
+* **[peatio.tech](https://www.peatio.tech)** - provides Peatio support (add custom features, deploy to the cloud, etc)
 * [Yunbi Exchange](https://yunbi.com) - a crypto-currency exchange funded by BitFundPE
 * [Bitspark](https://bitspark.io) - bitcoin exchange in Hong Kong
 * [MarsX.io](https://acx.io) - australian cryptocurrency rxchange
@@ -69,17 +69,17 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 
 Find more details in the [docs directory](docs).
 
-
 ## Getting Started
 
-Development setup:
+Local development setup:
 
-* [setup on Mac OS X](docs/dev/setup-local-osx.md)
-* [setup on Ubuntu](docs/dev/setup-local-ubuntu.md)
+* [on Mac OS X](docs/dev/setup/osx.md)
+* [on Ubuntu](docs/dev/setup/ubuntu.md)
 
 Production setup:
 
-* [deploy production server](docs/ops/deploy-production-server.md)
+* [Deploy production server on Ubuntu](docs/ops/deploy/ubuntu.md)
+* [Using Peatio docker image](docs/ops/deploy/docker.md)
 
 ## API
 
@@ -104,7 +104,7 @@ Peatio front-end based Bootstrap 3.0 version and Sass, and you can custom exchan
 * change peatio custom default variables in `vars/_basic.css.scss`
 * add your custom variables in `vars/_custom.css.scss`
 * add your custom css style in `layouts/_custom.css.scss`
-* add or change features style in `features/_xyz.css.scss'
+* add or change features style in `features/_xyz.css.scss`
 
 `vars/_custom.css.scss` can overwrite `vars/_basic.css.scss` defined variables
 `layout/_custom.css.scss` can overwrite `layout/_basic.css.scss` and `layoputs/_header.css.scss` style
@@ -123,21 +123,16 @@ Want to report a bug, request a feature, contribute or translate Peatio?
 ## Getting Support and Customization
 
 If you need help with running/deploying/customizing Peatio,
-you can contact us on [peatio.tech](https://peatio.tech).
+you can contact us on [peatio.tech](https://www.peatio.tech).
 
 ## License
 
-Peatio is released under the terms of the MIT license. See [http://peatio.mit-license.org](http://peatio.mit-license.org) for more information.
-
-## Donate
-
-**Every satoshi of your kind donation goes into the ongoing work of making Peatio more awesome.**
-
-**peatio-opensource-donate** address [1HjfnJpQmANtuW7yr1ggeDfyfe1kDK7rm3](https://blockchain.info/address/1HjfnJpQmANtuW7yr1ggeDfyfe1kDK7rm3)
+Peatio is released under the terms of the [MIT license](http://peatio.mit-license.org).
 
 ## What is Peatio?
 
-[Peatio](http://en.wikipedia.org/wiki/Pixiu) (Chinese: 貔貅) is a Chinese mythical hybrid creature considered to be a very powerful protector to practitioners of Feng Shui.
+[Peatio](http://en.wikipedia.org/wiki/Pixiu) (Chinese: 貔貅) is a Chinese mythical hybrid creature
+considered to be a very powerful protector to practitioners of Feng Shui.
 
 **[This illustration copyright for Peatio Team]**
 

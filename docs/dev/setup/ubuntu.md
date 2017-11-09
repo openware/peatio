@@ -12,60 +12,43 @@
 8. Install ImageMagick
 9. Configure Peatio
 
-
 ### Step 1: Install Ruby
 
-Make sure your system is up-to-date.
-
-```shell
-sudo apt-get update
-sudo apt-get upgrade
-```
-
-Installing [rbenv](https://github.com/sstephenson/rbenv):
+Install the ruby build dependencies:
 
 ```shell
 sudo apt-get install git curl zlib1g-dev build-essential \
-                     libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 \
-                     libxml2-dev libxslt1-dev libcurl4-openssl-dev \
-                     python-software-properties libffi-dev
-
-cd $HOME
-
-git clone git://github.com/sstephenson/rbenv.git .rbenv
-echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-exec $SHELL
-
-git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
-exec $SHELL
+  libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 \
+  libxml2-dev libxslt1-dev libcurl4-openssl-dev libffi-dev
 ```
 
-Install Ruby through rbenv:
+Install [rvm](https://rvm.io):
 
 ```shell
-rbenv install 2.2.1
-rbenv global 2.2.1
+gpg --keyserver hkp://keys.gnupg.net \
+    --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 \
+                7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+
+\curl -sSL https://get.rvm.io | bash -s stable --ruby=2.2.2 --gems=rails
 ```
 
-Install bundler:
+If you want to skip fetching documentation when installing gems,
+do the following:
 
 ```shell
 echo "gem: --no-ri --no-rdoc" > ~/.gemrc
-gem install bundler
-rbenv rehash
 ```
 
 ### Step 2: Install MySQL
 
 ```shell
-    sudo apt-get install mysql-server  mysql-client  libmysqlclient-dev
+sudo apt-get install mysql-server mysql-client libmysqlclient-dev
 ```
 
 ### Step 3: Install Redis
 
-Be sure to install the latest stable Redis, as the package in the distro may be a bit old:
+Be sure to install the latest stable Redis, as the package,
+the distro one can be outdated:
 
 ```shell
 sudo apt-add-repository -y ppa:rwky/redis
