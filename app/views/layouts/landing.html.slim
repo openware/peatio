@@ -10,6 +10,11 @@ html lang="en"
     = render 'shared/meta'
     = csrf_meta_tags
   body id='#{body_id}' data-lang="#{locale_name}"
+    - if content_for?(:header)
+      = yield(:header)
+    - else
+      = render 'shared/header'
+
     #wrap
       = render 'shared/alert'
       = yield

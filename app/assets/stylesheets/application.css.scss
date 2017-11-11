@@ -32,14 +32,10 @@
 /* layouts
 -------------------------------------------------------------- */
 html, body {
-  height: 100%;
+  height: 100vh;
 }
 
 #wrap {
-  height: auto !important;
-  min-height: 100%;
-  margin: 0 auto 0 - $footer-height;
-
   & + iframe { display: none; }
 
   #guide {
@@ -50,9 +46,8 @@ html, body {
     border-left: 1px solid $content-split;
     padding-top: 15px;
 
-
     #setting_list.table {
-      tr:first-of-type { td { border-top: 0px; } }
+      tr:first-of-type { td { border-top: 0; } }
       .hint {
         color: #777;
         font-size: .7em;
