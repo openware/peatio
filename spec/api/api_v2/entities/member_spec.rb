@@ -8,10 +8,23 @@ describe APIv2::Entities::Member do
 
   before { Currency.stubs(:codes).returns(%w(cny btc)) }
 
-  its(:sn)        { should == member.sn }
-  its(:name)      { should == member.name }
-  its(:email)     { should == member.email }
-  its(:activated) { should == true }
-  its(:accounts)  { should =~ [{:currency=>"cny", :balance=>"0.0", :locked=>"0.0"}, {:currency=>"btc", :balance=>"0.0", :locked=>"0.0"}] }
+  it 'sn' do
+    expect(subject.sn).to eq member.sn
+  end
 
+  it 'name' do
+    expect(subject.name).to eq member.name
+  end
+
+  it 'email' do
+    expect(subject.email).to eq member.email
+  end
+
+  it 'activated' do
+    expect(subject.activated).to be true
+  end
+
+  it 'accounts' do
+    expect(subject.accounts).to match [{:currency=>'cny', :balance=>'0.0', :locked=>'0.0'}, {:currency=>'btc', :balance=>'0.0', :locked=>'0.0'}]
+  end
 end

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Private::FundSourcesController do
+describe Private::FundSourcesController, type: :controller do
   let(:member) { create(:member) }
   before { session[:member_id] = member.id }
 
   describe 'POST create' do
-    it "should not create fund_source with blank extra" do
+    it 'should not create fund_source with blank extra' do
       params = { fund_source: { extra: '',
                                 currency: :cny,
                                 uid: '1234 1234 1234'} }
@@ -16,7 +16,7 @@ describe Private::FundSourcesController do
       }.not_to change(FundSource, :count)
     end
 
-    it "should not create fund_source with blank uid" do
+    it 'should not create fund_source with blank uid' do
       params = { fund_source: { extra: 'bank_code_1',
                                 currency: :cny,
                                 uid: ''} }
@@ -27,7 +27,7 @@ describe Private::FundSourcesController do
       }.not_to change(FundSource, :count)
     end
 
-    it "should create fund_source successful" do
+    it 'should create fund_source successful' do
       params = { fund_source: { extra: 'bank_code_1',
                                 currency: :cny,
                                 uid: '1234 1234 1234'} }
@@ -52,14 +52,13 @@ describe Private::FundSourcesController do
   describe 'DELETE' do
     let!(:fund_source) { create(:fund_source, member: member) }
 
-    it "should delete fund_source" do
+    it 'should delete fund_source' do
       expect {
         delete :destroy, {id: fund_source.id}
         expect(response).to be_ok
       }.to change(FundSource, :count).by(-1)
     end
   end
-
 end
 
 describe 'routes for FundSources', type: :routing do

@@ -21,35 +21,34 @@ describe Doorkeeper::AccessToken do
     end
 
     it "should set token" do
-      subject.token.should == APIToken.last.to_oauth_token
+      expect(subject.token).to eq APIToken.last.to_oauth_token
     end
 
     it "should setup api token correctly" do
       api_token = APIToken.last
-      api_token.label.should == app.name
-      api_token.scopes.should == %w(identity)
-      api_token.expire_at.should_not be_nil
+      expect(api_token.label).to eq app.name
+      expect(api_token.scopes).to eq %w(identity)
+      expect(api_token.expire_at).not_to be_nil
     end
 
     it "should link api token" do
-      APIToken.last.oauth_access_token.should == subject
+      expect(APIToken.last.oauth_access_token).to eq subject
     end
   end
 
   context "revoke" do
     it "should revoke access token and destroy corresponding api token" do
       subject.revoke
-      subject.should be_revoked
-      APIToken.find_by_id(subject.api_token.id).should be_nil
+      expect(subject).to be_revoked
+      expect(APIToken.find_by_id(subject.api_token.id)).to be_nil
     end
   end
 
   context "deletion" do
     it "should soft delete record" do
       subject.destroy
-      Doorkeeper::AccessToken.find_by_id(subject.id).should be_nil
-      Doorkeeper::AccessToken.with_deleted.find_by_id(subject.id).should == subject
+      expect(Doorkeeper::AccessToken.find_by_id(subject.id)).to be_nil
+      expect(Doorkeeper::AccessToken.with_deleted.find_by_id(subject.id)).to eq subject
     end
   end
-
 end

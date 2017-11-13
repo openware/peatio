@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Sign in' do
+describe 'Sign in', type: :feature do
   let!(:identity) { create :identity }
   let!(:member) { create :member, email: identity.email, activated: true }
 

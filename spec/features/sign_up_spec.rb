@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Sign up', js: true do
+describe 'Sign up', js: true, type: :feature do
 
   let(:identity) { build(:identity) }
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::TwoFactorsController do
+describe Admin::TwoFactorsController, type: :controller do
   let(:member) { create(:admin_member) }
   let(:sms_two_factor) { member.sms_two_factor }
   let(:app_two_factor) { member.app_two_factor }

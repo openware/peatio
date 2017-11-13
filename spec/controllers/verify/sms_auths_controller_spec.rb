@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Verify
-  describe SmsAuthsController do
+  describe SmsAuthsController, type: :controller do
 
     describe 'GET verify/sms_auth' do
       let(:member) { create :verified_member }
@@ -17,7 +17,7 @@ module Verify
       context 'already verified' do
         let(:member) { create :member, :sms_two_factor_activated }
 
-        it { should redirect_to(settings_path) }
+        it { is_expected.to redirect_to(settings_path) }
       end
     end
 
@@ -38,10 +38,13 @@ module Verify
         put :update, attrs
       }
 
-      it { should_not be_nil }
-      its(:otp_secret) { should_not be_blank }
+      it { is_expected.not_to be_nil }
 
-      context "with empty number" do
+      it 'otp_secret' do
+        expect(subject.otp_secret).not_to be_blank
+      end
+
+      context 'with empty number' do
         let(:attrs) {
           {
             format: :js,
@@ -52,12 +55,12 @@ module Verify
 
         before { put :update, attrs }
 
-        it "should not be ok" do
+        it 'should not be ok' do
           expect(response).not_to be_ok
         end
       end
 
-      context "with wrong number" do
+      context 'with wrong number' do
         let(:attrs) {
           {
             format: :js,
@@ -68,16 +71,16 @@ module Verify
 
         before { put :update, attrs }
 
-        it "should not be ok" do
+        it 'should not be ok' do
           expect(response).not_to be_ok
         end
 
-        it "should has error message" do
+        it 'should has error message' do
           expect(response.body).not_to be_blank
         end
       end
 
-      context "with right number" do
+      context 'with right number' do
         let(:attrs) {
           {
             format: :js,
@@ -100,7 +103,7 @@ module Verify
       let(:sms_auth) { member.sms_two_factor }
       before { session[:member_id] = member.id }
 
-      context "with empty code" do
+      context 'with empty code' do
         let(:attrs) {
           {
             format: :js,
@@ -112,12 +115,12 @@ module Verify
           put :update, attrs
         end
 
-        it "not return ok status" do
+        it 'not return ok status' do
           expect(response).not_to be_ok
         end
       end
 
-      context "with wrong code" do
+      context 'with wrong code' do
         let(:attrs) {
           {
             format: :js,
@@ -129,16 +132,16 @@ module Verify
           put :update, attrs
         end
 
-        it "not return ok status" do
+        it 'not return ok status' do
           expect(response).not_to be_ok
         end
 
-        it "has error message" do
+        it 'has error message' do
           expect(response.body).not_to be_blank
         end
       end
 
-      context "with right code" do
+      context 'with right code' do
         let(:attrs) {
           {
             format: :js,
@@ -155,6 +158,5 @@ module Verify
         it { expect(member.sms_two_factor).to be_activated }
       end
     end
-
   end
 end

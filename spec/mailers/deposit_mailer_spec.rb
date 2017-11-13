@@ -1,8 +1,8 @@
-require "spec_helper"
+require 'spec_helper'
 
 describe DepositMailer do
 
-  describe "accepted" do
+  describe 'accepted' do
     let(:deposit) { create :deposit }
     let(:mail) {
       deposit.submit!
@@ -11,7 +11,7 @@ describe DepositMailer do
     }
 
     it { expect(mail).not_to be_nil }
-    it { expect(mail.subject).to match "Your deposit has been credited into your account" }
+    it { expect(mail.subject).to match 'Your deposit has been credited into your account' }
   end
 
 end
