@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "sms_auths" do
+describe "sms_auths", type: :routing do
   describe "GET /verify/sms_auth" do
     it { expect(get("/verify/sms_auth")).to be_routable }
   end

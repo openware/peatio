@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Private::OrderAsksController do
+describe Private::OrderAsksController, type: :controller do
 
   let(:member) do
     create(:member).tap {|m|
@@ -22,14 +22,14 @@ describe Private::OrderAsksController do
     it "should create a sell order" do
       expect {
         post :create, params, {member_id: member.id}
-        response.should be_success
-        response.body.should == '{"result":true,"message":"Success"}'
+        expect(response).to be_success
+        expect(response.body).to eq '{"result":true,"message":"Success"}'
       }.to change(OrderAsk, :count).by(1)
     end
 
     it "should set order source to Web" do
       post :create, params, {member_id: member.id}
-      assigns(:order).source.should == 'Web'
+      expect(assigns(:order).source).to eq 'Web'
     end
   end
 
@@ -37,13 +37,12 @@ describe Private::OrderAsksController do
     it "should cancel all my asks in current market" do
       o1 = create(:order_ask, member: member, currency: market)
       o2 = create(:order_ask, member: member, currency: Market.find(:ptsbtc))
-      member.should have(2).orders
+      expect(member.orders.size).to eq 2
 
       post :clear, {market_id: market.id}, {member_id: member.id}
-      response.should be_success
-      assigns(:orders).size.should == 1
-      assigns(:orders).first.should == o1
+      expect(response).to be_success
+      expect(assigns(:orders).size).to eq 1
+      expect(assigns(:orders).first).to eq o1
     end
   end
-
 end

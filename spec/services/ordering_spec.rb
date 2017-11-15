@@ -11,18 +11,18 @@ describe Ordering do
     end
 
     it "should return true on success" do
-      Ordering.new(order).submit.should be_true
+      expect(Ordering.new(order).submit).to be true
     end
 
     it "should set locked funds on order" do
       Ordering.new(order).submit
-      order.locked.should == order.compute_locked
-      order.origin_locked.should == order.compute_locked
+      expect(order.locked).to eq order.compute_locked
+      expect(order.origin_locked).to eq order.compute_locked
     end
 
     it "should compute locked after number precision fixed" do
       Ordering.new(order).submit
-      order.reload.locked.should == '1.23'.to_d * '1.2345'.to_d
+      expect(order.reload.locked).to eq '1.23'.to_d * '1.2345'.to_d
     end
   end
 
@@ -38,8 +38,8 @@ describe Ordering do
 
     it "should hard cancel order" do
       Ordering.new(order).cancel!
-      order.reload.state.should == Order::CANCEL
-      account.reload.locked.should == ('100'.to_d - order.locked)
+      expect(order.reload.state).to eq Order::CANCEL
+      expect(account.reload.locked).to eq ('100'.to_d - order.locked)
     end
   end
 end

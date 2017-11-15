@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'show account info', js: true do
+feature 'show account info', js: true, type: :feature do
   let!(:identity) { create :identity }
   let!(:member) { create :member, :activated, email: identity.email  }
 
@@ -27,7 +27,7 @@ feature 'show account info', js: true do
     login identity
     click_on I18n.t('header.market')
 
-    new_window=page.driver.browser.window_handles.last 
+    new_window=page.driver.browser.window_handles.last
     page.within_window new_window do
       expect do
         fill_in 'order_bid_price', :with => 22.2
@@ -45,7 +45,7 @@ feature 'show account info', js: true do
     login identity
     click_on I18n.t('header.market')
 
-    new_window=page.driver.browser.window_handles.last 
+    new_window=page.driver.browser.window_handles.last
     page.within_window new_window do
       expect do
         fill_in 'order_ask_price', :with => 22.2
@@ -67,7 +67,7 @@ feature 'show account info', js: true do
     login identity
     click_on I18n.t('header.market')
 
-    new_window=page.driver.browser.window_handles.last 
+    new_window=page.driver.browser.window_handles.last
     page.within_window new_window do
       page.find('.asks tr[data-order="0"]').trigger 'click'
       expect(find('#order_bid_price').value).to be_d ask_order.price
@@ -87,7 +87,7 @@ feature 'show account info', js: true do
     login identity
     click_on I18n.t('header.market')
 
-    new_window=page.driver.browser.window_handles.last 
+    new_window=page.driver.browser.window_handles.last
     page.within_window new_window do
       # account balance at place order panel
       expect(page.find('#bid_entry .current-balance').text).to be_d bid_account.balance

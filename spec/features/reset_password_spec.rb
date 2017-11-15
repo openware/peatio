@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'password' do
+describe 'password', type: :feature do
   let!(:identity) { create :identity }
   let!(:password) { 'New1Password' }
   let!(:member) { create :member, email: identity.email }

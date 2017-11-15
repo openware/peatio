@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Admin::IdDocumentsController do
+describe Admin::IdDocumentsController, type: :controller do
   let(:member) { create(:admin_member) }
   before {
     session[:member_id] = member.id
@@ -10,8 +10,7 @@ describe Admin::IdDocumentsController do
   describe 'GET index' do
     before { get :index }
 
-    it { should respond_with :ok }
-    it { should render_template(:index) }
+    it { expect(response.status).to eq 200 }
+    it { is_expected.to render_template(:index) }
   end
-
 end

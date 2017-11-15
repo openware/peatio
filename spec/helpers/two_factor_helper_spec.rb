@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe TwoFactorHelper do
+describe TwoFactorHelper, type: :helper do
 
   describe '#two_factor_locked?' do
     context 'empty session' do
       subject { helper.two_factor_locked? }
 
-      it { should be_true }
+      it { is_expected.to be true }
     end
 
     context 'locked' do
@@ -15,7 +15,7 @@ describe TwoFactorHelper do
         session[:two_factor_locked] = false
       }
 
-      it { should be_true }
+      it { is_expected.to be true }
     end
 
     context 'unlock without unlocked_at' do
@@ -24,7 +24,7 @@ describe TwoFactorHelper do
         session[:two_factor_unlock] = true
       }
 
-      it { should be_true }
+      it { is_expected.to be true }
     end
 
     context 'unlock and expired' do
@@ -34,7 +34,7 @@ describe TwoFactorHelper do
         session[:two_factor_unlock_at] = 10.minutes.ago
       }
 
-      it { should be_true }
+      it { is_expected.to be true }
     end
 
     context 'unlock and not expired' do
@@ -44,7 +44,7 @@ describe TwoFactorHelper do
         session[:two_factor_unlock_at] = 5.minutes.ago
       }
 
-      it { should_not be_true }
+      it { is_expected.not_to be true }
     end
   end
 
