@@ -1,18 +1,14 @@
-require 'spec_helper'
-
 describe AMQPQueue do
   let(:config) do
-    Hashie::Mash.new({
-      connect:   { host: '127.0.0.1' },
-      exchange:  { testx: { name: 'testx', type: 'fanout' } },
-      queue:     { testq: { name: 'testq', durable: true },
-                   testd: { name: 'testd'} },
-      binding:   {
-        test:    { queue: 'testq', exchange: 'testx' },
-        testd:   { queue: 'testd' },
-        default: { queue: 'testq' }
-      }
-    })
+    Hashie::Mash.new(connect:   { host: '127.0.0.1' },
+                     exchange:  { testx: { name: 'testx', type: 'fanout' } },
+                     queue:     { testq: { name: 'testq', durable: true },
+                                  testd: { name: 'testd' } },
+                     binding:   {
+                       test:    { queue: 'testq', exchange: 'testx' },
+                       testd:   { queue: 'testd' },
+                       default: { queue: 'testq' }
+                     })
   end
 
   let(:default_exchange) { stub('default_exchange') }
@@ -22,7 +18,7 @@ describe AMQPQueue do
     AMQPConfig.stubs(:data).returns(config)
 
     AMQPQueue.unstub(:publish)
-    AMQPQueue.stubs(:exchanges).returns({default: default_exchange})
+    AMQPQueue.stubs(:exchanges).returns(default: default_exchange)
     AMQPQueue.stubs(:channel).returns(channel)
   end
 

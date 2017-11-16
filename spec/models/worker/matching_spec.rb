@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Worker::Matching do
-
   let(:alice)  { who_is_billionaire }
   let(:bob)    { who_is_billionaire }
   let(:market) { Market.find('btccny') }
@@ -22,7 +19,7 @@ describe Worker::Matching do
     let(:existing) { create(:order_ask, price: '4001', volume: '10.0', member: alice) }
 
     before do
-      subject.process({action: 'submit', order: existing.to_matching_attributes}, {}, {})
+      subject.process({ action: 'submit', order: existing.to_matching_attributes }, {}, {})
     end
 
     it 'should started engine' do
@@ -33,19 +30,19 @@ describe Worker::Matching do
       order = create(:order_bid, price: '4001', volume: '8.0', member: bob)
 
       AMQPQueue.expects(:enqueue)
-        .with(:slave_book, {action: 'update', order: {id: existing.id, timestamp: existing.at, type: :ask, volume: '2.0'.to_d, price: existing.price, market: 'btccny', ord_type: 'limit'}}, anything)
+               .with(:slave_book, { action: 'update', order: { id: existing.id, timestamp: existing.at, type: :ask, volume: '2.0'.to_d, price: existing.price, market: 'btccny', ord_type: 'limit' } }, anything)
       AMQPQueue.expects(:enqueue)
-        .with(:trade_executor, {market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '8.0'.to_d, funds: '32008'.to_d}, anything)
-      subject.process({action: 'submit', order: order.to_matching_attributes}, {}, {})
+               .with(:trade_executor, { market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '8.0'.to_d, funds: '32008'.to_d }, anything)
+      subject.process({ action: 'submit', order: order.to_matching_attributes }, {}, {})
     end
 
     it 'should match part of new order' do
       order = create(:order_bid, price: '4001', volume: '12.0', member: bob)
 
       AMQPQueue.expects(:enqueue)
-        .with(:trade_executor, {market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '10.0'.to_d, funds: '40010'.to_d}, anything)
+               .with(:trade_executor, { market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '10.0'.to_d, funds: '40010'.to_d }, anything)
       AMQPQueue.expects(:enqueue).with(:slave_book, anything, anything).times(2)
-      subject.process({action: 'submit', order: order.to_matching_attributes}, {}, {})
+      subject.process({ action: 'submit', order: order.to_matching_attributes }, {}, {})
     end
   end
 
@@ -81,13 +78,13 @@ describe Worker::Matching do
 
     it 'should create many trades' do
       AMQPQueue.expects(:enqueue)
-        .with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: bid3.id, strike_price: ask1.price, volume: ask1.volume, funds: '12009'.to_d}, anything).once
+               .with(:trade_executor, { market_id: market.id, ask_id: ask1.id, bid_id: bid3.id, strike_price: ask1.price, volume: ask1.volume, funds: '12009'.to_d }, anything).once
       AMQPQueue.expects(:enqueue)
-        .with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: bid3.id, strike_price: ask2.price, volume: ask2.volume, funds: '12006'.to_d}, anything).once
+               .with(:trade_executor, { market_id: market.id, ask_id: ask2.id, bid_id: bid3.id, strike_price: ask2.price, volume: ask2.volume, funds: '12006'.to_d }, anything).once
       AMQPQueue.expects(:enqueue)
-        .with(:trade_executor, {market_id: market.id, ask_id: ask4.id, bid_id: bid3.id, strike_price: bid3.price, volume: '2.0'.to_d, funds: '8006'.to_d}, anything).once
+               .with(:trade_executor, { market_id: market.id, ask_id: ask4.id, bid_id: bid3.id, strike_price: bid3.price, volume: '2.0'.to_d, funds: '8006'.to_d }, anything).once
       AMQPQueue.expects(:enqueue)
-        .with(:trade_executor, {market_id: market.id, ask_id: ask4.id, bid_id: bid5.id, strike_price: ask4.price, volume: bid5.volume, funds: '12006'.to_d}, anything).once
+               .with(:trade_executor, { market_id: market.id, ask_id: ask4.id, bid_id: bid5.id, strike_price: ask4.price, volume: bid5.volume, funds: '12006'.to_d }, anything).once
 
       subject
     end
@@ -97,11 +94,11 @@ describe Worker::Matching do
     let(:existing) { create(:order_ask, price: '4001', volume: '10.0', member: alice) }
 
     before do
-      subject.process({action: 'submit', order: existing.to_matching_attributes}, {}, {})
+      subject.process({ action: 'submit', order: existing.to_matching_attributes }, {}, {})
     end
 
     it 'should cancel existing order' do
-      subject.process({action: 'cancel', order: existing.to_matching_attributes}, {}, {})
+      subject.process({ action: 'cancel', order: existing.to_matching_attributes }, {}, {})
       expect(subject.engines[market.id].ask_orders.limit_orders).to be_empty
     end
   end
@@ -129,5 +126,4 @@ describe Worker::Matching do
       end
     end
   end
-
 end

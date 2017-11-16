@@ -1,59 +1,35 @@
-require 'spec_helper'
-
 describe APIv2::Entities::Order do
-
-  let(:order)  { create(:order_ask, currency: 'btccny', price: '12.326'.to_d, volume: '3.14', origin_volume: '12.13') }
+  let(:order) do
+    create(
+      :order_ask,
+      currency: 'btccny',
+      price: '12.326'.to_d,
+      volume: '3.14',
+      origin_volume: '12.13'
+    )
+  end
 
   context 'default exposure' do
     subject { OpenStruct.new APIv2::Entities::Order.represent(order, {}).serializable_hash }
 
-    it 'id' do
-      expect(subject.id).to eq order.id
-    end
+    it { expect(subject.id).to eq order.id }
 
-    it 'price' do
-      expect(subject.price).to eq order.price
-    end
+    it { expect(subject.price).to eq order.price }
+    it { expect(subject.avg_price).to eq ::Trade::ZERO }
 
-    it 'avg_price' do
-      expect(subject.avg_price).to eq ::Trade::ZERO
-    end
+    it { expect(subject.volume).to eq order.origin_volume }
+    it { expect(subject.remaining_volume).to eq order.volume }
+    it { expect(subject.executed_volume).to eq(order.origin_volume - order.volume) }
 
-    it 'volume' do
-      expect(subject.volume).to eq order.origin_volume
-    end
+    it { expect(subject.state).to eq order.state }
+    it { expect(subject.market).to eq order.market }
 
-    it 'remaining_volume' do
-      expect(subject.remaining_volume).to eq order.volume
-    end
+    it { expect(subject.side).to eq 'sell' }
 
-    it 'executed_volume' do
-      expect(subject.executed_volume).to eq (order.origin_volume - order.volume)
-    end
+    it { expect(subject.trades).to be_nil }
+    it { expect(subject.trades_count).to be_zero }
 
-    it 'state' do
-      expect(subject.state).to eq order.state
-    end
-
-    it 'market' do
-      expect(subject.market).to eq order.market
-    end
-
-    it 'created_at' do
-      expect(subject.created_at).to eq order.created_at.iso8601
-    end
-
-    it 'side' do
-      expect(subject.side).to eq 'sell'
-    end
-
-    it 'trades' do
-      expect(subject.trades).to be_nil
-    end
-
-    it 'trades_count' do
-      expect(subject.trades_count).to eq 0
-    end
+    it { expect(subject.created_at).to eq order.created_at.iso8601 }
   end
 
   context 'full exposure' do
@@ -65,5 +41,4 @@ describe APIv2::Entities::Order do
       expect(json[:trades].size).to eq 2
     end
   end
-
 end

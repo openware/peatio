@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Matching::OrderBook do
-
   context '#find' do
     subject { Matching::OrderBook.new('btccny', :ask) }
 
@@ -20,9 +17,9 @@ describe Matching::OrderBook do
     subject { Matching::OrderBook.new('btccny', :ask) }
 
     it 'should reject invalid order whose volume is zero' do
-      expect {
+      expect do
         subject.add Matching.mock_limit_order(type: :ask, volume: '0.0'.to_d)
-      }.to raise_error(::Matching::InvalidOrderError)
+      end.to raise_error(::Matching::InvalidOrderError)
     end
 
     it 'should add market order' do
@@ -58,15 +55,15 @@ describe Matching::OrderBook do
     it 'should broadcast add event' do
       order = Matching.mock_limit_order(type: :ask)
 
-      AMQPQueue.expects(:enqueue).with(:slave_book, {action: 'new', market: 'btccny', side: :ask}, {persistent: false})
-      AMQPQueue.expects(:enqueue).with(:slave_book, {action: 'add', order: order.attributes}, {persistent: false})
+      AMQPQueue.expects(:enqueue).with(:slave_book, { action: 'new', market: 'btccny', side: :ask }, persistent: false)
+      AMQPQueue.expects(:enqueue).with(:slave_book, { action: 'add', order: order.attributes }, persistent: false)
       subject.add order
     end
 
     it 'should not broadcast add event' do
       order = Matching.mock_limit_order(type: :ask)
 
-      AMQPQueue.expects(:enqueue).with(:slave_book, {action: 'add', order: order.attributes}, {persistent: false}).never
+      AMQPQueue.expects(:enqueue).with(:slave_book, { action: 'add', order: order.attributes }, persistent: false).never
       Matching::OrderBook.new('btccny', :ask, broadcast: false).add order
     end
   end
@@ -192,7 +189,9 @@ describe Matching::OrderBook do
     subject { Matching::OrderBook.new('btccny', :ask) }
 
     it 'should raise error if there is no top order' do
-      expect { subject.fill_top '1.0'.to_d, '1.0'.to_d, '1.0'.to_d }.to raise_error
+      expect do
+        subject.fill_top('1.0'.to_d, '1.0'.to_d, '1.0'.to_d)
+      end.to raise_error(RuntimeError, 'No top order in empty book.')
     end
 
     it 'should complete fill the top market order' do

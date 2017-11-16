@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Ticket do
   describe 'Validation' do
     context 'Both title and content is empty' do
@@ -21,8 +19,8 @@ describe Ticket do
   describe '#title_for_display' do
     let(:text) { 'alsadkjf aslkdjf aslkdjfla skdjf alsdkjf dlsakjf lasdkjf sadkfasdf xx' }
     context 'title is present' do
-      let(:ticket) { create(:ticket, title: text)}
-      subject{ ticket.title_for_display }
+      let(:ticket) { create(:ticket, title: text) }
+      subject { ticket.title_for_display }
 
       it { is_expected.to eq 'alsadkjf aslkdjf aslkdjfla skdjf alsdkjf dlsakjf lasdkjf ...' }
     end

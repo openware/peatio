@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Identity, type: :model do
   it 'accepts right passwords' do
     %w[password p@ssword PaSsworD].each do |pass|
@@ -7,7 +5,7 @@ describe Identity, type: :model do
     end
 
     %w[some wrong pass].each do |pass|
-      expect{create(:identity, password: pass, password_confirmation: pass)}.to raise_error(ActiveRecord::RecordInvalid)
+      expect { create(:identity, password: pass, password_confirmation: pass) }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 

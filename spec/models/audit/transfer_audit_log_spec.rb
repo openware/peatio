@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Audit
   describe TransferAuditLog do
     describe '.audit!' do
@@ -13,7 +11,7 @@ module Audit
       end
 
       it 'should create the TransferAuditLog record' do
-        expect { log }.to change{ TransferAuditLog.count }.by(1)
+        expect { log }.to change { TransferAuditLog.count }.by(1)
       end
 
       it 'operator' do

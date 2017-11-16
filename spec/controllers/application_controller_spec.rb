@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe ApplicationController, type: :controller do
   describe 'CoinRPC::ConnectionRefusedError handling' do
     controller do

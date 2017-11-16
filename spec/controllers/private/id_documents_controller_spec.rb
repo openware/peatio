@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Private::IdDocumentsController, type: :controller do
   let(:member) { create(:member) }
   before { session[:member_id] = member.id }
@@ -12,11 +10,11 @@ describe Private::IdDocumentsController, type: :controller do
   end
 
   describe 'post update' do
-    let(:attrs) {
+    let(:attrs) do
       {
-        id_document: {name: 'foobar'}
+        id_document: { name: 'foobar' }
       }
-    }
+    end
 
     before { put :update, attrs }
     it { is_expected.to redirect_to(settings_path) }

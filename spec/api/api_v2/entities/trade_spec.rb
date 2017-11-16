@@ -1,40 +1,20 @@
-require 'spec_helper'
-
 describe APIv2::Entities::Trade do
-
-  let(:trade) { create(:trade, ask: create(:order_ask), bid: create(:order_bid)) }
+  let(:trade) do
+    create :trade, ask: create(:order_ask), bid: create(:order_bid)
+  end
 
   subject { OpenStruct.new APIv2::Entities::Trade.represent(trade, side: 'sell').serializable_hash }
 
-  it 'id' do
-    expect(subject.id).to eq trade.id
-  end
+  it { expect(subject.id).to eq trade.id }
+  it { expect(subject.order_id).to be_nil }
 
-  it 'price' do
-    expect(subject.price).to eq trade.price
-  end
+  it { expect(subject.price).to eq trade.price }
+  it { expect(subject.volume).to eq trade.volume }
 
-  it 'volume' do
-    expect(subject.volume).to eq trade.volume
-  end
+  it { expect(subject.funds).to eq trade.funds }
+  it { expect(subject.market).to eq trade.currency }
 
-  it 'funds' do
-    expect(subject.funds).to eq trade.funds
-  end
+  it { expect(subject.side).to eq 'sell' }
 
-  it 'market' do
-    expect(subject.market).to eq trade.currency
-  end
-
-  it 'created_at' do
-    expect(subject.created_at).to eq trade.created_at.iso8601
-  end
-
-  it 'side' do
-    expect(subject.side).to eq 'sell'
-  end
-
-  it 'order_id' do
-    expect(subject.order_id).to be_nil
-  end
+  it { expect(subject.created_at).to eq trade.created_at.iso8601 }
 end

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe PaymentTransaction do
   it 'expect state transfer' do
     tx = create(:payment_transaction, deposit: create(:deposit))

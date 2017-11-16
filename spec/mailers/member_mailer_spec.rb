@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe MemberMailer do
   describe 'notify_signin' do
     let(:member) { create :member }

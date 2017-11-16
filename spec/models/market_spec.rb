@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Market do
-
   context 'visible market' do
     # it { expect(Market.orig_all.count).to eq(2) }
     it { expect(Market.all.count).to eq(1) }
@@ -9,7 +6,7 @@ describe Market do
 
   context 'markets hash' do
     it 'should list all markets info' do
-      expect(Market.to_hash).to eq ({:btccny=>{:name=>'BTC/CNY', :base_unit=>'btc', :quote_unit=>'cny'}})
+      expect(Market.to_hash).to eq ({ btccny: { name: 'BTC/CNY', base_unit: 'btc', quote_unit: 'cny' } })
     end
   end
 

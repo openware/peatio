@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Authentications
   describe EmailsController, type: :controller do
     let(:member) { create(:member, email: nil, activated: false) }
@@ -10,16 +8,16 @@ module Authentications
 
       it { is_expected.to be_success }
 
-      it  do
+      it do
         get :new
-        expect(flash[:info]).to eq t('authentications.emails.new.setup_email')
+        expect(flash[:info]).to eq I18n.t('authentications.emails.new.setup_email')
       end
     end
 
     describe 'POST create' do
-      let(:data) {
+      let(:data) do
         { email: { address: 'xman@xman.com', user_id: '2' } }
-      }
+      end
 
       it 'should update current_user\'s email' do
         post :create, data

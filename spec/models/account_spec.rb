@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Account do
   subject { create(:account, locked: '10.0'.to_d, balance: '10.0') }
 
@@ -31,20 +29,20 @@ describe Account do
   it { expect(subject.lock_funds('10.0'.to_d).locked).to eql '20.0'.to_d }
   it { expect(subject.lock_funds('10.0'.to_d).balance).to eql '0.0'.to_d }
 
-  it { expect{subject.sub_funds('11.0'.to_d)}.to raise_error }
-  it { expect{subject.lock_funds('11.0'.to_d)}.to raise_error }
-  it { expect{subject.unlock_funds('11.0'.to_d)}.to raise_error }
+  it { expect { subject.sub_funds('11.0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.lock_funds('11.0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.unlock_funds('11.0'.to_d) }.to raise_error(Account::AccountError) }
 
-  it { expect{subject.unlock_and_sub_funds('1.1'.to_d, locked: '1.0'.to_d)}.to raise_error }
+  it { expect { subject.unlock_and_sub_funds('1.1'.to_d, locked: '1.0'.to_d) }.to raise_error(Account::AccountError) }
 
-  it { expect{subject.sub_funds('-1.0'.to_d)}.to raise_error }
-  it { expect{subject.plus_funds('-1.0'.to_d)}.to raise_error }
-  it { expect{subject.lock_funds('-1.0'.to_d)}.to raise_error }
-  it { expect{subject.unlock_funds('-1.0'.to_d)}.to raise_error }
-  it { expect{subject.sub_funds('0'.to_d)}.to raise_error }
-  it { expect{subject.plus_funds('0'.to_d)}.to raise_error }
-  it { expect{subject.lock_funds('0'.to_d)}.to raise_error }
-  it { expect{subject.unlock_funds('0'.to_d)}.to raise_error }
+  it { expect { subject.sub_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.plus_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.lock_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.unlock_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.sub_funds('0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.plus_funds('0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.lock_funds('0'.to_d) }.to raise_error(Account::AccountError) }
+  it { expect { subject.unlock_funds('0'.to_d) }.to raise_error(Account::AccountError) }
 
   it 'expect to set reason' do
     subject.plus_funds('1.0'.to_d)
@@ -52,7 +50,7 @@ describe Account do
   end
 
   it 'expect to set ref' do
-    ref = stub(:id => 1)
+    ref = stub(id: 1)
 
     subject.plus_funds('1.0'.to_d, ref: ref)
 
@@ -68,14 +66,14 @@ describe Account do
       expect do
         account.plus_funds(strike_volume, reason: Account::STRIKE_ADD)
         account.sub_funds(strike_volume, reason: Account::STRIKE_FEE)
-      end.to_not change{account.balance}
+      end.to_not(change { account.balance })
     end
 
     it 'expect double operation funds to add versions' do
       expect do
         account.plus_funds(strike_volume, reason: Account::STRIKE_ADD)
         account.sub_funds(strike_volume, reason: Account::STRIKE_FEE)
-      end.to change{account.reload.versions.size}.from(0).to(2)
+      end.to(change { account.reload.versions.size }.from(0).to(2))
     end
   end
 
@@ -230,9 +228,9 @@ describe Account do
 
   describe 'after callback' do
     it 'should create account version associated to account change' do
-      expect {
+      expect do
         subject.unlock_and_sub_funds('1.0'.to_d, locked: '2.0'.to_d)
-      }.to change(AccountVersion, :count).by(1)
+      end.to change(AccountVersion, :count).by(1)
 
       v = AccountVersion.last
 
@@ -249,14 +247,14 @@ describe Account do
       # `unlock_and_sub_funds('5.0'.to_d, locked: '8.0'.to_d, fee: ZERO)`
       ActiveRecord::Base.connection.execute "update accounts set balance = balance + 3, locked = locked - 8 where id = #{subject.id}"
 
-      expect {
-        expect {
+      expect do
+        expect do
           ActiveRecord::Base.transaction do
             create(:order_ask) # any other statements should be executed
             subject.unlock_and_sub_funds('1.0'.to_d, locked: '2.0'.to_d)
           end
-        }.to change(OrderAsk, :count).by(1)
-      }.to change(AccountVersion, :count).by(1)
+        end.to change(OrderAsk, :count).by(1)
+      end.to change(AccountVersion, :count).by(1)
 
       v = AccountVersion.last
       expect(v.amount).to eq '14.0'.to_d
@@ -286,9 +284,9 @@ describe Account do
   end
 
   describe '.enabled' do
-    let!(:account1) { create(:account, currency: Currency.first.code)}
-    let!(:account2) { create(:account, currency: Currency.last.code)}
-    let!(:account3) { create(:account, currency: Currency.all[1].code)}
+    let!(:account1) { create(:account, currency: Currency.first.code) }
+    let!(:account2) { create(:account, currency: Currency.last.code) }
+    let!(:account3) { create(:account, currency: Currency.all[1].code) }
     before do
       Currency.stubs(:ids).returns([Currency.first.id, Currency.last.id])
     end

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe IdDocument do
   let(:member) { create(:member) }
 
@@ -37,7 +35,7 @@ describe IdDocument do
       end
 
       it 'rejected' do
-       expect(member.id_document.aasm_state).to eq 'unverified'
+        expect(member.id_document.aasm_state).to eq 'unverified'
       end
     end
   end

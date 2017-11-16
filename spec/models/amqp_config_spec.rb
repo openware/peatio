@@ -1,26 +1,21 @@
-require 'spec_helper'
-
 module Worker
   class Test
   end
 end
 
 describe AMQPConfig do
-
   let(:config) do
-    Hashie::Mash.new({
-      connect:   { host: '127.0.0.1' },
-      exchange:  { testx:  { name: 'testx', type: 'fanout' },
-                   testd:  { name: 'testd', type: 'direct' },
-                   topicx: { name: 'topicx', type: 'topic' } },
-      queue:     { testq: { name: 'testq', durable: true } },
-      binding:   {
-        test:    { queue: 'testq', exchange: 'testx' },
-        testd:   { queue: 'testq', exchange: 'testd' },
-        topic:   { queue: 'testq', exchange: 'topicx', topics: 'test.a,test.b' },
-        default: { queue: 'testq' }
-      }
-    })
+    Hashie::Mash.new(connect:   { host: '127.0.0.1' },
+                     exchange:  { testx:  { name: 'testx', type: 'fanout' },
+                                  testd:  { name: 'testd', type: 'direct' },
+                                  topicx: { name: 'topicx', type: 'topic' } },
+                     queue:     { testq: { name: 'testq', durable: true } },
+                     binding:   {
+                       test:    { queue: 'testq', exchange: 'testx' },
+                       testd:   { queue: 'testq', exchange: 'testd' },
+                       topic:   { queue: 'testq', exchange: 'topicx', topics: 'test.a,test.b' },
+                       default: { queue: 'testq' }
+                     })
   end
 
   before do
@@ -28,23 +23,23 @@ describe AMQPConfig do
   end
 
   it 'should tell client how to connect' do
-    expect(AMQPConfig.connect).to eq ({'host' => '127.0.0.1'})
+    expect(AMQPConfig.connect).to eq ({ 'host' => '127.0.0.1' })
   end
 
   it 'should return queue settings' do
-    expect(AMQPConfig.queue(:testq)).to eq ['testq', {durable: true}]
+    expect(AMQPConfig.queue(:testq)).to eq ['testq', { durable: true }]
   end
 
   it 'should return exchange settings' do
-    expect(AMQPConfig.exchange(:testx)).to eq ['fanout', 'testx']
+    expect(AMQPConfig.exchange(:testx)).to eq %w[fanout testx]
   end
 
   it 'should return binding queue' do
-    expect(AMQPConfig.binding_queue(:test)).to eq ['testq', {durable: true}]
+    expect(AMQPConfig.binding_queue(:test)).to eq ['testq', { durable: true }]
   end
 
   it 'should return binding exchange' do
-    expect(AMQPConfig.binding_exchange(:test)).to eq ['fanout', 'testx']
+    expect(AMQPConfig.binding_exchange(:test)).to eq %w[fanout testx]
   end
 
   it 'should set exchange to nil when binding use default exchange' do

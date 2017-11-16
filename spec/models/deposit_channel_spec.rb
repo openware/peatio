@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe DepositChannel do
-
   context '#sort' do
     let(:dc1) { DepositChannel.new }
     let(:dc2) { DepositChannel.new }

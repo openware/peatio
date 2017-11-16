@@ -1,17 +1,16 @@
-require 'spec_helper'
-
 describe OrderBid do
-
   subject { create(:order_bid) }
 
-  it { expect(subject.compute_locked).to eq subject.volume*subject.price }
+  it { expect(subject.compute_locked).to eq subject.volume * subject.price }
 
   context 'compute locked for market order' do
     let(:price_levels) do
-      [ ['100'.to_d, '10.0'.to_d],
+      [
+        ['100'.to_d, '10.0'.to_d],
         ['101'.to_d, '10.0'.to_d],
         ['102'.to_d, '10.0'.to_d],
-        ['200'.to_d, '10.0'.to_d] ]
+        ['200'.to_d, '10.0'.to_d]
+      ]
     end
 
     before do
@@ -29,12 +28,19 @@ describe OrderBid do
     end
 
     it 'should raise error if the market is not deep enough' do
-      expect { OrderBid.new(volume: '50'.to_d, ord_type: 'market').compute_locked }.to raise_error
+      expect do
+        OrderBid.new(volume: '50'.to_d, ord_type: 'market').compute_locked
+      end.to raise_error(RuntimeError, 'Market is not deep enough')
     end
 
     it 'should raise error if volume is too large' do
-      expect { OrderBid.new(volume: '30'.to_d, ord_type: 'market').compute_locked }.not_to raise_error
-      expect { OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked }.to raise_error
+      expect do
+        OrderBid.new(volume: '30'.to_d, ord_type: 'market').compute_locked
+      end.not_to raise_error
+
+      expect do
+        OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked
+      end.to raise_error(RuntimeError, 'Market is not deep enough')
     end
   end
 end

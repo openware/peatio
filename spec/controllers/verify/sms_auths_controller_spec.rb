@@ -1,8 +1,5 @@
-require 'spec_helper'
-
 module Verify
   describe SmsAuthsController, type: :controller do
-
     describe 'GET verify/sms_auth' do
       let(:member) { create :verified_member }
       before { session[:member_id] = member.id }
@@ -23,20 +20,20 @@ module Verify
 
     describe 'PUT verify/sms_auth in send code phase' do
       let(:member) { create :member }
-      let(:attrs) {
+      let(:attrs) do
         {
           format: :js,
-          sms_auth: {country: 'CN', phone_number: '123-1234-1234'},
+          sms_auth: { country: 'CN', phone_number: '123-1234-1234' },
           commit: 'send_code'
         }
-      }
+      end
 
       subject { assigns(:sms_auth) }
 
-      before {
+      before do
         session[:member_id] = member.id
         put :update, attrs
-      }
+      end
 
       it { is_expected.not_to be_nil }
 
@@ -45,13 +42,13 @@ module Verify
       end
 
       context 'with empty number' do
-        let(:attrs) {
+        let(:attrs) do
           {
             format: :js,
-            sms_auth: {country: '', phone_number: ''},
+            sms_auth: { country: '', phone_number: '' },
             commit: 'send_code'
           }
-        }
+        end
 
         before { put :update, attrs }
 
@@ -61,13 +58,13 @@ module Verify
       end
 
       context 'with wrong number' do
-        let(:attrs) {
+        let(:attrs) do
           {
             format: :js,
-            sms_auth: {country: 'CN', phone_number: 'wrong number'},
+            sms_auth: { country: 'CN', phone_number: 'wrong number' },
             commit: 'send_code'
           }
-        }
+        end
 
         before { put :update, attrs }
 
@@ -81,13 +78,13 @@ module Verify
       end
 
       context 'with right number' do
-        let(:attrs) {
+        let(:attrs) do
           {
             format: :js,
-            sms_auth: {country: 'CN', phone_number: '133.1234.1234'},
+            sms_auth: { country: 'CN', phone_number: '133.1234.1234' },
             commit: 'send_code'
           }
-        }
+        end
 
         before do
           put :update, attrs
@@ -104,12 +101,12 @@ module Verify
       before { session[:member_id] = member.id }
 
       context 'with empty code' do
-        let(:attrs) {
+        let(:attrs) do
           {
             format: :js,
-            sms_auth: {otp: ''}
+            sms_auth: { otp: '' }
           }
-        }
+        end
 
         before do
           put :update, attrs
@@ -121,12 +118,12 @@ module Verify
       end
 
       context 'with wrong code' do
-        let(:attrs) {
+        let(:attrs) do
           {
             format: :js,
-            sms_auth: {otp: 'foobar'}
+            sms_auth: { otp: 'foobar' }
           }
-        }
+        end
 
         before do
           put :update, attrs
@@ -142,12 +139,12 @@ module Verify
       end
 
       context 'with right code' do
-        let(:attrs) {
+        let(:attrs) do
           {
             format: :js,
-            sms_auth: {otp: sms_auth.otp_secret}
+            sms_auth: { otp: sms_auth.otp_secret }
           }
-        }
+        end
 
         before do
           put :update, attrs

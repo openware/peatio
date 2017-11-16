@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe WithdrawMailer do
   describe 'withdraw_state' do
     let(:withdraw) { create :satoshi_withdraw }

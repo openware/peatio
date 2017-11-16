@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :satoshi_withdraw, class: Withdraws::Satoshi do
     sum { 10.to_d }
     currency :btc
@@ -35,7 +35,7 @@ FactoryGirl.define do
 
     account do
       member.get_account(:cny).tap do |a|
-        a.balance = 50000
+        a.balance = 50_000
         a.save(validate: false)
 
         a.versions.create \

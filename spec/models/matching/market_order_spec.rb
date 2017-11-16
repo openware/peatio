@@ -1,14 +1,11 @@
-require 'spec_helper'
-
 describe Matching::MarketOrder do
-
   context 'initialize' do
     it 'should not allow price attribute' do
-      expect { Matching.mock_market_order(type: :ask, price: '1.0'.to_d) }.to raise_error
+      expect { Matching.mock_market_order(type: :ask, price: '1.0'.to_d) }.to raise_error(Matching::InvalidOrderError)
     end
 
     it 'should only accept positive sum limit' do
-      expect { Matching.mock_market_order(type: :bid, locked: '0.0'.to_d) }.to raise_error
+      expect { Matching.mock_market_order(type: :bid, locked: '0.0'.to_d) }.to raise_error(Matching::InvalidOrderError)
     end
   end
 
@@ -29,5 +26,4 @@ describe Matching::MarketOrder do
       expect(subject.locked).to eq '4.0'.to_d
     end
   end
-
 end

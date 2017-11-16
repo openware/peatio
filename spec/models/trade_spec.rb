@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Trade, '.latest_price' do
   context 'no trade' do
     it { expect(Trade.latest_price(:btccny)).to be_d '0.0' }
@@ -16,16 +14,18 @@ describe Trade, '.collect_side' do
   let(:ask)    { create(:order_ask, member: member) }
   let(:bid)    { create(:order_bid, member: member) }
 
-  let!(:trades) {[
-    create(:trade, ask: ask, created_at: 2.days.ago),
-    create(:trade, bid: bid, created_at: 1.day.ago)
-  ]}
+  let!(:trades) do
+    [
+      create(:trade, ask: ask, created_at: 2.days.ago),
+      create(:trade, bid: bid, created_at: 1.day.ago)
+    ]
+  end
 
   it 'should add side attribute on trades' do
     results = Trade.for_member(ask.currency, member)
     expect(results.size).to eq 2
-    expect(results.find {|t| t.id == trades.first.id }.side).to eq 'ask'
-    expect(results.find {|t| t.id == trades.last.id  }.side).to eq 'bid'
+    expect(results.find { |t| t.id == trades.first.id }.side).to eq 'ask'
+    expect(results.find { |t| t.id == trades.last.id  }.side).to eq 'bid'
   end
 
   it 'should sort trades in reverse creation order' do

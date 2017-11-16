@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Private::FundsController, type: :controller do
-
   context 'Verified user with two factor' do
     let(:member) { create(:member, :activated, :verified, :app_two_factor_activated) }
     before { session[:member_id] = member.id }
@@ -24,5 +21,4 @@ describe Private::FundsController, type: :controller do
     it { expect(member.two_factors).not_to be_activated }
     it { expect(response).to redirect_to(settings_path) }
   end
-
 end

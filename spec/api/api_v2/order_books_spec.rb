@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe APIv2::OrderBooks, type: :request do
-
   describe 'GET /api/v2/order_book' do
     before do
       5.times { create(:order_bid) }

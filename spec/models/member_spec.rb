@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Member do
   let(:member) { build(:member) }
   subject { member }
@@ -18,9 +16,9 @@ describe Member do
     end
 
     it 'creates accounts for the member' do
-      expect {
+      expect do
         member.save!
-      }.to change(member.accounts, :count).by(Currency.codes.size)
+      end.to change(member.accounts, :count).by(Currency.codes.size)
 
       Currency.codes.each do |code|
         expect(Account.with_currency(code).where(member_id: member.id).count).to eq 1
@@ -36,17 +34,17 @@ describe Member do
   end
 
   describe 'send activation after create' do
-    let(:auth_hash) {
+    let(:auth_hash) do
       {
         'provider' => 'identity',
         'info' => { 'email' => 'foobar@peatio.dev' }
       }
-    }
+    end
 
     it 'create activation' do
-      expect {
+      expect do
         Member.from_auth(auth_hash)
-      }.to change(Token::Activation, :count).by(1)
+      end.to change(Token::Activation, :count).by(1)
     end
   end
 
@@ -103,7 +101,6 @@ describe Member do
     before { ReadMark.delete_all }
 
     specify { expect(user.unread_comments.count).to eq 1 }
-
   end
 
   describe '#identity' do
@@ -183,8 +180,8 @@ describe Member do
   describe '#remove_auth' do
     let!(:identity) { create(:identity) }
     let!(:member) { create(:member, email: identity.email) }
-    let!(:weibo_auth) { create(:authentication, provider: 'weibo', member_id: member.id)}
-    let!(:identity_auth) { create(:authentication, provider: 'identity', member_id: member.id, uid: identity.id)}
+    let!(:weibo_auth) { create(:authentication, provider: 'weibo', member_id: member.id) }
+    let!(:identity_auth) { create(:authentication, provider: 'identity', member_id: member.id, uid: identity.id) }
 
     context 'third party' do
       it 'should delete the weibo auth' do
@@ -212,9 +209,9 @@ describe Member do
   describe '#locate_email' do
     context 'Email is blank' do
       let!(:member) { create(:member, email: nil) }
-      let(:auth) {
-        {'info' => { 'email' => nil}}
-      }
+      let(:auth) do
+        { 'info' => { 'email' => nil } }
+      end
 
       it 'should return nil' do
         expect(Member.count).to eq 1
@@ -225,9 +222,9 @@ describe Member do
     context 'Emails is exist and can find member' do
       let(:email) { 'fuck@chinese.gov' }
       let!(:member) { create(:member, email: email) }
-      let(:auth) {
-        { 'provider' => 'weibo', 'uid' => 'hehe', 'info' => { 'email' => email} }
-      }
+      let(:auth) do
+        { 'provider' => 'weibo', 'uid' => 'hehe', 'info' => { 'email' => email } }
+      end
 
       it 'should return the user and create the auth' do
         expect do
@@ -240,9 +237,9 @@ describe Member do
       let(:email) { 'fuck@chinese.gov' }
       let!(:member) { create(:member, email: email) }
 
-      let(:auth) {
-        { 'provider' => 'weibo', 'uid' => 'hehe', 'info' => { 'email' => email + 'veryhard'} }
-      }
+      let(:auth) do
+        { 'provider' => 'weibo', 'uid' => 'hehe', 'info' => { 'email' => email + 'veryhard' } }
+      end
 
       it 'should not create auth and return nil' do
         expect do

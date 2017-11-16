@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Bank do
   context '#with_currency' do
     it { expect(Bank.with_currency(:cny)).not_to be_empty }

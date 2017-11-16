@@ -1,21 +1,11 @@
-require 'spec_helper'
-
 module APIv2
   class Mount
-
-    get '/null' do
-      ''
-    end
-
-    get '/broken' do
-      raise Error, code: 2014310, text: 'MtGox bankrupt'
-    end
-
+    get('/null') { '' }
+    get('/broken') { raise Error, code: 2_014_310, text: 'MtGox bankrupt' }
   end
 end
 
 describe APIv2::Mount, type: :request do
-
   it 'should use auth and attack middleware' do
     expect(APIv2::Mount.middleware).to eq [[APIv2::Auth::Middleware], [Rack::Attack]]
   end
@@ -30,7 +20,7 @@ describe APIv2::Mount, type: :request do
     it 'should render json error message' do
       get '/api/v2/broken'
       expect(response.code).to eq '400'
-      expect(JSON.parse(response.body)).to eq ({'error' => {'code' => 2014310, 'message' => 'MtGox bankrupt'}})
+      expect(JSON.parse(response.body)).to eq('error' => { 'code' => 2_014_310, 'message' => 'MtGox bankrupt' })
     end
   end
 

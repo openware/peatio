@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe APIToken do
-
   let(:token) { create(:api_token, scopes: '') }
 
   it 'should generate keys before validation on create' do
@@ -26,14 +23,14 @@ describe APIToken do
   end
 
   it 'should allow ip if ip is in ip whitelist' do
-    token.trusted_ip_list = %w(127.0.0.1)
+    token.trusted_ip_list = %w[127.0.0.1]
     expect(token.allow_ip?('127.0.0.1')).to be true
     expect(token.allow_ip?('127.0.0.2')).to be false
   end
 
   it 'should tranlsate comma seperated whitelist to trusted ip list' do
     token.ip_whitelist = '127.0.0.1, 127.0.0.2,127.0.0.3'
-    token.trusted_ip_list = %w(127.0.0.1 127.0.0.2 127.0.0.3)
+    token.trusted_ip_list = %w[127.0.0.1 127.0.0.2 127.0.0.3]
   end
 
   it 'should return empty array if no scopes given' do
@@ -42,22 +39,22 @@ describe APIToken do
 
   it 'should return scopes array' do
     token.scopes = 'foo bar'
-    expect(token.scopes).to eq %w(foo bar)
+    expect(token.scopes).to eq %w[foo bar]
   end
 
   it 'should return false if out of scope' do
-    expect(token.in_scopes?(%w(foo))).to be false
+    expect(token.in_scopes?(%w[foo])).to be false
   end
 
   it 'should return true if in scope' do
     token.scopes = 'foo'
-    expect(token.in_scopes?(%w(foo))).to be true
+    expect(token.in_scopes?(%w[foo])).to be true
   end
 
   it 'should return true if token has all scopes' do
     token.scopes = 'all'
-    expect(token.in_scopes?(%w(foo))).to be true
-    expect(token.in_scopes?(%w(bar))).to be true
+    expect(token.in_scopes?(%w[foo])).to be true
+    expect(token.in_scopes?(%w[bar])).to be true
   end
 
   it 'should return true if api require no scope' do
@@ -71,7 +68,7 @@ describe APIToken do
   end
 
   it 'should destroy dependent oauth access token' do
-    app =Doorkeeper::Application.create!(name: 'test', uid: 'foo', secret: 'bar', redirect_uri: 'http://test.host/oauth/callback')
+    app = Doorkeeper::Application.create!(name: 'test', uid: 'foo', secret: 'bar', redirect_uri: 'http://test.host/oauth/callback')
     access_token = Doorkeeper::AccessToken.create!(application_id: app.id, resource_owner_id: create(:member).id, scopes: 'profile', expires_in: 1.week)
 
     token.update_attributes oauth_access_token_id: access_token.id

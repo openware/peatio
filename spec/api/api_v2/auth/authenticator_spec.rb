@@ -1,47 +1,43 @@
-require 'spec_helper'
-
 describe APIv2::Auth::Authenticator do
   Authenticator = APIv2::Auth::Authenticator
 
   let(:token) { create(:api_token) }
   let(:tonce) { time_to_milliseconds }
 
-  let(:endpoint) { stub('endpoint', options: {route_options: {scopes: ['identity']}})}
-  let(:request) { stub('request', request_method: 'GET', path_info: '/', env: {'api.endpoint' => endpoint}) }
+  let(:endpoint) do
+    stub('endpoint', options: { route_options: { scopes: ['identity'] } })
+  end
+
+  let(:request) do
+    stub(
+      'request',
+      request_method: 'GET',
+      path_info: '/',
+      env: { 'api.endpoint' => endpoint }
+    )
+  end
+
   let(:payload) { "GET|/api/|access_key=#{token.access_key}&foo=bar&hello=world&tonce=#{tonce}" }
 
   let(:params) do
-    Hashie::Mash.new({
-      'access_key' => token.access_key,
-      'tonce'      => tonce,
-      'foo'        => 'bar',
-      'hello'      => 'world',
-      'route_info' => Grape::Route.new,
-      'signature'  => APIv2::Auth::Utils.hmac_signature(token.secret_key, payload)
-    })
+    Hashie::Mash.new(
+      access_key: token.access_key,
+      tonce:      tonce,
+      foo:        'bar',
+      hello:      'world',
+      route_info: Grape::Route.new,
+      signature:  APIv2::Auth::Utils.hmac_signature(token.secret_key, payload)
+    )
   end
 
   subject { Authenticator.new(request, params) }
 
-  it 'authenticate' do
-    expect(subject.authenticate!).to eq token
-  end
+  it { expect(subject.authenticate!).to eq token }
+  it { expect(subject.token).to eq token }
 
-  it 'token' do
-    expect(subject.token).to eq token
-  end
-
-  it 'canonical_verb' do
-    expect(subject.canonical_verb).to eq 'GET'
-  end
-
-  it 'canonical_uri' do
-    expect(subject.canonical_uri).to eq '/'
-  end
-
-  it 'canonical_query' do
-    expect(subject.canonical_query).to eq "access_key=#{token.access_key}&foo=bar&hello=world&tonce=#{tonce}"
-  end
+  it { expect(subject.canonical_verb).to eq 'GET' }
+  it { expect(subject.canonical_uri).to eq '/' }
+  it { expect(subject.canonical_query).to eq "access_key=#{token.access_key}&foo=bar&hello=world&tonce=#{tonce}" }
 
   it 'should not be authentic without access key' do
     params[:access_key] = ''
@@ -127,7 +123,7 @@ describe APIv2::Auth::Authenticator do
   it 'should not be authentic if token is soft deleted' do
     token.destroy
     APIToken.find_by_id(token.id).should be_nil
-    APIToken.with_deleted.find_by_id(token.id).should == token
+    APIToken.with_deleted.find_by_id(token.id).should eq token
     lambda {
       subject.authenticate!
     }.should raise_error(APIv2::InvalidAccessKeyError)

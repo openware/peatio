@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Document do
   describe 'locale specific title setters & getters' do
     it 'sets the title in respective locales' do

@@ -1,23 +1,20 @@
-require 'spec_helper'
-
 describe Matching::Executor do
-
   let(:alice)  { who_is_billionaire }
   let(:bob)    { who_is_billionaire }
   let(:market) { Market.find('btccny') }
   let(:price)  { 10.to_d }
   let(:volume) { 5.to_d }
 
-  subject {
+  subject do
     Matching::Executor.new(
       market_id:    market.id,
       ask_id:       ask.id,
       bid_id:       bid.id,
       strike_price: price.to_s('F'),
       volume:       volume.to_s('F'),
-      funds:        (price*volume).to_s('F')
+      funds:        (price * volume).to_s('F')
     )
-  }
+  end
 
   context 'invalid volume' do
     let(:ask) { ::Matching::LimitOrder.new create(:order_ask, price: price, volume: volume, member: alice).to_matching_attributes }
@@ -30,7 +27,7 @@ describe Matching::Executor do
 
   context 'invalid price' do
     let(:ask) { ::Matching::LimitOrder.new create(:order_ask, price: price, volume: volume, member: alice).to_matching_attributes }
-    let(:bid) { ::Matching::LimitOrder.new create(:order_bid, price: price-1, volume: volume, member: bob).to_matching_attributes }
+    let(:bid) { ::Matching::LimitOrder.new create(:order_bid, price: price - 1, volume: volume, member: bob).to_matching_attributes }
 
     it 'should raise error' do
       expect { subject.execute! }.to raise_error(Matching::TradeExecutionError)
@@ -42,7 +39,7 @@ describe Matching::Executor do
     let(:bid) { ::Matching::LimitOrder.new create(:order_bid, price: price, volume: volume, member: bob).to_matching_attributes }
 
     it 'should create trade' do
-      expect {
+      expect do
         trade = subject.execute!
 
         expect(trade.trend).to eq 'up'
@@ -50,7 +47,7 @@ describe Matching::Executor do
         expect(trade.volume).to eq volume
         expect(trade.ask_id).to eq ask.id
         expect(trade.bid_id).to eq bid.id
-      }.to change(Trade, :count).by(1)
+      end.to change(Trade, :count).by(1)
     end
 
     it 'should set trend to down' do
@@ -63,7 +60,7 @@ describe Matching::Executor do
     it 'should set trade used funds' do
       market.expects(:latest_price).returns(11.to_d)
       trade = subject.execute!
-      expect(trade.funds).to eq price*volume
+      expect(trade.funds).to eq price * volume
     end
 
     it 'should increase order\'s trades count' do
@@ -129,19 +126,19 @@ describe Matching::Executor do
   end
 
   context 'unlock not used funds' do
-    let(:ask) { create(:order_ask, price: price-1, volume: 7.to_d, member: alice) }
+    let(:ask) { create(:order_ask, price: price - 1, volume: 7.to_d, member: alice) }
     let(:bid) { create(:order_bid, price: price, volume: volume, member: bob) }
 
-    subject {
+    subject do
       Matching::Executor.new(
         market_id:    market.id,
         ask_id:       ask.id,
         bid_id:       bid.id,
-        strike_price: price-1, # so bid order only used (price-1)*volume
+        strike_price: price - 1, # so bid order only used (price-1)*volume
         volume:       volume.to_s('F'),
-        funds:        ((price-1)*volume).to_s('F')
+        funds:        ((price - 1) * volume).to_s('F')
       )
-    }
+    end
 
     it 'should unlock funds not used by bid order' do
       locked_before = bid.hold_account.reload.locked
@@ -149,12 +146,12 @@ describe Matching::Executor do
       subject.execute!
       locked_after = bid.hold_account.reload.locked
 
-      expect(locked_after).to eq locked_before - (price*volume)
+      expect(locked_after).to eq locked_before - (price * volume)
     end
 
     it 'should save unused amount in order locked attribute' do
       subject.execute!
-      expect(bid.reload.locked).to eq price*volume - (price-1)*volume
+      expect(bid.reload.locked).to eq price * volume - (price - 1) * volume
     end
   end
 
@@ -171,5 +168,4 @@ describe Matching::Executor do
       end.not_to change(Trade, :count)
     end
   end
-
 end

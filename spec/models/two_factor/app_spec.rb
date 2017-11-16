@@ -1,6 +1,6 @@
 describe TwoFactor::App do
   let(:member) { create :member }
-  let(:app) { member.app_two_factor  }
+  let(:app) { member.app_two_factor }
 
   describe 'generate code' do
     subject { app.otp_secret }
@@ -42,9 +42,9 @@ describe TwoFactor::App do
     end
 
     it 'create new one by type' do
-      expect {
+      expect do
         expect(app).not_to be_nil
-      }.to change(TwoFactor::App, :count).by(1)
+      end.to change(TwoFactor::App, :count).by(1)
     end
 
     it 'retrieve exist one instead of creating' do
@@ -71,7 +71,6 @@ describe TwoFactor::App do
     end
   end
 
-
   describe '.activated' do
     subject { TwoFactor.activated? }
     before { create :member, :app_two_factor_activated }
@@ -95,5 +94,4 @@ describe TwoFactor::App do
       it { expect(mail.subject).to match('Google authenticator deactivated') }
     end
   end
-
 end

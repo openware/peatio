@@ -94,4 +94,3 @@ describe TwoFactor::Sms do
     end
   end
 end
-

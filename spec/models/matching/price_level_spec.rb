@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Matching::PriceLevel do
-
   subject  { Matching::PriceLevel.new('1.0'.to_d) }
   let(:o1) { Matching.mock_limit_order(type: :ask) }
   let(:o2) { Matching.mock_limit_order(type: :ask) }

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Verify::GoogleAuthsController, type: :controller do
   let(:member) { create :member }
   before { session[:member_id] = member.id }

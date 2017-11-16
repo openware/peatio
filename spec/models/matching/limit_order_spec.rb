@@ -1,16 +1,13 @@
-require 'spec_helper'
-
 describe Matching::LimitOrder do
-
   context 'initialize' do
     it 'should throw invalid order error for empty attributes' do
-      expect {
-        Matching::LimitOrder.new({type: '', price: '', volume: ''})
-      }.to raise_error(Matching::InvalidOrderError)
+      expect do
+        Matching::LimitOrder.new(type: '', price: '', volume: '')
+      end.to raise_error(Matching::InvalidOrderError)
     end
 
     it 'should initialize market' do
-        expect(Matching.mock_limit_order(type: :bid).market).to be_instance_of(Market)
+      expect(Matching.mock_limit_order(type: :bid).market).to be_instance_of(Market)
     end
   end
 

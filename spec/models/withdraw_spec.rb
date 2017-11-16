@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Withdraw do
   describe '#fix_precision' do
     it 'should round down to max precision' do
@@ -49,32 +47,32 @@ describe Withdraw do
       end
 
       it 'should be rejected if address is invalid' do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: false}))
+        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: { isvalid: false }))
         subject.audit!
         subject.should be_rejected
       end
 
       it 'should be rejected if address belongs to hot wallet' do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true, ismine: true}))
+        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: { isvalid: true, ismine: true }))
         subject.audit!
         subject.should be_rejected
       end
 
       it 'should accept withdraw with clean history' do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true}))
+        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: { isvalid: true }))
         subject.audit!
         subject.should be_accepted
       end
 
       it 'should mark withdraw with suspicious history' do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true}))
+        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: { isvalid: true }))
         subject.account.versions.delete_all
         subject.audit!
         subject.should be_suspect
       end
 
       it 'should approve quick withdraw directly' do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true}))
+        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: { isvalid: true }))
         subject.update_attributes sum: '0.099'
         subject.audit!
         subject.should be_processing
@@ -83,7 +81,7 @@ describe Withdraw do
 
     describe 'sn' do
       before do
-        Timecop.freeze(Time.local(2013,10,7,18,18,18))
+        Timecop.freeze(Time.local(2013, 10, 7, 18, 18, 18))
         @withdraw = create(:satoshi_withdraw, id: 1)
       end
 
@@ -113,9 +111,9 @@ describe Withdraw do
   context 'Worker::WithdrawCoin#process' do
     subject { create(:satoshi_withdraw) }
     before do
-      @rpc = mock()
-      @rpc.stubs(getbalance: 50000, sendtoaddress: '12345', settxfee: true )
-      @broken_rpc = mock()
+      @rpc = mock
+      @rpc.stubs(getbalance: 50_000, sendtoaddress: '12345', settxfee: true)
+      @broken_rpc = mock
       @broken_rpc.stubs(getbalance: 5)
 
       subject.submit
@@ -127,7 +125,7 @@ describe Withdraw do
     it 'transitions to :almost_done after calling rpc but getting Exception' do
       CoinRPC.stubs(:[]).returns(@broken_rpc)
 
-      lambda { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.should raise_error(Account::BalanceError)
+      -> { Worker::WithdrawCoin.new.process({ id: subject.id }, {}, {}) }.should raise_error(Account::BalanceError)
 
       expect(subject.reload.almost_done?).to be true
     end
@@ -135,7 +133,7 @@ describe Withdraw do
     it 'transitions to :done after calling rpc' do
       CoinRPC.stubs(:[]).returns(@rpc)
 
-      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to change{subject.account.reload.amount}.by(-subject.sum)
+      expect { Worker::WithdrawCoin.new.process({ id: subject.id }, {}, {}) }.to change { subject.account.reload.amount }.by(-subject.sum)
 
       subject.reload
       expect(subject.done?).to be true
@@ -144,10 +142,10 @@ describe Withdraw do
 
     it 'does not send coins again if previous attempt failed' do
       CoinRPC.stubs(:[]).returns(@broken_rpc)
-      begin Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}); rescue; end
-      CoinRPC.stubs(:[]).returns(mock())
+      begin Worker::WithdrawCoin.new.process({ id: subject.id }, {}, {}); rescue; end
+      CoinRPC.stubs(:[]).returns(mock)
 
-      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to_not change{subject.account.reload.amount}
+      expect { Worker::WithdrawCoin.new.process({ id: subject.id }, {}, {}) }.to_not change { subject.account.reload.amount }
       expect(subject.reload.almost_done?).to be true
     end
   end
@@ -198,7 +196,7 @@ describe Withdraw do
 
         subject.process!
 
-        expect { subject.fail! }.to_not change{subject.account.amount}
+        expect { subject.fail! }.to_not change { subject.account.amount }
 
         expect(subject.failed?).to be true
       end
@@ -247,14 +245,13 @@ describe Withdraw do
     end
 
     it 'returns false if exceeds quick withdraw amount' do
-      withdraw.currency_obj.stubs(:quick_withdraw_max).returns(withdraw.sum-1)
+      withdraw.currency_obj.stubs(:quick_withdraw_max).returns(withdraw.sum - 1)
       withdraw.should_not be_quick
     end
 
     it 'returns true' do
-      withdraw.currency_obj.stubs(:quick_withdraw_max).returns(withdraw.sum+1)
+      withdraw.currency_obj.stubs(:quick_withdraw_max).returns(withdraw.sum + 1)
       withdraw.should be_quick
     end
   end
 end
-

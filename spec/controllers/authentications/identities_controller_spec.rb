@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Authentications::IdentitiesController, type: :controller do
   let(:email) { 'xman@xman.com' }
   let(:member) { create(:verified_member, email: email) }
@@ -17,11 +15,11 @@ describe Authentications::IdentitiesController, type: :controller do
 
   describe 'POST create' do
     let(:password) { '111111' }
-    let(:attrs) {
-      { identity: { password: password, password_confirmation: password}}
-    }
+    let(:attrs) do
+      { identity: { password: password, password_confirmation: password } }
+    end
 
-    subject(:do_request) { post :create, attrs}
+    subject(:do_request) { post :create, attrs }
 
     it 'should create the ideneity' do
       expect do
@@ -32,7 +30,7 @@ describe Authentications::IdentitiesController, type: :controller do
     it 'should be recirect to settings path with flash' do
       do_request
       expect(response).to redirect_to(settings_path)
-      expect(flash[:notice]).to eq t('authentications.identities.create.success')
+      expect(flash[:notice]).to eq I18n.t('authentications.identities.create.success')
     end
   end
 end

@@ -1,7 +1,4 @@
-require 'spec_helper'
-
 describe Worker::SlaveBook do
-
   subject { Worker::SlaveBook.new(false) }
 
   let(:market)   { Market.find(:btccny) }
@@ -12,10 +9,10 @@ describe Worker::SlaveBook do
 
   context '#get_depth' do
     before do
-      subject.process({action: 'add', order: low_ask.attributes}, {}, {})
-      subject.process({action: 'add', order: high_ask.attributes}, {}, {})
-      subject.process({action: 'add', order: low_bid.attributes}, {}, {})
-      subject.process({action: 'add', order: high_bid.attributes}, {}, {})
+      subject.process({ action: 'add', order: low_ask.attributes }, {}, {})
+      subject.process({ action: 'add', order: high_ask.attributes }, {}, {})
+      subject.process({ action: 'add', order: low_bid.attributes }, {}, {})
+      subject.process({ action: 'add', order: high_bid.attributes }, {}, {})
     end
 
     it 'should return lowest asks' do
@@ -34,7 +31,7 @@ describe Worker::SlaveBook do
 
     it 'should updated volume' do
       attrs = low_ask.attributes.merge(volume: '0.01'.to_d)
-      subject.process({action: 'update', order: attrs}, {}, {})
+      subject.process({ action: 'update', order: attrs }, {}, {})
       subject.get_depth(market, :ask).should == [
         ['10.0'.to_d, '0.01'.to_d],
         ['12.0'.to_d, high_ask.volume]
@@ -44,18 +41,18 @@ describe Worker::SlaveBook do
 
   context '#process' do
     it 'should create new orderbook manager' do
-      subject.process({action: 'add', order: low_ask.attributes}, {}, {})
-      subject.process({action: 'new', market: market.id, side: 'ask'}, {}, {})
+      subject.process({ action: 'add', order: low_ask.attributes }, {}, {})
+      subject.process({ action: 'new', market: market.id, side: 'ask' }, {}, {})
       subject.get_depth(market, :ask).should be_empty
     end
 
     it 'should remove an empty order' do
-      subject.process({action: 'add', order: low_ask.attributes}, {}, {})
+      subject.process({ action: 'add', order: low_ask.attributes }, {}, {})
       subject.get_depth(market, :ask).should_not be_empty
 
       # after matching, order volume could be ZERO
       attrs = low_ask.attributes.merge(volume: '0.0'.to_d)
-      subject.process({action: 'remove', order: attrs}, {}, {})
+      subject.process({ action: 'remove', order: attrs }, {}, {})
 
       subject.get_depth(market, :ask).should be_empty
     end
