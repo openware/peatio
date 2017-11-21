@@ -43,11 +43,8 @@ Peatio::Application.routes.draw do
   get '/documents/websocket_api'
   get '/documents/oauth'
   resources :documents, only: [:show]
-  resources :two_factors, only: [:show, :index, :update]
-
   scope module: :private do
     resource  :id_document, only: [:edit, :update]
-
     resources :settings, only: [:index]
     resources :api_tokens do
       member do
@@ -109,7 +106,7 @@ Peatio::Application.routes.draw do
       end
     end
 
-    post '/pusher/auth', to: 'pusher#auth'
+   post '/pusher/auth', to: 'pusher#auth'
 
     resources :tickets, only: [:index, :new, :create, :show] do
       member do
