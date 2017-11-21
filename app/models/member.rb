@@ -202,14 +202,6 @@ class Member < ActiveRecord::Base
     end
   end
 
-  def app_two_factor
-    two_factors.by_type(:app)
-  end
-
-  def sms_two_factor
-    two_factors.by_type(:sms)
-  end
-
   def as_json(options = {})
     super(options).merge({
       "name" => self.name,
