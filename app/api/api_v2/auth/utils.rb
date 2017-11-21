@@ -1,7 +1,7 @@
 module APIv2
   module Auth
     module Utils
-      class <<self
+      class << self
 
         def cache
           # Simply use rack-attack cache wrapper

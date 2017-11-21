@@ -10,7 +10,8 @@ module APIv2
       end
 
       def provided?
-        params[:access_key] && params[:tonce] && params[:signature]
+        (params[:access_key] && params[:tonce] && params[:signature]) ||
+          env['HTTP_AUTHORIZATION'].present?
       end
 
       def request
