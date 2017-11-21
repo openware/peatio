@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.0.12'
+gem 'rails', '~> 4.0.13'
 gem 'rails-i18n'
 
 gem 'mysql2', '~> 0.3.21'
@@ -15,7 +15,6 @@ gem 'bcrypt-ruby', '~> 3.1.2'
 gem 'doorkeeper', '~> 1.4.1'
 gem 'omniauth', '~> 1.2.1'
 gem 'omniauth-identity', '~> 1.1.1'
-gem 'omniauth-weibo-oauth2', '~> 0.4.0'
 
 gem 'figaro'
 gem 'hashie'
@@ -71,7 +70,7 @@ gem 'simple_captcha2', require: 'simple_captcha'
 gem 'rest-client', '~> 1.6.8'
 
 group :development, :test do
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'faker', '~> 1.4.3'
   gem 'meta_request'
   gem 'better_errors'
@@ -86,13 +85,13 @@ group :development, :test do
 end
 
 group :test do
-  gem 'database_cleaner'
-  gem 'mocha', :require => false
-  gem 'shoulda-matchers'
   gem 'capybara'
+  gem 'database_cleaner'
   gem 'launchy'
-  gem 'selenium-webdriver'
+  gem 'mocha', require: false
   gem 'poltergeist'
+  gem 'selenium-webdriver'
+  gem 'shoulda-matchers'
 
   # rspec-rails rely on test-unit if rails version less then 4.1.0
   # but test-unit has been removed from ruby core since 2.2.0

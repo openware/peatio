@@ -933,12 +933,6 @@ en:
           title: API Tokens
           description: Create and manage your API tokens.
           go: Set
-        weibo:
-          title: Connect to Weibo
-          description: After you connecting to Weibo, you can login via Weibo account.
-          bound_desc: This has been connected with %{nickname}.
-          bind: Connect
-          unbind: Disconnect
     otps:
       new:
         step_1: Step 1
@@ -1021,11 +1015,10 @@ en:
         title: Login my account
         intro: Login Peatio now for you to exchange.
     identities:
-      panel: Create Account
+      panel: DEMO.Peatio.tech
       new:
-        title: Create My Account
-        intro: This will be your only ID on Peatio which is necessary for your exchange
-          , deposit and withdrawal . please fill it out carefully.
+        title: Create Account
+        intro: Register for you demo account or login using demo login information provided by your Peatio.tech Project Manager.
       edit:
         panel: My Account
         title: Reset Password
@@ -1475,7 +1468,11 @@ en:
   'true': true
   'false': false
   view_on_github: View on Github
-  slogan: An open-source crypto-currency exchange for world.
+  slogan:
+    heading: Peatio Open-Source Exchange
+    subheading: Cloud deployment made simple and secure
+    text1: Peatio - Cryptocurrency exchange for managing digital currency.
+    text2: We provide Peatio installation and configuration services
   tags:
     vip: VIP
     hero: Hero Member
@@ -1521,9 +1518,8 @@ en:
     signin: Sign In
     signout: Exit
     signup: Sign Up
-    login_via_weibo: Login via Weibo
     funds: Funds
-    getstart: Get Start
+    getstart: Markets
     assets: Solvency
     history: History
     order_history: Order History
@@ -1653,10 +1649,6 @@ en:
         warning: Please check your inbox after saving the email address.
         email_address: Email Address
         save: Save
-    weibo:
-      destroy:
-        last_auth_alert: You couldn't delete the last authentication
-        unbind_success: Unbind from the Weibo
     identities:
       new:
         title: Setup The Password

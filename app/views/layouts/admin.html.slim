@@ -1,12 +1,13 @@
 doctype html
 html lang="en"
   head
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
     = stylesheet_link_tag :admin, media: "all"
     = javascript_include_tag :admin
     = csrf_meta_tags
 
   body id='#{body_id}'
-    nav#top-menu.navbar.navbar-inverse.navbar-fixed-top role="navigation"
+    nav#top-menu.navbar.navbar-inverse role="navigation"
       .container
         ul.nav.navbar-nav.navbar-left
           li class = check_active('dashboard')
