@@ -12,21 +12,14 @@
     <% else %>
       <ul class="navbar-nav">
         <% if current_user == nil %>
+          <li class="nav-item mr-2"><%= link_to 'Markets', signin_path, class: 'btn btn-light' %></li>
+          <li class="nav-item"><%= link_to 'Help', signup_path, class: 'btn btn-light' %></li>
+        <% else %>
           <li class="nav-item"><%= link_to t('header.market'), market_path(current_market.id), target: true, class: 'nav-link' %></li>
           <li class="nav-item"><%= link_to 'Support', market_path(current_market.id), target: true, class: 'nav-link' %></li>
-          <!--
           <li class="nav-item"><%= link_to t('header.funds'), funds_path, controllers: ['funds'], class: 'nav-link' %></li>
           <li class="nav-item"><%= link_to t('header.assets'), exchange_assets_path, class: 'nav-link' %></li>
-          <li class="nav-item"><%= link_to t('header.assets'), signin_path, class: 'nav-link' %></li>
           <li class="nav-item"><%= link_to t('header.history'), order_history_path, controllers: ['history'], class: 'nav-link' %></li>
-          -->
-        <% else %>
-          <li class="nav-item mr-2">
-            <%= link_to 'Markets', signin_path, class: 'btn btn-light' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to 'Help', signup_path, class: 'btn btn-light' %>
-          </li>
         <% end %>
       </ul>
     <% end %>

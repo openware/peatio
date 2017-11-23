@@ -1,0 +1,5 @@
+<% unless current_user %>
+  <div class="mask">
+    <p class="text-center"><%= "#{t('.warning')}" %></p>
+  </div>
+<% end %>

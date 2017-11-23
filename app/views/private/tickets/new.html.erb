@@ -1,0 +1,11 @@
+<%= simple_form_for @ticket do |f| %>
+  <div class="form-group">
+    <div class="col-xs-20 col-xs-offset-4">
+      <%= t('.intro') %>
+    </div>
+  </div>
+  <%= f.input :title %>
+  <%= f.input :content, input_html: {rows: 10} %>
+  <hr class="split">
+  <%= f.button :wrapped, cancel: tickets_path %>
+<% end %>

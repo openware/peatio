@@ -739,11 +739,11 @@ header {
     position: absolute;
     z-index: 10;
   }
-
-  .label { font-size: inherit; }
-  .label.label-info { color: $brand-info }
-  .label.label-success { color: $brand-success }
-  .label.label-danger { color: $brand-danger }
+  // 
+  // .label { font-size: inherit; }
+  // .label.label-info { color: $brand-info }
+  // .label.label-success { color: $brand-success }
+  // .label.label-danger { color: $brand-danger }
 
   span.status-info, .status-success, .status-danger {
     top: -3px;

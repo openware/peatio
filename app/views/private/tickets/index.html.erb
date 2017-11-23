@@ -1,0 +1,31 @@
+<div class="col-xs-20">
+  <%= close_open_toggle_link %>
+</div>
+<%= link_to t('.new_ticket'), new_ticket_path, class: 'btn btn-secondary' %>
+<br>
+<br>
+
+<ul class="list-group">
+  <% @tickets.each do |t| %>
+    <li class="<%= (t.comments.unread_by(current_user).any? ? ['unread', 'list-group-item'] : ['list-group-item']) %>">
+      <div class="row row-middle">
+        <div class="col-xs-20">
+          <div class="row row-middle">
+            <div class="col-xs-20">
+              <h4><%= link_to t.title_for_display, ticket_path(t) %></h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-16">
+              <p><%= t.content %></p>
+            </div>
+            <div class="col-xs-8">
+              <i class="fa fa-clock-o text-info"></i>
+              <span><%= time_ago_in_words t.created_at %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ul>

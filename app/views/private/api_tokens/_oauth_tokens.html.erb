@@ -1,0 +1,63 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">
+      <%= t('.panel_title') %>
+    </h2>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div id="guide" class="col-xs-8">
+        <h3><%= t('.title') %></h3>
+        <p class="text-ignore"><%= t('.intro') %></p>
+
+        <p><%= link_to t('.oauth'), '/documents/oauth', target: '_blank' %></p>
+      </div>
+      <div id="content" class="col-xs-16">
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th class="oauth-app-name">
+                <%= t('.oauth_app_name') %>
+              </th>
+              <th class="oauth-app-expire">
+                <%= t('.oauth_app_expire') %>
+              </th>
+              <th class="oauth-app-scope">
+                <%= t('.oauth_app_scope') %>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @oauth_access_tokens.empty? %>
+              <tr>
+                <td colspan="3" style="text-align: center;">
+                  <p class="text-ignore">
+                    <%= t('.no_token') %>
+                  </p>
+                </td>
+              </tr>
+            <% else %>
+              <% @oauth_access_tokens.each do |token| %>
+                <tr>
+                  <td class="oauth-app-name">
+                    <%= token.application.name %>
+                  </td>
+                  <td class="oauth-app-expire">
+                    <%= token.send(:expired_time) %>
+                  </td>
+                  <td class="oauth-app-scope">
+                    <%= token.scopes.to_s %>
+                  </td>
+                  <td class="actions">
+                    <%= link_to t('.unbind'), unbind_api_token_path(token.application), method: :delete, data: {confirm: t('.unbind-confirm')} %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

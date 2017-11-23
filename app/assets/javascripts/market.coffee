@@ -1,15 +1,15 @@
 #= require es5-shim.min
 #= require es5-sham.min
 #= require jquery
-#= require jquery_ujs
+#= require jquery-ujs
 #= require jquery.mousewheel
 #= require jquery-timing.min
 #= require jquery.nicescroll.min
 #
-#= require bootstrap
+#= require bootstrap/dist/js/bootstrap
 #= require bootstrap-switch.min
 #
-#= require moment
+#= require moment/src/moment
 #= require bignumber
 #= require underscore
 #= require cookies.min

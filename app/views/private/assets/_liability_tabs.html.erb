@@ -1,0 +1,57 @@
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a class="btc-proof" href="#btc-proof" data-toggle="tab"><%= t('.verify-btc') %></a>
+    </li>
+    <li>
+      <a class="xrp-proof" href="#xrp-proof" data-toggle="tab"><%= t('.verify-xrp') %></a>
+    </li>
+    <li>
+      <a class="cny-proof" href="#cny-proof" data-toggle="tab"><%= t('.verify-cny') %></a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="btc-proof" class="tab-pane active">
+      <div class="trade-wrapper">
+        <div class="assets">
+          <span class="title"><%= t('.btc-assets-total') %></span>
+          <span class="currency">
+            <%= t('currency.icon.btc') %>
+            <%= @btc_proof.sum %>
+          </span>
+        </div>
+        <%= render 'liability_data', account: @btc_account, proof: @btc_proof %>
+
+      </div>
+    </div>
+
+    <div id="xrp-proof" class="tab-pane active">
+      <div class="trade-wrapper">
+        <div class="assets">
+          <span class="title"><%= t('.xrp-assets-total') %></span>
+          <span class="currency">
+            <%= t('currency.icon.xrp') %>
+            <%= @xrp_proof.sum %>
+          </span>
+        </div>
+        <%= render 'liability_data', account: @xrp_account, proof: @xrp_proof %>
+
+      </div>
+    </div>
+
+    <div id="cny-proof" class="tab-pane">
+      <div class="trade-wrapper">
+        <div class="assets">
+          <span class="title"><%= t('.cny-assets-total') %></span>
+          <span class="currency">
+            <%= t('currency.icon.cny') %>
+            <%= @cny_proof.sum %>
+          </span>
+        </div>
+        <%= render 'liability_data', account: @cny_account, proof: @cny_proof %>
+
+      </div>
+    </div>
+  </div>
+</div>

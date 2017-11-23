@@ -5,7 +5,7 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-switch.min';
 
-@import 'bootstrap-wysihtml5/index';
+@import "wysihtml/examples/css/stylesheet";
 
 @import 'vars/basic';
 @import 'vars/custom';
@@ -22,7 +22,7 @@ b.caret {
   margin-left: 5px;
 }
 
-.panel {
+.card{
   .table td:first-of-type, .table th:first-of-type {
     padding-left: 14px;
   }

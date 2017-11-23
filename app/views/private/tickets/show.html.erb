@@ -1,0 +1,54 @@
+<div class="col-xs-18"></div>
+<%= link_to t('private.tickets.close'), close_ticket_path(@ticket), method: :patch, confirm: t('private.tickets.close_confirm'), class: 'btn btn-default' %>
+| &nbsp; &nbsp; &nbsp;
+<%= link_to t('back'), tickets_path, class: 'btn btn-secondary' %>
+
+<ul class="list-group">
+  <li class="list-group-item">
+    <div class="row row-middle">
+      <div class="col-xs-20">
+        <div class="row row-middle">
+          <div class="col-xs-20">
+            <h4><%= "#{I18n.t('private.tickets.me')} - #{@ticket.title}" %></h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-16">
+            <p><%= @ticket.content %></p>
+          </div>
+          <div class="col-xs-8">
+            <i class="fa fa-clock-o text-info"></i>
+            <span><%= time_ago_in_words @ticket.created_at %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+  <% @comments.each do |c| %>
+    <li class="list-group-item">
+      <div class="row row-middle">
+        <div class="col-xs-20">
+          <div class="row row-middle">
+            <div class="col-xs-20">
+              <h4><%= "#{member_tittle(c.author)}" %></h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-16">
+              <p><%= c.content %></p>
+            </div>
+            <div class="col-xs-8">
+              <i class="fa fa-clock-o text-info"></i>
+              <span><%= time_ago_in_words c.created_at %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ul>
+<%= simple_form_for @comment, url: ticket_comments_path(@ticket.id) do |f| %>
+  <%= f.input :content, label: false,  input_html: { style: 'width:165%;', rows: 3 } %>
+  <hr class="split">
+  <%= f.button :wrapped %>
+<% end %>

@@ -4,16 +4,15 @@
   <p><%= t('slogan.text1') %></p>
   <p><%= t('slogan.text2') %></p>
 </div>
-
-<<<<<<< HEAD
   <div class="row" id="getstart">
     <% unless current_user %>
       <% offset = 8 %>
       <% offset -= 2 if ENV['GOOGLE_OAUTH2_SIGN_IN'] %>
       <% offset -= 2 if ENV['AUTH0_OAUTH2_SIGN_IN'] %>
 
-      <div class="col-xs-4 col-xs-offset-<%= offset %>">
-        <%= link_to t('header.signin'), signin_path, class: %w(btn btn-primary btn-lg btn-block), html: { role: 'button' } %>
+      <div class="buttons">
+        <%= link_to t('header.signin'), signin_path, class: 'btn btn-light m-1' %>
+        <%= link_to t('header.signup'), signup_path, class: 'btn btn-light m-1' %>
       </div>
 
       <% if ENV['GOOGLE_OAUTH2_SIGN_IN'] %>
@@ -28,20 +27,10 @@
         </div>
       <% end %>
 
-      <div class="col-xs-4">
-        <a class="btn btn-primary btn-lg btn-block" href="<%= signup_path %>" role="button"><%= t('header.signup') %></a>
-      </div>
     <% else %>
       <div class="col-xs-6 col-xs-offset-9 text-center">
         <a class="btn btn-primary btn-lg btn-block" href="<%= market_path(current_market) %>" role="button"><%= t('header.getstart') %></a>
         <a class="btn btn-primary btn-lg btn-block" href="<%= settings_path %>" role="button"><%= t('header.settings') %></a>
       </div>
     <% end %>
-=======
-<% unless current_user %>
-  <div class="buttons">
-    <%= link_to t('header.signin'), signin_path, class: 'btn btn-primary m-1' %>
-    <%= link_to t('header.signup'), signup_path, class: 'btn btn-primary m-1' %>
->>>>>>> Moving to bootstrap 4
   </div>
-<% end %>

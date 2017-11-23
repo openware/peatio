@@ -29,7 +29,6 @@ module Peatio
 
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/extras)
 
-    #config.assets.precompile += ['bootstrap-datetimepicker.css']
     config.assets.initialize_on_precompile = true
     config.assets.paths << Rails.root.join('vendor', 'assets', 'components')
 

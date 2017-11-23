@@ -3,7 +3,7 @@
 
 #= require ./lib/tiny-pubsub
 #= require angular
-#= require angular-resource
+#= require angular-resource/angular-resource
 #= require ./lib/angular-ui-router
 #= require ./lib/peatio_model
 #= require ./lib/ajax
@@ -18,11 +18,11 @@
 
 #= require es5-shim.min
 #= require es5-sham.min
-#= require jquery_ujs
-#= require bootstrap
+#= require jquery-ujs
+#= require bootstrap/dist/js/bootstrap
 #
 #= require bignumber
-#= require moment
+#= require moment/src/moment
 #= require ZeroClipboard
 #= require underscore
 #= require flight.min

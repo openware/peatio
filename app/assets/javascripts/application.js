@@ -2,6 +2,7 @@
 //= require es5-sham.min
 //= require popper.js/dist/umd/popper
 //= require jquery/dist/jquery
+//= require jquery-ujs
 //= require jquery-timing.min
 //= require bootstrap/dist/js/bootstrap
 //= require bootstrap-switch.min
