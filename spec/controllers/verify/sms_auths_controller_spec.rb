@@ -12,7 +12,7 @@ module Verify
       it { expect(response).to render_template(:show) }
 
       context 'already verified' do
-        let(:member) { create :member, :sms_two_factor_activated }
+        let(:member) { create :member}
 
         it { is_expected.to redirect_to(settings_path) }
       end
@@ -97,7 +97,6 @@ module Verify
 
     describe 'POST verify/sms_auth in verify code phase' do
       let(:member) { create :member }
-      let(:sms_auth) { member.sms_two_factor }
       before { session[:member_id] = member.id }
 
       context 'with empty code' do
@@ -152,7 +151,6 @@ module Verify
 
         it { expect(response).to be_ok }
         it { expect(assigns(:sms_auth)).to be_activated }
-        it { expect(member.sms_two_factor).to be_activated }
       end
     end
   end

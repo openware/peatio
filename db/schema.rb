@@ -431,14 +431,6 @@ ActiveRecord::Schema.define(version: 20171115234043) do
   add_index "trades", ["created_at"], name: "index_trades_on_created_at", using: :btree
   add_index "trades", ["currency"], name: "index_trades_on_currency", using: :btree
 
-  create_table "two_factors", force: true do |t|
-    t.integer  "member_id"
-    t.string   "otp_secret"
-    t.datetime "last_verify_at"
-    t.boolean  "activated"
-    t.string   "type"
-    t.datetime "refreshed_at"
-  end
 
   create_table "versions", force: true do |t|
     t.string   "item_type",  null: false

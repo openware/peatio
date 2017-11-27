@@ -137,12 +137,7 @@ en:
         activated: Activated
         activated?: "Activated?"
         id_document_verified?: "Id Document Verified?"
-        two_factor_activated?: "Tow Factor Activated?"
         phone_number: Phone Number
-      two_factor/sms:
-        country: Country
-        phone_number: Phone Number
-        otp: Verify Code
       withdraws/bank:
         id: ID
         member_name: Member
@@ -278,10 +273,6 @@ en:
               blank: Please enter your withdrawal address
               invalid: Invalid withdrawals address, please review.
               ismine: Please use a new address.
-        two_factor:
-          attributes:
-            otp:
-              invalid: Wrong Password!Please re-enter.
         application:
           attributes:
             redirect_uri:
@@ -611,13 +602,10 @@ en:
         fee: Fee
         total: Total
         withdraw_history: Withdrawal History
-      create:
-        two_factors_error: Two factor authentication failed.
       banks:
         update:
           notice: Bank Transfer withdrawal application has been submitted, we will
             process it as soon as possible
-          alert_two_factor: Two-Factor Authentication error
         destroy:
           notice: Bank Transfer withdraw has been cancelled, frozen amount has been
             returned to your account.
@@ -635,7 +623,6 @@ en:
         update:
           notice: Withdraw request is submit successful, we will process it as soon
             as possible
-          alert_two_factor: Two-Factor Authentication error
         new:
           submit: Submit
           allin: All-In
@@ -710,7 +697,6 @@ en:
       new:
         label_hint: Label helps you remember token usage, optional.
       create:
-        alert_two_factor: Two step authentication failed.
         success: API token created successfully.
         failed: Failed to create API token. Please try again later or contact admin.
         desc: Please copy and paste keys below to a safe place and save. The secret key will never be displayed again.
@@ -719,7 +705,6 @@ en:
         label_hint: Label helps you remember token usage, optional.
         ip_whitelist_hint: Seperate IP by commas, leave this field blank means all IP are allowed.
       update:
-        alert_two_factor: Two step authentication failed.
         success: Saved successfully.
         failed: Failed to save token. Please try again later or contact admin.
       destroy:
@@ -955,7 +940,6 @@ en:
       success: Settings updated successfully.
       failure: Invalid passcode. Please try again.
       index:
-        safety_instruction: In order to protect your bitcoins and personal information, we strongly suggest that you use Two-Factor Authentication.
         reset_password: Rest your Password
         reauthenticate: Authentication
         activated: An  email has been sent to your mailbox, please check it for verification
@@ -981,12 +965,6 @@ en:
           go: Set
           verified: Verified
           hint: "Verified number %{hint}"
-        two_factor_auth:
-          title: Two-Factor Authentication
-          description: Two-Factor Authentication provides another layer of security
-            to your account.
-          enable: Enable
-          disable: Disable
         verification:
           title: Verify Account
           description: Help keep the bad guys out of your account by using both your
@@ -1060,10 +1038,6 @@ en:
       balance: Account
     verify:
       google_auths:
-        panel: Two-Factor Authentication
-        edit:
-          title: Disable Two-Factor Authentication
-          intro: If you have a new phone, you can disable Two-Factor Authentication in the old phone, and enable Two-Factor Authentication  with the new one.
       sms_auths:
         panel: Verify Phone Number
     reset_passwords:
@@ -1098,8 +1072,6 @@ en:
       edit:
         panel: My Account
         title: Reset Password
-    two_factors:
-      panel: Two Factor Authenticator
   simple_form:
     placeholders:
       deposit:
@@ -1143,11 +1115,6 @@ en:
             match the name with your real name authentication</span>"
           sn: "<span class='text-danger'>Please copy the SN in your bank transfer's
             message, otherwise we can not process your order quickly.</span>"
-      two_factor:
-        otp_secret: We recommend that you back up QR code image or ciphertext to avoid
-          that you accidental loss of the phone for the inconvenience.
-        otp: Your validator will re-generate a new password every thirty seconds,
-          please input timely.
       identity:
         password: Set a password which has at least 6 characters and it's better to
           contain uppercase and lowercase letters and numbers.
@@ -1734,11 +1701,6 @@ en:
         destroy: Sign out
         verify: Verify
         update: Change
-      two_factor:
-        create: Verify
-        update: Activiate
-      reset_two_factor:
-        create: Reset Two-Factor Authentication
       reset_password:
         update: Reset Sign in Password
         create: Reset Sign in Password
@@ -1831,11 +1793,6 @@ en:
   sessions:
     new:
       reset_password: Forgot Password?
-    new_with_two_factor_auth:
-      title: 2 Step Verification
-      reset_two_factor: Lost 2-step-verification device
-    create_with_two_factor_auth:
-      session_expired: Session expired. Try again.
     create:
       error: You account has been disabled, contact admin if you have any problem.
     failure:
@@ -1847,11 +1804,8 @@ en:
     admin:
       member:
         member_info: Member Info
-        deactive_sms_two_factor: SMS TFA
-        deactive_app_two_factor: Google TFA
         inactive: Inactive
         deactive: Deactive
-        are_you_sure: Are you sure deactive two factor authentication?
       account:
         account_info: Account Info
         payment_address: Deposit Address
@@ -1875,30 +1829,10 @@ en:
         latest_price: Last
     frame:
       deposit_now: Deposit Now
-  two_factors:
-    index:
-      verify: Verify
-    update:
-      alert: Two factor verification code error, please re-enter.
-    auth:
-      please_active_two_factor: Please set mobile number or google authenticator first.
-      submit: Submit
-      otp_placeholder: 6-digit password
-      google_app: Google Authenticator
-      sms: SMS Verification Messages
-      send_code: Send Code
-      send_code_alt: Resend in COUNT seconds
-      hints:
-        app: Google Authenticator will re-generate a new password every thirty seconds,
-          please input timely.
-        sms: We'll send a text message to you phone with verify code.
   verify:
     google_auths:
       edit:
         submit: Disable
-        warning: 'Tip: If you have lost your Two-Factor Authentication by some reason
-          and can''t login your Peatio account, please contact our online customer
-          service.'
       show:
         step-1: Step 1
         step-2: Step 2
@@ -1910,7 +1844,6 @@ en:
           target='_blank'>Installation Instructions</a>。"
         scan-qr-code: Scan the following QR code with Google Authenticator APP，or
           add cipher text to the validator manually.
-        enter-passcode: Fill in the dynamic password  displayed by your phone to activate Two-Factor Authentication.
         submit: Enable
         ios: Iphone iOS
         android: Android
@@ -1920,11 +1853,8 @@ en:
           not_activated_yet: The Google Authenticator hasn't been set yet.
       update:
         alert: Password for authentication is incorrect, please re-enter.
-        notice: Two-Factor Authentication has been successfully Enabled.
-        sms_two_factor_error: SMS Verification code is incorrect, please re-enter.
       destroy:
         alert: Password for authentication is incorrect, please re-enter.
-        notice: Two-Factor Authentication has been successfully Disabled.
     sms_auths:
       show:
         title: Verify Phone Number

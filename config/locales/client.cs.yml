@@ -113,7 +113,6 @@ cs:
         canceled: Stornuji
         failed: Chyba
     auth:
-      please_active_two_factor: Prosím nejdříve vyplňte číslo mobilního telefonu nebo aktivujte Google Authenticator.
       submit: Odeslat
       otp_placeholder: 6místný kód
       google_app: Google Authenticator

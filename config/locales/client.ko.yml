@@ -113,7 +113,6 @@ ko:
         canceled: 취소
         failed: 오류
     auth:
-      please_active_two_factor: 회원님의 안전한 자산보호를 위해 핸드폰인증 또는 구글이중인증 받으세요.
       submit: 확인
       otp_placeholder: 6자리 숫자 비밀번호
       google_app: 구글이중인증

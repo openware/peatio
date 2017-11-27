@@ -3,7 +3,6 @@ module Verify
     before_action :auth_member!
     before_action :find_sms_auth
     before_action :activated?
-    before_action :two_factor_required!
 
     def show
       @phone_number = Phonelib.parse(current_user.phone_number).national
@@ -26,7 +25,6 @@ module Verify
     end
 
     def find_sms_auth
-      @sms_auth ||= current_user.sms_two_factor
     end
 
     def send_code_phase
@@ -51,8 +49,7 @@ module Verify
 
       respond_to do |format|
         if @sms_auth.verify?
-          @sms_auth.active! and unlock_two_factor!
-
+          @sms_auth.active!
           text = I18n.t('verify.sms_auths.show.notice.otp_success')
           flash[:notice] = text
           format.any { render status: :ok, text: {text: text, reload: true}.to_json }
@@ -65,15 +62,6 @@ module Verify
 
     def token_params
       params.required(:sms_auth).permit(:country, :phone_number, :otp)
-    end
-
-    def two_factor_required!
-      return if not current_user.app_two_factor.activated?
-
-      if two_factor_locked?
-        session[:return_to] = request.original_url
-        redirect_to two_factors_path
-      end
     end
 
   end

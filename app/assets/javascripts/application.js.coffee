@@ -74,4 +74,3 @@ $ ->
 
   FlashMessageUI.attachTo('.flash-message')
   SmsAuthVerifyUI.attachTo('#edit_sms_auth')
-  TwoFactorAuth.attachTo('.two-factor-auth-container')
