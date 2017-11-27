@@ -48,7 +48,6 @@ describe 'withdraw' do
   it 'prevents withdraws that the account has no sufficient balance' do
     pending
     current_user = Member.find_by_email identity.email
-    create :two_factor_sms, member: current_user
 
     login identity
 

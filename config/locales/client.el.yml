@@ -48,7 +48,6 @@ el:
       withdraw_history:
         failed: Απέτυχε
     auth:
-      please_active_two_factor: Παρακαλούμε να ορίσετε τον αριθμό του κινητού ή τον επαληθευτή Google πρώτα.
       submit: Υποβολή
       otp_placeholder: '6-ψήφιος κωδικό '
       google_app: Επαληθευτής Google

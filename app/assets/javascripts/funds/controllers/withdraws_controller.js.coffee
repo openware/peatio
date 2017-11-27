@@ -47,10 +47,6 @@ app.controller 'WithdrawsController', ['$scope', '$stateParams', '$http', '$gon'
     data = { withdraw: { member_id: current_user.id, currency: currency, sum: @withdraw.sum, fund_source_id: _selectedFundSourceId } }
 
     if current_user.app_activated or current_user.sms_activated
-      type = $('.two_factor_auth_type').val()
-      otp  = $("#two_factor_otp").val()
-
-      data.two_factor = { type: type, otp: otp }
       data.captcha = $('#captcha').val()
       data.captcha_key = $('#captcha_key').val()
 
@@ -91,9 +87,5 @@ app.controller 'WithdrawsController', ['$scope', '$stateParams', '$http', '$gon'
     current_user.sms_activated and !current_user.app_activated
 
 
-  $scope.$watch (-> $scope.currency), ->
-    setTimeout(->
-      $.publish "two_factor_init"
-    , 100)
 
 ]
