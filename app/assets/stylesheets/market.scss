@@ -3,15 +3,14 @@
 @import 'vars/bootstrap';
 @import 'vars/bootstrap_market';
 
-@import 'bootstrap';
+@import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-switch.min';
 
 @import 'vars/basic';
 @import 'vars/market';
 @import 'vars/custom';
 
-@import 'font-awesome-sprockets';
-@import 'font-awesome';
+@import 'font-awesome/css/font-awesome';
 @import 'csshake.min';
 
 @import 'layouts/basic';
@@ -647,14 +646,14 @@ header {
       width: 99%;
       height: 0;
       padding: 0;
-      color: $gray-light;
+      color: $gray-600;
       text-align: center;
     }
 
     .label { margin: 0 1px; padding: 2px; }
     .label-ask { background-color: $down-text-fade; }
     .label-bid { background-color: $up-text-fade; }
-    .label-new { background-color: $gray-light; }
+    .label-new { background-color: $gray-600; }
     .label-partial { background-color: #2b90de; }
   }
 

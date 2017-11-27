@@ -2,14 +2,13 @@
 
 @import 'vars/bootstrap';
 
-@import 'bootstrap';
+@import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-switch.min';
 
 @import 'vars/basic';
 @import 'vars/custom';
 
-@import 'font-awesome-sprockets';
-@import 'font-awesome';
+@import 'font-awesome/css/font-awesome.css';
 
 @import 'ngDialog/ngDialog';
 @import 'ngDialog/ngDialog-theme-default';
@@ -17,7 +16,6 @@
 @import 'layouts/basic';
 @import 'layouts/header';
 
-@import 'features/welcome';
 @import 'features/market';
 @import 'features/market_chart';
 @import 'features/assets';
@@ -28,20 +26,55 @@
 @import 'features/simple_captcha';
 @import 'features/custom';
 
+/* layouts */
 
-/* layouts
--------------------------------------------------------------- */
 html, body {
-  height: 100vh;
+  height: 100%;
+}
+
+nav {
+  margin-bottom: 10px;
+  z-index: 2;
+}
+
+.particles, canvas {
+  background-color: #343a40;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: -1;
+  top: 0;
+  left: 0;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  div.title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  div.buttons {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .btn {
+      width: 180px;
+    }
+  }
 }
 
 #wrap {
-  height: auto !important;
-  min-height: 100%;
-  margin: 0 auto 0 - $footer-height;
-
-  & + iframe { display: none; }
-
   #guide {
     padding-left: 26px;
   }
@@ -49,7 +82,6 @@ html, body {
   #content {
     border-left: 1px solid $content-split;
     padding-top: 15px;
-
 
     #setting_list.table {
       tr:first-of-type { td { border-top: 0px; } }
@@ -91,11 +123,6 @@ html, body {
   }
 }
 
-#push, footer {
-  height: $footer-height;
-  box-sizing: 'border-box';
-}
-
 footer {
   color: $footer-color;
   height: $footer-height;
@@ -115,7 +142,7 @@ footer {
   dt {
     width: 38px;
     cursor: pointer;
-    color: $gray-light;
+    color: $gray-600;
   }
 
   dd {
@@ -148,6 +175,18 @@ form.simple_form {
   margin-top: 4px;
   margin-bottom: 4px;
   h5 i.fa { margin-right: 10px; }
+}
+
+.alerts-container {
+  position: fixed;
+  z-index: 2;
+  bottom: 5px;
+  right: 10px;
+  width: 30%;
+
+  .alert {
+    box-shadow: 1px 2px 3px rgba(#aaa, 0.5);
+  }
 }
 
 @import 'layouts/custom';

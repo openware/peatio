@@ -1775,11 +1775,14 @@ en:
         account_info: Account Info
         payment_address: Deposit Address
     alert:
-      modern: In order not to affect trading experience, please use a more popular
-        browser transaction, we recommend you <a target='_blank' href='https://www.google.com/#q=google+chrome'>Google
-        Chrome</a>。
-      pusher_unavailable: The network connection is temporarily unavailable... <a
-        href='#' class='alert-link'>Please refresh</a>.
+      modern: "In order to have better trading experience,
+        please use more modern web browser. We recommend using
+        <a target='_blank' class='alert-link'
+           href='https://www.google.com/chrome/browser/desktop/index.html'>
+        Google Chrome
+        </a>"
+      pusher_unavailable: The network connection is temporarily unavailable.
+                          <a href='#' class='alert-link'>Try to refresh the page</a>
     header:
       balance: Balance
     header_account_balance:

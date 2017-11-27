@@ -44,3 +44,6 @@ tags
 .DS_Store
 .agignore
 **/*.tgz
+
+/vendor/assets/components
+/node_modules

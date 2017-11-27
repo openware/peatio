@@ -1,0 +1,40 @@
+<div class="card" style="max-width: 350px">
+  <div class="card-body">
+    <h4 class="card-title"><%= t('header.signup') %></h4>
+
+    <%= form_for(@identity, url: '/auth/identity/callback', method: :post) do |f| %>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <%= f.text_field :email, type: 'email',
+              class: 'form-control', name: 'auth_key', autofocus: 'true',
+              placeholder: t('simple_form.placeholders.session.email') %>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+
+        <%= f.text_field :password, type: 'password', name: 'password',
+              class: 'form-control', 'aria-describedby' => 'passwordHelp',
+              placeholder: t('simple_form.placeholders.session.password') %>
+
+        <small id="passwordHelp" class="form-text text-muted">
+          <%= t('simple_form.hints.identity.password') %>
+        </small>
+      </div>
+
+      <% if require_captcha? %>
+        <% text_field_tag :captcha, required: true, label: t('simple_form.labels.session.captcha') do %>
+          <%= show_simple_captcha %>
+        <% end %>
+      <% end %>
+
+      <%= f.submit t('header.signin'), class: 'btn btn-primary w-100' %>
+    <% end %>
+
+  </div>
+  <div class="card-footer">
+    <%= link_to t('.reset_password'), new_reset_password_path, class: 'card-link float-left' %>
+    <%= link_to t('header.signup'), signup_path, class: 'card-link float-right' %>
+  </div>
+</div>

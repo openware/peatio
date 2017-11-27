@@ -59,14 +59,14 @@
 
     .panel .panel-body {
       padding-right: 15px;
-      border-right: 1px solid $gray-light;
+      border-right: 1px solid $gray-600;
     }
 
     .table.asks { margin-bottom: 0px; }
     .table.bids { margin-top: 0px; }
-    .table.seperator { 
+    .table.seperator {
       td.price { margin: 0px; padding: 0px; font-size: 20px !important; }
-      margin: 9px 0px 8px 0px; 
+      margin: 9px 0px 8px 0px;
     }
   }
 
