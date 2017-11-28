@@ -273,10 +273,6 @@ en:
               blank: Please enter your withdrawal address
               invalid: Invalid withdrawals address, please review.
               ismine: Please use a new address.
-        two_factor:
-          attributes:
-            otp:
-              invalid: Wrong Password!Please re-enter.
         application:
           attributes:
             redirect_uri:
@@ -641,7 +637,6 @@ en:
         update:
           notice: Withdraw request is submit successful, we will process it as soon
             as possible
-          alert_two_factor: Two-Factor Authentication error
         new:
           submit: Submit
           allin: All-In
