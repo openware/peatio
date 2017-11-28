@@ -964,8 +964,6 @@ cs:
         edit:
           title: Deaktivovat Dvoustupňové ověření
           intro: Pokud máte nový telefon, můžete zakázat dvoustupňovou autentizaci ve starém telefonu, a umožnit dvoustupňové ověřování s novým.
-      sms_auths:
-        panel: Ověřit Telefonní číslo
     reset_passwords:
       panel: Heslo
       new:
@@ -1361,12 +1359,6 @@ cs:
     google_auth_deactivated:
       subject: "[PEATIO] Google Authentifikátor deaktivován"
       google_auth_deactivated: Deaktivoval jste úspěšně Google Autentifikátor.
-    sms_auth_activated:
-      subject: "[PEATIO] SMS autentifikace aktivována"
-      sms_auth_activated: Aktivoval jste úspěšně SMS Autentifikátor.
-    sms_auth_deactivated:
-      subject: "[PEATIO] SMS autentifikace deaktivována"
-      sms_auth_deactivated: Deaktivoval jste úspěšně SMS Autentifikátor.
     reset_password_done:
       subject: "[PEATIO] Vaše heslo bylo změněno"
       successful: Vaše heslo bylo úspěšně změněno.
@@ -1445,11 +1437,6 @@ cs:
       date-short: "%m-%d"
       short: "%m-%d %H:%M"
       default: "%m/%d/%Y %H:%M"
-  sms:
-    verification_code: 'Verifikační kód pro Vaše telefonní číslo je: %{code}.'
-    password_changed: Ahoj %{email}, Vaše heslo bylo úspěšně změněno.
-    deposit_done: Ahoj %{email}, žádost o vklad je dokončena.
-    withdraw_done: Ahoj %{email}, žádost o výběr je dokončena.
   header:
     home: Home
     dashboard: Dashboard
@@ -1703,23 +1690,6 @@ cs:
       destroy:
         alert: Heslo které jste zadali je neplatné, zadejte znovu.
         notice: Dvoustupňového ověření je úspěšně deaktivováno.
-    sms_auths:
-      show:
-        title: Ověřit Telefonní číslo
-        description: Poskytnout telefonní číslo bude pro váš účet bezpečnější. Můžete rychle obnovit heslo a operace na účtu budou oznámovány.
-        warning: nebudete moci získat vaše heslo k účtu, pokud není nastaveno telefonní číslo.
-        phone_number: Telefonní číslo
-        send_code: Odeslat kód
-        send_code_alt: Odeslat znovu COUNT sekund
-        input_otp: Zadejte 6místný kód, který jsme Vám zaslali
-        submit: Uložit
-        notice:
-          send_code_success: Verifikační kód odeslán.
-          already_taken: Toto číslo je již použito.
-          otp_success: Verifikační kód v pořádku.
-          already_activated: Vaše telefonní číslo je aktivováno.
-        alert:
-          phone_number_error: Telefonní číslo - Chyba
   withdraw_channel:
     bank:
       key: Bankovní převod

@@ -935,8 +935,6 @@ ko:
         edit:
           title: 이중인증 해제
           intro: 새 핸드폰으로 교체하려면 반드시 이중인증 해지 후 새 핸드폰으로 다시 인증 받으세요.
-      sms_auths:
-        panel: 핸드폰인증
     reset_passwords:
       panel: 로그인비밀번호
       new:
@@ -1327,12 +1325,6 @@ ko:
     google_auth_deactivated:
       subject: "[PEATIO] 구글 인중인증 재설정"
       google_auth_deactivated: 구글 인중인증 재설정이 완료되었습니다.
-    sms_auth_activated:
-      subject: "[PEATIO]핸드폰SMS 인증"
-      sms_auth_activated: 핸드폰SMS인증이 완료되었습니다.
-    sms_auth_deactivated:
-      subject: "[PEATIO] 핸드폰SMS인증을 재설정"
-      sms_auth_deactivated: 핸드폰SMS인증이 완료되었습니다.
     reset_password_done:
       subject: "[PEATIO] 비밀번호 수정 완료"
       successful: 회원님이 비밀번호가 성공적으로 수정되었습니다.
@@ -1402,11 +1394,6 @@ ko:
       date-short: "%m-%d"
       short: "%m-%d %H:%M"
       default: "%m/%d/%Y %H:%M"
-  sms:
-    verification_code: '인증번호:%{code}.유효 기간 30분 입니다. (인증번호를 안전하게 관리하세요.)[PEATIO]'
-    password_changed: Hi %{email}, 회원님 비밀번호가 성공적으로 수정 되었습니다.
-    deposit_done: Hi %{email}, 회원님이 입금신청 처리 되여습니다.
-    withdraw_done: Hi %{email}, 회원님 출금신청이 처리되었습니다.
   header:
     home: 홈
     dashboard: 계기판
@@ -1660,22 +1647,6 @@ ko:
       destroy:
         alert: 인증번호 오류, 다시 입력하세요
         notice: 구글이중인증 해지완료
-    sms_auths:
-      show:
-        title: 핸드폰 인증 받기
-        description: 핸드폰인증을 받으세요.개인정보 보호와 비밀번호 재설정 출금요청시 필요합니다.
-        warning: 핸드폰인증을 받지않아 출금신청 및 비밀번호 찾기를 할수없습니다.
-        phone_number: 핸드폰번호
-        send_code: 인증번호 요청하기
-        send_code_alt: COUNT초후 재전송 합니다.
-        input_otp: 6자리 인증번호를 입력하세요
-        submit: 확인
-        notice:
-          send_code_success: 핸드폰으로 인증번호가 전송되었습니다.
-          otp_success: 핸드폰 인증 완료 되었습니다
-          already_activated: 핸드폰 확인 완료
-        alert:
-          phone_number_error: 핸드폰 번호 오류
   withdraw_channel:
     bank:
       key: 은행 송금

@@ -962,8 +962,6 @@ en:
       balance: Account
     verify:
       google_auths:
-      sms_auths:
-        panel: Verify Phone Number
     reset_passwords:
       panel: Password
       new:
@@ -1380,12 +1378,6 @@ en:
     google_auth_deactivated:
       subject: "[PEATIO] Google authenticator deactivated"
       google_auth_deactivated: You have deactivated google authenticator successfully
-    sms_auth_activated:
-      subject: "[PEATIO] SMS authenticator activated"
-      sms_auth_activated: You have activated SMS authenticator successfully
-    sms_auth_deactivated:
-      subject: "[PEATIO] SMS authenticator deactivated"
-      sms_auth_deactivated: You have deactivated SMS authenticator successfully
     reset_password_done:
       subject: "[PEATIO] Your password changed"
       successful: Your password has been changed successfully.
@@ -1471,11 +1463,6 @@ en:
       date-short: "%m-%d"
       short: "%m-%d %H:%M"
       default: "%m/%d/%Y %H:%M"
-  sms:
-    verification_code: 'Your phone number verification code is: %{code}.'
-    password_changed: Hi %{email}, you password has been changed successfully.
-    deposit_done: Hi %{email}, the request of your deposit is complete.
-    withdraw_done: Hi %{email}, the request of your withdrawal is complete.
   header:
     home: Home
     dashboard: Dashboard
@@ -1734,24 +1721,6 @@ en:
         alert: Password for authentication is incorrect, please re-enter.
       destroy:
         alert: Password for authentication is incorrect, please re-enter.
-    sms_auths:
-      show:
-        title: Verify Phone Number
-        description: Providing a phone number will make your account more secure. you
-          can quickly reset your password and your account operations will be notified.
-        warning: it will not be able to retrieve your account's password if not set
-          the phone number.
-        phone_number: Phone number
-        send_code: Send Code
-        send_code_alt: Resend in COUNT seconds
-        input_otp: Enter the 6-digit code we sent to you
-        submit: Save
-        notice:
-          send_code_success: Send verify code success
-          otp_success: Verify Code success.
-          already_activated: You phone number has been activated.
-        alert:
-          phone_number_error: phone number error
   withdraw_channel:
     bank:
       key: Bank Transfer
