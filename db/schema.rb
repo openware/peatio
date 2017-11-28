@@ -293,6 +293,7 @@ ActiveRecord::Schema.define(version: 20171128081449) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "currency"
+    t.string   "secret"
   end
 
   create_table "payment_transactions", force: true do |t|

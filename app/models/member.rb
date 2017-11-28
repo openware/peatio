@@ -87,14 +87,16 @@ class Member < ActiveRecord::Base
     end
 
     def create_from_auth(auth_hash)
-      member = create(email: auth_hash['info']['email'], nickname: auth_hash['info']['nickname'],
-                      activated: false)
-      member.add_auth(auth_hash)
-      member.send_activation if auth_hash['provider'] == 'identity'
-      member
+      new(email:     auth_hash['info']['email'],
+          nickname:  auth_hash['info']['nickname'],
+          activated: auth_hash['provider'] != 'identity'
+      ).tap do |member|
+        member.save!
+        member.add_auth(auth_hash)
+        member.send_activation if auth_hash['provider'] == 'identity'
+      end
     end
   end
-
 
   def create_auth_for_identity(identity)
     self.authentications.create(provider: 'identity', uid: identity.id)
