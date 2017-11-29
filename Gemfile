@@ -100,3 +100,6 @@ group :test do
   # but test-unit has been removed from ruby core since 2.2.0
   gem 'test-unit'
 end
+
+# Added at 2017-11-29 19:12:05 +0200 by sophia:
+gem "sprockets", "~> 2.11"

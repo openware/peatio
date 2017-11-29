@@ -500,6 +500,7 @@ DEPENDENCIES
   simple_captcha2
   simple_form (~> 3.1.0)
   slim-rails
+  sprockets (~> 2.11)
   test-unit
   timecop
   twilio-ruby (~> 3.11)
