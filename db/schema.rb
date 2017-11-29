@@ -47,7 +47,6 @@ ActiveRecord::Schema.define(version: 20171115234043) do
   end
 
   add_index "accounts", ["member_id", "currency"], name: "index_accounts_on_member_id_and_currency", using: :btree
-  add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
 
   create_table "api_tokens", force: true do |t|
     t.integer  "member_id",                        null: false

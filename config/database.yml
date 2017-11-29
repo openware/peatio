@@ -8,14 +8,14 @@ default: &default
 
 development:
   <<: *default
-  database: peatio_development
+  database: pea_dev
 
 test:
   <<: *default
-  database: peatio_test
+  database: pea_test
 
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
   pool: 10
-  database: peatio_production
+  database: pea_prod

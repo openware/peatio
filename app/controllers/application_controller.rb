@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_gon
-    gon.env = Rails.env
+    gon.environment = Rails.env
     gon.local = I18n.locale
     gon.market = current_market.attributes
     gon.ticker = current_market.ticker
@@ -158,7 +158,7 @@ class ApplicationController < ActionController::Base
     end
 
     if current_user
-      gon.current_user = { sn: current_user.sn }
+      gon.user = { sn: current_user.sn }
       gon.accounts = current_user.accounts.inject({}) do |memo, account|
         memo[account.currency] = {
           currency: account.currency,

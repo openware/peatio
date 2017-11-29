@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.0.13'
+gem 'rails', '~> 4.2'
 gem 'rails-i18n'
 
 gem 'mysql2', '~> 0.3.21'
@@ -33,7 +33,7 @@ gem 'kaminari'
 gem 'paranoid2'
 gem 'active_hash'
 gem 'http_accept_language'
-gem 'globalize', '~> 4.0.0'
+gem 'globalize', '~> 5.0'
 gem 'paper_trail', '~> 3.0.1'
 gem 'rails-observers'
 gem 'country_select', '~> 2.1.0'
@@ -91,7 +91,6 @@ group :test do
   gem 'database_cleaner'
   gem 'launchy'
   gem 'mocha', require: false
-  gem 'poltergeist'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
 

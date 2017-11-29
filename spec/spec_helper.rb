@@ -4,7 +4,6 @@ ENV['ADMIN'] ||= 'admin@peatio.dev'
 require File.expand_path('../../config/environment', __FILE__)
 require 'database_cleaner'
 require 'rspec/rails'
-require 'capybara/poltergeist'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -25,17 +24,15 @@ if ENV['CHROME_HOSTNAME'].present?
   end
 
   host = `hostname -s`.strip
-  Rails.logger.warn host
   Capybara.server_port = Capybara::Server.new(Rails.application).send(:find_available_port, host)
   Capybara.app_host = "http://#{host}.local:#{Capybara.server_port}"
+  Capybara.javascript_driver = :chrome
 else
-  Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, browser: :chrome)
-  end
+  Capybara.default_driver    = :selenium_chrome_headless
+  Capybara.javascript_driver = :selenium_chrome_headless
 end
 
 Capybara.default_max_wait_time = 15
-Capybara.javascript_driver = :chrome
 
 %i[ google_oauth2 auth0 ].each do |provider|
   { 'provider' => provider.to_s,
@@ -84,7 +81,7 @@ RSpec.configure do |config|
   config.before(:each) do
     DatabaseCleaner.start
 
-    Rails.cache.clear
+    FileUtils.rm_rf(File.join(__dir__, 'tmp', 'cache'))
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
 
