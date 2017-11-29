@@ -46,9 +46,8 @@ app.controller 'WithdrawsController', ['$scope', '$stateParams', '$http', '$gon'
     account = withdraw_channel.account()
     data = { withdraw: { member_id: current_user.id, currency: currency, sum: @withdraw.sum, fund_source_id: _selectedFundSourceId } }
 
-    if current_user.app_activated or current_user.sms_activated
-      data.captcha = $('#captcha').val()
-      data.captcha_key = $('#captcha_key').val()
+    data.captcha = $('#captcha').val()
+    data.captcha_key = $('#captcha_key').val()
 
     $('.form-submit > input').attr('disabled', 'disabled')
 
@@ -76,16 +75,4 @@ app.controller 'WithdrawsController', ['$scope', '$stateParams', '$http', '$gon'
       controller: 'FundSourcesController'
       className: className
       data: {currency: $scope.currency}
-
-  $scope.sms_and_app_activated = ->
-    current_user.app_activated and current_user.sms_activated
-
-  $scope.only_app_activated = ->
-    current_user.app_activated and !current_user.sms_activated
-
-  $scope.only_sms_activated = ->
-    current_user.sms_activated and !current_user.app_activated
-
-
-
 ]

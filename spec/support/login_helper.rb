@@ -1,4 +1,4 @@
-def login(identity, otp: nil, password: nil)
+def login(identity, password: nil)
   visit signin_path
 
   within 'form#new_identity' do
