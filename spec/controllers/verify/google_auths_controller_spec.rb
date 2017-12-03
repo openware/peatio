@@ -8,13 +8,10 @@ describe Verify::GoogleAuthsController, type: :controller do
     context 'not activated yet' do
       it { expect(response.status).to eq 200 }
       it { is_expected.to render_template(:show) }
-      it 'member should have two_factor prepared' do
-        expect(member.two_factors).not_to be_empty
-      end
     end
 
     context 'already activated' do
-      let(:member) { create :member, :app_two_factor_activated }
+      let(:member) { create :member}
 
       it { is_expected.to redirect_to(settings_path) }
     end
@@ -24,12 +21,11 @@ describe Verify::GoogleAuthsController, type: :controller do
     context 'not activated' do
       before { get :edit }
 
-      it { expect(member.app_two_factor).not_to be_activated }
       it { is_expected.to redirect_to(settings_path) }
     end
 
     context 'activated' do
-      let(:member) { create :member, :app_two_factor_activated }
+      let(:member) { create :member}
       before { session[:member_id] = member.id }
 
       before { get :edit }
