@@ -28,7 +28,7 @@ describe APIv2::Mount, type: :request do
     it 'should render json error message' do
       get '/api/v2/non/exist'
       expect(response.code).to eq '404'
-      expect(response.body).to eq 'Not Found'
+      expect(response.body).to eq '404 Not Found'
     end
   end
 end
