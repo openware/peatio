@@ -23,7 +23,7 @@ describe 'Sign in', type: :feature do
   end
 
   it 'display captcha after too many failed attempts' do
-    # sign in and sign out first for failed attempts reset
+    # Reset the counter of invalid password attempts.
     signin identity
     signout
 
