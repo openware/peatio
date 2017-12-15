@@ -50,8 +50,7 @@ If you run bitcoind at local, the necessary hard drive space largely depends on 
 ## Development Dependencies
 
 * [RabbitMQ](https://www.rabbitmq.com/) is Peatio's backbone, it's the message broker doing all the message exchanges between daemons.
-* Peatio use [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) to test JavaScript.
-* ChromeDriver supports Chrome v61-63
+* Peatio uses [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) for functional testing.
 
 ## Support
 
