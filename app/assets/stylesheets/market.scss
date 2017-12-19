@@ -617,7 +617,7 @@ header {
       tr { display: none; }
       &.all { tr { display: block; } }
       &.cny { tr.quote-cny { display: block; } }
-      &.btc { tr.quote-btc { display: block; } }
+      &.xrp { tr.quote-xrp { display: block; } }
     }
   }
 }
