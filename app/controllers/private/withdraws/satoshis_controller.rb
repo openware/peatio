@@ -4,6 +4,9 @@ module Private::Withdraws
 
     def index
     end
-    
+
+    def new
+      @withdraw = Withdraw.new
+    end
   end
 end
