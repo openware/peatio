@@ -231,6 +231,15 @@ If daemons don't work, check `log/#{daemon name}.rb.output`
 or `log/peatio:amqp:#{daemon name}.output`
 for more information (suffix is '.output', not '.log').
 
+#### Genetare liability proofs
+
+To generate liability proofs run:
+
+```shell
+bundle exec  rake solvency:liability_proof
+```
+Otherwise you will get an exception entering the "Solvency" tab
+
 #### Run Peatio
 
 Start the server:
