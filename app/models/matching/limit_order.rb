@@ -9,8 +9,8 @@ module Matching
       @id         = attrs[:id]
       @timestamp  = attrs[:timestamp]
       @type       = attrs[:type].to_sym
-      @volume     = attrs[:volume].to_f.to_d
-      @price      = attrs[:price].to_f.to_d
+      @volume     = attrs[:volume].to_d
+      @price      = attrs[:price].to_d
       @market     = Market.find attrs[:market]
 
       raise InvalidOrderError.new(attrs) unless valid?
