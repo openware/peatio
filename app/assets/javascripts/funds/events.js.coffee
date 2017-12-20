@@ -1,4 +1,3 @@
-#= require clipboard
 $(window).load ->
 
   $.subscribe 'deposit_address:create', (event, data) ->
