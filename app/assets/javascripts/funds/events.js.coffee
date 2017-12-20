@@ -2,7 +2,7 @@ $(window).load ->
 
   $.subscribe 'deposit_address:create', (event, data) ->
     $('[data-clipboard-text], [data-clipboard-target]').each ->
-      clipboard = new Clipboard this
+      clipboard = new Clipboard (this)
 
   # qrcode
   $.subscribe 'deposit_address:create', (event, data) ->

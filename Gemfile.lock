@@ -458,7 +458,7 @@ DEPENDENCIES
   cancancan
   capybara
   carrierwave (~> 0.10.0)
-  clipboard-rails
+  clipboard-rails (~> 1.7)
   coffee-rails
   country_select (~> 2.1.0)
   daemons-rails
