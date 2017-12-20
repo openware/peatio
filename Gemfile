@@ -75,6 +75,7 @@ gem 'simple_captcha2', require: 'simple_captcha'
 gem 'rest-client', '~> 1.6.8'
 gem 'jwt', '~> 1.5'
 gem 'email_validator', '~> 1.6'
+gem 'clipboard-rails'
 
 group :development, :test do
   gem 'factory_bot_rails'
