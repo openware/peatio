@@ -238,7 +238,7 @@ To generate liability proof run:
 ```shell
 bundle exec rake solvency:liability_proof
 ```
-Otherwise you will get an exception entering the "Solvency".
+Otherwise you will get an exception at the "Solvency" page.
 
 #### Run Peatio
 
