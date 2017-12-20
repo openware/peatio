@@ -1,0 +1,32 @@
+<% content_for :frame do %>
+  <div class="container history-pages">
+    <%= render 'tabs', active: :order %>
+
+    <div class="card" id="orders">
+      <div class="card-body"></div>
+      <div class="col-md-4">
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th><%= t('.id') %></th>
+              <th><%= t('.type') %></th>
+              <th><%= t('.state') %></th>
+              <th><%= t('.market') %></th>
+              <th><%= t('.price') %></th>
+              <th><%= t('.volume') %></th>
+              <th><%= t('.average_price') %></th>
+              <th><%= t('.fullfilled_volume') %></th>
+              <th><%= t('.timestamp') %></th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <%= render partial: 'order', collection: @orders %>
+          </tbody>
+        </table>
+        <div class="pull-right">
+          <%= paginate @orders %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

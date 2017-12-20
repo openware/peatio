@@ -59,18 +59,18 @@ header .account-balance {
   .account-wrap {
     width: 360px;
     padding: 8px;
-    border-bottom: 1px solid $gray-light;
+    border-bottom: 1px solid $gray-600;
   }
 
   hr {
     margin-top: 2px;
     margin-bottom: 0px;
-    border-color: $gray-light;
+    border-color: $gray-600;
     border-style: dashed;
   }
 
   i.fa, span.total-title {
-    color: $gray-light;
+    color: $gray-600;
   }
 
   i.fa.fa-plus {

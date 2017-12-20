@@ -18,6 +18,7 @@
 # Ignore all logfiles and tempfiles.
 log
 tmp
+yarn-error.log
 
 # Ignore all config files
 /config/application.yml
@@ -44,3 +45,6 @@ tags
 .DS_Store
 .agignore
 **/*.tgz
+
+/vendor/assets/components
+/node_modules

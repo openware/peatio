@@ -30,19 +30,19 @@
     .market-name {
       font-size: 35px;
       font-family: monospace;
-      color: $gray-light;
+      color: $gray-600;
       margin: 20px 0px 0px 0px;
 
       &:hover {
         cursor: pointer;
-        color: rgba($gray-light, 0.7);
+        color: rgba($gray-600, 0.7);
       }
     }
   }
 }
 
 .row.ticker-wrapper {
-  border-bottom: 1px solid $gray-light;
+  border-bottom: 1px solid $gray-600;
 }
 
 

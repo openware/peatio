@@ -1,5 +1,5 @@
-//= require swagger_ui
-//= require bootstrap/dropdown
+//= require swagger-ui
+//= require bootstrap/js/dist/dropdown
 
 $(function() {
 

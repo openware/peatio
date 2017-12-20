@@ -1,0 +1,14 @@
+<div class="<%= !browser.mobile? ? 'alerts-' : '' %>container">
+  <% unless browser.modern? %>
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <div class="container">
+        <button class="close" data-dismiss="alert" type="button">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+        <span class="text-important">
+          <%= raw t('.modern') %>
+        </span>
+      </div>
+    </div>
+  <% end %>
+</div>

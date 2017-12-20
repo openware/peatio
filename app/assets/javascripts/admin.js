@@ -1,7 +1,7 @@
 //= require jquery
-//= require jquery_ujs
-//= require bootstrap
-//= require bootstrap-wysihtml5
+//= require jquery-ujs
+//= require bootstrap/dist/js/bootstrap
+//= require wysihtml5/
 //= require bootstrap-datetimepicker
 //= require ZeroClipboard
 //= require admin/app

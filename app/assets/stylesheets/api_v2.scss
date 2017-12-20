@@ -5,14 +5,13 @@
 
 @import 'vars/bootstrap';
 
-@import 'bootstrap';
+@import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-switch.min';
 
 @import 'vars/basic';
 @import 'vars/custom';
 
-@import 'font-awesome-sprockets';
-@import 'font-awesome';
+@import 'font-awesome/css/font-awesome';
 
 @import 'layouts/basic';
 
