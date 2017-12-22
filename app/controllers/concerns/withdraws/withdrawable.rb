@@ -11,6 +11,10 @@ module Withdraws
 
     end
 
+    def new
+      @withdraw = model_kls.new(withdraw_params)
+    end
+
     def destroy
       Withdraw.transaction do
         @withdraw = current_user.withdraws.find(params[:id]).lock!
