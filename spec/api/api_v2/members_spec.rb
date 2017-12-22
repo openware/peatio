@@ -19,8 +19,8 @@ describe APIv2::Members, type: :request do
       expect(result['sn']).to eq member.sn
       expect(result['activated']).to be true
       expect(result['accounts']).to match [
-        { 'currency' => 'cny', 'balance' => '2014.47', 'locked' => '0.0' },
-        { 'currency' => 'btc', 'balance' => '12.13', 'locked' => '3.14' }
+        { 'currency' => 'cny', 'balance' => '2014.47', 'locked' => '0.0', 'address' => nil },
+        { 'currency' => 'btc', 'balance' => '12.13', 'locked' => '3.14', 'address' => nil }
       ]
     end
   end

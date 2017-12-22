@@ -12,8 +12,8 @@ describe APIv2::Entities::Member do
 
   it 'accounts' do
     expect(subject.accounts).to match [
-      { currency: 'cny', balance: '0.0', locked: '0.0' },
-      { currency: 'btc', balance: '0.0', locked: '0.0' }
+      { currency: 'cny', balance: '0.0', locked: '0.0', address: nil },
+      { currency: 'btc', balance: '0.0', locked: '0.0', address: nil }
     ]
   end
 end
