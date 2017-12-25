@@ -76,4 +76,13 @@ describe APIv2::Deposits, type: :request do
       expect(JSON.parse(response.body)['amount']).to eq '111.0'
     end
   end
+
+  it 'should enqueue deposit address generation and respond with blank address field' do
+    affected_channels = []
+    AMQPQueue.stubs(:enqueue).with { |channel| affected_channels << channel }
+    signed_post '/api/v2/deposit_address', token: token, params: { currency: 'btc' }
+    expect(response.code).to eq '200'
+    expect(response.body).to eq '{"address":null}'
+    expect(affected_channels).to include(:deposit_coin_address)
+  end
 end

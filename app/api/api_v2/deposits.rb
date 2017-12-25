@@ -38,5 +38,17 @@ module APIv2
     get "/deposit_address" do
       current_user.ac(params[:currency]).payment_address.to_json
     end
+
+    desc 'Enqueues generation of deposit address or returns it if it already exists.'
+    params do
+      requires :currency, type: String, values: Currency.all.map(&:code)
+    end
+    post '/deposit_address' do
+      status 200
+      account = current_user.ac(params[:currency])
+      address = account.payment_address || account.payment_addresses.create!(currency: account.currency)
+      address.gen_address if address.address.blank?
+      address.to_json
+    end
   end
 end
