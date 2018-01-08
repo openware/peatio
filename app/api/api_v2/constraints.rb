@@ -12,7 +12,7 @@ module APIv2
         end
 
         Rack::Attack.throttle 'Authorized access', limit: 6000, period: 5.minutes do |req|
-          req.env['api_v2.keypair_token']&.access_key
+          req.env['api_v2.keypair_token'].access_key
         end
       end
     end
