@@ -1,6 +1,7 @@
 # Peatio - an open-source crypto currency exchange
 
 [![Build Status](https://ci.helioscloud.com/api/v1/pipelines/peatio/jobs/test-master/badge)](https://ci.helioscloud.com/pipelines/peatio/jobs/test-master)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frubykube%2Fpeatio.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Frubykube%2Fpeatio?ref=badge_shield)
 
 ### [peatio.tech](https://www.peatio.tech) fork
 
@@ -128,6 +129,9 @@ you can contact us on [peatio.tech](https://www.peatio.tech).
 ## License
 
 Peatio is released under the terms of the [MIT license](http://peatio.mit-license.org).
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frubykube%2Fpeatio.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Frubykube%2Fpeatio?ref=badge_large)
 
 ## What is Peatio?
 
