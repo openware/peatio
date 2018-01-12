@@ -16,7 +16,7 @@ app.controller 'FundSourcesController', ['$scope', '$gon', 'fundSourceService', 
     return if not uid
     return if not extra
 
-    data = uid: uid, extra: extra, currency: currency
+    data = uid: uid, extra: extra, currency: currency, authenticity_token: $('meta[name="csrf-token"]').attr('content')
     fundSourceService.create data, ->
       $scope.uid = ""
       $scope.extra = "" if currency isnt $gon.fiat_currency
