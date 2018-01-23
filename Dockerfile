@@ -1,4 +1,4 @@
-FROM ruby:2.4.2
+FROM ruby:2.5.0
 MAINTAINER lbellet@heliostech.fr
 
 # By default image is built using RAILS_ENV=production.
