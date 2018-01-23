@@ -169,3 +169,11 @@ en:
         done: Done
         canceled: Canceld
         failed: Failed
+
+    markets:
+      market_list:
+        all: All Market
+        usd: USD Market
+        btc: BTC Market
+        bch: BCH Market
+        xrp: XRP Market
