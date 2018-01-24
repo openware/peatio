@@ -46,3 +46,6 @@ tags
 .DS_Store
 .agignore
 **/*.tgz
+
+# ruby managers files
+.tool-versions
