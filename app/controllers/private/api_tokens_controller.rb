@@ -52,7 +52,7 @@ module Private
     end
 
     def show
-      @token = current_user.api_tokens.user_requested.find params[:id]
+      @token = current_user.api_tokens.find params[:id]
     end
 
     private
