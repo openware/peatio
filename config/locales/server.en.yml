@@ -6,7 +6,6 @@ en:
       order: Orders
       order_bid: BID
       order_ask: ASK
-      document: Document
       withdraw: Withdraw
       deposit: Deposit
       payment_transaction: Payment
@@ -33,17 +32,6 @@ en:
         email: Email
         password: New Password
         password_confirmation: Confirm Password
-      document:
-        zh_cn_body: Chinese content
-        zh_cn_title: Chinese title
-        zh_cn_desc: Chinese description
-        zh_cn_keywords: Chinese keyword
-        en_body: English content
-        en_title: English title
-        en_desc: English description
-        en_keywords: English keyword
-        key: Key
-        is_auth: Is Auth
       fund_source:
         address: Address
         category: Category
@@ -133,11 +121,9 @@ en:
         created_at: Register At
         sn: SN
         id_document_number: Id Document Number
-        tag_list: Tags
         activated: Activated
         activated?: "Activated?"
         id_document_verified?: "Id Document Verified?"
-        phone_number: Phone Number
       withdraws/bank:
         id: ID
         member_name: Member
@@ -313,7 +299,7 @@ en:
     currency:
       btc: BTC
       xrp: XRP
-      cny: CNY
+      usd: USD
       doge: DOGE
       pts: PTS
       ltc: LTC
@@ -333,10 +319,10 @@ en:
       code: BTSX
       name: BitsharesX
       format: '0,0.0000'
-    renminbi:
-      key: CNY
-      code: CNY
-      name: Chinese Yuan
+    dollar:
+      key: usd
+      code: usd
+      name: USD
       format: '0,0.00'
     dogecoin:
       key: DOG
@@ -495,8 +481,8 @@ en:
       go: Deposit
     ripple:
       key: Block Chain
-      title: Bitcoin Deposits
-      intro: Deposit bitcoin from your own wallet address to Peatio account
+      title: Ripple Deposits
+      intro: Deposit ripple from your own wallet address to Peatio account
       latency: 1 confirmation
       transfer: Manual
       go: Deposit
@@ -646,26 +632,6 @@ en:
         create:
           notice: Withdrawal request successfully submitted. Use the info below to
             complete the bank transfer.
-    tickets:
-      index:
-        new_ticket: New Ticket
-      new:
-        intro: If you have any problems, start a new discussion so that our staff
-          can help you out as soon as possible. All discussions are private between
-          you and the support staff.
-      ticket_create_succ: Ticket created successfully.
-      ticket_create_fail: Failed to create ticket, please try again latter.
-      comment_succ: Comment successfully.
-      cooment_fail: Comment failed, please try again latter
-      me: me
-      supporter: Support
-      close: Close Ticket
-      close_succ: Ticket closed successfully
-      close_confirm: Are you sure to close this ticket?
-      title_content_both_blank: Title and content could be both be empty.
-      from: from
-      view_closed_tickets: View closed tickets
-      view_open_tickets: View open tickets
     account_versions:
       index:
         description: Every transaction and every penny of income in Peatio are well
@@ -680,17 +646,6 @@ en:
         http: HTTP API Document
         websocket: Websocket API Document
         more: 'For more information please check the API section on github:'
-      oauth_tokens:
-        panel_title: Authorizations
-        title: Authorized Applications
-        oauth: OAuth Integration
-        intro: Manage all your authorized applications.
-        no_token: No Application.
-        unbind: Revoke
-        unbind-confirm: Are you sure?
-        oauth_app_name: Name
-        oauth_app_expire: Expire At
-        oauth_app_scope: Scopes
       unbind:
         success: Successfully revoked.
         failed: Revoke failed.
@@ -715,22 +670,20 @@ en:
         liability-proof: Proof of Liabilities
         btc-assets: BTC Assets
         xrp-assets: XRP Assets
-        cny-assets: CNY Assets
+        usd-assets: USD Assets
       liability_tabs:
         verify-btc: Verify My BTC Assets
         verify-xrp: Verify My XRP Assets
-        verify-cny: Verify My CNY Assets
+        verify-usd: Verify My USD Assets
         btc-assets-total: 'Total BTC assets of exchange: '
         xrp-assets-total: 'Total XRP assets of exchange: '
-        cny-assets-total: 'Total CNY assets of exchange: '
+        usd-assets-total: 'Total USD assets of exchange: '
       liability_proof:
         title: Proof of Liabilities
         intro: As an exchange, our liabilities refer to the sum of money (in both
           crypto currencies and fiat currencies) that our users trust us with. On
           this page, we present you our liabilities. We also provide you a way to
           verify that your account balance is indeed part of our liabilities.
-        how-to-verify: How to verify an exchange is solvent?
-        how-to-verify-uri: https://peatio.com/documents/liability_proof
       liability_data:
         liability-proof-generating: Proof of Liability generation in process, please
           come back after 30 minutes.
@@ -749,10 +702,10 @@ en:
         intro: All of exchange's XRP assets are listed here.
         total: Total XRP Assets
         address: Address
-      cny_assets:
-        title: CNY Assets
-        intro: All of exchange's CNY assets are listed here.
-        total: Total CNY Assets
+      usd_assets:
+        title: USD Assets
+        intro: All of exchange's USD assets are listed here.
+        total: Total USD Assets
         description: " <p>For supervision, you can inquiry the balance of our deposit
           account:</p> <p>Bank: %{bank}</p> <p>Account： %{address}</p> <p>Inquiry
           Password： %{password}</p> <p>Inquiry Tel.： %{tel}</p>"
@@ -761,10 +714,10 @@ en:
     funds:
       show:
         account_history: Account History
-        cny_format: '0.00'
+        usd_format: '0.00'
         btc_format: '0.00000000'
         reason:
-          cny:
+          usd:
             strike_add: Plus
             strike_sub: Sub
             deposit: Deposit
@@ -823,7 +776,7 @@ en:
       market_list:
         all: All Markets
         all_html: "<i class='fa fa-check'></i><span>All Markets</span>"
-        cny_html: "<i class='fa fa-check'></i><span>CNY Markets</span>"
+        usd_html: "<i class='fa fa-check'></i><span>USD Markets</span>"
         btc_html: "<i class='fa fa-check'></i><span>BTC Markets</span>"
         xrp_html: "<i class='fa fa-check'></i><span>XRP Markets</span>"
         price: Price
@@ -957,18 +910,10 @@ en:
           resend: Send it again
           activated: Verified
           go: Set
-        phone_number:
-          title: Phone Number
-          description: Providing a phone number will make your account more secure.
-            You can quickly reset your password and your account operations will be
-            notified.
-          go: Set
-          verified: Verified
-          hint: "Verified number %{hint}"
         verification:
           title: Verify Account
-          description: Help keep the bad guys out of your account by using both your
-            password and your phone
+          description: Help keep the bad guys out of your account by using your
+            password
           go: Submit
           verified: Verified
         asset_passwords:
@@ -992,7 +937,7 @@ en:
         balance: Balance
         available: Available
         title: "%{icon} %{c} Account"
-        cny_format: '0.00'
+        usd_format: '0.00'
         btc_format: '0.00000000'
         xrp_format: '0.000000'
         total: Total
@@ -1016,8 +961,6 @@ en:
           title: Edit API Token
         update:
           title: Edit API Token
-      tickets:
-        panel: Tickets
       id_documents:
         panel: Real-name Authentication
         new:
@@ -1072,9 +1015,6 @@ en:
         password_confirmation: Confirm your password
         edit:
           password: Please set your account password!
-      document:
-        key: Document link URL key
-        title: Document Title
       order_bid:
         origin_volume: Buy Volume
         sum: Sum
@@ -1142,7 +1082,6 @@ en:
       session:
         email: Sign In E-mail
         password: Sign In Password
-        captcha: Captcha
       identity:
         email: Sign In E-mail
         old_password: Original password
@@ -1150,8 +1089,6 @@ en:
         password_confirmation: Confirm new password
       reset_password:
         password: New Password
-      ticket:
-        content: More detail
       withdraw:
         bank:
           fund_extra: Bank
@@ -1199,20 +1136,12 @@ en:
         index:
           accept: Accept
           accept_confirm: Confirm deposit?
-    tickets:
-      view: View
-      close: Close Ticket
-      comments_count: Comments Count
-      replies: Replies
-      open_tickets: Open Tickets
-      closed_tickets: Closed Tickets
     members:
       index:
         search: Search
         members: Members
         email: Email
         name: Name
-        phone: Phone Number
         wallet_address: Wallet Address
       show:
         member_title: User Information
@@ -1222,10 +1151,6 @@ en:
     dashboard:
       index:
         accounts_title: Account Summary
-        daemons_title: System Summary
-    documents:
-      index:
-        new: New Document
     statistic:
       filter: Filter
       summary: Summary
@@ -1308,62 +1233,6 @@ en:
       accepted: Accepted
       checked: Checked
       warning: Warning
-  doorkeeper:
-    scopes:
-      profile: Read your basic profile (e.g. name, email) and account balances
-      history: Read your trade history
-      trade: Submit and cancel orders
-    authorizations:
-      new:
-        title: Peatio Application Authorization
-        authorize_html: Authorize <strong class='text-info'>%{name}</strong> to use
-          your account?
-        scopes: 'This application will be able to:'
-        authorize: Authorize
-        deny: Deny
-    errors:
-      messages:
-        invalid_request: The request is missing a required parameter, includes an
-          unsupported parameter value, or is otherwise malformed.
-        invalid_redirect_uri: The redirect uri included is not valid.
-        unauthorized_client: The client is not authorized to perform this request
-          using this method.
-        access_denied: The resource owner or authorization server denied the request.
-        invalid_scope: The requested scope is invalid, unknown, or malformed.
-        server_error: The authorization server encountered an unexpected condition
-          which prevented it from fulfilling the request.
-        temporarily_unavailable: The authorization server is currently unable to handle
-          the request due to a temporary overloading or maintenance of the server.
-        credential_flow_not_configured: Resource Owner Password Credentials flow failed
-          due to Doorkeeper.configure.resource_owner_from_credentials being unconfigured.
-        resource_owner_authenticator_not_configured: Resource Owner find failed due
-          to Doorkeeper.configure.resource_owner_authenticator being unconfiged.
-        unsupported_response_type: The authorization server does not support this
-          response type.
-        invalid_client: Client authentication failed due to unknown client, no client
-          authentication included, or unsupported authentication method.
-        invalid_grant: The provided authorization grant is invalid, expired, revoked,
-          does not match the redirection URI used in the authorization request, or
-          was issued to another client.
-        unsupported_grant_type: The authorization grant type is not supported by the
-          authorization server.
-        invalid_resource_owner: The provided resource owner credentials are not valid,
-          or resource owner cannot be found
-        invalid_token:
-          revoked: The access token was revoked
-          expired: The access token expired
-          unknown: The access token is invalid
-    flash:
-      applications:
-        create:
-          notice: Application created.
-        destroy:
-          notice: Application deleted.
-        update:
-          notice: Application updated.
-      authorized_applications:
-        destroy:
-          notice: Application revoked.
   easy_table:
     satoshi:
       amount: Amount
@@ -1410,7 +1279,7 @@ en:
       wait: Wait
       cancel: Cancel
     currency:
-      cny: CNY
+      usd: USD
       btc: BTC
       xrp: XRP
     order:
@@ -1462,13 +1331,6 @@ en:
     signature: Thanks,<br/>The Peatio Team
     please_contact: If it's not you, please <a href='mailto:%{contact_mail}'>contact us</a> ASAP.
     footer: This is an automatically generated email, please do not reply, if you have any question, please <a href="mailto:%{contact_mail}">contact us</a>.
-  comment_mailer:
-    admin_notification:
-      subject: "[PEATIO] User reply a ticket"
-      notification_content: User %{email} reply a ticket, please follow the link below to see the detail
-    user_notification:
-      subject: "[PEATIO] Your ticket got a new reply"
-      notification_content: 'Your ticket got a new reply, please follow the link below to see the detail:'
   deposit_mailer:
     accepted:
       subject: "[Peatio] Your deposit has been credited into your account"
@@ -1480,9 +1342,6 @@ en:
     reset_password_done:
       subject: "[PEATIO] Your password changed"
       successful: Your password has been changed successfully.
-    phone_number_verified:
-      subject: "[PEATIO] Your phone number verified"
-      verified: 'Your phone number verified: %{phone_number}'
   system_mailer:
     daily_stats:
       member_stats: Member Stats
@@ -1492,13 +1351,6 @@ en:
       trade_stats: Trades Changes
       asset_value_change_total: Digital Assets Changes Total
       trades_change_total: Trades Changes Total
-  ticket_mailer:
-    admin_notification:
-      subject: "[PEATIO] User created a new ticket"
-      admin_notification_content: User %{email} created a new ticket, please follow the link below to see the detail
-    author_notification:
-      subject: "[PEATIO] Thank you for submit ticket"
-      thanks_for_submit_ticket: Thank you for submit ticket to us, we will get back to you as soon as possible.
   token_mailer:
     activation:
       subject: "[Peatio] Account Activation"
@@ -1531,10 +1383,6 @@ en:
     subheading: Cloud deployment made simple and secure
     text1: Peatio - Cryptocurrency exchange for managing digital currency.
     text2: We provide Peatio installation and configuration services.
-  tags:
-    vip: VIP
-    hero: Hero Member
-    admin: Admin
   trade:
     markets: Markets
     realtime_price:
@@ -1579,7 +1427,6 @@ en:
     trade_history: Trade History
     account_history: Account History
     my_profile: My Profile
-    tickets: Tickets
     account_balance: Total Assets
     back: Back
     total: Total
@@ -1642,9 +1489,6 @@ en:
     depth_title: Market Depth
   'yes': 'Yes'
   'no': 'No'
-  simple_captcha:
-    label: Refresh page to get new captcha.
-    placeholder: type characters in image
   helpers:
     action:
       view: View
@@ -1654,10 +1498,6 @@ en:
         create: ASK
       order_bid:
         create: BID
-      document:
-        create: Create Document
-        update: Update Document
-        destroy: Destroy Document
       member:
         update: Open Account
       identity:
@@ -1676,8 +1516,6 @@ en:
       id_document:
         create: Submit
       withdraw:
-        create: Submit
-      ticket:
         create: Submit
   activations:
     new:
@@ -1730,9 +1568,7 @@ en:
           operating:
             proofs: Proof
             deposits: Deposits
-            documents: Documents
             withdraws: Withdraws
-            tickets: Tickets
           deposits:
             currency: Deposit
     application:
@@ -1759,7 +1595,7 @@ en:
     new:
       reset_password: Forgot Password?
     create:
-      error: You account has been disabled, contact admin if you have any problem.
+      disabled: Your account has been disabled, contact admin if you have any problem.
     failure:
       account_locked: Too many failed login attempts. To ensure the safety of your
         account, we have locked your account. To unlock, reset your password by clicking

@@ -1,22 +1,27 @@
 FROM ruby:2.4.2
 MAINTAINER lbellet@heliostech.fr
 
+# By default image is built using RAILS_ENV=production.
+# You may want to customize it:
+#
+#   --build-arg RAILS_ENV=development
+#
+# See https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables-build-arg
+#
+ARG RAILS_ENV=production
+ENV RAILS_ENV ${RAILS_ENV}
+
 ENV APP_HOME=/home/app
 
 RUN groupadd -r app --gid=1000
 RUN useradd -r -m -g app -d /home/app --uid=1000 app
 
-# Install apt based dependencies required to run Rails as
-# well as RubyGems. As the Ruby image itself is based on a
-# Debian image, we use apt-get to install those.
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-
-RUN apt-get update && apt-get install -y \
-  nodejs \
-  libmysqlclient-dev \
-  imagemagick \
-  gsfonts \
-  chromedriver
+RUN apt-get update \
+ && apt-get install -y \
+      libmysqlclient-dev \
+      imagemagick \
+      gsfonts \
+      chromedriver
 
 WORKDIR $APP_HOME
 
@@ -33,6 +38,7 @@ RUN chown -R app:app /home/app
 USER app
 
 RUN ./bin/init_config
+RUN bundle exec rake tmp:create assets:precompile
 
 # Expose port 8080 to the Docker host, so we can access it
 # from the outside.
@@ -42,4 +48,4 @@ ENTRYPOINT ["bundle", "exec"]
 # The main command to run when the container starts. Also
 # tell the Rails dev server to bind to all interfaces by
 # default.
-CMD ["rails", "s", "-p", "8080", "-b", "0.0.0.0"]
+CMD ["puma", "--config", "config/puma.rb"]

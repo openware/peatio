@@ -3,7 +3,7 @@ feature 'show account info', js: true do
   let(:other_member) { create :member }
   let(:member) { create :member, email: identity.email }
   let!(:bid_account) do
-    member.get_account('cny').tap { |a| a.update_attributes locked: 400, balance: 1000 }
+    member.get_account('usd').tap { |a| a.update_attributes locked: 400, balance: 1000 }
   end
   let!(:ask_account) do
     member.get_account('btc').tap { |a| a.update_attributes locked: 400, balance: 2000 }
@@ -13,7 +13,6 @@ feature 'show account info', js: true do
   let!(:ask_name) { I18n.t('currency.name.btc') }
 
   scenario 'user can cancel his own order' do
-    pending
 
     login identity
     click_on I18n.t('header.market')
@@ -21,11 +20,11 @@ feature 'show account info', js: true do
     AMQPQueue.expects(:enqueue).with(:matching, action: 'cancel', order: ask_order.to_matching_attributes)
 
     page.within_window(windows.last) do
-      click_link page.all('#my_order_tabs_wrapper li').first.text
+      click_link page.all('#my_orders_wrapper li').first.text
       expect(page.all('#my_orders .order').count).to eq(1) # can only see his order
-      expect(page).to have_selector('#my_orders .fa-trash')
-
-      page.all('#my_orders .fa-trash').first.click
+      accept_confirm { page.all('#my_orders .order').first.click }
+      page.reset!
+      expect(page).not_to have_selector('#my_orders .order')
     end
   end
 end

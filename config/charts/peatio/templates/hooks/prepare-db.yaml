@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-prepare-db"
+  name: "{{ .Release.Name }}-prepare-db-{{ randNumeric 5 }}"
   labels:
     app: {{ template "fullname" . }}
     component: peatio
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
 spec:
   template:
     metadata:
@@ -16,14 +16,9 @@ spec:
         component: peatio
     spec:
       restartPolicy: OnFailure
-      volumes:
-      - name: peatio-jobs
-        configMap:
-          name: {{ .Release.Name }}-peatio-jobs
       containers:
-        - name: post-install-job
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        - name: prepare-db
+          image: {{ template "image" . }}
           command: ["rake", "db:create", "db:migrate"]
           env:
-{{ include "env" . | indent 12 }}
-
+{{ include "prepare-db-env" . | indent 12 }}

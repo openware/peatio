@@ -9,7 +9,7 @@ module CoinRPC
     def handle(name, *args)
       post_body = { method: name, params: args }.to_json
       resp = JSON.parse(http_post_request(post_body))
-      raise JSONRPCError, resp['error'] if resp['error']
+      raise_if_unsuccessful!(resp)
       result = resp['result']
       result.symbolize_keys! if result.is_a? Hash
       result
@@ -28,24 +28,37 @@ module CoinRPC
 
     def getnewaddress(args = nil)
       resp = JSON.parse(RestClient.get("#{@rest_uri}/v1/wallet/new").body)
-      raise JSONRPCError, resp['error'] if resp['error']
+      raise_if_unsuccessful!(resp)
       resp['wallet']
     end
 
     def listtransactions(account, number = 100)
-      post_body = {
-        method: 'account_tx',
-        params: [{
-          account: account,
-          ledger_index_max: -1,
-          ledger_index_min: -1,
-          limit: number
-        }]
-      }.to_json
+      txs = PaymentAddress.where(currency: 'xrp').map do |pa|
+        post_body = {
+          method: 'account_tx',
+          params: [{
+            account: pa.address,
+            ledger_index_max: -1,
+            ledger_index_min: -1,
+            limit: number
+          }]
+        }.to_json
 
-      resp = JSON.parse(http_post_request(post_body))
-      raise JSONRPCError, resp['error'] if resp['error']
-      resp['result']['transactions'].map { |t| t['tx'] }
+        resp = JSON.parse(http_post_request(post_body))
+        raise_if_unsuccessful!(resp)
+
+        resp['result']['transactions'].map do |t|
+          {
+            'txid'     => t['tx']['hash'],
+            'address'  => t['tx']['Destination'],
+            'amount'   => t['tx']['Amount'],
+            'category' => 'receive',
+            'walletconflicts' => []
+          }
+        end
+      end
+
+      txs.flatten
     end
 
     def gettransaction(txid)
@@ -58,7 +71,7 @@ module CoinRPC
       }.to_json
 
       resp = JSON.parse(http_post_request(post_body))
-      raise JSONRPCError, resp['error'] if resp['error']
+      raise_if_unsuccessful!(resp)
 
       {
         amount: resp['result']['Amount'].to_d / 1_000_000,
@@ -87,7 +100,7 @@ module CoinRPC
       }.to_json
 
       resp = JSON.parse(http_post_request(post_body))
-      raise JSONRPCError, resp['error'] if resp['error']
+      raise_if_unsuccessful!(resp)
 
       {
         isvalid: resp['result']['status'] == 'success',
@@ -144,13 +157,20 @@ module CoinRPC
       }.to_json
 
       resp = JSON.parse(http_post_request(post_body))
-      raise JSONRPCError, resp['error'] if resp['error']
-      result = resp['result']['account_data']['Balance'].to_f / 1_000_000
-      result
+      raise_if_unsuccessful!(resp)
+      resp['result']['account_data']['Balance'].to_f / 1_000_000
     end
 
     def safe_getbalance
       getbalance || 'N/A'
+    end
+
+  private
+
+    def raise_if_unsuccessful!(response)
+      (response['error'] || response.dig('result', 'error')).tap do |error|
+        raise JSONRPCError, error if error
+      end
     end
   end
 end

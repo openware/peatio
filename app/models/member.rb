@@ -1,7 +1,4 @@
 class Member < ActiveRecord::Base
-  acts_as_taggable
-  acts_as_reader
-
   has_many :orders
   has_many :accounts
   has_many :payment_addresses, through: :accounts
@@ -9,9 +6,6 @@ class Member < ActiveRecord::Base
   has_many :fund_sources
   has_many :deposits
   has_many :api_tokens
-  has_many :tickets, foreign_key: 'author_id'
-  has_many :comments, foreign_key: 'author_id'
-  has_many :signup_histories
 
   has_one :id_document
 
@@ -55,8 +49,6 @@ class Member < ActiveRecord::Base
       result = case field
                when 'email'
                  where('members.email LIKE ?', "%#{term}%")
-               when 'phone_number'
-                 where('members.phone_number LIKE ?', "%#{term}%")
                when 'name'
                  joins(:id_document).where('id_documents.name LIKE ?', "%#{term}%")
                when 'wallet_address'
@@ -189,20 +181,15 @@ class Member < ActiveRecord::Base
 
   end
 
-  def unread_comments
-    ticket_ids = self.tickets.open.collect(&:id)
-    if ticket_ids.any?
-      Comment.where(ticket_id: ticket_ids).where('author_id <> ?', id).unread_by(self).to_a
-    else
-      []
-    end
-  end
-
   def as_json(options = {})
     super(options).merge({
       "name" => self.name,
       "memo" => self.id
     })
+  end
+
+  def jwt
+    JWT.encode({ email: email }, APIv2::Auth::Utils.jwt_shared_secret_key, 'RS256')
   end
 
   private

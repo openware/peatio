@@ -7,7 +7,6 @@ class ActionDispatch::Routing::Mapper
 end
 
 Peatio::Application.routes.draw do
-  use_doorkeeper
 
   root 'welcome#index'
 
@@ -32,8 +31,7 @@ Peatio::Application.routes.draw do
 
   get '/documents/api_v2'
   get '/documents/websocket_api'
-  get '/documents/oauth'
-  resources :documents, only: [:show]
+
   scope module: :private do
     resource  :id_document, only: [:edit, :update]
     resources :settings, only: [:index]
@@ -98,17 +96,13 @@ Peatio::Application.routes.draw do
     end
 
    post '/pusher/auth', to: 'pusher#auth'
-
-    resources :tickets, only: [:index, :new, :create, :show] do
-      member do
-        patch :close
-      end
-      resources :comments, only: [:create]
-    end
   end
 
   draw :admin
 
   mount APIv2::Mount => APIv2::Mount::PREFIX
 
+  namespace :test do
+    resources :members, only: :index
+  end unless Rails.env.production?
 end

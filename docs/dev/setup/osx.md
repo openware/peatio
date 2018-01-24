@@ -185,34 +185,18 @@ Replace `username:password` and `port`.
 bundle exec rake db:setup
 ```
 
-#### Run Daemons
+#### Run daemons
 
-Start all daemons:
+Read how to deal with Peatio daemons at [Peatio daemons](https://github.com/rubykube/peatio/blob/master/docs/peatio/daemons.md).
 
-```shell
-bundle exec rake daemons:start
-```
+#### Genetare liability proof
 
-Or start daemons one by one:
+To generate liability proof run:
 
 ```shell
-$ bundle exec rake daemon:matching:start
-...
-
-# Daemon trade_executor can be run concurrently, e.g. below
-# line will start four trade executors, each with its own logfile.
-# Default to 1.
-$ TRADE_EXECUTOR=4 rake daemon:trade_executor:start
-...
-
-# You can do the same when you start all daemons:
-$ TRADE_EXECUTOR=4 rake daemons:start
-...
+bundle exec rake solvency:liability_proof
 ```
-
-If daemons don't work, check `log/#{daemon name}.rb.output`
-or `log/peatio:amqp:#{daemon name}.output`
-for more information (suffix is '.output', not '.log').
+Otherwise you will get an exception at the "Solvency" page.
 
 #### Run Peatio
 
