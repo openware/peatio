@@ -425,7 +425,7 @@ DEPENDENCIES
   database_cleaner
   datagrid
   easy_table
-  ejs
+  ejs (= 1.1.1)
   em-websocket (~> 0.5.1)
   email_validator (~> 1.6)
   enumerize
