@@ -22,7 +22,7 @@ tmp
 
 # Ignore all config files
 /config/application.yml
-/config/currencies.yml
+/config/configs/currencies.yml
 /config/markets.yml
 /config/banks.yml
 
