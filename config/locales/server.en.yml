@@ -1178,6 +1178,12 @@ en:
         index:
           accept: Accept
           accept_confirm: Confirm deposit?
+      litecoin:
+        update:
+          notice: The deposit was successful.
+        index:
+          accept: Accept
+          accept_confirm: Confirm deposit?
       ripples:
         update:
           notice: The deposit was successful.
@@ -1269,6 +1275,18 @@ en:
           succeed_confirm: Process withdrawal?
           reject_confirm: Reject withdrawal?
           withdraw: Withdrawals
+      litecoin:
+        index:
+          one: Pending withdrawals
+          all: Last 24 hours
+          empty: No data
+        show:
+          process: Accepted
+          succeed: Withdraw
+          reject: Reject
+          succeed_confirm: Process withdrawal?
+          reject_confirm: Reject withdrawal?
+          withdraw: Withdrawals
       ripples:
         index:
           one: Pending withdrawals
@@ -1293,6 +1311,12 @@ en:
       accepted: Accepted
       checked: Checked
       warning: Warning
+  deposits/litecoin:
+    aasm_state:
+      submitted: Submitted
+      accepted: Accepted
+      checked: Checked
+      warning: Warning
   deposits/ripple:
     aasm_state:
       submitted: Submitted
@@ -1309,6 +1333,14 @@ en:
       state_and_actions: State/Actions
       currency_obj_key_text: Currency
     bitcoin_cash:
+      amount: Amount
+      txid: TxId
+      created_at: Created At
+      confirmations: Confirmations
+      member_name: Member
+      state_and_actions: State/Actions
+      currency_obj_key_text: Currency
+    litecoin:
       amount: Amount
       txid: TxId
       created_at: Created At
@@ -1356,6 +1388,7 @@ en:
       usd: USD
       btc: BTC
       bch: BCH
+      ltc: LTC
       xrp: XRP
     order:
       state:
@@ -1651,6 +1684,13 @@ en:
       latency: 30 minutes
       transfer: Manual
       go: Withdraw
+    litecoin:
+      key: Blockchain
+      title: Litecoin Blockchain
+      intro: Withdraw Litecoin to your own Litecoin wallet
+      latency: 30 minutes
+      transfer: Manual
+      go: Withdraw
     ripple:
       key: Blockchain
       title: Ripple Blockchain
@@ -1685,6 +1725,18 @@ en:
       canceled: Cancelled
       failed: Failed
   withdraws/bitcoin_cash:
+    aasm_state:
+      submitting: Submitting
+      submitted: Submitted
+      rejected: Rejected
+      accepted: Accepted
+      suspect: Suspect
+      processing: processing
+      done: Done
+      almost_done: Almost Done
+      canceled: Cancelled
+      failed: Failed
+  withdraws/litecoin:
     aasm_state:
       submitting: Submitting
       submitted: Submitted
