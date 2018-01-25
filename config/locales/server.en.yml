@@ -21,6 +21,7 @@ en:
       withdraws/bank: Withdraw Bank
       withdraws/satoshi: Withdraw
       withdraws/ripple: Withdraw
+      withdraws/ethereum: Withdraw
     attributes:
       api_token:
         access_key: Access Key
@@ -151,6 +152,12 @@ en:
         amount: Amount
         confirmations: Confirmation
         aasm_state_text: State
+      deposits/ethereum:
+        created_at: Created At
+        txid: Transaction ID
+        amount: Amount
+        confirmations: Confirmation
+        aasm_state_text: State
       withdraws/satoshi:
         id: ID
         member_name: Account
@@ -166,6 +173,20 @@ en:
         remark: Remark
         fee: Fee
       withdraws/ripple:
+        id: ID
+        member_name: Account
+        currency_obj_key_text: Currency
+        state_and_actions: State/Action
+        fund_extra_text: Withdraw Label
+        fund_extrat: Withdraw Label
+        fund_source: Bank
+        fund_uid: Account
+        created_at: Created At
+        sum: Amount
+        amount: Amount
+        remark: Remark
+        fee: Fee
+      withdraws/ethereum:
         id: ID
         member_name: Account
         currency_obj_key_text: Currency
@@ -204,6 +225,8 @@ en:
               satoshi_invalid: Invalid Address
               ripple_ismine: Used Address
               ripple_invalid: Invalid Address
+              ethereum_ismine: Used Address
+              ethereum_invalid: Invalid Address
         withdraw:
           account_balance_is_poor: Account balance is insufficient
           attributes:
@@ -219,6 +242,12 @@ en:
               invalid: Invalid withdrawals address, please review.
               ismine: Please use a new address.
         withdraws/ripple:
+          attributes:
+            fund_uid:
+              blank: Please enter your withdrawal address
+              invalid: Invalid withdrawals address, please review.
+              ismine: Please use a new address.
+        withdraws/ethereum:
           attributes:
             fund_uid:
               blank: Please enter your withdrawal address
@@ -260,6 +289,7 @@ en:
     currency:
       btc: BTC
       xrp: XRP
+      eth: ETH
       usd: USD
       doge: DOGE
       pts: PTS
@@ -274,6 +304,11 @@ en:
       key: XRP
       code: XRP
       name: Ripple
+      format: '0,0.0000'
+    ethereum:
+      key: ETH
+      code: ETH
+      name: Ethereum
       format: '0,0.0000'
     bitsharesx:
       key: BTS
@@ -443,6 +478,13 @@ en:
       latency: 1 confirmation
       transfer: Manual
       go: Deposit
+    ethereum:
+      key: Block Chain
+      title: Ripple Deposits
+      intro: Deposit ethereum from your own wallet address to Peatio account
+      latency: 1 confirmation
+      transfer: Manual
+      go: Deposit
   deposits/bank:
     aasm_state:
       submitting: Submitting
@@ -458,6 +500,9 @@ en:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       ripples:
+        gen_address:
+          require_transaction: it can't generate new address if it hasn't been used.
+      ethereum:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       banks:
@@ -589,6 +634,21 @@ en:
         create:
           notice: Withdrawal request successfully submitted. Use the info below to
             complete the bank transfer.
+      ethereum:
+        destroy:
+          notice: Withdraw been canceled, frozen balance has returned to your account
+        update:
+          notice: Withdraw request is submit successful, we will process it as soon
+            as possible
+          alert_two_factor: Two-Factor Authentication error
+        new:
+          submit: Submit
+          allin: All-In
+          fund_source_label: Label
+          manage_fund_source: Manage Fund Source
+        create:
+          notice: Withdrawal request successfully submitted. Use the info below to
+            complete the bank transfer.
     account_versions:
       index:
         description: Every transaction and every penny of income in Peatio are well
@@ -627,13 +687,16 @@ en:
         liability-proof: Proof of Liabilities
         btc-assets: BTC Assets
         xrp-assets: XRP Assets
+        eth-assets: ETH Assets
         usd-assets: USD Assets
       liability_tabs:
         verify-btc: Verify My BTC Assets
         verify-xrp: Verify My XRP Assets
+        verify-eth: Verify My ETH Assets
         verify-usd: Verify My USD Assets
         btc-assets-total: 'Total BTC assets of exchange: '
         xrp-assets-total: 'Total XRP assets of exchange: '
+        eth-assets-total: 'Total ETH assets of exchange: '
         usd-assets-total: 'Total USD assets of exchange: '
       liability_proof:
         title: Proof of Liabilities
@@ -658,6 +721,11 @@ en:
         title: XRP Assets
         intro: All of exchange's XRP assets are listed here.
         total: Total XRP Assets
+        address: Address
+      eth_assets:
+        title: ETH Assets
+        intro: All of exchange's ETH assets are listed here.
+        total: Total ETH Assets
         address: Address
       usd_assets:
         title: USD Assets
@@ -687,6 +755,12 @@ en:
             withdraw: Withdraw
             fix: Fix
           xrp:
+            strike_add: Plus
+            strike_sub: Sub
+            deposit: Deposit
+            withdraw: Withdraw
+            fix: Fix
+          eth:
             strike_add: Plus
             strike_sub: Sub
             deposit: Deposit
@@ -736,6 +810,7 @@ en:
         usd_html: "<i class='fa fa-check'></i><span>USD Markets</span>"
         btc_html: "<i class='fa fa-check'></i><span>BTC Markets</span>"
         xrp_html: "<i class='fa fa-check'></i><span>XRP Markets</span>"
+        eth_html: "<i class='fa fa-check'></i><span>ETH Markets</span>"
         price: Price
         change: "24h %"
       range_switch:
@@ -871,6 +946,7 @@ en:
         usd_format: '0.00'
         btc_format: '0.00000000'
         xrp_format: '0.000000'
+        eth_format: '0.000000'
         total: Total
   guides:
     private:
@@ -931,6 +1007,9 @@ en:
         ripple:
           sum: Minimum amount 0.001
           fund_extra: Enter a label for this address (optional)
+        ethereum:
+          sum: Minimum amount 0.001
+          fund_extra: Enter a label for this address (optional)
     hints:
       deposit:
         bank:
@@ -951,6 +1030,8 @@ en:
         satoshi:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
         ripple:
+          sum: "<a target='_balance' href='#'>Fee structure</a>"
+        ethereum:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
     creating: Creating...
     updating: Updating...
@@ -991,6 +1072,13 @@ en:
           fund_extra: Label
           account_balance: Account Balance
           member_name: Account
+        ethereum:
+          fee: Fee
+          sum: Amount
+          fund_uid: Bitcoin Address
+          fund_extra: Label
+          account_balance: Account Balance
+          member_name: Account
   admin:
     deposits:
       banks:
@@ -1013,6 +1101,12 @@ en:
           accept: Accept
           accept_confirm: Confirm deposit?
       ripples:
+        update:
+          notice: The deposit was successful.
+        index:
+          accept: Accept
+          accept_confirm: Confirm deposit?
+      ethereum:
         update:
           notice: The deposit was successful.
         index:
@@ -1103,6 +1197,18 @@ en:
           succeed_confirm: Process withdrawal?
           reject_confirm: Reject withdrawal?
           withdraw: Withdrawals
+      ethereum:
+        index:
+          one: Pending withdrawals
+          all: Last 24 hours
+          empty: No data
+        show:
+          process: Accepted
+          succeed: Withdraw
+          reject: Reject
+          succeed_confirm: Process withdrawal?
+          reject_confirm: Reject withdrawal?
+          withdraw: Withdrawals
   deposits/satoshi:
     aasm_state:
       submitted: Submitted
@@ -1110,6 +1216,12 @@ en:
       checked: Checked
       warning: Warning
   deposits/ripple:
+    aasm_state:
+      submitted: Submitted
+      accepted: Accepted
+      checked: Checked
+      warning: Warning
+  deposits/ethereum:
     aasm_state:
       submitted: Submitted
       accepted: Accepted
@@ -1125,6 +1237,14 @@ en:
       state_and_actions: State/Actions
       currency_obj_key_text: Currency
     ripple:
+      amount: Amount
+      txid: TxId
+      created_at: Created At
+      confirmations: Confirmations
+      member_name: Member
+      state_and_actions: State/Actions
+      currency_obj_key_text: Currency
+    ethereum:
       amount: Amount
       txid: TxId
       created_at: Created At
@@ -1164,6 +1284,7 @@ en:
       usd: USD
       btc: BTC
       xrp: XRP
+      eth: ETH
     order:
       state:
         done: DONE
@@ -1458,6 +1579,13 @@ en:
       latency: 30 minutes
       transfer: Manual
       go: Withdraw
+    ethereum:
+      key: Blockchain
+      title: Ethereum Blockchain
+      intro: Withdraw ETH to your own Ripple wallet
+      latency: 30 minutes
+      transfer: Manual
+      go: Withdraw
   withdraws:
     invalid_address: is not valid. You can not withdraw to this address.
   withdraws/bank:
@@ -1485,6 +1613,18 @@ en:
       canceled: Cancelled
       failed: Failed
   withdraws/ripple:
+    aasm_state:
+      submitting: Submitting
+      submitted: Submitted
+      rejected: Rejected
+      accepted: Accepted
+      suspect: Suspect
+      processing: processing
+      done: Done
+      almost_done: Almost Done
+      canceled: Cancelled
+      failed: Failed
+  withdraws/ethereum:
     aasm_state:
       submitting: Submitting
       submitted: Submitted

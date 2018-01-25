@@ -16,11 +16,13 @@ module Admin
       can :manage, ::Deposits::Bank
       can :manage, ::Deposits::Satoshi
       can :manage, ::Deposits::Ripple
+      can :manage, ::Deposits::Ethereum
 
       can :menu, Withdraw
       can :manage, ::Withdraws::Bank
       can :manage, ::Withdraws::Satoshi
       can :manage, ::Withdraws::Ripple
+      can :manage, ::Withdraws::Ethereum
     end
   end
 end

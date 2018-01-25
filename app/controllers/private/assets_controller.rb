@@ -7,11 +7,13 @@ module Private
       @btc_proof   = Proof.current :btc
       @usd_proof   = Proof.current :usd
       @xrp_proof   = Proof.current :xrp
+      @eth_proof   = Proof.current :eth
 
       if current_user
         @btc_account = current_user.accounts.with_currency(:btc).first
         @usd_account = current_user.accounts.with_currency(:usd).first
         @xrp_account = current_user.accounts.with_currency(:xrp).first
+        @eth_account = current_user.accounts.with_currency(:eth).first
       end
     end
 

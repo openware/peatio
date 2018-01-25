@@ -7,6 +7,9 @@
       <a class="xrp-proof" href="#xrp-proof" data-toggle="tab"><%= t('.verify-xrp').html_safe %></a>
     </li>
     <li>
+      <a class="eth-proof" href="#eth-proof" data-toggle="tab"><%= t('.verify-eth').html_safe %></a>
+    </li>
+    <li>
       <a class="usd-proof" href="#usd-proof" data-toggle="tab"><%= t('.verify-usd').html_safe %></a>
     </li>
   </ul>
@@ -36,6 +39,20 @@
           </span>
         </div>
         <%= render 'liability_data', account: @xrp_account, proof: @xrp_proof %>
+
+      </div>
+    </div>
+
+    <div id="eth-proof" class="tab-pane active">
+      <div class="trade-wrapper">
+        <div class="assets">
+          <span class="title"><%= t('.eth-assets-total').html_safe %></span>
+          <span class="currency">
+            <%= t('currency.icon.eth').html_safe %>
+            <%= @eth_proof.sum %>
+          </span>
+        </div>
+        <%= render 'liability_data', account: @eth_account, proof: @eth_proof %>
 
       </div>
     </div>

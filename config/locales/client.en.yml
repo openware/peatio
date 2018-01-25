@@ -43,6 +43,7 @@ en:
         usd: USD
         btc: BTC
         xrp: XRP
+        eth: ETH
       deposit_usd:
         title: USD Deposit
         desc: "To deposit via Bank transfer, please follow these steps:"
@@ -69,6 +70,9 @@ en:
 
       deposit_xrp:
         title: XRP Deposit
+
+      deposit_eth:
+        title: ETH Deposit
 
       deposit_coin:
         address: Address
@@ -121,6 +125,9 @@ en:
       withdraw_xrp:
         title: XRP Withdraw
 
+      withdraw_eth:
+        title: ETH Withdraw
+
       withdraw_coin:
         intro: Please fill in the address and amount, then submit the form. It will be confirmed in 10 minutes
         label: Label
@@ -163,4 +170,4 @@ en:
         usd: USD Market
         btc: BTC Market
         xrp: XRP Market
-
+        eth: ETH Market

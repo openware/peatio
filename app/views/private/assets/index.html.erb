@@ -11,6 +11,9 @@
         <a><%= t('.xrp-assets') %></a>
       </li>
       <li data-scroll-nav="3">
+        <a><%= t('.eth-assets') %></a>
+      </li>
+      <li data-scroll-nav="4">
         <a><%= t('.usd-assets') %></a>
       </li>
     </ul>
@@ -21,7 +24,8 @@
 
     <div data-scroll-index=1><%= render 'btc_assets' %></div>
     <div data-scroll-index=2><%= render 'xrp_assets' %></div>
-    <div data-scroll-index=3><%= render 'usd_assets' %></div>
+    <div data-scroll-index=3><%= render 'eth_assets' %></div>
+    <div data-scroll-index=4><%= render 'usd_assets' %></div>
   </div>
 
 <% end %>
