@@ -21,6 +21,6 @@ class WebhooksController < ApplicationController
 private
 
   def currency_exists!
-    head :unprocessable_entity unless params[:ccy].in?(Currency.coins.map(&:code))
+    head :unprocessable_entity unless params[:ccy].in?(Currency.coin_codes)
   end
 end
