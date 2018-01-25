@@ -245,7 +245,7 @@ describe Account do
 
     it 'should retry the whole transaction on stale object error' do
       # `unlock_and_sub_funds('5.0'.to_d, locked: '8.0'.to_d, fee: ZERO)`
-      ActiveRecord::Base.connection.execute "update accounts set balance = balance + 3, locked = locked - 8 where id = #{subject.id}"
+      subject.update_attributes(balance: subject.balance + 3, locked: subject.locked - 8)
 
       expect do
         expect do
