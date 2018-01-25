@@ -151,6 +151,12 @@ en:
         amount: Amount
         confirmations: Confirmation
         aasm_state_text: State
+      deposits/litecoin:
+        created_at: Created At
+        txid: Transaction ID
+        amount: Amount
+        confirmations: Confirmation
+        aasm_state_text: State
       deposits/ripple:
         created_at: Created At
         txid: Transaction ID
@@ -172,6 +178,20 @@ en:
         remark: Remark
         fee: Fee
       withdraws/bitcoin_cash:
+        id: ID
+        member_name: Account
+        currency_obj_key_text: Currency
+        state_and_actions: State/Action
+        fund_extra_text: Withdraw Label
+        fund_extrat: Withdraw Label
+        fund_source: Bank
+        fund_uid: Account
+        created_at: Created At
+        sum: Amount
+        amount: Amount
+        remark: Remark
+        fee: Fee
+      withdraws/litecoin:
         id: ID
         member_name: Account
         currency_obj_key_text: Currency
@@ -224,6 +244,8 @@ en:
               satoshi_invalid: Invalid Address
               bitcoin_cash_ismine: Used Address
               bitcoin_cash_invalid: Invalid Address
+              litecoin_ismine: Used Address
+              litecoin_invalid: Invalid Address
               ripple_ismine: Used Address
               ripple_invalid: Invalid Address
         withdraw:
@@ -241,6 +263,12 @@ en:
               invalid: Invalid withdrawals address, please review.
               ismine: Please use a new address.
         withdraws/bitcoin_cash:
+          attributes:
+            fund_uid:
+              blank: Please enter your withdrawal address
+              invalid: Invalid withdrawals address, please review.
+              ismine: Please use a new address.
+        withdraws/litecoin:
           attributes:
             fund_uid:
               blank: Please enter your withdrawal address
@@ -303,6 +331,11 @@ en:
       key: BCH
       code: BCH
       name: Bitcoin Cash
+      format: '0,0.0000'
+    litecoin:
+      key: LTC
+      code: LTC
+      name: Litecoin
       format: '0,0.0000'
     ripple:
       key: XRP
@@ -477,6 +510,13 @@ en:
       latency: 1 confirmation
       transfer: Manual
       go: Deposit
+    litecoin:
+      key: Block Chain
+      title: Litecoin Deposits
+      intro: Deposit Litecoin from your own wallet address to Peatio account
+      latency: 1 confirmation
+      transfer: Manual
+      go: Deposit
     ripple:
       key: Block Chain
       title: Ripple Deposits
@@ -499,6 +539,9 @@ en:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       bitcoin_cash:
+        gen_address:
+          require_transaction: it can't generate new address if it hasn't been used.
+      litecoin:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       ripples:
@@ -632,6 +675,18 @@ en:
         create:
           notice: Withdrawal request successfully submitted. Use the info below to
             complete the bank transfer.
+      litecoin:
+        destroy:
+          notice: Withdraw been canceled, frozen balance has returned to your account
+        update:
+          notice: Withdraw request is submit successful, we will process it as soon as possible
+        new:
+          submit: Submit
+          allin: All-In
+          fund_source_label: Label
+          manage_fund_source: Manage Fund Source
+        create:
+          notice: Withdrawal request successfully submitted. Use the info below to complete the bank transfer.
       ripples:
         destroy:
           notice: Withdraw been canceled, frozen balance has returned to your account
@@ -690,10 +745,12 @@ en:
       liability_tabs:
         verify-btc: Verify My BTC Assets
         verify-bch: Verify My BCH Assets
+        verify-ltc: Verify My LTC Assets
         verify-xrp: Verify My XRP Assets
         verify-usd: Verify My USD Assets
         btc-assets-total: 'Total BTC assets of exchange: '
         bch-assets-total: 'Total BCH assets of exchange: '
+        ltc-assets-total: 'Total LTC assets of exchange: '
         xrp-assets-total: 'Total XRP assets of exchange: '
         usd-assets-total: 'Total USD assets of exchange: '
       liability_proof:
@@ -719,6 +776,11 @@ en:
         title: BCH Assets
         intro: All of exchange's BCH assets are listed here.
         total: Total BCH Assets
+        address: Address
+      ltc_assets:
+        title: LTC Assets
+        intro: All of exchange's LTC assets are listed here.
+        total: Total LTC Assets
         address: Address
       xrp_assets:
         title: XRP Assets
@@ -753,6 +815,12 @@ en:
             withdraw: Withdraw
             fix: Fix
           bch:
+            strike_add: Plus
+            strike_sub: Sub
+            deposit: Deposit
+            withdraw: Withdraw
+            fix: Fix
+          ltc:
             strike_add: Plus
             strike_sub: Sub
             deposit: Deposit
@@ -808,6 +876,7 @@ en:
         usd_html: "<i class='fa fa-check'></i><span>USD Markets</span>"
         btc_html: "<i class='fa fa-check'></i><span>BTC Markets</span>"
         bch_html: "<i class='fa fa-check'></i><span>BCH Markets</span>"
+        ltc_html: "<i class='fa fa-check'></i><span>LTC Markets</span>"
         xrp_html: "<i class='fa fa-check'></i><span>XRP Markets</span>"
         price: Price
         change: "24h %"
@@ -1025,6 +1094,8 @@ en:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
         bitcoin_cash:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
+        litecoin:
+          sum: "<a target='_balance' href='#'>Fee structure</a>"
         ripple:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
     creating: Creating...
@@ -1063,6 +1134,13 @@ en:
           fee: Fee
           sum: Amount
           fund_uid: Bitcoin Address
+          fund_extra: Label
+          account_balance: Account Balance
+          member_name: Account
+        litecoin:
+          fee: Fee
+          sum: Amount
+          fund_uid: Litecoin Address
           fund_extra: Label
           account_balance: Account Balance
           member_name: Account
