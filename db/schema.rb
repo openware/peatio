@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180112151205) do
+ActiveRecord::Schema.define(version: 20180124120251) do
 
   create_table "account_versions", force: :cascade do |t|
     t.integer  "member_id",       limit: 4
@@ -98,6 +98,24 @@ ActiveRecord::Schema.define(version: 20180112151205) do
 
   add_index "authentications", ["member_id"], name: "index_authentications_on_member_id", using: :btree
   add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", using: :btree
+
+  create_table "currencies", force: :cascade do |t|
+    t.string   "key",                      limit: 30,                                              null: false
+    t.string   "code",                     limit: 30,                                              null: false
+    t.string   "name",                     limit: 30,                                              null: false
+    t.string   "symbol",                   limit: 1
+    t.string   "type",                     limit: 30,                             default: "coin", null: false
+    t.string   "json_rpc_endpoint",        limit: 200
+    t.string   "rest_api_endpoint",        limit: 200
+    t.string   "hot_wallet_address",       limit: 200,                                             null: false
+    t.string   "wallet_url_template",      limit: 200,                                             null: false
+    t.string   "transaction_url_template", limit: 200,                                             null: false
+    t.decimal  "quick_withdraw_limit",                  precision: 23, scale: 10, default: 0.0,    null: false
+    t.string   "options",                  limit: 1000,                           default: "{}",   null: false
+    t.boolean  "visible",                                                         default: true
+    t.datetime "created_at",                                                                       null: false
+    t.datetime "updated_at",                                                                       null: false
+  end
 
   create_table "deposits", force: :cascade do |t|
     t.integer  "account_id",             limit: 4

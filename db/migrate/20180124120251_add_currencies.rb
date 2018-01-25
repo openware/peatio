@@ -12,7 +12,9 @@ class AddCurrencies < ActiveRecord::Migration
       t.string  :wallet_url_template,      limit: 200, null: false
       t.string  :transaction_url_template, limit: 200, null: false
       t.decimal :quick_withdraw_limit,     precision: 23, scale: 10, unsigned: true, null: false, default: 0
-      t.timestamps
+      t.string  :options,                  limit: 1000, default: '{}', null: false
+      t.boolean :visible,                  default: true
+      t.timestamps                         null: false
     end
   end
 end
