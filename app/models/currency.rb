@@ -33,6 +33,10 @@ class Currency < ActiveRecord::Base
            :summary,
            to: :'Configs::Currency'
 
+  scope :visible, -> { where(visible: true) }
+  scope :invisible, -> { where(visible: false) }
+
+  scope :codes, -> { visible.pluck(:code) }
   scope :coins, -> { where(type: 'coin') }
   scope :coin_codes, -> { coins.pluck(:code) }
 
