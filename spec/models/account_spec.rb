@@ -284,9 +284,12 @@ describe Account do
   end
 
   describe '.enabled' do
+    before(:each) do
+      binding.pry
+    end
     let!(:account1) { create(:account, currency: Currency.first.code) }
     let!(:account2) { create(:account, currency: Currency.last.code) }
-    let!(:account3) { create(:account, currency: Currency.all[1].code) }
+    let!(:account3) { create(:account, currency: Currency.second.code) }
     before do
       Currency.stubs(:ids).returns([Currency.first.id, Currency.last.id])
     end

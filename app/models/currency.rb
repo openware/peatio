@@ -1,6 +1,6 @@
 class Currency < ActiveRecord::Base
   extend Enumerize
-  
+
   # NOTE: alias attributes during refactoring
   alias_attribute :quick_withdraw_max,
                   :quick_withdraw_limit
@@ -8,6 +8,8 @@ class Currency < ActiveRecord::Base
   alias_attribute :rpc,
                   :json_rpc_endpoint
 
+  # NOTE: type column reserved for STI
+  self.inheritance_column = nil
   enumerize :type,
             in: %i(fiat coin token),
             predicates: true,
@@ -16,12 +18,12 @@ class Currency < ActiveRecord::Base
   serialize :options, JSON
 
   class << self
-    delegate :enumerize,
+    delegate :assets,
+             # :enumerize,
              # :all,
              # :all_with_invisible,
              # :codes,
-             :ids,
-             :assets,
+             # :ids,
              to: :'Configs::Currency'
   end
 
@@ -43,10 +45,14 @@ class Currency < ActiveRecord::Base
   scope :visible, -> { where(visible: true) }
   default_scope { visible }
   scope :invisible, -> { where(visible: false) }
-  scope :all_with_invisible, -> { 'visible is true or visible is false' }
+  scope :all_with_invisible, -> { where('visible is true or visible is false') }
 
   scope :codes, -> { visible.pluck(:code) }
   scope :coins, -> { where(type: 'coin') }
   scope :coin_codes, -> { coins.pluck(:code) }
+
+  def self.enumerize
+    all_with_invisible.inject({}) {|memo, i| memo[i.code.to_sym] = i.id; memo}
+  end
 
 end
