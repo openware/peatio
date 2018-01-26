@@ -6,6 +6,8 @@ class Currency < ActiveRecord::Base
             predicates: true,
             scope: true
 
+  serialize :options, JSON
+
   class << self
     delegate :all,
              :all_with_invisible,
