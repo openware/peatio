@@ -1,14 +1,15 @@
 module Admin
   module Withdraws
-    class LitecoinController < ::Admin::Withdraws::BaseController
+    class LitecoinsController < ::Admin::Withdraws::BaseController
       load_and_authorize_resource class: '::Withdraws::Litecoin'
 
       def index
-        @litecoin = @litecoin.includes(:member).
-                      where('created_at > ?', start_at).
-                      order('id DESC').
-                      page(params[:page]).
-                      per(20)
+        @one_litecoins = @litecoins.with_aasm_state(:accepted).
+                           order('id DESC')
+
+        @all_litecoins = @litecoins.without_aasm_state(:accepted).
+                           where('created_at > ?', DateTime.now.ago(60 * 60 * 24)).
+                           order('id DESC')
       end
 
       def show

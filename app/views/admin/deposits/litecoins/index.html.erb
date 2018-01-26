@@ -1,4 +1,4 @@
-<%= table_for @litecoin, class: 'table table-condensed table-hover' do |t| %>
+<%= table_for @litecoins, class: 'table table-condensed table-hover' do |t| %>
   <% t.column :txid do |x| %>
     <a href="<%= x.blockchain_url %>" target="_blank">
       <code class="text-info"><%= x.txid.truncate(36) %></code>
@@ -25,5 +25,5 @@
 <% end %>
 
 <div class="pull-right">
-  <%= paginate @litecoin %>
+  <%= paginate @litecoins %>
 </div>
