@@ -30,3 +30,10 @@
   fee: 0.0005
   inuse: true
   type: WithdrawChannelBitcoinCash
+- id: 1000
+  key: litecoin
+  currency: ltc
+  fixed: 8
+  fee: 0.0005
+  inuse: true
+  type: WithdrawChannelLitecoin
