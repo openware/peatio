@@ -541,7 +541,7 @@ en:
       bitcoin_cash:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
-      litecoin:
+      litecoins:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       ripples:
@@ -675,7 +675,7 @@ en:
         create:
           notice: Withdrawal request successfully submitted. Use the info below to
             complete the bank transfer.
-      litecoin:
+      litecoins:
         destroy:
           notice: Withdraw been canceled, frozen balance has returned to your account
         update:
@@ -1178,7 +1178,7 @@ en:
         index:
           accept: Accept
           accept_confirm: Confirm deposit?
-      litecoin:
+      litecoins:
         update:
           notice: The deposit was successful.
         index:
@@ -1275,7 +1275,7 @@ en:
           succeed_confirm: Process withdrawal?
           reject_confirm: Reject withdrawal?
           withdraw: Withdrawals
-      litecoin:
+      litecoins:
         index:
           one: Pending withdrawals
           all: Last 24 hours
