@@ -54,6 +54,9 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :deletion
+    FactoryBot.create(:currency_usd)
+    FactoryBot.create(:currency_btc)
+    FactoryBot.create(:currency_pts)
   end
 
   config.before(:each) do
