@@ -1,9 +1,10 @@
-class Currency < ActiveYamlBase
-  include ActiveHash::Associations
+class Currency < ActiveRecord::Base
+  extend Enumerize
 
-  field :visible, default: true
-
-  self.singleton_class.send :alias_method, :all_with_invisible, :all
+  enumerize :type,
+            in: %i(fiat coin token),
+            predicates: true,
+            scope: true
 
   class << self
     delegate :all,
