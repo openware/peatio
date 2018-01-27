@@ -21,4 +21,5 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.acronym 'AMQP'
   inflect.acronym 'CORS'
   inflect.irregular 'cash', 'cash'
+  inflect.uncountable 'ethereum'
 end

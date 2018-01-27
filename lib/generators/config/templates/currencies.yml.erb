@@ -92,20 +92,10 @@
   quick_withdraw_max: 10
   blockchain:         https://www.blocktrail.com/BCC/tx/#{txid}
   address_url:        https://www.blocktrail.com/BCC/address/#{address}
-  rpc: http://username:password@127.0.0.1:18332
   assets:
     accounts:
       - address: r1234567890abcdefghijklmnopqrstuvw
         secret: sp1234567890abcdefghijklmnopq
-
-
-
-
-
-
-
-
-
 
 - id:          5
   key:         litoshi
@@ -152,4 +142,15 @@
   quick_withdraw_max: 25
   blockchain:         https://live.blockcypher.com/dash/tx/#{txid}
   address_url:        https://live.blockcypher.com/dash/address/#{address}
+
+- id: 6
+  key: ethereum
+  code: eth
+  symbol: "Ξ"
+  coin: true
+  precision: 8
+  quick_withdraw_max: 1
+  json_rpc_endpoint: http://username:password@127.0.0.1:8545
+  blockchain: https://www.blocktrail.com/ETH/tx/#{txid}
+  address_url: https://www.blocktrail.com/ETH/address/#{address}
 <% end %>

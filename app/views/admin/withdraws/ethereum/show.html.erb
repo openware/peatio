@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <span><%= t('.withdraw', sn: @ethereum.id) %></span>
+      </div>
+      <div class="panel-body">
+        <%= description_for :withdraw do %>
+          <%= item_for @ethereum, :id %>
+          <%= item_for @ethereum, :created_at %>
+          <%= item_for @ethereum, :aasm_state_text %>
+          <hr class="split">
+          <%= item_for @ethereum.member, :name %>
+          <%= item_for @ethereum, :fund_extra %>
+          <%= item_for @ethereum, :fund_uid do %>
+            <span><%= @ethereum.fund_uid.truncate(22) %></span>
+          <% end %>
+          <%= item_for @ethereum, :amount %>
+          <hr class="split">
+          <%= item_for @ethereum, :remark %>
+          <hr class="split">
+          <ul class="list-inline pull-right">
+            <% if @ethereum.may_reject? %>
+              <li>
+                <%= link_to t('.reject'), url_for([:admin, @ethereum]), class: 'btn btn-danger', method: 'DELETE', confirm: t('.reject_confirm') %>
+              </li>
+            <% end %>
+            <% if @ethereum.may_process? %>
+              <li>
+                <%= link_to t('.process'), url_for([:admin, @ethereum]), class: 'btn btn-primary', method: 'PATCH' %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-12">
+    <%= render partial: 'shared/admin/member', locals: {member: @ethereum.member} %>
+    <%= render partial: 'shared/admin/account', locals: {account: @ethereum.account} %>
+  </div>
+</div>

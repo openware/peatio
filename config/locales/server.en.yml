@@ -157,6 +157,12 @@ en:
         amount: Amount
         confirmations: Confirmation
         aasm_state_text: State
+      deposits/ethereum:
+        created_at: Created At
+        txid: Transaction ID
+        amount: Amount
+        confirmations: Confirmation
+        aasm_state_text: State
       deposits/ripple:
         created_at: Created At
         txid: Transaction ID
@@ -198,6 +204,20 @@ en:
         remark: Remark
         fee: Fee
       withdraws/litoshi:
+        id: ID
+        member_name: Account
+        currency_obj_key_text: Currency
+        state_and_actions: State/Action
+        fund_extra_text: Withdraw Label
+        fund_extrat: Withdraw Label
+        fund_source: Bank
+        fund_uid: Account
+        created_at: Created At
+        sum: Amount
+        amount: Amount
+        remark: Remark
+        fee: Fee
+      withdraws/ethereum:
         id: ID
         member_name: Account
         currency_obj_key_text: Currency
@@ -296,6 +316,12 @@ en:
               blank: Please enter your withdrawal address
               invalid: Invalid withdrawals address, please review.
               ismine: Please use a new address.
+        withdraws/ethereum:
+          attributes:
+            fund_uid:
+              blank: Please enter your withdrawal address
+              invalid: Invalid withdrawals address, please review.
+              ismine: Please use a new address.
         withdraws/ripple:
           attributes:
             fund_uid:
@@ -344,6 +370,7 @@ en:
     currency:
       btc: BTC
       bch: BCH
+      eth: ETH
       xrp: XRP
       usd: USD
       doge: DOGE
@@ -359,6 +386,11 @@ en:
       key: BCH
       code: BCH
       name: Bitcoin Cash
+      format: '0,0.0000'
+    ethereum:
+      key: ETH
+      code: ETH
+      name: Ethereum
       format: '0,0.0000'
     ripple:
       key: XRP
@@ -540,6 +572,13 @@ en:
       latency: 1 confirmation
       transfer: Manual
       go: Deposit
+    ethereum:
+      key: Ethereum
+      title: Ethereum Deposits
+      intro: Deposit Ethereum from your own wallet address to Peatio account
+      latency: 1 confirmation
+      transfer: Manual
+      go: Deposit
     ripple:
       key: Block Chain
       title: Ripple Deposits
@@ -572,6 +611,9 @@ en:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       litoshis:
+        gen_address:
+          require_transaction: it can't generate new address if it hasn't been used.
+      ethereum:
         gen_address:
           require_transaction: it can't generate new address if it hasn't been used.
       ripples:
@@ -720,6 +762,19 @@ en:
           manage_fund_source: Manage Fund Source
         create:
           notice: Withdrawal request successfully submitted. Use the info below to complete the bank transfer.
+      ethereum:
+        destroy:
+          notice: Withdraw been canceled, frozen balance has returned to your account
+        update:
+          notice: Withdraw request is submit successful, we will process it as soon
+            as possible
+        new:
+          submit: Submit
+          allin: All-In
+          fund_source_label: Label
+          manage_fund_source: Manage Fund Source
+        create:
+          notice: Withdrawal request successfully submitted. Use the info below to complete the bank transfer.
       ripples:
         destroy:
           notice: Withdraw been canceled, frozen balance has returned to your account
@@ -844,6 +899,12 @@ en:
             deposit: Deposit
             withdraw: Withdraw
             fix: Fix
+          eth:
+            strike_add: Plus
+            strike_sub: Sub
+            deposit: Deposit
+            withdraw: Withdraw
+            fix: Fix
           xrp:
             strike_add: Plus
             strike_sub: Sub
@@ -895,6 +956,7 @@ en:
         usd_html: "<i class='fa fa-check'></i><span>USD Markets</span>"
         btc_html: "<i class='fa fa-check'></i><span>BTC Markets</span>"
         bch_html: "<i class='fa fa-check'></i><span>BCH Markets</span>"
+        eth_html: "<i class='fa fa-check'></i><span>ETH Markets</span>"
         xrp_html: "<i class='fa fa-check'></i><span>XRP Markets</span>"
         price: Price
         change: "24h %"
@@ -1104,6 +1166,8 @@ en:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
         litoshi:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
+        eth:
+          sum: "<a target='_balance' href='#'>Fee structure</a>"
         ripple:
           sum: "<a target='_balance' href='#'>Fee structure</a>"
         duff:
@@ -1151,6 +1215,13 @@ en:
           fee: Fee
           sum: Amount
           fund_uid: Litoshi Address
+          fund_extra: Label
+          account_balance: Account Balance
+          member_name: Account
+        ethereum:
+          fee: Fee
+          sum: Amount
+          fund_uid: Bitcoin Address
           fund_extra: Label
           account_balance: Account Balance
           member_name: Account
@@ -1284,6 +1355,12 @@ en:
       accepted: Accepted
       checked: Checked
       warning: Warning
+  deposits/ethereum:
+    aasm_state:
+      submitted: Submitted
+      accepted: Accepted
+      checked: Checked
+      warning: Warning
   deposits/ripple:
     aasm_state:
       submitted: Submitted
@@ -1314,6 +1391,14 @@ en:
       state_and_actions: State/Actions
       currency_obj_key_text: Currency
     litoshi:
+      amount: Amount
+      txid: TxId
+      created_at: Created At
+      confirmations: Confirmations
+      member_name: Member
+      state_and_actions: State/Actions
+      currency_obj_key_text: Currency
+    ethereum:
       amount: Amount
       txid: TxId
       created_at: Created At
@@ -1369,6 +1454,7 @@ en:
       btc: BTC
       bch: BCH
       ltc: LTC
+      eth: ETH
       xrp: XRP
       dash: Dash
     order:
@@ -1672,6 +1758,13 @@ en:
       latency: 30 minutes
       transfer: Manual
       go: Withdraw
+    ethereum:
+      key: Blockchain
+      title: Ethereum Blockchain
+      intro: Withdraw Ethereum to your own Bitcoin Cash wallet
+      latency: 30 minutes
+      transfer: Manual
+      go: Withdraw
     ripple:
       key: Blockchain
       title: Ripple Blockchain
@@ -1741,6 +1834,18 @@ en:
       suspect: Suspect
       processing: processing
       done: Done
+      canceled: Cancelled
+      failed: Failed
+  withdraws/ethereum:
+    aasm_state:
+      submitting: Submitting
+      submitted: Submitted
+      rejected: Rejected
+      accepted: Accepted
+      suspect: Suspect
+      processing: processing
+      done: Done
+      almost_done: Almost Done
       canceled: Cancelled
       failed: Failed
   withdraws/ripple:
