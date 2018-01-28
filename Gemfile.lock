@@ -150,7 +150,7 @@ GEM
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     god (0.13.7)
-    gon (5.2.3)
+    gon (5.2.0)
       actionpack (>= 2.3.0)
       json
       multi_json
