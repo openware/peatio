@@ -82,6 +82,18 @@ module APIv2
       }
     end
 
+    def create_withdraw_address(attrs)
+      FundSource.create! \
+        member_id:  current_user.id,
+        currency:   attrs[:currency],
+        extra:      attrs[:label],
+        uid:        attrs[:address]
+    rescue
+      Rails.logger.info "Failed to create withdraw address: #{$!}"
+      Rails.logger.debug $!.backtrace.join("\n")
+      raise CreateWithdrawAddressError, $!
+    end
+
     def get_k_json
       key = "peatio:#{params[:market]}:k:#{params[:period]}"
 

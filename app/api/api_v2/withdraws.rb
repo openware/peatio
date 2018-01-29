@@ -1,5 +1,7 @@
 module APIv2
   class Withdraws < Grape::API
+    helpers ::APIv2::NamedParams
+
     before { authenticate! }
 
     desc 'List your withdraws as paginated collection.', scopes: %w[ history ]
@@ -34,6 +36,15 @@ module APIv2
         .page(params[:page])
         .per(params[:limit])
         .tap { |q| present q, with: APIv2::Entities::WithdrawAddress }
+    end
+
+    desc 'Create withdraw address.', scopes: %w[ history ]
+    params do
+      use :withdraw_address
+    end
+    post '/withdraws/addresses' do
+      order = create_withdraw_address params
+      present order, with: APIv2::Entities::WithdrawAddress
     end
   end
 end
