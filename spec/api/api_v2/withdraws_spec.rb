@@ -131,4 +131,35 @@ describe APIv2::Withdraws, type: :request do
       expect(results.map { |x| x['address'] }).to eq ordered_withdraws_addresses.map(&:uid)
     end
   end
+
+  describe 'POST /api/v2/withdraws/addresses' do
+    it 'should require currency code' do
+      signed_post '/api/v2/withdraws/addresses', params: { label: 'valid', address: '123456' }, token: token
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":1001,"message":"currency is missing, currency does not have a valid value"}}'
+    end
+
+    it 'should require label' do
+      signed_post '/api/v2/withdraws/addresses', params: { currency: 'btc', address: '123456' }, token: token
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":1001,"message":"label is missing"}}'
+    end
+
+    it 'should require address' do
+      signed_post '/api/v2/withdraws/addresses', params: { currency: 'btc', label: 'valid' }, token: token
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":1001,"message":"address is missing"}}'
+    end
+
+    it 'should validate currency code' do
+      signed_post '/api/v2/withdraws/addresses', params: { currency: 'invalid', label: 'valid', address: '123456' }, token: token
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":1001,"message":"currency does not have a valid value"}}'
+    end
+
+    it 'should create withdraw address' do
+      signed_post '/api/v2/withdraws/addresses', params: { label: 'btc address', currency: 'btc', address: '123456' }, token: token
+      expect(response.code).to eq '201'
+    end
+  end
 end
