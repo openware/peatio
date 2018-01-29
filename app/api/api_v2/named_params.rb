@@ -34,8 +34,8 @@ module APIv2
     params :withdraw_address do
       codes = Currency.all.map(&:code).map(&:upcase)
       requires :currency,   type: String, values: codes + codes.map(&:downcase), desc: 'Currency code. Both upcase (USD) and downcase (usd) are supported'
-      requires :label,      type: String, desc: 'Label associated with wallet address'
-      requires :address,    type: String, desc: 'Address where to send money itself'
+      requires :label,      type: String, desc: 'Label associated with wallet address.'
+      requires :address,    type: String, desc: 'Wallet address where money would be sent.'
     end
   end
 end
