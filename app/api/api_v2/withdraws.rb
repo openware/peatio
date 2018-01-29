@@ -1,6 +1,6 @@
 module APIv2
   class Withdraws < Grape::API
-    helpers ::APIv2::NamedParams
+    helpers APIv2::NamedParams
 
     before { authenticate! }
 
@@ -43,7 +43,11 @@ module APIv2
       use :withdraw_address
     end
     post '/withdraws/addresses' do
-      order = create_withdraw_address params
+      order = FundSource.create! \
+        member_id:  current_user.id,
+        currency:   params[:currency],
+        extra:      params[:label],
+        uid:        params[:address]
       present order, with: APIv2::Entities::WithdrawAddress
     end
   end

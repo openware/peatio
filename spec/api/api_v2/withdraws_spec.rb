@@ -101,34 +101,34 @@ describe APIv2::Withdraws, type: :request do
     end
 
     it 'should paginate withdraws' do
-      ordered_withdraws_addresses = btc_withdraw_addresses.sort_by(&:id).reverse
+      ordered_withdraw_addresses = btc_withdraw_addresses.sort_by(&:id).reverse
 
       signed_get '/api/v2/withdraws/addresses', params: { currency: 'BTC', limit: 10, page: 1 }, token: token
       expect(response).to be_success
-      expect(JSON.parse(response.body).first['id']).to eq ordered_withdraws_addresses[0].id
+      expect(JSON.parse(response.body).first['id']).to eq ordered_withdraw_addresses[0].id
 
       signed_get '/api/v2/withdraws/addresses', params: { currency: 'BTC', limit: 10, page: 2 }, token: token
       expect(response).to be_success
-      expect(JSON.parse(response.body).first['id']).to eq ordered_withdraws_addresses[10].id
+      expect(JSON.parse(response.body).first['id']).to eq ordered_withdraw_addresses[10].id
     end
 
     it 'should sort withdraws' do
-      ordered_withdraws_addresses = btc_withdraw_addresses.sort_by(&:id).reverse
+      ordered_withdraw_addresses = btc_withdraw_addresses.sort_by(&:id).reverse
 
       signed_get '/api/v2/withdraws/addresses', params: { currency: 'BTC', limit: 100 }, token: token
       expect(response).to be_success
       results = JSON.parse(response.body)
-      expect(results.map { |x| x['id'] }).to eq ordered_withdraws_addresses.map(&:id)
+      expect(results.map { |x| x['id'] }).to eq ordered_withdraw_addresses.map(&:id)
     end
 
     it 'should return correct label and address' do
-      ordered_withdraws_addresses = btc_withdraw_addresses.sort_by(&:id).reverse
+      ordered_withdraw_addresses = btc_withdraw_addresses.sort_by(&:id).reverse
 
       signed_get '/api/v2/withdraws/addresses', params: { currency: 'BTC', limit: 100 }, token: token
       expect(response).to be_success
       results = JSON.parse(response.body)
-      expect(results.map { |x| x['label'] }).to eq ordered_withdraws_addresses.map(&:extra)
-      expect(results.map { |x| x['address'] }).to eq ordered_withdraws_addresses.map(&:uid)
+      expect(results.map { |x| x['label'] }).to eq ordered_withdraw_addresses.map(&:extra)
+      expect(results.map { |x| x['address'] }).to eq ordered_withdraw_addresses.map(&:uid)
     end
   end
 

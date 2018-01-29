@@ -102,10 +102,4 @@ module APIv2
       super code: 2012, text: "Deposit##txid=#{txid} doesn't exist.", status: 404
     end
   end
-
-  class CreateWithdrawAddressError < Error
-    def initialize()
-      super code: 2013, text: "Failed to create withdraw address. Reason: #{e}", status: 400
-    end
-  end
 end
