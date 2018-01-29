@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  include Currencible
+  include ActiveRecordCurrencible
 
   FIX = :fix
   UNKNOWN = :unknown
@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
   validates :member_id, uniqueness: { scope: :currency }
   validates_numericality_of :balance, :locked, greater_than_or_equal_to: ZERO
 
-  scope :enabled, -> { where("currency in (?)", Currency.ids) }
+  scope :enabled, -> { where(currency_id: Currency.ids) }
 
   after_commit :trigger, :sync_update
 
@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
                      fee: fee,
                      reason: reason,
                      amount: account.amount,
-                     currency: account.currency.to_sym,
+                     currency: account.currency,
                      member_id: account.member_id,
                      account_id: account.id }
 
@@ -159,9 +159,10 @@ class Account < ActiveRecord::Base
     add_to_transaction # so after_commit will be triggered
     self
   end
-
-  scope :locked_sum, -> (currency) { with_currency(currency).sum(:locked) }
-  scope :balance_sum, -> (currency) { with_currency(currency).sum(:balance) }
+  
+  scope :with_currency, -> (currency_code) { where(currency: Currency.find_by(code: currency_code)) }
+  scope :locked_sum, -> (currency_code) { with_currency(currency_code).sum(:locked) }
+  scope :balance_sum, -> (currency_code) { with_currency(currency_code).sum(:balance) }
 
   class AccountError < RuntimeError; end
   class LockedError < AccountError; end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180124120251) do
+ActiveRecord::Schema.define(version: 20180129105114) do
 
   create_table "account_versions", force: :cascade do |t|
     t.integer  "member_id",       limit: 4
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20180124120251) do
     t.decimal  "in",                                        precision: 32, scale: 16
     t.decimal  "out",                                       precision: 32, scale: 16
     t.integer  "default_withdraw_fund_source_id", limit: 4
+    t.integer  "currency_id",                     limit: 4
   end
 
   add_index "accounts", ["member_id", "currency"], name: "index_accounts_on_member_id_and_currency", using: :btree
@@ -99,23 +100,8 @@ ActiveRecord::Schema.define(version: 20180124120251) do
   add_index "authentications", ["member_id"], name: "index_authentications_on_member_id", using: :btree
   add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", using: :btree
 
-  create_table "currencies", force: :cascade do |t|
-    t.string   "key",                      limit: 30,                                              null: false
-    t.string   "code",                     limit: 30,                                              null: false
-    t.string   "name",                     limit: 30,                                              null: false
-    t.string   "symbol",                   limit: 1
-    t.string   "type",                     limit: 30,                             default: "coin", null: false
-    t.string   "json_rpc_endpoint",        limit: 200
-    t.string   "rest_api_endpoint",        limit: 200
-    t.string   "hot_wallet_address",       limit: 200,                                             null: false
-    t.string   "wallet_url_template",      limit: 200,                                             null: false
-    t.string   "transaction_url_template", limit: 200,                                             null: false
-    t.decimal  "quick_withdraw_limit",                  precision: 23, scale: 10, default: 0.0,    null: false
-    t.string   "options",                  limit: 1000,                           default: "{}",   null: false
-    t.boolean  "visible",                                                         default: true
-    t.datetime "created_at",                                                                       null: false
-    t.datetime "updated_at",                                                                       null: false
-  end
+# Could not dump table "currencies" because of following StandardError
+#   Unknown type 'json' for column 'options'
 
   create_table "deposits", force: :cascade do |t|
     t.integer  "account_id",             limit: 4
@@ -213,12 +199,13 @@ ActiveRecord::Schema.define(version: 20180124120251) do
   end
 
   create_table "payment_addresses", force: :cascade do |t|
-    t.integer  "account_id", limit: 4
-    t.string   "address",    limit: 255
+    t.integer  "account_id",  limit: 4
+    t.string   "address",     limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "currency",   limit: 4
-    t.string   "secret",     limit: 255
+    t.integer  "currency",    limit: 4
+    t.string   "secret",      limit: 255
+    t.integer  "currency_id", limit: 4
   end
 
   create_table "payment_transactions", force: :cascade do |t|

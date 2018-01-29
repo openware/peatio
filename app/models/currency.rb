@@ -54,8 +54,8 @@ class Currency < ActiveRecord::Base
     all.inject({}) {|memo, i| memo[i.code.to_sym] = i.id; memo}
   end
 
-  def code
-    read_attribute(:code).to_sym
+  def self.ids
+    visible.ids
   end
 
   def currency_value

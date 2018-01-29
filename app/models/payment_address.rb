@@ -1,5 +1,5 @@
 class PaymentAddress < ActiveRecord::Base
-  include Currencible
+  include ActiveRecordCurrencible
   belongs_to :account
 
   after_commit :gen_address, on: :create
