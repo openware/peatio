@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180129105114) do
+ActiveRecord::Schema.define(version: 20180129135153) do
 
   create_table "account_versions", force: :cascade do |t|
     t.integer  "member_id",       limit: 4
@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(version: 20180129105114) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",                       limit: 4
-    t.integer  "currency",                        limit: 4
     t.decimal  "balance",                                   precision: 32, scale: 16
     t.decimal  "locked",                                    precision: 32, scale: 16
     t.datetime "created_at"
@@ -47,8 +46,8 @@ ActiveRecord::Schema.define(version: 20180129105114) do
     t.integer  "currency_id",                     limit: 4
   end
 
-  add_index "accounts", ["member_id", "currency"], name: "index_accounts_on_member_id_and_currency", using: :btree
   add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
+  add_index "accounts", ["member_id"], name: "index_accounts_on_member_id_and_currency", using: :btree
 
   create_table "api_tokens", force: :cascade do |t|
     t.integer  "member_id",       limit: 4,   null: false
@@ -203,7 +202,6 @@ ActiveRecord::Schema.define(version: 20180129105114) do
     t.string   "address",     limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "currency",    limit: 4
     t.string   "secret",      limit: 255
     t.integer  "currency_id", limit: 4
   end
