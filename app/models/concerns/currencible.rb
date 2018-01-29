@@ -9,8 +9,9 @@ module Currencible
               scope: true
 
     belongs_to_active_hash :currency_obj,
-                           class_name: 'Currency',
+                           class_name: 'Configs::Currency',
                            foreign_key: 'currency_value'
+
 
     delegate :key_text, to: :currency_obj, prefix: true
   end

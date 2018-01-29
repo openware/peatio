@@ -19,7 +19,7 @@ class Currency < ActiveRecord::Base
 
   class << self
     delegate :assets,
-             # :enumerize,
+             :enumerize,
              # :all,
              # :all_with_invisible,
              # :codes,
@@ -43,16 +43,23 @@ class Currency < ActiveRecord::Base
            to: :'Configs::Currency'
 
   scope :visible, -> { where(visible: true) }
-  default_scope { visible }
   scope :invisible, -> { where(visible: false) }
-  scope :all_with_invisible, -> { where('visible is true or visible is false') }
+  scope :all_with_invisible, -> { all }
 
   scope :codes, -> { visible.pluck(:code) }
   scope :coins, -> { where(type: 'coin') }
   scope :coin_codes, -> { coins.pluck(:code) }
 
   def self.enumerize
-    all_with_invisible.inject({}) {|memo, i| memo[i.code.to_sym] = i.id; memo}
+    all.inject({}) {|memo, i| memo[i.code.to_sym] = i.id; memo}
+  end
+
+  def code
+    read_attribute(:code).to_sym
+  end
+
+  def currency_value
+    code
   end
 
 end
