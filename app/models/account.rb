@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
                      fee: fee,
                      reason: reason,
                      amount: account.amount,
-                     currency: account.currency,
+                     currency_id: account.currency_id,
                      member_id: account.member_id,
                      account_id: account.id }
 

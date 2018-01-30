@@ -13,7 +13,7 @@ describe AccountVersion do
         fee: Account::ZERO,
         reason: Account::UNKNOWN,
         amount: '15.0'.to_d,
-        currency: account.currency,
+        currency_id: account.currency_id,
         member_id: account.member_id,
         locked: '-8.0'.to_d,
         balance: '3.0'.to_d }
@@ -37,7 +37,6 @@ describe AccountVersion do
     it 'should raise StaleObjectError if associated account is stale' do
       account_in_another_thread = Account.find account.id
       account_in_another_thread.plus_funds('2.0'.to_d)
-
       expect do
         # `unlock_and_sub_funds('5.0'.to_d, locked: '8.0'.to_d, fee: ZERO)`
         ActiveRecord::Base.connection.execute "update accounts set balance = balance + 3, locked = locked - 8 where id = #{account.id}"
