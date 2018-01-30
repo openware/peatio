@@ -1,3 +1,11 @@
+# Explicitly require "lib/peatio.rb".
+# You may be surprised why this line also sits in config/application.rb.
+# The same line sits in config/application.rb to allows early access to lib/peatio.rb.
+# We duplicate line in config/routes.rb since routes.rb is reloaded when code is changed.
+# The implementation of ActiveSupport's require_dependency makes sense to use it only in reloadable files.
+# That's why it is here.
+require_dependency 'peatio'
+
 Rails.application.eager_load! if Rails.env.development?
 
 class ActionDispatch::Routing::Mapper
@@ -80,7 +88,7 @@ Peatio::Application.routes.draw do
       end
     end
 
-   post '/pusher/auth', to: 'pusher#auth'
+    post '/pusher/auth', to: 'pusher#auth'
   end
 
   scope ['', 'webhooks', ENV['WEBHOOKS_SECURE_URL_COMPONENT'].presence, ':ccy'].compact.join('/'), as: 'webhooks' do
