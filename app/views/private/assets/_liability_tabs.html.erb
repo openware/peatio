@@ -92,10 +92,10 @@
           <span class="title"><%= t('.usd-assets-total').html_safe %></span>
           <span class="currency">
             <%= t('currency.icon.usd').html_safe %>
-            <%= @usd_proof.sum %>
+            <%= @base_fiat_ccy_proof.sum %>
           </span>
         </div>
-        <%= render 'liability_data', account: @usd_account, proof: @usd_proof %>
+        <%= render 'liability_data', account: @usd_account, proof: @base_fiat_ccy_proof %>
       </div>
     </div>
   </div>

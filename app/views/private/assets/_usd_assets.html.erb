@@ -13,8 +13,8 @@
                 <%= t('.total') %>
               </span>
               <span class="pull-right">
-                <%= t('currency.icon.usd').html_safe %>
-                <%= @usd_proof.balance %>
+                <%= t("currency.icon.#{Peatio.base_fiat_ccy}").html_safe %>
+                <%= @base_fiat_ccy_proof.balance %>
               </span>
             </div>
           </div>

@@ -7,7 +7,7 @@ module Private
       @btc_proof  = Proof.current :btc
       @bch_proof  = Proof.current :bch
       @ltc_proof  = Proof.current :ltc
-      @usd_proof  = Proof.current :usd
+      @base_fiat_ccy_proof   = Proof.current :usd
       @xrp_proof  = Proof.current :xrp
       @dash_proof = Proof.current :dash
 
