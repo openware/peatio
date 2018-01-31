@@ -9,7 +9,7 @@ describe APIv2::Members, type: :request do
   let(:token) { create(:api_token, member: member) }
 
   describe 'GET /members/me' do
-    before { Currency.stubs(:codes).returns(%w[usd btc]) }
+    before { Currency.stubs(:codes).returns(%W[#{Peatio.base_fiat_ccy.downcase} btc]) }
 
     it 'should return current user profile with accounts info' do
       signed_get '/api/v2/members/me', token: token

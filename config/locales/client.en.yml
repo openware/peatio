@@ -57,7 +57,7 @@ en:
         add: Add
         manage: Manage
         amount: Deposit Amount
-        min_amount: At least 10 USD
+        min_amount: At least 10
         to_account: Account
         to_name: Name
         to_bank_name: Bank Name
@@ -111,7 +111,7 @@ en:
         warning: Warning
         suspect: Suspect
 
-      withdraw_usd:
+      withdraw_fiat:
         title: USD Withdraw
         intro: Select the bank to cash withdrawal amount and enter the account number and complete submission.
         intro_2: Your bank account and name must be consistent with the real-name authentication name.

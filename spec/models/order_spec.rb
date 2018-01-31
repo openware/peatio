@@ -245,7 +245,7 @@ describe Order, 'related accounts' do
   let(:bob)   { who_is_billionaire }
 
   context OrderAsk do
-    it 'should hold btc and expect usd' do
+    it "should hold btc and expect #{Peatio.base_fiat_ccy.downcase}" do
       ask = create(:order_ask, member: alice)
       expect(ask.hold_account).to eq alice.get_account(:btc)
       expect(ask.expect_account).to eq alice.get_account(Peatio.base_fiat_ccy_sym)
@@ -253,7 +253,7 @@ describe Order, 'related accounts' do
   end
 
   context OrderBid do
-    it 'should hold usd and expect btc' do
+    it "should hold #{Peatio.base_fiat_ccy.downcase} and expect btc" do
       bid = create(:order_bid, member: bob)
       expect(bid.hold_account).to eq bob.get_account(Peatio.base_fiat_ccy_sym)
       expect(bid.expect_account).to eq bob.get_account(:btc)

@@ -159,7 +159,7 @@
 
     p Create multiple orders with a single request:
     pre: code
-      | curl -X POST '#{root_url_with_port_from_request}' -d 'access_key=your_access_key&tonce=123456789&signature=computed_signature&market=btc#{Peatio.base_fiat_ccy.downcase}&orders[][price]=4000&orders[][side]=sell&orders[][volume]=0.5&orders[][price]=3999&orders[][side]=sell&orders[][volume]=0.99'
+      | curl -X POST "#{root_url_with_port_from_request}' -d 'access_key=your_access_key&tonce=123456789&signature=computed_signature&market=btc#{Peatio.base_fiat_ccy.downcase}&orders[][price]=4000&orders[][side]=sell&orders[][volume]=0.5&orders[][price]=3999&orders[][side]=sell&orders[][volume]=0.99"
 
 .panel.panel-default
   .panel-heading
