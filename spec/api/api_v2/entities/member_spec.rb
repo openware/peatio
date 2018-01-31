@@ -11,7 +11,7 @@ describe APIv2::Entities::Member do
 
   it 'accounts' do
     expect(subject.accounts).to match [
-      { currency: 'usd', balance: '0.0', locked: '0.0' },
+      { currency: Peatio.base_fiat_ccy.downcase, balance: '0.0', locked: '0.0' },
       { currency: 'btc', balance: '0.0', locked: '0.0' }
     ]
   end

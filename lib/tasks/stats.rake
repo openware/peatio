@@ -1,7 +1,7 @@
 namespace :stats do
 
   def asset_value(ts, currency, amount)
-    if currency.code != 'usd'
+    if currency.code != Peatio.base_fiat_ccy.downcase
       redis = KlineDB.redis
       market = Market.find "#{currency.code}usd"
       key = "peatio:#{market.id}:k:60"

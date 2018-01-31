@@ -1,7 +1,7 @@
 describe Private::OrderBidsController, type: :controller do
   let(:member) do
     create(:member).tap do |m|
-      m.get_account('usd').update_attributes(balance: '30000')
+      m.get_account(Peatio.base_fiat_ccy.downcase).update_attributes(balance: '30000')
     end
   end
 

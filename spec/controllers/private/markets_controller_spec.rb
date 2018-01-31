@@ -28,7 +28,7 @@ describe Private::MarketsController, type: :controller do
       id: 'btcusd',
       market: 'btcusd',
       ask: 'btc',
-      bid: 'usd'
+      bid: Peatio.base_fiat_ccy.downcase
     }
   end
 end

@@ -2,7 +2,7 @@ feature 'show account info', js: true do
   let(:other_member) { create :member }
   let(:member) { create :member }
   let!(:bid_account) do
-    member.get_account('usd').tap { |a| a.update_attributes locked: 400, balance: 1000 }
+    member.get_account(Peatio.base_fiat_ccy.downcase).tap { |a| a.update_attributes locked: 400, balance: 1000 }
   end
   let!(:ask_account) do
     member.get_account('btc').tap { |a| a.update_attributes locked: 400, balance: 2000 }

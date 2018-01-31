@@ -10,7 +10,7 @@ FactoryBot.define do
     trait Peatio.base_fiat_ccy_sym do
       extra 'bc'
       uid '123412341234'
-      currency 'usd'
+      currency Peatio.base_fiat_ccy.downcase
     end
 
     factory :base_fiat_ccy_fund_source, traits: [Peatio.base_fiat_ccy_sym]

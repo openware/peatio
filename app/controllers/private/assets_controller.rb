@@ -3,7 +3,7 @@ module Private
     skip_before_action :auth_member!, only: [:index]
 
     def index
-      @base_fiat_ccy_assets  = Currency.assets('usd')
+      @base_fiat_ccy_assets  = Currency.assets(Peatio.base_fiat_ccy.downcase)
       @btc_proof   = Proof.current :btc
       @bch_proof   = Proof.current :bch
       @ltc_proof   = Proof.current :ltc

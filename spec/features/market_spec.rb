@@ -2,7 +2,7 @@ feature 'show account info', js: true do
   let!(:member) { create :member }
 
   let!(:bid_account) do
-    member.get_account('usd').tap do |a|
+    member.get_account(Peatio.base_fiat_ccy.downcase).tap do |a|
       a.plus_funds 1000
       a.save!
     end
