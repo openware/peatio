@@ -3,7 +3,7 @@ feature 'withdraw', js: true do
   let!(:admin_member) { create :member, email: Member.admins.first }
 
   let!(:account) do
-    member.get_account(:usd).tap { |a| a.update_attributes locked: 8000, balance: 10_000 }
+    member.get_account(Peatio.base_fiat_ccy_sym).tap { |a| a.update_attributes locked: 8000, balance: 10_000 }
   end
 
   let!(:withdraw) { create :bank_withdraw, member: member, sum: 5000, aasm_state: :accepted, account: account }

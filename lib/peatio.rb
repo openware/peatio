@@ -5,7 +5,7 @@ module Peatio
     end
 
     def base_fiat_ccy_sym
-      base_fiat_ccy.to_sym
+      base_fiat_ccy.downcase.to_sym
     end
   end
 end

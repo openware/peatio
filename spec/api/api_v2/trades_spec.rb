@@ -2,7 +2,7 @@ describe APIv2::Trades, type: :request do
   let(:member) do
     create(:verified_member).tap do |m|
       m.get_account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
-      m.get_account(:usd).update_attributes(balance: 2014.47, locked: 0)
+      m.get_account(Peatio.base_fiat_ccy_sym).update_attributes(balance: 2014.47, locked: 0)
     end
   end
 

@@ -100,7 +100,7 @@ describe APIv2::Orders, type: :request do
   describe 'POST /api/v2/orders/multi' do
     before do
       member.get_account(:btc).update_attributes(balance: 100)
-      member.get_account(:usd).update_attributes(balance: 100_000)
+      member.get_account(Peatio.base_fiat_ccy_sym).update_attributes(balance: 100_000)
     end
 
     it 'should create a sell order and a buy order' do
@@ -155,7 +155,7 @@ describe APIv2::Orders, type: :request do
     end
 
     it 'should create a buy order' do
-      member.get_account(:usd).update_attributes(balance: 100_000)
+      member.get_account(Peatio.base_fiat_ccy_sym).update_attributes(balance: 100_000)
 
       expect do
         signed_post '/api/v2/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '12.13', price: '2014' }
@@ -165,7 +165,7 @@ describe APIv2::Orders, type: :request do
     end
 
     it 'should set order source to APIv2' do
-      member.get_account(:usd).update_attributes(balance: 100_000)
+      member.get_account(Peatio.base_fiat_ccy_sym).update_attributes(balance: 100_000)
       signed_post '/api/v2/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '12.13', price: '2014' }
       expect(OrderBid.last.source).to eq 'APIv2'
     end
@@ -196,7 +196,7 @@ describe APIv2::Orders, type: :request do
 
     context 'succesful' do
       before do
-        member.get_account(:usd).update_attributes(locked: order.price * order.volume)
+        member.get_account(Peatio.base_fiat_ccy_sym).update_attributes(locked: order.price * order.volume)
       end
 
       it 'should cancel specified order' do
@@ -224,7 +224,7 @@ describe APIv2::Orders, type: :request do
       create(:order_bid, currency: 'btcusd', price: '12.326', volume: '3.14', origin_volume: '12.13', member: member)
 
       member.get_account(:btc).update_attributes(locked: '5')
-      member.get_account(:usd).update_attributes(locked: '50')
+      member.get_account(Peatio.base_fiat_ccy_sym).update_attributes(locked: '50')
     end
 
     it 'should cancel all my orders' do

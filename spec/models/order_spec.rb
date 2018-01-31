@@ -248,14 +248,14 @@ describe Order, 'related accounts' do
     it 'should hold btc and expect usd' do
       ask = create(:order_ask, member: alice)
       expect(ask.hold_account).to eq alice.get_account(:btc)
-      expect(ask.expect_account).to eq alice.get_account(:usd)
+      expect(ask.expect_account).to eq alice.get_account(Peatio.base_fiat_ccy_sym)
     end
   end
 
   context OrderBid do
     it 'should hold usd and expect btc' do
       bid = create(:order_bid, member: bob)
-      expect(bid.hold_account).to eq bob.get_account(:usd)
+      expect(bid.hold_account).to eq bob.get_account(Peatio.base_fiat_ccy_sym)
       expect(bid.expect_account).to eq bob.get_account(:btc)
     end
   end

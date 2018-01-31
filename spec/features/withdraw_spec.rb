@@ -9,7 +9,7 @@ feature 'withdraw', js: true do
     Withdraw.any_instance.stubs(:examine).returns(true)
     btc_account = member.get_account(:btc)
     btc_account.update_attributes balance: 1000
-    base_fiat_ccy_account = member.get_account(:usd)
+    base_fiat_ccy_account = member.get_account(Peatio.base_fiat_ccy_sym)
     base_fiat_ccy_account.update_attributes balance: 0
 
     @label = 'common address'

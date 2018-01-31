@@ -14,7 +14,7 @@ module Benchmark
 
       def make_order(klass, attrs={})
         klass.new({
-          bid: :usd,
+          bid: Peatio.base_fiat_ccy_sym,
           ask: :btc,
           state: Order::WAIT,
           currency: :btcusd,

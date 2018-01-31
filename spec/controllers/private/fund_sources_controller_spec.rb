@@ -5,7 +5,7 @@ describe Private::FundSourcesController, type: :controller do
   describe 'POST create' do
     it 'should not create fund_source with blank extra' do
       params = { fund_source: { extra: '',
-                                currency: :usd,
+                                currency: Peatio.base_fiat_ccy_sym,
                                 uid: '1234 1234 1234' } }
 
       expect do
@@ -16,7 +16,7 @@ describe Private::FundSourcesController, type: :controller do
 
     it 'should not create fund_source with blank uid' do
       params = { fund_source: { extra: 'bank_code_1',
-                                currency: :usd,
+                                currency: Peatio.base_fiat_ccy_sym,
                                 uid: '' } }
 
       expect do
@@ -27,7 +27,7 @@ describe Private::FundSourcesController, type: :controller do
 
     it 'should create fund_source successful' do
       params = { fund_source: { extra: 'bank_code_1',
-                                currency: :usd,
+                                currency: Peatio.base_fiat_ccy_sym,
                                 uid: '1234 1234 1234' } }
 
       expect do

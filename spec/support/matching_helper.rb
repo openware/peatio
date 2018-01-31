@@ -3,7 +3,7 @@ def who_is_billionaire
   member.get_account(:btc).update_attributes(
     locked: '1000000000.0'.to_d, balance: '1000000000.0'.to_d
   )
-  member.get_account(:usd).update_attributes(
+  member.get_account(Peatio.base_fiat_ccy_sym).update_attributes(
     locked: '1000000000.0'.to_d, balance: '1000000000.0'.to_d
   )
   member
