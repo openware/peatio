@@ -1497,7 +1497,6 @@ en:
       wait: Wait
       cancel: Cancel
     currency:
-      usd: USD
       btc: BTC
       bch: BCH
       ltc: LTC
