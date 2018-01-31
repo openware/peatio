@@ -43,7 +43,7 @@ en:
         usd: USD
         btc: BTC
         xrp: XRP
-      deposit_usd:
+      deposit_fiat:
         title: USD Deposit
         desc: "To deposit via Bank transfer, please follow these steps:"
         desc_item_1: "1. Submit the form to get the identification code."

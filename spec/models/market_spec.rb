@@ -6,7 +6,7 @@ describe Market do
 
   context 'markets hash' do
     it 'should list all markets info' do
-      expect(Market.to_hash).to eq ({ "btc#{Peatio.base_fiat_ccy.downcase}" => { name: "BTC/#{Peatio.base_fiat_ccy.upcase}", base_unit: 'btc', quote_unit: Peatio.base_fiat_ccy.downcase } })
+      expect(Market.to_hash).to eq ({ "btc#{Peatio.base_fiat_ccy.downcase}".to_sym => { name: "BTC/#{Peatio.base_fiat_ccy.upcase}", base_unit: 'btc', quote_unit: Peatio.base_fiat_ccy.downcase } })
     end
   end
 

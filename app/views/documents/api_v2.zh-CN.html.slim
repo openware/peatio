@@ -125,7 +125,7 @@
         tr
           td Order
           td: pre: code
-            | {"id":7,"side":"sell","price":"3100.0","avg_price":"3101.2","state":"wait","market":"btcusd","created_at":"2014-04-18T02:02:33Z","volume":"100.0","remaining_volume":"89.8","executed_volume":"10.2","trades_count": 1, "trades":[{"id":2,"price":"3100.0","volume":"10.2","market":"btcusd","created_at":"2014-04-18T02:04:49Z","side":"sell"}]}
+            | {"id":7,"side":"sell","price":"3100.0","avg_price":"3101.2","state":"wait","market":"btc#{Peatio.base_fiat_ccy}","created_at":"2014-04-18T02:02:33Z","volume":"100.0","remaining_volume":"89.8","executed_volume":"10.2","trades_count": 1, "trades":[{"id":2,"price":"3100.0","volume":"10.2","market":"btc#{Peatio.base_fiat_ccy}","created_at":"2014-04-18T02:04:49Z","side":"sell"}]}
           td
             p Order包含了某一个订单的所有信息:
             p id: 唯一的Order ID
@@ -143,7 +143,7 @@
         tr
           td Trade
           td: pre: code
-            | {"id":2,"price":"3100.0","volume":"10.2","market":"btcusd","created_at":"2014-04-18T02:04:49Z","order_id":101,"side":"sell"}
+            | {"id":2,"price":"3100.0","volume":"10.2","market":"btc#{Peatio.base_fiat_ccy}","created_at":"2014-04-18T02:04:49Z","order_id":101,"side":"sell"}
           td
             p Trade代表订单撮合后形成的一笔交易:
             p id: 交易的唯一ID
