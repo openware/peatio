@@ -11,10 +11,10 @@ describe Market do
   end
 
   context 'market attributes' do
-    let(:log) { Market.find('btcusd') }
+    let(:log) { Market.find("btc#{Peatio.base_fiat_ccy.downcase}") }
 
     it 'id' do
-      expect(log.id).to eq 'btcusd'
+      expect(log.id).to eq "btc#{Peatio.base_fiat_ccy.downcase}"
     end
 
     it 'name' do
@@ -42,7 +42,7 @@ describe Market do
   end
 
   context 'shortcut of global access' do
-    let(:log) { Market.find('btcusd') }
+    let(:log) { Market.find("btc#{Peatio.base_fiat_ccy.downcase}") }
 
     it 'bids' do
       expect(log.bids).to be

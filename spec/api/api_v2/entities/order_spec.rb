@@ -2,7 +2,7 @@ describe APIv2::Entities::Order do
   let(:order) do
     create(
       :order_ask,
-      currency: 'btcusd',
+      currency: "btc#{Peatio.base_fiat_ccy.downcase}",
       price: '12.326'.to_d,
       volume: '3.14',
       origin_volume: '12.13'

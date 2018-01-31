@@ -3,8 +3,8 @@ describe APIv2::Tickers, type: :request do
     it 'returns ticker of all markets' do
       get '/api/v2/tickers'
       expect(response).to be_success
-      expect(JSON.parse(response.body)['btcusd']['at']).not_to be_nil
-      expect(JSON.parse(response.body)['btcusd']['ticker']).to eq ({ 'buy' => '0.0', 'sell' => '0.0', 'low' => '0.0', 'high' => '0.0', 'last' => '0.0', 'vol' => '0.0' })
+      expect(JSON.parse(response.body)["btc#{Peatio.base_fiat_ccy.downcase}"]['at']).not_to be_nil
+      expect(JSON.parse(response.body)["btc#{Peatio.base_fiat_ccy.downcase}"]['ticker']).to eq ({ 'buy' => '0.0', 'sell' => '0.0', 'low' => '0.0', 'high' => '0.0', 'last' => '0.0', 'vol' => '0.0' })
     end
   end
 

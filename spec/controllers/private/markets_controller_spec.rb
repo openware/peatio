@@ -25,8 +25,8 @@ describe Private::MarketsController, type: :controller do
 
   def data
     {
-      id: 'btcusd',
-      market: 'btcusd',
+      id: "btc#{Peatio.base_fiat_ccy.downcase}",
+      market: "btc#{Peatio.base_fiat_ccy.downcase}",
       ask: 'btc',
       bid: Peatio.base_fiat_ccy.downcase
     }

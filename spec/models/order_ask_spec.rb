@@ -14,7 +14,7 @@ describe OrderAsk do
     end
 
     before do
-      global = Global.new('btcusd')
+      global = Global.new("btc#{Peatio.base_fiat_ccy.downcase}")
       global.stubs(:asks).returns(price_levels)
       Global.stubs(:[]).returns(global)
     end

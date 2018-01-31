@@ -1,3 +1,3 @@
 describe Global do
-  let(:global) { Global['btcusd'] }
+  let(:global) { Global["btc#{Peatio.base_fiat_ccy.downcase}"] }
 end

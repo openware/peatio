@@ -25,7 +25,7 @@ module Matching
         timestamp: Time.now.to_i,
         volume: 1 + rand(10),
         price:  3000 + rand(3000),
-        market: 'btcusd'
+        market: "btc#{Peatio.base_fiat_ccy.downcase}"
       }.merge(attrs))
     end
 
@@ -36,7 +36,7 @@ module Matching
         timestamp: Time.now.to_i,
         volume: 1 + rand(10),
         locked: 15_000 + rand(15_000),
-        market: 'btcusd'
+        market: "btc#{Peatio.base_fiat_ccy.downcase}"
       }.merge(attrs))
     end
   end
