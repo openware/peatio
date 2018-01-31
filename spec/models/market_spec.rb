@@ -37,7 +37,7 @@ describe Market do
   context 'enumerize' do
     subject { Market.enumerize }
 
-    it { is_expected.to be_has_key :btcusd }
+    it { is_expected.to be_has_key "btc#{Peatio.base_fiat_ccy.downcase}".to_sym }
     it { is_expected.to be_has_key :ptsbtc }
   end
 

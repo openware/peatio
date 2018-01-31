@@ -199,7 +199,7 @@ describe Order, '#done', type: :model do
 end
 
 describe Order, '#head' do
-  let(:currency) { :btcusd }
+  let(:currency) { "btc#{Peatio.base_fiat_ccy.downcase}".to_sym }
 
   describe OrderAsk do
     it 'price priority' do

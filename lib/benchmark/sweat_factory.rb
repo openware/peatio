@@ -17,7 +17,7 @@ module Benchmark
           bid: Peatio.base_fiat_ccy_sym,
           ask: :btc,
           state: Order::WAIT,
-          currency: :btcusd,
+          currency: "btc#{Peatio.base_fiat_ccy.downcase}".to_sym,
           origin_volume: attrs[:volume],
           source: 'Web'
         }.merge(attrs))
