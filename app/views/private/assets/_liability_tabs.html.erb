@@ -89,9 +89,9 @@
     <div id="usd-proof" class="tab-pane">
       <div class="trade-wrapper">
         <div class="assets">
-          <span class="title"><%= t('.usd-assets-total').html_safe %></span>
+          <span class="title"><%= "Total #{Peatio.base_fiat_ccy} assets of exchange:" %></span>
           <span class="currency">
-            <%= t('currency.icon.usd').html_safe %>
+            <%= t("currency.icon.#{Peatio.base_fiat_ccy}").html_safe %>
             <%= @base_fiat_ccy_proof.sum %>
           </span>
         </div>

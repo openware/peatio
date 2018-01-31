@@ -800,7 +800,6 @@ en:
         bch-assets: BCH Assets
         ltc-assets: LTC Assets
         xrp-assets: XRP Assets
-        usd-assets: USD Assets
         dash-assets: Dash Assets
       liability_tabs:
         verify-btc: Verify My BTC Assets
@@ -813,7 +812,6 @@ en:
         bch-assets-total: 'Total BCH assets of exchange: '
         ltc-assets-total: 'Total LTC assets of exchange: '
         xrp-assets-total: 'Total XRP assets of exchange: '
-        usd-assets-total: 'Total USD assets of exchange: '
         dash-assets-total: 'Total Dash assets of exchange: '
       liability_proof:
         title: Proof of Liabilities
