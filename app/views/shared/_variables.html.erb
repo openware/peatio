@@ -1,0 +1,3 @@
+<% if defined?(Peatio) && ENV['BASE_FIAT_CCY'].present? %>
+  <meta name="base-fiat-ccy" content="<%= ENV['BASE_FIAT_CCY'] %>">
+<% end %>
