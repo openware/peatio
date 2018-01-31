@@ -3,7 +3,7 @@ describe Private::MarketsController, type: :controller do
   before { session[:member_id] = member.id }
 
   context 'logged in user' do
-    describe 'GET /markets/btcusd' do
+    describe "GET /markets/btc#{Peatio.base_fiat_ccy.downcase}" do
       before { get :show, data }
 
       it { expect(response.status).to eq 200 }
@@ -13,7 +13,7 @@ describe Private::MarketsController, type: :controller do
   context 'non-login user' do
     before { session[:member_id] = nil }
 
-    describe 'GET /markets/btcusd' do
+    describe "GET /markets/btc#{Peatio.base_fiat_ccy.downcase}" do
       before { get :show, data }
 
       it { expect(response.status).to eq 200 }
