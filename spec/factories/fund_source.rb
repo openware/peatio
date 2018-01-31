@@ -13,7 +13,7 @@ FactoryBot.define do
       currency 'usd'
     end
 
-    factory :usd_fund_source, traits: [:usd]
+    factory :base_fiat_ccy_fund_source, traits: [:usd]
     factory :btc_fund_source
   end
 end

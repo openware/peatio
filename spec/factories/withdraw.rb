@@ -30,7 +30,7 @@ FactoryBot.define do
     member { create :member }
     currency :usd
     sum { 1000.to_d }
-    fund_source_id { create(:usd_fund_source).id }
+    fund_source { create(:base_fiat_ccy_fund_source) }
     type 'Withdraws::Bank'
 
     account do

@@ -2,9 +2,9 @@ describe APIv2::Withdraws, type: :request do
   let(:member)         { create(:member) }
   let(:token)          { create(:api_token, member: member) }
   let!(:btc_withdraws) { create_list(:satoshi_withdraw, 20, member: member) }
-  let!(:usd_withdraws) { create_list(:bank_withdraw, 20, member: member) }
+  let!(:base_fiat_ccy_withdraws) { create_list(:bank_withdraw, 20, member: member) }
   let!(:btc_withdraw_addresses) { create_list(:btc_fund_source, 20, member: member) }
-  let!(:usd_withdraw_addresses) { create_list(:usd_fund_source, 20, member: member) }
+  let!(:base_fiat_ccy_withdraw_addresses) { create_list(:base_fiat_ccy_fund_source, 20, member: member) }
 
   describe 'GET /api/v2/withdraws' do
     it 'should require authentication' do
