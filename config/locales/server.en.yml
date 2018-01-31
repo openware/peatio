@@ -806,7 +806,6 @@ en:
         verify-bch: Verify My BCH Assets
         verify-ltc: Verify My LTC Assets
         verify-xrp: Verify My XRP Assets
-        verify-usd: Verify My USD Assets
         verify-dash: Verify My Dash Assets
         btc-assets-total: 'Total BTC assets of exchange: '
         bch-assets-total: 'Total BCH assets of exchange: '

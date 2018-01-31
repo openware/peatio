@@ -15,10 +15,10 @@ module Private
         @btc_account  = current_user.accounts.with_currency(:btc).first
         @bch_account  = current_user.accounts.with_currency(:bch).first
         @ltc_account  = current_user.accounts.with_currency(:ltc).first
-        @usd_account  = current_user.accounts.with_currency(:usd).first
+        @base_fiat_ccy_account = current_user.accounts.with_currency(:usd).first
         @xrp_account  = current_user.accounts.with_currency(:xrp).first
         @dash_account = current_user.accounts.with_currency(:dash).first
-      end
+     end
     end
 
     def partial_tree

@@ -16,7 +16,7 @@
       <a class="dash-proof" href="#dash-proof" data-toggle="tab"><%= t('.verify-dash').html_safe %></a>
     </li>
     <li>
-      <a class="usd-proof" href="#usd-proof" data-toggle="tab"><%= t('.verify-usd').html_safe %></a>
+      <a class="usd-proof" href="#usd-proof" data-toggle="tab"><%= "Verify My #{Peatio.base_fiat_ccy} Assets" %></a>
     </li>
   </ul>
 
@@ -95,7 +95,7 @@
             <%= @base_fiat_ccy_proof.sum %>
           </span>
         </div>
-        <%= render 'liability_data', account: @usd_account, proof: @base_fiat_ccy_proof %>
+        <%= render 'liability_data', account: @base_fiat_ccy_account, proof: @base_fiat_ccy_proof %>
       </div>
     </div>
   </div>
