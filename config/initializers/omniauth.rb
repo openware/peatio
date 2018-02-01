@@ -1,17 +1,22 @@
 Rails.application.config.middleware.use OmniAuth::Builder do
-  if ENV['AUTH0_OAUTH2_SIGN_IN']
-    provider :auth0,
-             ENV.fetch('AUTH0_OAUTH2_CLIENT_ID'),
-             ENV.fetch('AUTH0_OAUTH2_CLIENT_SECRET'),
-             ENV.fetch('AUTH0_OAUTH2_DOMAIN'),
-             { authorize_params: {
-                 scope: ENV.fetch('AUTH0_OAUTH2_SCOPE', 'openid profile email')
+  case ENV['OAUTH2_SIGN_IN_PROVIDER']
+    when 'auth0'
+      provider :auth0,
+               ENV.fetch('AUTH0_OAUTH2_CLIENT_ID'),
+               ENV.fetch('AUTH0_OAUTH2_CLIENT_SECRET'),
+               ENV.fetch('AUTH0_OAUTH2_DOMAIN'),
+               { authorize_params: {
+                   scope: ENV.fetch('AUTH0_OAUTH2_SCOPE', 'openid profile email')
+                 }
                }
-             }
-  end
+    when 'google'
+      provider :google_oauth2, ENV.fetch('GOOGLE_CLIENT_ID'), ENV.fetch('GOOGLE_CLIENT_SECRET')
 
-  if ENV['GOOGLE_OAUTH2_SIGN_IN']
-    provider :google_oauth2, ENV.fetch('GOOGLE_CLIENT_ID'), ENV.fetch('GOOGLE_CLIENT_SECRET')
+    when 'barong'
+      provider :barong,
+               ENV.fetch('BARONG_CLIENT_ID'),
+               ENV.fetch('BARONG_CLIENT_SECRET'),
+               domain: ENV.fetch('BARONG_DOMAIN')
   end
 end
 

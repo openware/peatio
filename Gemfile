@@ -15,12 +15,12 @@ gem 'jbuilder'
 gem 'omniauth',               '~> 1.8.1'
 gem 'omniauth-auth0',         '~> 2.0.0'
 gem 'omniauth-google-oauth2', '~> 0.5.2'
+gem 'omniauth-barong',        '~> 0.1.0'
 
 gem 'figaro'
 gem 'hashie', '~> 3.0'
 
 gem 'aasm', '~> 3.4.0'
-gem 'amqp', '~> 1.3.0'
 gem 'bunny', '~> 2.9.0'
 gem 'cancancan'
 gem 'enumerize'
@@ -57,10 +57,10 @@ gem 'grape', '~> 1.0.1'
 gem 'grape-entity', '~> 0.5.2'
 gem 'grape-swagger', '~> 0.27.3'
 gem 'grape-swagger-ui', '~> 2.2.8'
-gem 'rack-attack', '~> 3.0.0'
+gem 'rack-attack', '~> 4.3.1'
 gem 'easy_table'
 gem 'carrierwave', '~> 0.10.0'
-gem 'rest-client', '~> 1.6.8'
+gem 'faraday', '~> 0.12'
 gem 'jwt', '~> 1.5'
 gem 'email_validator', '~> 1.6'
 gem 'clipboard-rails', '~> 1.7'
@@ -68,6 +68,8 @@ gem 'god', '~> 0.13.7', require: false
 gem 'mini_racer', '~> 0.1', require: false
 gem 'arel-is-blank', '~> 1.0'
 gem 'sentry-raven', '~> 2.7', require: false
+gem 'memoist', '~> 0.16'
+gem 'method-not-implemented', '~> 1.0'
 
 group :development, :test do
   gem 'factory_bot_rails'
