@@ -20,7 +20,7 @@ log
 *.log
 tmp
 
-# Ignore all config files, including isolated for refactoring spec/fixtures/currencies.yml
+# Ignore all config files, including isolated for refactoring /config/configs/currencies.yml
 /config/application.yml
 /config/currencies.yml
 /config/configs/currencies.yml
