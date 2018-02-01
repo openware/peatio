@@ -2,6 +2,8 @@ module Private
   class OrderAsksController < BaseController
     include Concerns::OrderCreation
 
+    skip_before_action :verify_authenticity_token
+
     def create
       @order = OrderAsk.new(order_params(:order_ask))
       order_submit
