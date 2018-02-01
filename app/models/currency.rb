@@ -17,6 +17,32 @@ class Currency < ActiveRecord::Base
 
   serialize :options, JSON
 
+  validates :key,
+            :code,
+            :name,
+            length: { maximum: 30 },
+            presence: true
+
+  validates :symbol, length: { maximum: 1 }
+  validates :type,
+            length: { maximum: 30 }
+  validates :json_rpc_endpoint,
+            :rest_api_endpoint,
+            length: { maximum: 200 },
+            url: { allow_blank: true }
+  validates :hot_wallet_address,
+            length: { maximum: 200 },
+            presence: true
+  validates :options,
+            length: { maximum: 1000 },
+            presence: true
+  validates :wallet_url_template,
+            :transaction_url_template,
+            length: { maximum: 200 },
+            url: { allow_blank: false }
+  validates :quick_withdraw_limit,
+            presence: true
+
   class << self
     delegate :assets,
              :enumerize,

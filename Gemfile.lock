@@ -397,6 +397,9 @@ GEM
       thread_safe (~> 0.1)
     uglifier (4.1.3)
       execjs (>= 0.3.0, < 3)
+    validate_url (1.0.2)
+      activemodel (>= 3.0.0)
+      addressable
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -485,6 +488,7 @@ DEPENDENCIES
   slim-rails
   timecop
   uglifier (~> 4.1)
+  validate_url (~> 1.0.2)
 
 BUNDLED WITH
    1.16.1

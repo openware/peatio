@@ -3,6 +3,7 @@ FactoryBot.define do
     hot_wallet_address 'unknown'
     transaction_url_template 'https://example.com'
     wallet_url_template 'https://example.com'
+    options '{}'
 
     factory :currency_usd do
       key 'dollar'
