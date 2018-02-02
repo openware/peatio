@@ -34,8 +34,7 @@ class Currency < ActiveRecord::Base
             length: { maximum: 200 },
             presence: true
   validates :options,
-            length: { maximum: 1000 },
-            presence: true
+            length: { maximum: 1000 }
   validates :wallet_url_template,
             :transaction_url_template,
             length: { maximum: 200 },
@@ -86,6 +85,10 @@ class Currency < ActiveRecord::Base
 
   def currency_value
     code
+  end
+
+  def code=(code)
+    write_attribute(:code, code.to_s.upcase)
   end
 
 end

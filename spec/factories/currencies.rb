@@ -30,20 +30,25 @@ FactoryBot.define do
   end
 end
 
-# t.string  :key,                      limit: 30, null: false
-# t.string  :code,                     limit: 30, null: false
-# t.string  :name,                     limit: 30, null: false
-# t.string  :symbol,                   limit: 1
-# t.string  :type,                     limit: 30, null: false, default: 'coin'
-# t.string  :json_rpc_endpoint,        limit: 200
-# t.string  :rest_api_endpoint,        limit: 200
-# t.string  :hot_wallet_address,       limit: 200, null: false
-# t.string  :wallet_url_template,      limit: 200, null: false
-# t.string  :transaction_url_template, limit: 200, null: false
-# t.decimal :quick_withdraw_limit,     precision: 23, scale: 10, unsigned: true, null: false, default: 0
-# t.string  :options,                  limit: 1000, default: '{}', null: false
-# t.boolean :visible,                  default: true
-# t.timestamps                         null: false
+# | currencies | CREATE TABLE `currencies` (
+#   `id` int(11) NOT NULL AUTO_INCREMENT,
+#   `key` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+#   `code` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+#   `name` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+#   `symbol` varchar(1) COLLATE utf8_unicode_ci DEFAULT NULL,
+#   `type` varchar(30) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'coin',
+#   `json_rpc_endpoint` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+#   `rest_api_endpoint` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
+#   `hot_wallet_address` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+#   `wallet_url_template` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+#   `transaction_url_template` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+#   `quick_withdraw_limit` decimal(23,10) NOT NULL DEFAULT '0.0000000000',
+#   `options` varchar(1000) COLLATE utf8_unicode_ci NOT NULL DEFAULT '{}',
+#   `visible` tinyint(1) DEFAULT '1',
+#   `created_at` datetime NOT NULL,
+#   `updated_at` datetime NOT NULL,
+#   PRIMARY KEY (`id`)
+# ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci |
 #
 #
 # - id: 1
