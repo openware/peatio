@@ -40,6 +40,9 @@ tags
 # Ignore RubyMine files
 .idea
 
+# Ignore RVM files
+.rvmrc
+
 /vendor/bundle
 /vendor/assets/yarn_components
 .env
