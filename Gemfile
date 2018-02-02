@@ -70,6 +70,7 @@ gem 'arel-is-blank', '~> 1.0'
 gem 'sentry-raven', '~> 2.7', require: false
 
 group :development, :test do
+  gem 'spirit_hands'
   gem 'factory_bot_rails'
   gem 'faker', '~> 1.4.3'
   gem 'binding_of_caller'
