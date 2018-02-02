@@ -10,7 +10,7 @@ describe APIv2::Tickers, type: :request do
 
   describe 'GET /api/v2/tickers/:market' do
     it 'should return market tickers' do
-      get '/api/v2/tickers/btcusd'
+      get "/api/v2/tickers/btc#{Peatio.base_fiat_ccy.downcase}"
       expect(response).to be_success
       expect(JSON.parse(response.body)['ticker']).to eq ({ 'buy' => '0.0', 'sell' => '0.0', 'low' => '0.0', 'high' => '0.0', 'last' => '0.0', 'vol' => '0.0' })
     end

@@ -33,7 +33,8 @@ describe APIv2::Withdraws, type: :request do
     it 'should return withdraws for all currencies by default' do
       signed_get '/api/v2/withdraws', params: { limit: 1000 }, token: token
       expect(response).to be_success
-      expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %w[ BTC USD ]
+      # FIXME: when running specs with BASE_FIAT_CCY=usd Peatio.base_fiat_ccy returns 'usd' instead of 'USD' in this context
+      expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %W[ BTC #{Peatio.base_fiat_ccy.upcase} ]
     end
 
     it 'should return withdraws specified currency' do
@@ -113,7 +114,8 @@ describe APIv2::Withdraws, type: :request do
     it 'should return withdraw addresses for all currencies by default' do
       signed_get '/api/v2/withdraws/addresses', params: { limit: 1000 }, token: token
       expect(response).to be_success
-      expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %w[ BTC USD ]
+      # FIXME: when running specs with BASE_FIAT_CCY=usd Peatio.base_fiat_ccy returns 'usd' instead of 'USD' in this context
+      expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %W[ BTC #{Peatio.base_fiat_ccy.upcase} ]
     end
 
     it 'should return withdraw addresses for specified currency' do

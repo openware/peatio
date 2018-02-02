@@ -15,7 +15,7 @@ feature 'withdraw', js: true do
     @label = 'common address'
     @bank = 'bc'
     @btc_addr = create :btc_fund_source, extra: @label, uid: '1btcaddress', member: member
-    @usd_addr = create :base_fiat_ccy_fund_source, extra: @bank, uid: '1234566890', member: member
+    @base_fiat_ccy_addr = create :base_fiat_ccy_fund_source, extra: @bank, uid: '1234566890', member: member
   end
 
   it 'allows user to add a BTC withdraw address, withdraw BTC' do

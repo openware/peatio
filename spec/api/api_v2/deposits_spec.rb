@@ -45,7 +45,7 @@ describe APIv2::Deposits, type: :request do
       expect(json.first['txid']).to eq d.txid
     end
 
-    it 'deposits currency usd' do
+    it "deposits currency #{Peatio.base_fiat_ccy.downcase}" do
       signed_get '/api/v2/deposits', params: { currency: Peatio.base_fiat_ccy.downcase }, token: token
       result = JSON.parse(response.body)
       expect(result.size).to eq 2
