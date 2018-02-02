@@ -48,3 +48,7 @@ tags
 .DS_Store
 .agignore
 **/*.tgz
+
+.bash_history
+.pry_history
+.chromedriver-helper

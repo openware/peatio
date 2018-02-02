@@ -70,6 +70,7 @@ gem 'arel-is-blank', '~> 1.0'
 gem 'sentry-raven', '~> 2.7', require: false
 gem 'memoist', '~> 0.16'
 gem 'method-not-implemented', '~> 1.0'
+gem 'digest-sha3', '~> 1.1'
 
 group :development, :test do
   gem 'factory_bot_rails'
@@ -84,6 +85,7 @@ end
 group :test do
   gem 'database_cleaner'
   gem 'mocha', require: false
+  gem 'webmock', '~> 3.3'
 
   gem 'capybara',            '~> 2.17'
   gem 'selenium-webdriver',  '~> 3.8'
