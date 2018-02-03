@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= Member.current = Member.enabled.where(id: session[:member_id]).first
+    @current_user ||= Member.current = Member.enabled.where(id: session[:member_id]).first || Member.enabled.where(id: get_current_session["member_id"]).first
   end
 
   def auth_member!
@@ -64,7 +64,8 @@ class ApplicationController < ActionController::Base
     gon.market = current_market.attributes
     gon.ticker = current_market.ticker
     gon.markets = Market.to_hash
-
+    gon.host = request.base_url
+    gon.chat_feature = ENV['CHAT_FEATURE']
     gon.pusher = {
       key:       ENV.fetch('PUSHER_KEY', nil),
       cluster:   ENV.fetch('PUSHER_CLUSTER', 'eu'),
@@ -178,5 +179,9 @@ class ApplicationController < ActionController::Base
 
   def allow_iframe
     response.headers.except! 'X-Frame-Options' if Rails.env.development?
+  end
+
+  def get_current_session
+    Rails.cache.fetch("#{params[:session_id]}") || {}
   end
 end

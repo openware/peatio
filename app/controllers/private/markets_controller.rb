@@ -21,6 +21,7 @@ module Private
       # default to limit order
       @order_bid = OrderBid.new ord_type: 'limit'
       @order_ask = OrderAsk.new ord_type: 'limit'
+      @markets_data = @markets.map{|m| {market: {name: m.name, id: m.id, quote_unit: m.quote_unit}, global_currency: Global[m.id].ticker[:last]} }
 
       set_member_data if current_user
       gon.jbuilder

@@ -43,5 +43,11 @@ module Peatio
 
     # Automatically load and reload constants from "lib/peatio".
     config.paths.add 'lib/peatio', eager_load: true, glob: '*'
+
+    # Enable this to use trading app locally
+    # config.action_dispatch.default_headers = {
+    #     'Access-Control-Allow-Origin' => 'http://localhost:3001',
+    #     'Access-Control-Request-Method' => %w{OPTIONS GET POST DELETE}.join(",")
+    # }
   end
 end

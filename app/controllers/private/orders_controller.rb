@@ -1,6 +1,8 @@
 module Private
   class OrdersController < BaseController
 
+    skip_before_action :verify_authenticity_token
+
     def destroy
       ActiveRecord::Base.transaction do
         order = current_user.orders.find(params[:id])
