@@ -139,7 +139,7 @@
             p id: Unique ID
             p price: trade price
             p volume: trade volume
-            p market: the market trade belongs to, like "btc#{Peatio.base_fiat_ccy.downcase}
+            p market: the market trade belongs to, like btc#{Peatio.base_fiat_ccy.downcase}
             p created_at: trade time
         tr
           td OrderBook
@@ -155,11 +155,11 @@
   .panel-body
     p Buy 1BTC at price 4000 #{Peatio.base_fiat_ccy}:
     pre: code
-      | curl -X POST "#{root_url_with_port_from_request}' -d 'access_key=your_access_key&tonce=1234567&signature=computed_signature&market=btc#{Peatio.base_fiat_ccy.downcase}&price=4000&side=buy&volume=1"
+      | curl -X POST '#{root_url_with_port_from_request}' -d 'access_key=your_access_key&tonce=1234567&signature=computed_signature&market=btc#{Peatio.base_fiat_ccy.downcase}&price=4000&side=buy&volume=1'
 
     p Create multiple orders with a single request:
     pre: code
-      | curl -X POST "#{root_url_with_port_from_request}' -d 'access_key=your_access_key&tonce=123456789&signature=computed_signature&market=btc#{Peatio.base_fiat_ccy.downcase}&orders[][price]=4000&orders[][side]=sell&orders[][volume]=0.5&orders[][price]=3999&orders[][side]=sell&orders[][volume]=0.99"
+      | curl -X POST '#{root_url_with_port_from_request}' -d 'access_key=your_access_key&tonce=123456789&signature=computed_signature&market=btc#{Peatio.base_fiat_ccy.downcase}&orders[][price]=4000&orders[][side]=sell&orders[][volume]=0.5&orders[][price]=3999&orders[][side]=sell&orders[][volume]=0.99'
 
 .panel.panel-default
   .panel-heading
