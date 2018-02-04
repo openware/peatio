@@ -2,6 +2,46 @@
 
 module CoinAPI
   class ETH < BaseAPI
+    class Formatter
+      attr_accessor :currency
+      private       :currency
+
+      def initialize(currency)
+        self.currency = currency
+      end
+
+      def from_input(hexstring)
+        hexstring[10..-1].scan(/.{64}/)
+      end
+
+      def to_address(hexstring)
+        '0x' + hexstring[-40..-1]
+      end
+
+      def to_int(hexstring)
+        return nil if hexstring.nil?
+
+        hexstring.gsub(/^0x/, '')[0..1] == 'ff' ? (hexstring.hex - (2**256)) : hexstring.hex
+      end
+
+      def to_float(hexstring)
+        return nil if hexstring.nil?
+
+        to_int(hexstring).to_f
+      end
+
+      def to_float_with_precision(hexstring)
+        return nil if hexstring.nil?
+
+        to_float(hexstring) / (10**currency.precision)
+      end
+
+      def to_hex(value)
+        value.to_s(16)
+      end
+    end
+    private_constant :Formatter
+
     attr_accessor :json_rpc_endpoint, :request_id
     protected     :json_rpc_endpoint, :request_id
 
@@ -12,13 +52,22 @@ module CoinAPI
       self.request_id = 0
     end
 
-    delegate :precision, to: :currency
-
     def load_balance!
-      do_request(:eth_getBalance, hot_wallet_address, 'latest').hex.to_f / 10 ** precision
+      do_request(:eth_getBalance, hot_wallet_address, 'latest').yield_self do |result|
+        formatter.to_float_with_precision(result)
+      end
+    end
+
+    # You must pass to create ethereum address
+    def create_address!(password)
+      do_request(:personal_newAccount, password)
     end
 
     protected
+
+    def eth_coinbase
+      do_request(:eth_coinbase)
+    end
 
     def connection
       Faraday.new(json_rpc_endpoint).tap do |connection|
@@ -55,5 +104,10 @@ module CoinAPI
     def increment_request_id!
       self.request_id += 1
     end
+
+    def formatter
+      Formatter.new(currency)
+    end
+    memoize :formatter
   end
 end

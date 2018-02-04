@@ -10,18 +10,18 @@ RSpec.describe CoinAPI::ETH do
 
     let(:request_body) do
       {
-        'jsonrpc': '2.0',
-        'method': 'eth_getBalance',
-        'params': %w[0xb3b89717c0cbbce35972d8a8f75bc9cd20748a91 latest],
-        'id': 1
+        jsonrpc: '2.0',
+        method: 'eth_getBalance',
+        params: %w[0xb3b89717c0cbbce35972d8a8f75bc9cd20748a91 latest],
+        id: 1
       }.to_json
     end
 
     let(:response_body) do
       {
-        'jsonrpc': '2.0',
-        'id': 1,
-        'result': '0x28d2360052d640e0'
+        jsonrpc: '2.0',
+        id: 1,
+        result: '0x28d2360052d640e0'
       }.to_json
     end
 
