@@ -16,3 +16,12 @@
   key: protoshare
   code: pts
   coin: true
+- id: 7
+  key: ethereum
+  code: eth
+  symbol: "Ξ"
+  coin: true
+  precision: 18
+  quick_withdraw_max: 1
+  json_rpc_endpoint: http://127.0.0.1:8545
+  hot_wallet_address: '0xb3b89717c0cbbce35972d8a8f75bc9cd20748a91'
