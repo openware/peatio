@@ -84,7 +84,7 @@ end
 group :test do
   gem 'database_cleaner'
   gem 'mocha', require: false
-  gem 'webmock'
+  gem 'webmock', '~> 3.3'
 
   gem 'capybara',            '~> 2.17'
   gem 'selenium-webdriver',  '~> 3.8'

@@ -492,7 +492,7 @@ DEPENDENCIES
   slim-rails
   timecop
   uglifier (~> 4.1)
-  webmock
+  webmock (~> 3.3)
 
 BUNDLED WITH
    1.16.1
