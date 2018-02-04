@@ -3,16 +3,6 @@
 module CoinAPI
   module JsonRPC
     class BaseAPI < ::CoinAPI::BaseAPI
-      # class V1 < JsonRpcBaseAPI
-      #   def json_rpc_params(method, *params)
-      #     {
-      #       jsonrpc: '1.0',
-      #       method: method,
-      #       params: params
-      #     }
-      #   end
-      # end
-
       attr_accessor :json_rpc_endpoint
       protected     :json_rpc_endpoint
 
