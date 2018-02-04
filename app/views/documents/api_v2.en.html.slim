@@ -112,7 +112,7 @@
           td: pre: code
             | {"currency":"#{Peatio.base_fiat_ccy.downcase}","balance":"100243840.0","locked":"0.0"}
           td
-            p currency: Account type, like 'btc' or Peatio.base_fiat_ccy.downcase
+            p currency: Account type, like 'btc' or '#{Peatio.base_fiat_ccy.downcase}'
             p balance: Account balance, exclude locked funds
             p locked: locked funds
         tr
@@ -139,7 +139,7 @@
             p id: Unique ID
             p price: trade price
             p volume: trade volume
-            p market: the market trade belongs to, like btc#{Peatio.base_fiat_ccy.downcase}
+            p market: the market trade belongs to, like 'btc#{Peatio.base_fiat_ccy.downcase}'
             p created_at: trade time
         tr
           td OrderBook
