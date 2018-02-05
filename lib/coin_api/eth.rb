@@ -14,8 +14,8 @@ module CoinAPI
         hexstring[10..-1].scan(/.{64}/)
       end
 
-      def to_address(hexstring)
-        '0x' + hexstring[-40..-1]
+      def from_address(hexstring)
+        with_lead_zero(hexstring[-40..-1])
       end
 
       def to_int(hexstring)
@@ -38,6 +38,14 @@ module CoinAPI
 
       def to_hex(value)
         value.to_s(16)
+      end
+
+      def to_address(address)
+        with_lead_zero(address.gsub(/^0x/, '').rjust(64, '0'))
+      end
+
+      def with_lead_zero(value)
+        "0x#{value}"
       end
     end
     private_constant :Formatter
@@ -71,6 +79,9 @@ module CoinAPI
 
     def connection
       Faraday.new(json_rpc_endpoint).tap do |connection|
+        connection.options[:open_timeout] = 2
+        connection.options[:timeout] = 5
+
         unless json_rpc_endpoint.user.blank?
           connection.basic_auth(json_rpc_endpoint.user, json_rpc_endpoint.password)
         end

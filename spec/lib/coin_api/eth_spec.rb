@@ -3,6 +3,14 @@
 RSpec.describe CoinAPI::ETH do
   let(:eth) { CoinAPI[:eth] }
 
+  around do |example|
+    WebMock.disable_net_connect!
+
+    example.run
+
+    WebMock.allow_net_connect!
+  end
+
   describe '#load_balance!' do
     subject(:load_balance!) do
       eth.load_balance!
