@@ -5,7 +5,7 @@ describe Private::OrderAsksController, type: :controller do
     end
   end
 
-  let(:market) { Market.find("btc#{Peatio.base_fiat_ccy.downcase}") }
+  let(:market) { Market.find('btcusd') }
   let(:params) do
     { market_id: market.id,
       market:    market.id,

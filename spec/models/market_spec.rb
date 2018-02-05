@@ -6,19 +6,19 @@ describe Market do
 
   context 'markets hash' do
     it 'should list all markets info' do
-      expect(Market.to_hash).to eq ({ "btc#{Peatio.base_fiat_ccy.downcase}".to_sym => { name: "BTC/#{Peatio.base_fiat_ccy.upcase}", base_unit: 'btc', quote_unit: Peatio.base_fiat_ccy.downcase } })
+      expect(Market.to_hash).to eq ({ :btcusd => { name: 'BTC/USD', base_unit: 'btc', quote_unit: 'usd' } })
     end
   end
 
   context 'market attributes' do
-    let(:log) { Market.find("btc#{Peatio.base_fiat_ccy.downcase}") }
+    let(:log) { Market.find('btcusd') }
 
     it 'id' do
-      expect(log.id).to eq "btc#{Peatio.base_fiat_ccy.downcase}"
+      expect(log.id).to eq 'btcusd'
     end
 
     it 'name' do
-      expect(log.name).to eq "BTC/#{Peatio.base_fiat_ccy.upcase}"
+      expect(log.name).to eq 'BTC/USD'
     end
 
     it 'base_unit' do
@@ -26,7 +26,7 @@ describe Market do
     end
 
     it 'quote_unit' do
-      expect(log.quote_unit).to eq Peatio.base_fiat_ccy.downcase
+      expect(log.quote_unit).to eq 'usd'
     end
 
     it 'visible' do
@@ -37,12 +37,12 @@ describe Market do
   context 'enumerize' do
     subject { Market.enumerize }
 
-    it { is_expected.to be_has_key "btc#{Peatio.base_fiat_ccy.downcase}".to_sym }
+    it { is_expected.to be_has_key :btcusd }
     it { is_expected.to be_has_key :ptsbtc }
   end
 
   context 'shortcut of global access' do
-    let(:log) { Market.find("btc#{Peatio.base_fiat_ccy.downcase}") }
+    let(:log) { Market.find('btcusd') }
 
     it 'bids' do
       expect(log.bids).to be

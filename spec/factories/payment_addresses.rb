@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :payment_address do
     address 'MyString'
-    account { create(:member).get_account(Peatio.base_fiat_ccy_sym.downcase) }
+    account { create(:member).get_account(:usd) }
 
     trait :btc_address do
       address { Faker::Bitcoin.address }

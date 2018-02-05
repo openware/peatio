@@ -2,7 +2,7 @@ feature 'show account info', js: true do
   let!(:member) { create :member }
 
   let!(:bid_account) do
-    member.get_account(Peatio.base_fiat_ccy.downcase).tap do |a|
+    member.get_account('usd').tap do |a|
       a.plus_funds 1000
       a.save!
     end
@@ -19,7 +19,7 @@ feature 'show account info', js: true do
   let!(:bid_order) { create :order_bid, price: '21.3' }
   let!(:ask_name)  { 'BTC' }
 
-  let(:global) { Global[Market.find("btc#{Peatio.base_fiat_ccy.downcase}")] }
+  let(:global) { Global[Market.find('btcusd')] }
 
   scenario 'user can place a buy order by filling in the order form' do
     sign_in member

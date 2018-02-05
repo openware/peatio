@@ -1,7 +1,7 @@
 describe Matching::Executor do
   let(:alice)  { who_is_billionaire }
   let(:bob)    { who_is_billionaire }
-  let(:market) { Market.find("btc#{Peatio.base_fiat_ccy.downcase}") }
+  let(:market) { Market.find('btcusd') }
   let(:price)  { 10.to_d }
   let(:volume) { 5.to_d }
 
