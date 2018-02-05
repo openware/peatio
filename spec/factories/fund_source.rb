@@ -10,7 +10,7 @@ FactoryBot.define do
     trait :usd do
       extra 'bc'
       uid '123412341234'
-      currency :usd
+      currency 'usd'
     end
 
     factory :usd_fund_source, traits: [:usd]
