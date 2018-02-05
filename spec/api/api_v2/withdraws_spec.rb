@@ -84,6 +84,11 @@ describe APIv2::Withdraws, type: :request do
       signed_post '/api/v2/withdraws', params: { currency: 'BTC', address_id: btc_withdraw_addresses.first.id, amount: '1' }, token: token
       expect(response.code).to eq '201'
     end
+
+    it 'should allow to create withdraw where amount is fraction number' do
+      signed_post '/api/v2/withdraws', params: { currency: 'BTC', address_id: btc_withdraw_addresses.first.id, amount: '0.1' }, token: token
+      expect(response.code).to eq '201'
+    end
   end
 
   describe 'GET /api/v2/withdraws/addresses' do
