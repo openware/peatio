@@ -43,7 +43,7 @@ en:
         usd: USD
         btc: BTC
         xrp: XRP
-      deposit_fiat:
+      deposit_usd:
         title: USD Deposit
         desc: "To deposit via Bank transfer, please follow these steps:"
         desc_item_1: "1. Submit the form to get the identification code."
@@ -57,7 +57,7 @@ en:
         add: Add
         manage: Manage
         amount: Deposit Amount
-        min_amount: At least 10
+        min_amount: At least 10 USD
         to_account: Account
         to_name: Name
         to_bank_name: Bank Name
@@ -111,7 +111,7 @@ en:
         warning: Warning
         suspect: Suspect
 
-      withdraw_fiat:
+      withdraw_usd:
         title: USD Withdraw
         intro: Select the bank to cash withdrawal amount and enter the account number and complete submission.
         intro_2: Your bank account and name must be consistent with the real-name authentication name.
