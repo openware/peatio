@@ -60,8 +60,7 @@ module CoinAPI
     end
 
     def method_identifier(method)
-      method_hex = '0x' + method.each_byte.map { |b| formatter.to_hex(b) }.join
-      do_request(:web3_sha3, method_hex)[0..9]
+      '0x' + Digest::SHA3.hexdigest(method, 256)[0..7]
     end
 
     def build_deposit(tx)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe CoinAPI::ERC20 do
+RSpec.fdescribe CoinAPI::ERC20 do
   let(:erc20) { CoinAPI[:erc20] }
 
   describe '#load_balance!' do
@@ -27,24 +27,6 @@ RSpec.describe CoinAPI::ERC20 do
           }.to_json
         )
 
-      # stub web3_sha3 request
-      stub_request(:post, 'http://127.0.0.1:8545/')
-        .with(
-          body: {
-            jsonrpc: '2.0',
-            method: 'web3_sha3',
-            params: %w[0x62616c616e63654f66286164647265737329],
-            id: 2
-          }.to_json
-        )
-        .to_return(
-          body: {
-            jsonrpc: '2.0',
-            id: 2,
-            result: '0x70a08231b98ef4ca268c9cc3f6b4590e4bfec28280db06bb5d45e689f2a360be'
-          }.to_json
-        )
-
       # stub eth_call request
       stub_request(:post, 'http://127.0.0.1:8545/')
         .with(
@@ -58,13 +40,13 @@ RSpec.describe CoinAPI::ERC20 do
               },
               'latest'
             ],
-            id: 3
+            id: 2
           }.to_json
         )
         .to_return(
           body: {
             jsonrpc: '2.0',
-            id: 3,
+            id: 2,
             result: '0x0000000000000000000000000000000000000000000037712ea5f4c8d6a80000'
           }.to_json
         )
@@ -221,24 +203,6 @@ RSpec.describe CoinAPI::ERC20 do
     let(:fee) { 1000 }
 
     before do
-      # stub web3_sha3 request
-      stub_request(:post, 'http://127.0.0.1:8545/')
-        .with(
-          body: {
-            jsonrpc: '2.0',
-            method: 'web3_sha3',
-            params: %w[0x7472616e7366657228616464726573732c75696e7432353629],
-            id: 1
-          }.to_json
-        )
-        .to_return(
-          body: {
-            jsonrpc: '2.0',
-            id: 1,
-            result: '0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b'
-          }.to_json
-        )
-
       # stub eth_coinbase
       stub_request(:post, 'http://127.0.0.1:8545/')
         .with(
@@ -246,13 +210,13 @@ RSpec.describe CoinAPI::ERC20 do
             jsonrpc: '2.0',
             method: 'eth_coinbase',
             params: [],
-            id: 2
+            id: 1
           }.to_json
         )
         .to_return(
           body: {
             jsonrpc: '2.0',
-            id: 2,
+            id: 1,
             result: '0x89Af4bF02126b56fc2c24BC324154fF3628Bd946'
           }.to_json
         )
@@ -270,12 +234,12 @@ RSpec.describe CoinAPI::ERC20 do
                   gas: '0x3e8'
                 }
               ],
-              id: 3
+              id: 2
             }.to_json
           )
           .to_return(
             body: {
-              id: 3,
+              id: 2,
               jsonrpc: '2.0',
               result: '0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331'
             }.to_json
