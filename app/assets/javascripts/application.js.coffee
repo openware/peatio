@@ -63,6 +63,3 @@ $ ->
       height: $el.data('height')
 
   FlashMessageUI.attachTo('.flash-message')
-
-@Peatio =
-  baseFiatCcy: document.querySelector('base-fiat-ccy')
