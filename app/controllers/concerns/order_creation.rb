@@ -11,17 +11,18 @@ module Concerns
       params[order][:volume] = params[order][:origin_volume]
       params[order][:source] = 'Web'
       params.require(order).permit(
-        :bid, :ask, :currency, :price, :source,
-        :state, :origin_volume, :volume, :member_id, :ord_type)
+          :bid, :ask, :currency, :price, :source,
+          :state, :origin_volume, :volume, :member_id, :ord_type)
     end
 
     def order_submit
       begin
         Ordering.new(@order).submit
         render status: 200, json: success_result
-      rescue => e
-        Rails.logger.error "Member id=#{current_user.id} failed to submit order.", params.inspect
-        report_exception(e)
+      rescue
+        Rails.logger.warn "Member id=#{current_user.id} failed to submit order: #{$!}"
+        Rails.logger.warn params.inspect
+        Rails.logger.warn $!.backtrace[0,20].join("\n")
         render status: 500, json: error_result(@order.errors)
       end
     end
