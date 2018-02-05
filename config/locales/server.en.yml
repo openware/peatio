@@ -340,16 +340,6 @@ en:
     pab: Ping An Bank Co., Ltd.
     gdb: Guangdong Development Bank
     psbc: Postal Savings Bank of China
-  market:
-    currency:
-      btc: BTC
-      bch: BCH
-      xrp: XRP
-      usd: USD
-      doge: DOGE
-      pts: PTS
-      ltc: LTC
-      dash: Dash
   currency:
     satoshi:
       key: BTC
@@ -807,13 +797,13 @@ en:
         verify-bch: Verify My BCH Assets
         verify-ltc: Verify My LTC Assets
         verify-xrp: Verify My XRP Assets
-        verify-usd: Verify My USD Assets
+        verify-fiat: Verify My %{currency} Assets
         verify-dash: Verify My Dash Assets
         btc-assets-total: 'Total BTC assets of exchange: '
         bch-assets-total: 'Total BCH assets of exchange: '
         ltc-assets-total: 'Total LTC assets of exchange: '
         xrp-assets-total: 'Total XRP assets of exchange: '
-        usd-assets-total: 'Total USD assets of exchange: '
+        fiat-assets-total: 'Total %{currency} assets of exchange: '
         dash-assets-total: 'Total Dash assets of exchange: '
       liability_proof:
         title: Proof of Liabilities

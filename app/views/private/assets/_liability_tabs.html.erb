@@ -16,7 +16,7 @@
       <a class="dash-proof" href="#dash-proof" data-toggle="tab"><%= t('.verify-dash').html_safe %></a>
     </li>
     <li>
-      <a class="<%= Peatio.base_fiat_ccy.downcase %>-proof" href="#<%= Peatio.base_fiat_ccy.downcase %>-proof" data-toggle="tab"><%= "Verify My #{Peatio.base_fiat_ccy} Assets" %></a>
+      <a class="fiat-proof" href="#fiat-proof" data-toggle="tab"><%= t('.verify-fiat', currency: Peatio.base_fiat_ccy).html_safe %></a>
     </li>
   </ul>
 
@@ -86,16 +86,15 @@
       </div>
     </div>
 
-    <div id="<%= Peatio.base_fiat_ccy.downcase %>-proof" class="tab-pane">
+    <div id="fiat-proof" class="tab-pane">
       <div class="trade-wrapper">
         <div class="assets">
-          <span class="title"><%= "Total #{Peatio.base_fiat_ccy} assets of exchange:" %></span>
+          <span class="title"><%= t('.fiat-assets-total', currency: Peatio.base_fiat_ccy).html_safe %></span>
           <span class="currency">
-            <%= t("currency.icon.#{Peatio.base_fiat_ccy}").html_safe %>
-            <%= @base_fiat_ccy_proof.sum %>
+            <%= @fiat_proof.sum %>
           </span>
         </div>
-        <%= render 'liability_data', account: @base_fiat_ccy_account, proof: @base_fiat_ccy_proof %>
+        <%= render 'liability_data', account: @fiat_account, proof: @fiat_proof %>
       </div>
     </div>
   </div>

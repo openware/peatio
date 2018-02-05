@@ -100,10 +100,6 @@ ru:
         sum: Сумма
         amount: Сумма
         fee: Комиссия
-  market:
-    currency:
-      btc: BTC
-      usd: USD
   currency:
     satoshi:
       key: BTC

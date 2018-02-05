@@ -17,7 +17,10 @@ class Withdraw extends PeatioModel.Model
   pathName: ->
     switch @currency.toUpperCase()
       when Peatio.baseFiatCcy then 'banks'
-      when 'BTC' then 'satoshis'
-      when 'XRP' then 'ripples'
+      when 'BTC'  then 'satoshis'
+      when 'XRP'  then 'ripples'
+      when 'LTC'  then 'litoshis'
+      when 'BCH'  then 'bitcoin_cash'
+      when 'DASH' then 'duffs'
 
 window.Withdraw = Withdraw

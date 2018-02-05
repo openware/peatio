@@ -3,21 +3,21 @@ module Private
     skip_before_action :auth_member!, only: [:index]
 
     def index
-      @base_fiat_ccy_assets = Currency.assets(Peatio.base_fiat_ccy.downcase)
-      @btc_proof            = Proof.current :btc
-      @bch_proof            = Proof.current :bch
-      @ltc_proof            = Proof.current :ltc
-      @base_fiat_ccy_proof  = Proof.current Peatio.base_fiat_ccy_sym.downcase
-      @xrp_proof            = Proof.current :xrp
-      @dash_proof           = Proof.current :dash
+      @fiat_assets = Currency.assets(Peatio.base_fiat_ccy.downcase)
+      @btc_proof   = Proof.current :btc
+      @bch_proof   = Proof.current :bch
+      @ltc_proof   = Proof.current :ltc
+      @fiat_proof  = Proof.current Peatio.base_fiat_ccy_sym.downcase
+      @xrp_proof   = Proof.current :xrp
+      @dash_proof  = Proof.current :dash
 
       if current_user
-        @btc_account           = current_user.accounts.with_currency(:btc).first
-        @bch_account           = current_user.accounts.with_currency(:bch).first
-        @ltc_account           = current_user.accounts.with_currency(:ltc).first
-        @base_fiat_ccy_account = current_user.accounts.with_currency(Peatio.base_fiat_ccy_sym.downcase).first
-        @xrp_account           = current_user.accounts.with_currency(:xrp).first
-        @dash_account          = current_user.accounts.with_currency(:dash).first
+        @btc_account  = current_user.accounts.with_currency(:btc).first
+        @bch_account  = current_user.accounts.with_currency(:bch).first
+        @ltc_account  = current_user.accounts.with_currency(:ltc).first
+        @fiat_account = current_user.accounts.with_currency(Peatio.base_fiat_ccy_sym.downcase).first
+        @xrp_account  = current_user.accounts.with_currency(:xrp).first
+        @dash_account = current_user.accounts.with_currency(:dash).first
       end
     end
 
