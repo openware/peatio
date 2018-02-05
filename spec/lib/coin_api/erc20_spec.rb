@@ -70,7 +70,7 @@ RSpec.fdescribe CoinAPI::ERC20 do
         .with(
           body: {
             jsonrpc: '2.0',
-            method: 'eth_getTransactionByHash',
+            method: 'eth_getTransactionReceipt',
             params: %w[0xa4c2bdbe4ff397d7d3a1fb18422be513eceeccd4abe76e84fcb38fa87547dcbe],
             id: 1
           }.to_json
@@ -80,20 +80,34 @@ RSpec.fdescribe CoinAPI::ERC20 do
             jsonrpc: '2.0',
             id: 1,
             result: {
-              blockHash: '0x54b57d657de213acbe5c6df88370d03429f0ea0ed25f116cfde7e16de14b7fce',
-              blockNumber: '0x16074d',
-              from: '0x89af4ef02126b56fc9c24fc324154ff3628bd946',
-              gas: '0x2e2c3',
-              gasPrice: '0x4e6d5aa1a',
-              hash: '0xa4c2bdbe4ff397d7d3a1fb18422be513eceeccd4abe76e84fcb38fa87547dcbe',
-              input: '0xa9059cbb000000000000000000000000dccfff1506a8518abf4102cae582eb7ce7972460000000000000000000000000000000000000000000000001a055690d9db80000',
-              nonce: '0x38',
-              to: '0x6a472aab862eabc632818d07d3c46a4bca6ae561',
-              transactionIndex: '0x1',
-              value: '0x0',
-              v: '0x2c',
-              r: '0x97e3f71d9bb49c165eb36f06af4a5f823d6a443c022a9b6230254545e4841627',
-              s: '0x28d7eec371eededfdc9dd1a7f315f8aded4518a4c2ce47b082215f52a871389f'
+              blockHash: "0x23439b3e5b5e76a3f39c1faad21822171d8a228aa4582b3d94d4487b36592498",
+              blockNumber: "0x16074d",
+              contractAddress: nil,
+              cumulativeGasUsed: "0x27d2c6",
+              from: "0x89af4ef02126b56fc9c24fc324154ff3628bd946",
+              gasUsed: "0x93b9",
+              logs: [
+                {
+                  address: "0x6a472aab862eabc632818d07d3c46a4bca6ae561",
+                  topics: [
+                    "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+                    "0x00000000000000000000000089af4ef02126b56fc9c24fc324154ff3628bd946",
+                    "0x000000000000000000000000dccfff1506a8518abf4102cae582eb7ce7972460"
+                  ],
+                  data: "0x000000000000000000000000000000000000000000000001a055690d9db80000",
+                  blockNumber: "0x1a31bb",
+                  transactionHash: "0x133b177d5462a1b092a74e197d2cd1613b4eb4cf0450db4q0f1c090e37b8b2698",
+                  transactionIndex: "0x5",
+                  blockHash: "0x23439b3e5b5e76a3f39c1faad21822171d8a228aa4582b3d94d4487b36592498",
+                  logIndex: "0x19",
+                  removed: false
+                }
+              ],
+              logsBloom: "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000200000000000000000000000000000000000100000000000000000000010040000800000000000000000000000000000000000000000004000000000000000000000002000000000000000000000000000000000000200000000000000000000000000000000000000002000000000000000000000000000000000000000000",
+              status: "0x1",
+              to: "0x6a472aab862eabc632818d07d3c46a4bca6ae561",
+              transactionHash: "0xa4c2bdbe4ff397d7d3a1fb18422be513eceeccd4abe76e84fcb38fa87547dcbe",
+              transactionIndex: "0x5"
             }
           }.to_json
         )

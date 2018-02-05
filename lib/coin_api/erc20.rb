@@ -3,7 +3,9 @@
 module CoinAPI
   class ERC20 < ETH
     ADDRESS_REGEXP = /\A0x[a-fA-F0-9]{40}\z/
-    private_constant :ADDRESS_REGEXP
+    TRANSFER_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    SUCCESS_STATUS = '0x1'
+    private_constant :ADDRESS_REGEXP, :TRANSFER_IDENTIFIER, :SUCCESS_STATUS
 
     delegate :token_address, to: :currency
 
@@ -16,7 +18,7 @@ module CoinAPI
     end
 
     def load_deposit!(txid)
-      do_request(:eth_getTransactionByHash, txid).yield_self { |tx| build_deposit(tx) }
+      do_request(:eth_getTransactionReceipt, txid).yield_self { |tx| build_deposit(tx) }
     end
 
     def inspect_address!(address)
@@ -64,12 +66,21 @@ module CoinAPI
     end
 
     def build_deposit(tx)
-      address_hex, amount_hex = formatter.from_input(tx.fetch('input'))
+      return {} unless tx['status'] == SUCCESS_STATUS
+
+      entries = tx['logs'].each_with_object([]) do |log, result|
+        next unless log['topics'].first == TRANSFER_IDENTIFIER
+
+        result << {
+          amount: formatter.to_float_with_precision(log['data']),
+          address: formatter.to_address(log['topics'].last)
+        }
+      end
 
       {
-        id: tx.fetch('hash'),
+        id: tx.fetch('transactionHash'),
         confirmations: calculate_confirmations(formatter.to_int(tx.fetch('blockNumber'))),
-        entries: [{amount: formatter.to_float_with_precision(amount_hex), address: formatter.to_address(address_hex)}]
+        entries: entries
       }
     end
 
