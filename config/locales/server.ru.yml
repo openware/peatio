@@ -100,13 +100,6 @@ ru:
         sum: Сумма
         amount: Сумма
         fee: Комиссия
-  currency:
-    satoshi:
-      key: BTC
-      code: BTC
-    dollar:
-      key: USD
-      code: USD
   datagrid:
     admin_deposits_grid:
       columns:
@@ -193,9 +186,6 @@ ru:
     bank:
       member_name: Участник
   enumerize:
-    currency:
-      usd: USD
-      btc: BTC
     deposit:
       aasm_state:
         accepted: Одобрен

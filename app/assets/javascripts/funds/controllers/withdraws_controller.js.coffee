@@ -12,6 +12,8 @@ app.controller 'WithdrawsController', ['$scope', '$stateParams', '$http', '$gon'
   $scope.account = Account.findBy('currency', $scope.currency)
   $scope.balance = $scope.account.balance
   $scope.withdraw_channel = WithdrawChannel.findBy('currency', $scope.currency)
+  $scope.fiatCurrency = BASE_FIAT_CCY
+  $scope.fiatCurrencyTranslationLocals = currency: BASE_FIAT_CCY
 
   $scope.selected_fund_source_id = (newId) ->
     if angular.isDefined(newId)
