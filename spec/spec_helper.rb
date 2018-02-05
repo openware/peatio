@@ -54,13 +54,14 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :deletion
-    FactoryBot.create(:currency_usd)
-    FactoryBot.create(:currency_btc)
-    FactoryBot.create(:currency_pts)
   end
 
   config.before(:each) do
     DatabaseCleaner.start
+
+    FactoryBot.create(:currency_usd)
+    FactoryBot.create(:currency_btc)
+    FactoryBot.create(:currency_pts)
 
     FileUtils.rm_rf(File.join(__dir__, 'tmp', 'cache'))
     AMQPQueue.stubs(:publish)

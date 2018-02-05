@@ -44,7 +44,7 @@ class Currency < ActiveRecord::Base
 
   class << self
     delegate :assets,
-             :enumerize,
+             # :enumerize,
              # :all,
              # :all_with_invisible,
              # :codes,
