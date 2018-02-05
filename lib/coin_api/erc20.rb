@@ -27,10 +27,9 @@ module CoinAPI
       }
     end
 
-    def create_withdrawal!(issuer, recipient, amount, fee)
+    def create_withdrawal!(_issuer, recipient, amount, fee)
       data = build_data(
-        'transferFrom(address,address,uint256)',
-        issuer.fetch(:address),
+        'transfer(address,uint256)',
         recipient.fetch(:address),
         formatter.to_hex(amount)
       )

@@ -227,7 +227,7 @@ RSpec.describe CoinAPI::ERC20 do
           body: {
             jsonrpc: '2.0',
             method: 'web3_sha3',
-            params: %w[0x7472616e7366657246726f6d28616464726573732c616464726573732c75696e7432353629],
+            params: %w[0x7472616e7366657228616464726573732c75696e7432353629],
             id: 1
           }.to_json
         )
@@ -235,7 +235,7 @@ RSpec.describe CoinAPI::ERC20 do
           body: {
             jsonrpc: '2.0',
             id: 1,
-            result: '0x23b872dd7302113369cda2901243429419bec145408fa8b352b3dd92b66c680b'
+            result: '0xa9059cbb2ab09eb219583f4a59a5d0623ade346d962bcd4e46b11da047c9049b'
           }.to_json
         )
 
@@ -266,7 +266,7 @@ RSpec.describe CoinAPI::ERC20 do
                 {
                   from: '0x89Af4bF02126b56fc2c24BC324154fF3628Bd946',
                   to: '0x6a472aab762eabd632818d07d3c46b4bca6ae733',
-                  data: '0x23b872dd00000000000000000000000089Af4bF02126b56fc2c24BC324154fF3628Bd9460000000000000000000000003a672aab262eabc632818d07d3c46a4bca6be1230000000000000000000000000000000000000000000000000000000000007530',
+                  data: '0xa9059cbb0000000000000000000000003a672aab262eabc632818d07d3c46a4bca6be1230000000000000000000000000000000000000000000000000000000000007530',
                   gas: '0x3e8'
                 }
               ],

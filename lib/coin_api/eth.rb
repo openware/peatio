@@ -58,7 +58,7 @@ module CoinAPI
       end
     end
 
-    # You must pass to create ethereum address
+    # You must pass password to create ethereum address
     def create_address!(password)
       do_request(:personal_newAccount, password)
     end
