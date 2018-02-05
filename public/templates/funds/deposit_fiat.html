@@ -9,7 +9,7 @@
   <span class="text-danger">{{ "funds.deposit_fiat.attention" | t }}</span>
 </div>
 
-<form id="usd_deposit" name="deposit_form" class="form form-horizontal transfer-form" ng-controller="DepositsController as depositsCtrl" ng-submit="deposit_form.$valid && depositsCtrl.createDeposit(currency)" novalidate>
+<form name="deposit_form" class="form form-horizontal transfer-form" ng-controller="DepositsController as depositsCtrl" ng-submit="deposit_form.$valid && depositsCtrl.createDeposit(currency)" novalidate>
 
   <table class="table">
     <tr>
