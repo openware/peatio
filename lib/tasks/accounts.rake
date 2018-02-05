@@ -1,5 +1,5 @@
 namespace :accounts do
-  desc "Add new currency accounts to existing users"
+  desc 'Create missing accounts for existing members.'
   task touch: :environment do
     Member.find_each(&:touch_accounts)
   end
