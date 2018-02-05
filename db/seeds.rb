@@ -9,8 +9,8 @@ Currency.create!(
   json_rpc_endpoint: nil,
   rest_api_endpoint: nil,
   hot_wallet_address: 'unknown',
-  wallet_url_template: 'https://example.com',
-  transaction_url_template: 'https://example.com',
+  wallet_url_template: 'https://example.com', #optional
+  transaction_url_template: 'https://example.com', #optional
   quick_withdraw_limit: 10,
   options: {},
   visible: true
@@ -29,12 +29,14 @@ Currency.create!(
   transaction_url_template: 'https://blockchain.info/tx/#{txid}',
   quick_withdraw_limit: 11,
   options: {
-    bitgo_test_net:              'on',
-    bitgo_wallet_id:             '~',
-    bitgo_wallet_address:        '~',
-    bitgo_wallet_passphrase:     '~',
+    bitgo_test_net:              true,
+    bitgo_wallet_id:             nil,
+    bitgo_wallet_address:        nil,
+    bitgo_wallet_passphrase:     nil,
     bitgo_rest_api_root:         'https://test.bitgo.com/api/v2',
-    bitgo_rest_api_access_token: '~'
+    bitgo_rest_api_access_token: nil
   },
   visible: true
 )
+
+# Insert all currencies from currencies.yml
