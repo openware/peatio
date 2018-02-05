@@ -54,7 +54,7 @@ class Currency < ActiveRecord::Base
 
   delegate :precision,
            :api,
-           :fiat?,
+           # :fiat?,
            :balance_cache_key,
            :balance,
            :decimal_digit,
