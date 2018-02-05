@@ -6,7 +6,8 @@
 # That's why it is here.
 require_dependency 'peatio'
 
-Rails.application.eager_load! if Rails.env.development?
+Dir['app/models/deposits/**/*.rb'].each { |x| require_dependency x }
+Dir['app/models/withdraws/**/*.rb'].each { |x| require_dependency x }
 
 class ActionDispatch::Routing::Mapper
   def draw(routes_name)

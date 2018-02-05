@@ -99,14 +99,6 @@ ActiveRecord::Schema.define(version: 20180112151205) do
   add_index "authentications", ["member_id"], name: "index_authentications_on_member_id", using: :btree
   add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", using: :btree
 
-  create_table "comments", force: :cascade do |t|
-    t.text     "content",    limit: 65535
-    t.integer  "author_id",  limit: 4
-    t.integer  "ticket_id",  limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "deposits", force: :cascade do |t|
     t.integer  "account_id",             limit: 4
     t.integer  "member_id",              limit: 4
@@ -128,31 +120,6 @@ ActiveRecord::Schema.define(version: 20180112151205) do
   end
 
   add_index "deposits", ["txid", "txout"], name: "index_deposits_on_txid_and_txout", using: :btree
-
-  create_table "document_translations", force: :cascade do |t|
-    t.integer  "document_id", limit: 4,     null: false
-    t.string   "locale",      limit: 255,   null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
-    t.string   "title",       limit: 255
-    t.text     "body",        limit: 65535
-    t.text     "desc",        limit: 65535
-    t.text     "keywords",    limit: 65535
-  end
-
-  add_index "document_translations", ["document_id"], name: "index_document_translations_on_document_id", using: :btree
-  add_index "document_translations", ["locale"], name: "index_document_translations_on_locale", using: :btree
-
-  create_table "documents", force: :cascade do |t|
-    t.string   "key",        limit: 255
-    t.string   "title",      limit: 255
-    t.text     "body",       limit: 65535
-    t.boolean  "is_auth"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "desc",       limit: 65535
-    t.text     "keywords",   limit: 65535
-  end
 
   create_table "fund_sources", force: :cascade do |t|
     t.integer  "member_id",  limit: 4
@@ -179,18 +146,6 @@ ActiveRecord::Schema.define(version: 20180112151205) do
     t.string   "zipcode",            limit: 255
     t.integer  "id_bill_type",       limit: 4
     t.string   "aasm_state",         limit: 255
-  end
-
-  create_table "identities", force: :cascade do |t|
-    t.string   "email",           limit: 255
-    t.string   "password_digest", limit: 255
-    t.boolean  "is_active"
-    t.integer  "retry_count",     limit: 4
-    t.boolean  "is_locked"
-    t.datetime "locked_at"
-    t.datetime "last_verify_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "members", force: :cascade do |t|
@@ -277,99 +232,6 @@ ActiveRecord::Schema.define(version: 20180112151205) do
     t.text     "addresses",  limit: 65535
     t.string   "balance",    limit: 30
   end
-
-  create_table "read_marks", force: :cascade do |t|
-    t.integer  "readable_id",   limit: 4
-    t.integer  "member_id",     limit: 4,  null: false
-    t.string   "readable_type", limit: 20, null: false
-    t.datetime "timestamp"
-  end
-
-  add_index "read_marks", ["member_id"], name: "index_read_marks_on_member_id", using: :btree
-  add_index "read_marks", ["readable_type", "readable_id"], name: "index_read_marks_on_readable_type_and_readable_id", using: :btree
-
-  create_table "running_accounts", force: :cascade do |t|
-    t.integer  "category",    limit: 4
-    t.decimal  "income",                  precision: 32, scale: 16, default: 0.0, null: false
-    t.decimal  "expenses",                precision: 32, scale: 16, default: 0.0, null: false
-    t.integer  "currency",    limit: 4
-    t.integer  "member_id",   limit: 4
-    t.integer  "source_id",   limit: 4
-    t.string   "source_type", limit: 255
-    t.string   "note",        limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "running_accounts", ["member_id"], name: "index_running_accounts_on_member_id", using: :btree
-  add_index "running_accounts", ["source_type", "source_id"], name: "index_running_accounts_on_source_type_and_source_id", using: :btree
-
-  create_table "signup_histories", force: :cascade do |t|
-    t.integer  "member_id",       limit: 4
-    t.string   "ip",              limit: 255
-    t.string   "accept_language", limit: 255
-    t.string   "ua",              limit: 255
-    t.datetime "created_at"
-  end
-
-  add_index "signup_histories", ["member_id"], name: "index_signup_histories_on_member_id", using: :btree
-
-  create_table "simple_captcha_data", force: :cascade do |t|
-    t.string   "key",        limit: 40
-    t.string   "value",      limit: 6
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "simple_captcha_data", ["key"], name: "idx_key", using: :btree
-
-  create_table "taggings", force: :cascade do |t|
-    t.integer  "tag_id",        limit: 4
-    t.integer  "taggable_id",   limit: 4
-    t.string   "taggable_type", limit: 255
-    t.integer  "tagger_id",     limit: 4
-    t.string   "tagger_type",   limit: 255
-    t.string   "context",       limit: 128
-    t.datetime "created_at"
-  end
-
-  add_index "taggings", ["context"], name: "index_taggings_on_context", using: :btree
-  add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, using: :btree
-  add_index "taggings", ["tag_id"], name: "index_taggings_on_tag_id", using: :btree
-  add_index "taggings", ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context", using: :btree
-  add_index "taggings", ["taggable_id", "taggable_type", "tagger_id", "context"], name: "taggings_idy", using: :btree
-  add_index "taggings", ["taggable_id"], name: "index_taggings_on_taggable_id", using: :btree
-  add_index "taggings", ["taggable_type"], name: "index_taggings_on_taggable_type", using: :btree
-  add_index "taggings", ["tagger_id", "tagger_type"], name: "index_taggings_on_tagger_id_and_tagger_type", using: :btree
-  add_index "taggings", ["tagger_id"], name: "index_taggings_on_tagger_id", using: :btree
-
-  create_table "tags", force: :cascade do |t|
-    t.string  "name",           limit: 255
-    t.integer "taggings_count", limit: 4,   default: 0
-  end
-
-  add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
-
-  create_table "tickets", force: :cascade do |t|
-    t.string   "title",      limit: 255
-    t.text     "content",    limit: 65535
-    t.string   "aasm_state", limit: 255
-    t.integer  "author_id",  limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "tokens", force: :cascade do |t|
-    t.string   "token",      limit: 255
-    t.datetime "expires_at"
-    t.integer  "member_id",  limit: 4
-    t.boolean  "is_used",                default: false
-    t.string   "type",       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "tokens", ["type", "token", "expires_at", "is_used"], name: "index_tokens_on_type_and_token_and_expires_at_and_is_used", using: :btree
 
   create_table "trades", force: :cascade do |t|
     t.decimal  "price",                   precision: 32, scale: 16
