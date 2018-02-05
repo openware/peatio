@@ -1,16 +1,16 @@
 <% if ENV['MARKETS_CONFIG'] %>
 <%= File.read(ENV['MARKETS_CONFIG']) %>
 <% else %>
-- id: btcusd
+- id: btc<%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   code: 3
   base_unit: btc
-  quote_unit: usd
+  quote_unit: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   sort_order: 1
-  bid: { fee: 0.0015, currency: usd, fixed: 2 }
+  bid: { fee: 0.0015, currency: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase, fixed: 2 }
   ask: { fee: 0.0015, currency: btc, fixed: 4 }
 
   # default name
-  # name: BTC/USD
+  # name: BTC/<%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>
 
   # aggregate price levels in orderbook
   # price_group_fixed: 1
@@ -18,12 +18,12 @@
   # default is true
   # visible: false
 
-- id: xrpusd
+- id: xrp<%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   code: 4
   base_unit: xrp
-  quote_unit: usd
+  quote_unit: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   sort_order: 1
-  bid: { fee: 0.0015, currency: usd, fixed: 2 }
+  bid: { fee: 0.0015, currency: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase, fixed: 2 }
   ask: { fee: 0.0015, currency: xrp, fixed: 3 }
 
 - id: btcxrp
@@ -34,12 +34,12 @@
   bid: { fee: 0.0015, currency: xrp, fixed: 3 }
   ask: { fee: 0.0015, currency: btc, fixed: 4 }
 
-- id: bchusd
+- id: bch<%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   code: 6
   base_unit: bch
-  quote_unit: usd
+  quote_unit: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   sort_order: 1
-  bid: { fee: 0.0015, currency: usd, fixed: 2 }
+  bid: { fee: 0.0015, currency: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase, fixed: 2 }
   ask: { fee: 0.0015, currency: bch, fixed: 4 }
 
 - id: bchxrp
@@ -58,12 +58,12 @@
   bid: { fee: 0.0015, currency: btc, fixed: 2 }
   ask: { fee: 0.0015, currency: bch, fixed: 4 }
 
-- id: ltcusd
+- id: ltc<%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   code: 9
   base_unit: ltc
-  quote_unit: usd
+  quote_unit: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   sort_order: 1
-  bid: { fee: 0.0015, currency: usd, fixed: 2 }
+  bid: { fee: 0.0015, currency: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase, fixed: 2 }
   ask: { fee: 0.0015, currency: ltc, fixed: 4 }
 
 - id: ltcxrp
@@ -90,12 +90,12 @@
   bid: { fee: 0.0015, currency: bch, fixed: 2 }
   ask: { fee: 0.0015, currency: ltc, fixed: 4 }
 
-- id: dashusd
+- id: dash<%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   code: 13
   base_unit: dash
-  quote_unit: usd
+  quote_unit: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase
   sort_order: 1
-  bid: { fee: 0.0015, currency: usd, fixed: 2 }
+  bid: { fee: 0.0015, currency: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>.downcase, fixed: 2 }
   ask: { fee: 0.0015, currency: dash, fixed: 4 }
 
 - id: dashbtc
