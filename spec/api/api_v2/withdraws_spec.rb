@@ -34,7 +34,7 @@ describe APIv2::Withdraws, type: :request do
       signed_get '/api/v2/withdraws', params: { limit: 1000 }, token: token
       expect(response).to be_success
       # FIXME: when running specs with BASE_FIAT_CCY=usd Peatio.base_fiat_ccy returns 'usd' instead of 'USD' in this context
-      expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %W[ BTC #{Peatio.base_fiat_ccy.upcase} ]
+      expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %W[ BTC #{Peatio.base_fiat_ccy} ]
     end
 
     it 'should return withdraws specified currency' do

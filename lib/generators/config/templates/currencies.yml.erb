@@ -3,7 +3,7 @@
 <% else %>
 - id:        1
   key:       dollar
-  code:      usd
+  code:      <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>
   symbol:    '$'
   coin:      false
   precision: 2

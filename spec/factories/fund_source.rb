@@ -7,13 +7,13 @@ FactoryBot.define do
 
     member { create(:member) }
 
-    trait Peatio.base_fiat_ccy_sym do
+    trait Peatio.base_fiat_ccy_sym.downcase do
       extra 'bc'
       uid '123412341234'
       currency Peatio.base_fiat_ccy.downcase
     end
 
-    factory :base_fiat_ccy_fund_source, traits: [Peatio.base_fiat_ccy_sym]
+    factory :base_fiat_ccy_fund_source, traits: [Peatio.base_fiat_ccy_sym.downcase]
     factory :btc_fund_source
   end
 end

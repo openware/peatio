@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :order_bid do
-    bid Peatio.base_fiat_ccy_sym
+    bid Peatio.base_fiat_ccy_sym.downcase
     ask :btc
     currency "btc#{Peatio.base_fiat_ccy.downcase}".to_sym
     state :wait
@@ -14,7 +14,7 @@ FactoryBot.define do
   end
 
   factory :order_ask do
-    bid Peatio.base_fiat_ccy_sym
+    bid Peatio.base_fiat_ccy_sym.downcase
     ask :btc
     currency "btc#{Peatio.base_fiat_ccy.downcase}".to_sym
     state :wait
