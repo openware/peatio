@@ -6,8 +6,8 @@
 # That's why it is here.
 require_dependency 'peatio'
 
-Dir['app/models/deposits/**/*.rb'].each { |x| require_dependency x }
-Dir['app/models/withdraws/**/*.rb'].each { |x| require_dependency x }
+Dir['app/models/deposits/**/*.rb'].each { |x| require_dependency x.split('/')[2..-1].join('/') }
+Dir['app/models/withdraws/**/*.rb'].each { |x| require_dependency x.split('/')[2..-1].join('/') }
 
 class ActionDispatch::Routing::Mapper
   def draw(routes_name)
