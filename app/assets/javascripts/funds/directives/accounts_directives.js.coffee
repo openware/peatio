@@ -16,6 +16,8 @@ app.directive 'accounts', ->
       @selectedCurrency = window.location.hash.split('/')[2] || Account.first().currency
       @currentAction = window.location.hash.split('/')[1] || 'deposits'
       $scope.currency = @selectedCurrency
+      $scope.currencyLogoStyles = (account) ->
+        'background-image': "url('#{account.currency_icon_url}')"
 
       @isSelected = (currency) ->
         @selectedCurrency == currency
