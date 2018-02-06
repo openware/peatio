@@ -16,7 +16,7 @@ class Withdraw extends PeatioModel.Model
 
   pathName: ->
     switch @currency.toUpperCase()
-      when Peatio.baseFiatCcy then 'banks'
+      when gon.fiat_currency then 'banks'
       when 'BTC'  then 'satoshis'
       when 'XRP'  then 'ripples'
       when 'LTC'  then 'litoshis'

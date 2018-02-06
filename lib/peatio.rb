@@ -1,7 +1,7 @@
 module Peatio
   class << self
     def base_fiat_ccy
-      ENV.fetch('BASE_FIAT_CCY').upcase
+      Currency.first.code.upcase
     end
 
     def base_fiat_ccy_sym

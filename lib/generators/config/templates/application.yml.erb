@@ -113,9 +113,6 @@ defaults: &defaults
   # Customize title of markers page using the variable below:
   TITLE_MARKETS: PEATIO
 
-  # Configuration variable for currency which would be used by peatio as base.
-  BASE_FIAT_CCY: <%= ENV.fetch('BASE_FIAT_CCY', 'USD') %>
-
 development:
   <<: *defaults
 
