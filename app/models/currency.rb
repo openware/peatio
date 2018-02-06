@@ -23,6 +23,10 @@ class Currency < ActiveRecord::Base
             length: { maximum: 30 },
             presence: true
 
+  validates :code,
+            uniqueness: true,
+            presence: true
+
   validates :symbol, length: { maximum: 1 }
   validates :type,
             length: { maximum: 30 }
@@ -38,8 +42,11 @@ class Currency < ActiveRecord::Base
   validates :wallet_url_template,
             :transaction_url_template,
             length: { maximum: 200 },
-            url: { allow_blank: false }
+            url: { allow_nil: true }
   validates :quick_withdraw_limit,
+            numericality: { greater_than_or_equal_to: 0 },
+            presence: true
+  validates :visible,
             presence: true
 
   class << self
@@ -76,6 +83,7 @@ class Currency < ActiveRecord::Base
   scope :coin_codes, -> { coins.pluck(:code) }
 
   def self.enumerize
+    return {} unless ActiveRecord::Base.connection.table_exists?('currencies')
     all.inject({}) {|memo, i| memo[i.code.to_sym] = i.id; memo}
   end
 

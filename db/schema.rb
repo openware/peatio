@@ -103,19 +103,20 @@ ActiveRecord::Schema.define(version: 20180129140934) do
     t.string   "key",                      limit: 30,                                              null: false
     t.string   "code",                     limit: 30,                                              null: false
     t.string   "name",                     limit: 30,                                              null: false
-    t.string   "symbol",                   limit: 1
+    t.string   "symbol",                   limit: 1,                                               null: false
     t.string   "type",                     limit: 30,                             default: "coin", null: false
     t.string   "json_rpc_endpoint",        limit: 200
     t.string   "rest_api_endpoint",        limit: 200
-    t.string   "hot_wallet_address",       limit: 200,                                             null: false
-    t.string   "wallet_url_template",      limit: 200,                                             null: false
-    t.string   "transaction_url_template", limit: 200,                                             null: false
+    t.string   "wallet_url_template",      limit: 200
+    t.string   "transaction_url_template", limit: 200
     t.decimal  "quick_withdraw_limit",                  precision: 23, scale: 10, default: 0.0,    null: false
     t.string   "options",                  limit: 1000,                           default: "{}",   null: false
-    t.boolean  "visible",                                                         default: true
+    t.boolean  "visible",                                                         default: true,   null: false
     t.datetime "created_at",                                                                       null: false
     t.datetime "updated_at",                                                                       null: false
   end
+
+  add_index "currencies", ["code"], name: "index_currencies_on_code", unique: true, using: :btree
 
   create_table "deposits", force: :cascade do |t|
     t.integer  "account_id",             limit: 4

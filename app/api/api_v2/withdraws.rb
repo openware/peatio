@@ -1,13 +1,12 @@
 module APIv2
   class Withdraws < Grape::API
-    helpers APIv2::NamedParams
+    helpers ::APIv2::NamedParams
 
     before { authenticate! }
 
     desc 'List your withdraws as paginated collection.', scopes: %w[ history ]
     params do
-      currencies = Currency.codes.map(&:upcase)
-      optional :currency, type: String,  values: currencies + currencies.map(&:downcase), desc: "Any supported currencies: #{currencies.join(',')}."
+      optional :currency, type: String,  values: ::APIv2::Services::Currencible.codes(bothcase: true), desc: "Any supported currencies: #{ ::APIv2::Services::Currencible.codes(bothcase: true).join(',') }."
       optional :page,     type: Integer, default: 1,   integer_gt_zero: true, desc: 'Page number (defaults to 1).'
       optional :limit,    type: Integer, default: 100, range: 1..1000, desc: 'Number of withdraws per page (defaults to 100, maximum is 1000).'
     end
@@ -23,8 +22,7 @@ module APIv2
 
     desc 'List your withdraw addresses as paginated collection.', scopes: %w[ history ]
     params do
-      currencies = Currency.all.map(&:code).map(&:upcase)
-      optional :currency, type: String,  values: currencies + currencies.map(&:downcase), desc: "Any supported currency: #{currencies.join(',')}."
+      optional :currency, type: String,  values: ::APIv2::Services::Currencible.codes(bothcase: true), desc: "Any supported currency: #{ ::APIv2::Services::Currencible.codes(bothcase: true).join(',') }."
       optional :page,     type: Integer, default: 1,   integer_gt_zero: true, desc: 'Page number (defaults to 1).'
       optional :limit,    type: Integer, default: 100, range: 1..1000, desc: 'Number of withdraws per page (defaults to 100, maximum is 1000).'
     end
@@ -53,9 +51,8 @@ module APIv2
 
     desc 'Create withdraw.', scopes: %w[ withdraw ]
     params do
-      currencies = Currency.all.map(&:code).map(&:upcase)
-      requires :currency,   type: String,  values: currencies + currencies.map(&:downcase), desc: "Any supported currency: #{currencies.join(',')}."
-      requires :amount,     type: BigDecimal, desc: 'Withdraw amount without fees.'
+      requires :currency,   type: String,  values: ::APIv2::Services::Currencible.codes(bothcase: true), desc: "Any supported currency: #{ ::APIv2::Services::Currencible.codes(bothcase: true).join(',') }."
+      requires :amount,     type: Integer, desc: 'Withdraw amount without fees.'
       requires :address_id, type: Integer, desc: 'Stored withdraw address ID. You should create withdraw address before.'
     end
     post '/withdraws' do
