@@ -19,7 +19,7 @@ module Concerns
       begin
         Ordering.new(@order).submit
         render status: 200, json: success_result
-      rescue
+      rescue => e
         Rails.logger.error { "Member id=#{current_user.id} failed to submit order." }
         Rails.logger.debug { params.inspect }
         report_exception(e)
