@@ -91,11 +91,11 @@ class Currency < ActiveRecord::Base
     visible.ids
   end
   
-  # codes.each do |code|
-  #   define_singleton_method code do
-  #     find_by!(code: code)
-  #   end
-  # end
+  codes.each do |code|
+    define_singleton_method code.downcase do
+      find_by!(code: code)
+    end
+  end
 
   def currency_value
     code
