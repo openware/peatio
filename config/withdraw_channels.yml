@@ -23,3 +23,12 @@
   fee: 0.0009
   inuse: true
   type: WithdrawChannelRipple
+- id: 800
+  key: ether
+  currency: eth
+  min_confirm: 1
+  max_confirm: 6
+  inuse: true
+  fixed: 8
+  fee: 0.0005
+  type: WithdrawChannelEthereum

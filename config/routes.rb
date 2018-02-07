@@ -85,10 +85,11 @@ Peatio::Application.routes.draw do
 
   scope ['', 'webhooks', ENV['WEBHOOKS_SECURE_URL_COMPONENT'].presence, ':ccy'].compact.join('/'), as: 'webhooks' do
     post 'tx_created', to: 'webhooks#tx_created'
+    post '/webhooks/eth' => 'webhooks#eth'
   end
 
   draw :admin
-
+  post '/webhooks/tx' => 'webhooks#tx'
   mount APIv2::Mount => APIv2::Mount::PREFIX
 
   namespace :test do
