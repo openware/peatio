@@ -90,6 +90,12 @@ class Currency < ActiveRecord::Base
   def self.ids
     visible.ids
   end
+  
+  # codes.each do |code|
+  #   define_singleton_method code do
+  #     find_by!(code: code)
+  #   end
+  # end
 
   def currency_value
     code
@@ -98,5 +104,7 @@ class Currency < ActiveRecord::Base
   def code=(code)
     write_attribute(:code, code.to_s.upcase)
   end
+  
+  
 
 end

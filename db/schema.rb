@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(version: 20180129140934) do
     t.string   "type",                     limit: 30,                             default: "coin", null: false
     t.string   "json_rpc_endpoint",        limit: 200
     t.string   "rest_api_endpoint",        limit: 200
+    t.string   "hot_wallet_address",       limit: 200,                                             null: false
     t.string   "wallet_url_template",      limit: 200
     t.string   "transaction_url_template", limit: 200
     t.decimal  "quick_withdraw_limit",                  precision: 23, scale: 10, default: 0.0,    null: false
