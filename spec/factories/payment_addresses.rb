@@ -4,7 +4,7 @@ FactoryBot.define do
     account { create(:member).get_account(:usd) }
 
     trait :btc_address do
-      currency { Currency.btc }
+      currency { Currency.find_by(code: :btc) }
       address { Faker::Bitcoin.address }
       account { create(:member).get_account(:btc) }
     end

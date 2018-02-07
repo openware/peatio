@@ -285,12 +285,13 @@ describe Account do
   end
 
   describe '.enabled' do
-    let!(:account1) { create(:account, member: create(:member), currency: create(:currency_btc, visible: true)) }
-    let!(:account2) { create(:account, member: create(:member), currency: create(:currency_pts, visible: false)) }
-    let!(:account3) { create(:account, member: create(:member), currency: create(:currency_usd, visible: true)) }
+    before(:each) do
+      Currency.find_by!(code: 'bts').update(visible: false)
+      create(:member)
+    end
 
     it 'should only return the accoutns with currency enabled' do
-      expect(Account.enabled.to_a).to_not include(account2)
+      expect(Account.enabled.pluck(:currency_id)).to_not include(Currency.find_by!(code: 'bts').id)
     end
   end
 end

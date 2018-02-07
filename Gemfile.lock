@@ -136,8 +136,8 @@ GEM
     factory_bot_rails (4.8.2)
       factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
-    faker (1.4.3)
-      i18n (~> 0.5)
+    faker (1.8.7)
+      i18n (>= 0.7)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
@@ -437,7 +437,7 @@ DEPENDENCIES
   enumerize
   eventmachine (~> 1.0.4)
   factory_bot_rails
-  faker (~> 1.4.3)
+  faker (~> 1.8.7)
   faraday (~> 0.12)
   figaro
   font-awesome-sass

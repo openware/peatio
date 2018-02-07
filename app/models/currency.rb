@@ -27,7 +27,9 @@ class Currency < ActiveRecord::Base
             uniqueness: true,
             presence: true
 
-  validates :symbol, length: { maximum: 1 }
+  validates :symbol,
+            length: { maximum: 1 },
+            presence: true
   validates :type,
             length: { maximum: 30 }
   validates :json_rpc_endpoint,
@@ -47,7 +49,7 @@ class Currency < ActiveRecord::Base
             numericality: { greater_than_or_equal_to: 0 },
             presence: true
   validates :visible,
-            presence: true
+            inclusion: { in: [ true, false ] }
   validates :base_factor,
             numericality: { greater_than_or_equal_to: 0 }
 
@@ -93,8 +95,8 @@ class Currency < ActiveRecord::Base
     visible.ids
   end
 
-  codes.each do |code|
-    define_singleton_method code.downcase do
+  pluck(:code).each do |code|
+    define_singleton_method(code.downcase) do
       find_by!(code: code)
     end
   end
