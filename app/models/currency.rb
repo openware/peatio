@@ -42,12 +42,14 @@ class Currency < ActiveRecord::Base
   validates :wallet_url_template,
             :transaction_url_template,
             length: { maximum: 200 },
-            url: { allow_nil: true }
+            url: { allow_nil: true, allow_blank: false }
   validates :quick_withdraw_limit,
             numericality: { greater_than_or_equal_to: 0 },
             presence: true
   validates :visible,
             presence: true
+  validates :base_factor,
+            numericality: { greater_than_or_equal_to: 0 }
 
   class << self
     delegate :assets,
@@ -90,7 +92,7 @@ class Currency < ActiveRecord::Base
   def self.ids
     visible.ids
   end
-  
+
   codes.each do |code|
     define_singleton_method code.downcase do
       find_by!(code: code)
@@ -104,7 +106,7 @@ class Currency < ActiveRecord::Base
   def code=(code)
     write_attribute(:code, code.to_s.upcase)
   end
-  
-  
+
+
 
 end

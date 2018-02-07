@@ -1,6 +1,10 @@
 module Peatio
   class << self
     def base_fiat_ccy
+      unless ActiveRecord::Base.connection.table_exists?('currencies')
+        Rake::Task['db:migrate'].invoke
+      end
+
       unless Currency.exists?
         Rake::Task['currencies:seed'].invoke
       end
