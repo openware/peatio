@@ -2,11 +2,10 @@ module Peatio
   class << self
     def base_fiat_ccy
       unless Currency.exists?
-        ActiveRecord::Tasks::DatabaseTasks.load_seed
+        Rake::Task['currencies:seed'].invoke
       end
 
-      return Currency.find_by(code: 'usd').code if Currency.exists?(code: 'usd')
-      raise 'seed.rb should create base fiat currency'
+      Currency.find_by(code: 'usd').code if Currency.exists?(code: 'usd')
     end
 
     def base_fiat_ccy_sym
