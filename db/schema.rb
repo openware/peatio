@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 20180129140934) do
     t.decimal  "quick_withdraw_limit",                  precision: 23, scale: 10, default: 0.0,    null: false
     t.string   "options",                  limit: 1000,                           default: "{}",   null: false
     t.boolean  "visible",                                                         default: true,   null: false
-    t.integer  "base_factor",              limit: 4
+    t.integer  "base_factor",              limit: 4,                              default: 0
     t.string   "api_client",               limit: 255
     t.datetime "created_at",                                                                       null: false
     t.datetime "updated_at",                                                                       null: false

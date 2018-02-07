@@ -14,7 +14,7 @@ class AddCurrencies < ActiveRecord::Migration
       t.decimal :quick_withdraw_limit,     precision: 23, scale: 10, null: false, default: 0
       t.string  :options,                  limit: 1000, default: '{}', null: false
       t.boolean :visible,                  default: true, null: false
-      t.integer :base_factor
+      t.integer :base_factor,              default: 0
       t.string  :api_client
       t.timestamps                         null: false
       t.index :code, unique: true

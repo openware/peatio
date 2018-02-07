@@ -107,6 +107,4 @@ class Currency < ActiveRecord::Base
     write_attribute(:code, code.to_s.upcase)
   end
 
-
-
 end
