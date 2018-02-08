@@ -59,6 +59,10 @@ RSpec.configure do |config|
   config.before(:each) do
     DatabaseCleaner.start
 
+    FactoryBot.create(:currency_usd) unless Currency.find_by(code: :usd).present?
+    FactoryBot.create(:currency_btc) unless Currency.find_by(code: :btc).present?
+    FactoryBot.create(:currency_bts) unless Currency.find_by(code: :bts).present?
+
     FileUtils.rm_rf(File.join(__dir__, 'tmp', 'cache'))
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])

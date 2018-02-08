@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :member do
-    email { Faker::Internet.email }
+    email { Faker::Internet.unique.email }
 
     trait :verified do
       after :create do |member|

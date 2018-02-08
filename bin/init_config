@@ -8,7 +8,14 @@ target_dir = File.expand_path('../../lib/generators/config/templates', __FILE__)
 dest_dir   = File.expand_path('../../config', __FILE__)
 
 Dir.glob(File.join(target_dir, '*')) do |tpl|
-  dest = File.join(dest_dir, File.basename(tpl, '.erb'))
+  dest = 
+    if File.basename(tpl) == 'currencies.yml.erb'
+      configs_dir   = File.expand_path('../../config/configs', __FILE__)
+      File.join(configs_dir, File.basename(tpl, '.erb'))
+    else
+      File.join(dest_dir, File.basename(tpl, '.erb'))
+    end
+    
   puts "Copying #{tpl.gsub(%r{#{app_root}/}, '')} -> #{dest.gsub(%r{#{app_root}/}, '')}"
   File.write(dest, ERB.new(File.read(tpl)).result.strip)
 end

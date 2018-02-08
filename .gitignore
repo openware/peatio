@@ -20,9 +20,10 @@ log
 *.log
 tmp
 
-# Ignore all config files
+# Ignore all config files, including isolated for refactoring /config/configs/currencies.yml
 /config/application.yml
 /config/currencies.yml
+/config/configs/currencies.yml
 /config/markets.yml
 /config/banks.yml
 
@@ -46,3 +47,6 @@ tags
 .DS_Store
 .agignore
 **/*.tgz
+
+# ruby managers files
+.tool-versions

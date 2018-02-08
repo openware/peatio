@@ -119,12 +119,13 @@ class Member < ActiveRecord::Base
     name? and !name.empty?
   end
 
-  def get_account(currency)
-    account = accounts.with_currency(currency.to_sym).first
+  def get_account(code)
+    currency = Currency.find_by!(code: code)
+    account = accounts.where(currency: currency).first
 
     if account.nil?
       touch_accounts
-      account = accounts.with_currency(currency.to_sym).first
+      account = accounts.where(currency: currency).first
     end
 
     account
@@ -132,9 +133,9 @@ class Member < ActiveRecord::Base
   alias :ac :get_account
 
   def touch_accounts
-    less = Currency.codes.map(&:to_s) - self.accounts.map(&:currency).map(&:to_s)
-    less.each do |code|
-      self.accounts.create!(currency: code, balance: 0, locked: 0)
+    less = Currency.all - Currency.where(id: self.accounts.map(&:currency_id))
+    less.each do |currency|
+      self.accounts.create!(currency: currency, balance: 0, locked: 0)
     end
   end
 

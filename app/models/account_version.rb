@@ -1,5 +1,6 @@
 class AccountVersion < ActiveRecord::Base
-  include Currencible
+  extend Enumerize
+  include ActiveRecordCurrencible
 
   HISTORY = [Account::STRIKE_ADD, Account::STRIKE_SUB, Account::STRIKE_FEE, Account::DEPOSIT, Account::WITHDRAW, Account::FIX]
 
@@ -39,7 +40,7 @@ class AccountVersion < ActiveRecord::Base
     attrs[:updated_at] = attrs[:created_at]
     attrs[:fun]        = Account::FUNS[attrs[:fun]]
     attrs[:reason]     = REASON_CODES[attrs[:reason]]
-    attrs[:currency]   = Currency.enumerize[attrs[:currency]]
+    attrs[:currency_id] = Currency.find(attrs[:currency_id])
 
     account_id = attrs[:account_id]
     raise ActiveRecord::ActiveRecordError, "account must be specified" unless account_id.present?
