@@ -366,57 +366,6 @@ en:
     pab: Ping An Bank Co., Ltd.
     gdb: Guangdong Development Bank
     psbc: Postal Savings Bank of China
-  market:
-    currency:
-      btc: BTC
-      bch: BCH
-      eth: ETH
-      xrp: XRP
-      usd: USD
-      doge: DOGE
-      pts: PTS
-      ltc: LTC
-  currency:
-    satoshi:
-      key: BTC
-      code: BTC
-      name: Bitcoin
-      format: '0,0.0000'
-    bitcoin_cash:
-      key: BCH
-      code: BCH
-      name: Bitcoin Cash
-      format: '0,0.0000'
-    ethereum:
-      key: ETH
-      code: ETH
-      name: Ethereum
-      format: '0,0.0000'
-    ripple:
-      key: XRP
-      code: XRP
-      name: Ripple
-      format: '0,0.0000'
-    bitsharesx:
-      key: BTS
-      code: BTSX
-      name: BitsharesX
-      format: '0,0.0000'
-    dollar:
-      key: usd
-      code: usd
-      name: USD
-      format: '0,0.00'
-    dogecoin:
-      key: DOG
-      code: DOGE
-      name: Dogecoin
-      format: '0,0.0000'
-    protoshare:
-      key: PTS
-      code: PTS
-      name: Protoshare
-      format: '0,0.0000'
   datagrid:
     empty: no data found
     filters:
@@ -875,45 +824,6 @@ en:
           Password： %{password}</p> <p>Inquiry Tel.： %{tel}</p>"
       partial_tree:
         success: 'Success! Verification data generated at: %{timestamp}'
-    funds:
-      show:
-        account_history: Account History
-        usd_format: '0.00'
-        btc_format: '0.00000000'
-        reason:
-          usd:
-            strike_add: Plus
-            strike_sub: Sub
-            deposit: Deposit
-            withdraw: Withdraw
-            fix: Fix
-          btc:
-            strike_add: Plus
-            strike_sub: Sub
-            deposit: Deposit
-            withdraw: Withdraw
-            fix: Fix
-          bch:
-            strike_add: Plus
-            strike_sub: Sub
-            deposit: Deposit
-            withdraw: Withdraw
-            fix: Fix
-          eth:
-            strike_add: Plus
-            strike_sub: Sub
-            deposit: Deposit
-            withdraw: Withdraw
-            fix: Fix
-          xrp:
-            strike_add: Plus
-            strike_sub: Sub
-            deposit: Deposit
-            withdraw: Withdraw
-            fix: Fix
-        ref:
-          system: System
-          default: Default
     id_documents:
       edit:
         state: State
@@ -953,11 +863,6 @@ en:
         all: All Markets
         all_html: "<i class='fa fa-check'></i><span>All Markets</span>"
         ccy_html: "<i class='fa fa-check'></i><span>%{currency} Markets</span>"
-        usd_html: "<i class='fa fa-check'></i><span>USD Markets</span>"
-        btc_html: "<i class='fa fa-check'></i><span>BTC Markets</span>"
-        bch_html: "<i class='fa fa-check'></i><span>BCH Markets</span>"
-        eth_html: "<i class='fa fa-check'></i><span>ETH Markets</span>"
-        xrp_html: "<i class='fa fa-check'></i><span>XRP Markets</span>"
         price: Price
         change: "24h %"
       range_switch:
