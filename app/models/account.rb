@@ -153,10 +153,7 @@ class Account < ActiveRecord::Base
   end
 
   def change_balance_and_locked(delta_b, delta_l)
-    self.balance += delta_b
-    self.locked  += delta_l
-    self.class.connection.execute "update accounts set balance = balance + #{delta_b}, locked = locked + #{delta_l} where id = #{id}"
-    add_to_transaction # so after_commit will be triggered
+    self.update_attributes(balance: self.balance + delta_b, locked: self.locked + delta_l)
     self
   end
 
