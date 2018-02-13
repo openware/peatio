@@ -33,9 +33,7 @@ private
   def redirect_on_successful_sign_in
     "#{params[:provider].to_s.gsub(/(?:_|oauth2)+\z/i, '').upcase}_OAUTH2_REDIRECT_URL".tap do |key|
       if ENV[key] && params[:provider].to_s == 'barong'
-        auth_data = auth_hash['credentials']
-        auth_data['full_name'] = @member.full_name
-        redirect_to "#{ENV[key]}?#{auth_data.to_query}"
+          redirect_to "#{ENV[key]}?token=#{auth_hash['credentials']['token']}"
       elsif ENV[key]
         redirect_to ENV[key]
       else
