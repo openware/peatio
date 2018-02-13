@@ -65,6 +65,8 @@
   #
   # The rest of configuration.
   quick_withdraw_max: 10000
+  blockchain:         https://bithomp.com/explorer/#{txid}
+  address_url:        https://bithomp.com/explorer/#{address}
 
 - id:          4
   key:         bitcoin_cash
@@ -92,10 +94,6 @@
   quick_withdraw_max: 10
   blockchain:         https://www.blocktrail.com/BCC/tx/#{txid}
   address_url:        https://www.blocktrail.com/BCC/address/#{address}
-  assets:
-    accounts:
-      - address: r1234567890abcdefghijklmnopqrstuvw
-        secret: sp1234567890abcdefghijklmnopq
 
 - id:          5
   key:         litoshi
@@ -146,21 +144,31 @@
 - id: 7
   key: ethereum
   code: eth
-  symbol: "Ξ"
+  symbol: 'Ξ'
   coin: true
   precision: 18
-  quick_withdraw_max: 1
+  base_factor: 100_000_000
+  api_client: ETH
   json_rpc_endpoint: http://user:password@127.0.0.1:8545
-  hot_wallet_address: ~
+  quick_withdraw_max: 10
+
+  # todo
+  blockchain:         https://bithomp.com/explorer/#{txid}
+  address_url:        https://bithomp.com/explorer/#{address}
+
 
 - id: 8
   key: erc20
   code: erc20
   coin: true
   precision: 18
-  quick_withdraw_max: 1
+  base_factor: 100_000_000
+  api_client: ERC20
   json_rpc_endpoint: http://user:password@127.0.0.1:8545
-  token_adress: ~
-  hot_wallet_address: ~
+  quick_withdraw_max: 1
+
+# todo
+  blockchain:         https://bithomp.com/explorer/#{txid}
+  address_url:        https://bithomp.com/explorer/#{address}
 
 <% end %>
