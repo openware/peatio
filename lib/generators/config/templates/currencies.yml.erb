@@ -148,12 +148,18 @@
   coin: true
   precision: 18
   base_factor: 100_000_000
+  #
+  # API client configuration.
   api_client: ETH
+  #
+  # Bitcoind specific configuration.
   json_rpc_endpoint: http://user:password@127.0.0.1:8545
   quick_withdraw_max: 10
-
-  # todo
+  #
+  # Explorts transaction details
   blockchain:         https://bithomp.com/explorer/#{txid}
+  #
+  # Explorts address in blockchain
   address_url:        https://bithomp.com/explorer/#{address}
 
 
@@ -163,12 +169,19 @@
   coin: true
   precision: 18
   base_factor: 100_000_000
+  #
+  # API client configuration.
   api_client: ERC20
+  #
+  # Bitcoind specific configuration.
   json_rpc_endpoint: http://user:password@127.0.0.1:8545
+  # The rest of configuration.
   quick_withdraw_max: 1
-
-# todo
+  #
+  # Explorts transaction details
   blockchain:         https://bithomp.com/explorer/#{txid}
+  #
+  # Explorts address in blockchain
   address_url:        https://bithomp.com/explorer/#{address}
 
 <% end %>

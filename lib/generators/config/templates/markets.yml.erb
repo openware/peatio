@@ -154,6 +154,27 @@
   bid: { fee: 0.0015, currency: btc, fixed: 2 }
   ask: { fee: 0.0015, currency: eth, fixed: 4 }
 
+- id: ethbch
+  code: 21
+  base_unit: eth
+  quote_unit: bch
+  sort_order: 1
+  bid: { fee: 0.0015, currency: bch, fixed: 2 }
+  ask: { fee: 0.0015, currency: eth, fixed: 4 }
 
-  # todo: add also: eth/ltc, eth/dash, etc...
+- id: ethltc
+  code: 22
+  base_unit: eth
+  quote_unit: ltc
+  sort_order: 1
+  bid: { fee: 0.0015, currency: ltc, fixed: 2 }
+  ask: { fee: 0.0015, currency: eth, fixed: 4 }
+
+- id: ethdash
+  code: 23
+  base_unit: eth
+  quote_unit: dash
+  sort_order: 1
+  bid: { fee: 0.0015, currency: dash, fixed: 2 }
+  ask: { fee: 0.0015, currency: eth, fixed: 4 }
 <% end %>
