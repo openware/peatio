@@ -1,0 +1,31 @@
+.content, .form-control {
+    background-color: #374c63 !important;
+}
+
+#candlestick {
+    border-style: solid;
+    border-width: 2px;
+    border-top: 0;
+    border-bottom: 0;
+    border-right-color: #eee;
+    border-left-color: #eee;
+    padding-right: 17px;
+}
+
+.panel {
+    background-color: #374c63;
+    border: 0;
+}
+
+.entry-left, .entry-right {
+    background-color: #2c3e50 !important;
+}
+
+.dropdown-menu, .dropdown-menu a, .btn-danger, .navbar-default {
+    background-color: #2c3e50 !important;
+    border-color: #eee !important;
+}
+
+table thead th, #my_orders .panel-body-content .empty-row {
+    color: #eee;
+}
