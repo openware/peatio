@@ -66,9 +66,12 @@ module CoinAPI
       end
     end
 
-    # You must pass password to create ethereum address
-    def create_address!(password)
-      do_request(:personal_newAccount, password)
+    # returns a hash of address and password:
+    # {address: aaa, secret: bbb}
+    def create_address!
+      pass = SecureRandom.base64(15)
+      res = do_request(:personal_newAccount, pass)
+      {address: res, secret: pass}
     end
 
     protected
