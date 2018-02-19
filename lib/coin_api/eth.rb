@@ -66,8 +66,10 @@ module CoinAPI
       end
     end
 
-    # returns a hash of address and password:
-    # {address: aaa, secret: bbb}
+    #
+    # Creates address and generates password
+    #
+    # @return {address: aaa, secret: bbb}
     def create_address!
       pass = SecureRandom.base64(15)
       res = do_request(:personal_newAccount, pass)

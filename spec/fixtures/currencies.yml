@@ -32,5 +32,13 @@
   precision: 18
   quick_withdraw_max: 1
   json_rpc_endpoint: http://127.0.0.1:8545
+
+  #
+  # address of token
+  #  
   token_address: '0x6a472aab762eabd632818d07d3c46b4bca6ae733'
+
+  #
+  # address of hot wallet
+  #
   hot_wallet_address: '0x89Af4bF02126b56fc2c24BC324154fF3628Bd946'
