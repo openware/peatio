@@ -5,19 +5,20 @@
 
 ## [Peatio.tech](https://www.peatio.tech) Introduction
 
-Peatio is a free and open-source crypto currency exchange implementation with the Rails framework.
-Peatio.tech is a fork of Peatio designed for micro-services architecture, we have simplified the code
-in order to use only Peatio API with external frontend and server components.
+Peatio.tech is a fork of the original Peatio - a free and open-source (FOSS) cyptocurrency exchange application implemented with the Rails framework.
 
-To build your own exchange you should now run Peatio as a backend instead of forking the repository,
-and extend it using other microservices such as [Barong](https://www.github.com/rubykube/barong).
+Peatio.tech has been redesigned leveraging a microservices based architecture. We have-/ continue- to simplify the codebase
+in order to soley leverage the Peatio API via external frontend and server components.
+
+To build your own exchange, we suggest running Peatio as a backend service rather than forking this repository. Should you choose, you may extend the exchange using our optional microservice add-ons (Example: [Barong](https://www.github.com/rubykube/barong)  https://www.github.com/rubykube/barong).
 
 ## Mission
 
-Our mission is to build an open-source crypto currency exchange with a high performance trading engine and safety which can be trusted and enjoyed by users. We moving toward dev/ops best practices of running an enterprise grade exchange.
+Our team combined with the efforts of the open-source community is striving to be at the forefront of the cryptocurrency exchange R&D market. We currently already excel in utilizing one of the best high-performance trading engine's available and cyber-safety which can be trusted and enjoyed by developers and users alike. We're moving towards dev/ops best practices in order to run an enterprise-grade digital asset exchange.
 
-We provide webminar or on site training for installing, configuring and administation best practices of Peatio.
-Feel free to contact us for joining the next training session: [Peatio.tech](https://www.peatio.tech)
+We're offering webinars and/or on-site training for nearly all aspects of development cycle, from installation/ configuring to administation best practices of our product.
+
+Feel free to contact us for joining the next training session at [Peatio.tech](https://www.peatio.tech).
 
 Help is greatly appreciated, feel free to submit pull-requests or open issues.
 
@@ -76,7 +77,6 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 * Powerful admin dashboard and management tools
 * Highly configurable and extendable
 * Industry standard security out of box
-* Maintained by [peatio.tech](https://www.peatio.tech)
 * [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer) provided by [Barong](https://www.github.com/rubykube/peatio)
 
 ## API
