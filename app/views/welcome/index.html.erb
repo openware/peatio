@@ -1,3 +1,13 @@
+<% if flash[:notice] || flash[:info] || flash[:alert] %>
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-xs-offset-6">
+        <%= render 'shared/flash' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <div class="container">
   <div class="logo">
     <a href="https://peatio.tech" target="blank">
@@ -5,20 +15,16 @@
     </a>
   </div>
 
-  <section class="text-center" style="line-height: 1">
-    <h2><%= t('slogan.heading') %></h2>
-    <% if flash[:notice] || flash[:info] || flash[:alert] %>
-      <div class="row">
-        <div class="col-xs-12 col-xs-offset-6">
-          <%= render 'shared/flash' %>
-        </div>
-      </div>
-    <% else %>
+  <% if ENV['LANDING_INTODUCTION_HTML'].present? %>
+    <%= ENV['LANDING_INTODUCTION_HTML'].html_safe %>
+  <% else %>
+    <section class="text-center" style="line-height: 1">
+      <h2><%= t('slogan.heading') %></h2>
       <h3><%= t('slogan.subheading') %></h3>
       <p><%= t('slogan.text1') %></p>
       <p><%= t('slogan.text2') %></p>
-    <% end %>
-  </section>
+    </section>
+  <% end %>
 
   <div class="row" id="getstart">
     <% unless current_user %>
