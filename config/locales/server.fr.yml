@@ -112,7 +112,6 @@ en:
         sn: SN
       withdraws/bank:
         id: ID
-        member_name: Membre
         currency_obj_key_text: MOnnaie
         state_and_actions: Statut/Action
         fund_source: Banque
@@ -130,7 +129,6 @@ en:
         fund_extra: Depuis
         fund_uid: Compte d'envois
         member_sn: SN de membre
-        member_name: Nom de l'envoyeur
         amount: Montant
         sn: SN
         state_and_action: Statut/Action
@@ -166,9 +164,14 @@ en:
         amount: Montant
         confirmations: Confirmation
         aasm_state_text: Statut
+      deposits/ethereum:
+        created_at: Créé le
+        txid: ID de Transaction
+        amount: Montant
+        confirmations: Confirmation
+        aasm_state_text: Statut
       withdraws/satoshi:
         id: ID
-        member_name: Compte
         currency_obj_key_text: Monnaie
         state_and_actions: Statut/Action
         fund_extra_text: Retrait
@@ -182,7 +185,6 @@ en:
         fee: Commission
       withdraws/bitcoin_cash:
         id: ID
-        member_name: Compte
         currency_obj_key_text: Monnaie
         state_and_actions: Statut/Action
         fund_extra_text: Retrait
@@ -196,7 +198,6 @@ en:
         fee: Commission
       withdraws/litoshi:
         id: ID
-        member_name: Compte
         currency_obj_key_text: Monnaie
         state_and_actions: Statut/Action
         fund_extra_text: Retrait
@@ -210,7 +211,6 @@ en:
         fee: Commission
       withdraws/ripple:
         id: ID
-        member_name: Compte
         currency_obj_key_text: Monnaie
         state_and_actions: Statut/Action
         fund_extra_text: Retrait
@@ -224,7 +224,6 @@ en:
         fee: Commission
       withdraws/duff:
         id: ID
-        member_name: Compte
         currency_obj_key_text: Monnaie
         state_and_actions: Statut/Action
         fund_extra_text: Retrait
@@ -236,6 +235,20 @@ en:
         amount: Montant
         remark: Description
         fee: Commission
+      withdraws/ethereum:
+        id: ID
+        member_name: Compte
+        currency_obj_key_text: Monnaie
+        state_and_actions: Statut/Action
+        fund_extra_text: Retrait
+        fund_extrat: Retrait
+        fund_source: Banque
+        fund_uid: Compte
+        created_at: Créé le
+        sum: Somme
+        amount: Montant
+        remark: Remarque
+        fee: Commissions
     errors:
       models:
         order_bid:
@@ -267,6 +280,8 @@ en:
               ripple_invalid: Adresse non valide
               duff_ismine: Adresse utilisée 
               duff_invalid: Adresse non valide
+              ethereum_ismine: Adresse utilisée
+              ethereum_invalid: Adresse non valide
         withdraw:
           account_balance_is_poor: Approvisionnement insuffisant
           attributes:
@@ -305,6 +320,12 @@ en:
               blank: Entrez votre adresse de retrait 
               invalid: Adresse de retrait non valide.
               ismine: Veuillez utiliser une nouvelle adresse.
+        withdraws/ethereum:
+          attributes:
+            fund_uid:
+              blank: Entrez votre adresse de retrait
+              invalid: Adresse de retrait non valide
+              ismine: Veuillez utiliser une nouvelle adresse.
         application:
           attributes:
             redirect_uri:
@@ -319,26 +340,6 @@ en:
           price: Limite de prix %{l} ~ %{h}
           sum: Somme limite %{l} ~ %{h}
           precision: Précision %{p}
-  banks:
-    icbc: Industryand Commercial Bank of China
-    cbc: Construction Bank of China
-    bc: Bank of China
-    bcm: Bank of Communications
-    abc: Agriculture Bank of China
-    cmb: China Merchants Bank Ltd
-    cmbc: China Minsheng Banking Co., Ltd
-    cncb: China CITIC Bank
-    hxb: Hua Xia Bank Co., Ltd.
-    cib: Industrial Bank Co., Ltd
-    spdb: Shanghai Pudong Development Bank
-    bob: Bank of Beijing
-    ceb: China Everbright Bank CO.LTD
-    sdb: Shenzhen Development Bank
-    pab: Ping An Bank Co., Ltd.
-    gdb: Guangdong Development Bank
-    psbc: Postal Savings Bank of China
-  datagrid:
-    empty: no data found
     filters:
       date:
         range_separator: " au "
@@ -506,6 +507,13 @@ en:
       latency: 1 confirmation
       transfer: Manuel
       go: Dépôt
+    ethereum:
+      key: Block Chain
+      title: Dépôt d'Ethereum
+      intro: Déposer des Ethereum depuis votre propre porte-monnaie vers Peatio
+      latency: 1 confirmation
+      transfer: Manuel
+      go: Dépôt
   deposits/bank:
     aasm_state:
       submitting: Soumettre
@@ -519,29 +527,29 @@ en:
     deposits:
       satoshis:
         gen_address:
-          require_transaction: Impossible de générér une bouvelle adresse si celle-ci n'a pas été utilisée.
+          require_transaction: Impossible de générér unouvelle adresse si celle-ci n'a pas été utilisée.
       bitcoin_cash:
         gen_address:
-          require_transaction: Impossible de générér une bouvelle adresse si celle-ci n'a pas été utilisée.
+          require_transaction: Impossible de générér unouvelle adresse si celle-ci n'a pas été utilisée.
       litoshis:
         gen_address:
-          require_transaction: Impossible de générér une bouvelle adresse si celle-ci n'a pas été utilisée.
+          require_transaction: Impossible de générér unouvelle adresse si celle-ci n'a pas été utilisée.
       ripples:
         gen_address:
-          require_transaction: Impossible de générér une bouvelle adresse si celle-ci n'a pas été utilisée.
+          require_transaction: Impossible de générér uno bouvelle adresse si celle-ci n'a pas été utilisée.
       duffs:
         gen_address:
-          require_transaction: Impossible de générér une bouvelle adresse si celle-ci n'a pas été utilisée.
+          require_transaction: Impossible de générér u nouvelle adresse si celle-ci n'a pas été utilisée.
       banks:
         destroy:
-          notice: Revocaiton réussie.
+          notice: Revocation réussie.
         create:
           notice: Réapprovisionnement réussi.
           submit: Soumettre
         new:
           fund_source: Selectionner la provenance.
           manage_fund_source: Gérer l'approvisionnement
-          submit: Submit
+          submit: Soumettre
         edit:
           bank: Nom de la banque
           branch: Nom de la banque
@@ -678,6 +686,18 @@ en:
         create:
           notice: La demande de retrait a bien été soumise. Veuillez utiliser les informations ci dessous afin de compléter le transfert.
       duffs:
+        destroy:
+          notice: Le retrait a bien été annulé, tous les fonds bloqués vous ont été retournés
+        update:
+          notice: Demande de retrait effectuée avec succès, nous y procéderons aussi vite que possible
+        new:
+          submit: Soumettre
+          allin: Tout
+          fund_source_label: Label
+          manage_fund_source: Gérer les fonds
+        create:
+          notice: La demande de retrait a bien été soumise. Veuillez utiliser les informations ci dessous afin de compléter le transfert.
+      ethereums:
         destroy:
           notice: Le retrait a bien été annulé, tous les fonds bloqués vous ont été retournés
         update:
@@ -1164,7 +1184,6 @@ en:
       txid: TxId
       created_at: Créé le
       confirmations: Confirmations
-      member_name: Membre
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
     duff:
@@ -1173,7 +1192,6 @@ en:
       txid: TxId
       created_at: Créé le
       confirmations: Confirmations
-      member_name: Membre
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
     duff:
@@ -1182,7 +1200,6 @@ en:
       txid: TxId
       created_at: Créé le
       confirmations: Confirmations
-      member_name: Membre
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
     duff:
@@ -1190,7 +1207,6 @@ en:
       txid: TxId
       created_at: Créé le
       confirmations: Confirmations
-      member_name: Membre
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
     duff:
@@ -1198,7 +1214,6 @@ en:
       txid: TxId
       created_at: Créé le
       confirmations: Confirmations
-      member_name: Membre
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
     bank:
@@ -1207,7 +1222,6 @@ en:
       created_at: Créé le
       fund_source: Fonds
       memo: Memo
-      member_name: Membre
       state_and_actions: Etat/Action
       currency_obj_key_text: Monnaie
   enumerize:
@@ -1235,6 +1249,7 @@ en:
       ltc: LTC
       xrp: XRP
       dash: Dash
+      eth: ETH
     order:
       state:
         done: TERMINÉ
@@ -1496,37 +1511,47 @@ en:
       transfer: Transférer manuellement
       go: Retirer
     satoshi:
-      
+      key: Blockchain
+      Title: Bitcoin Blockchain
+      intro: Envoyer des Bitcoins vers votre propre porte-monnaie BTC.
     bitcoin_cash:
       key: Blockchain
       title: Bitcoin Cash Blockchain
-      intro: Envoyer Bitcoin Cash vers votre portefeuille Cash.
+      intro: Envoyer Bitcoin Cash vers votre porte-monaie Bitcoin-Cash.
       latency: 30 minutes
       transfer: Manuel
       go: Retirer.
     litoshi:
       key: Blockchain
       title: Litoshi Blockchain
-      intro: Envoyer Litoshi vers votre portefeuille Litoshi.
+      intro: Envoyer Litoshi vers votre porte-monnaie Litoshi.
       latency: 30 minutes
       transfer: Manuel
       go: Retirer.
     ripple:
       key: Blockchain
       title: Ripple Blockchain
-      intro: Envoyer XRP vers votre portefeuille Ripple.
+      intro: Envoyer XRP vers votre porte-monnaie Ripple.
       latency: 30 minutes
       transfer: Manuel
       go: Retirer.
     duff:
       key: Blockchain
       title: Dash Blockchain
-      intro: Envoyer Dash vers votre portefeuille Dash
+      intro: Envoyer Dash vers votre porte-monnaie Dash
       latency: 30 minutes
       transfer: Manuel
       go: Retirer.
+    ethereum:
+      key: Blockchain
+      title: Blockchain Ethereum
+      intro:Retirer des Ethereum vers votre porte-monnaie Ethereum
+      latency: 30 minutes
+      transfer: Manuel
+      go: Retrait
+
   withdraws:
-    invalid_address: is not valid. You can not withdraw to this address.
+    invalid_address: N'est pas valide, vous ne pouvez pas retirer depuis cette adresse.
   withdraws/bank:
     aasm_state:
       submitting: Soumettre
