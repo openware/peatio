@@ -1,0 +1,161 @@
+en:
+  js:
+    brand: Peatio
+    submit: Soumettre
+    cancel: Annuler
+    confirm: Confirmer
+    banks:
+      icbc: Industryand Commercial Bank of China
+      cbc: Construction Bank of China
+      bc: Bank of China
+      bcm: Bank of Communications
+      abc: Agriculture Bank of China
+      cmb: China Merchants Bank Ltd
+      cmbc: China Minsheng Banking Co., Ltd
+      cncb: China CITIC Bank
+      hxb: Hua Xia Bank Co., Ltd.
+      cib: Industrial Bank Co., Ltd
+      spdb: Shanghai Pudong Development Bank
+      bob: Bank of Beijing
+      ceb: China Everbright Bank CO.LTD
+      sdb: Shenzhen Development Bank
+      pab: Ping An Bank Co., Ltd.
+      gdb: Guangdong Development Bank
+      psbc: Postal Savings Bank of China
+      bos: Bank of Shanghai
+    fund_sources:
+      manage_bank_account: Gérer le compte en banque
+      manage_bank_account_desc: Faciliter le choix des adresses bancaires de retrait
+      manage_coin_address: Gérer les adresses de Crypto-monnaies
+      manage_coin_address_desc: Faciliter le choix des adresses de retraits de Crypto-monnaies
+      bank: Banque
+      account: Compte en banque
+      label: Label
+      address: Adresse
+      action: Action
+      add: Ajouter
+      remove: Retirer
+      default: Default
+    funds:
+      deposit: Dépôt
+      withdraw: Retrait
+      deposit_fiat:
+        title: '{{currency}} Dépôt'
+        description: |
+          <div>Faire un dépôt en utilisant les informations suivantes. Vous devrez contacter contacter votre banque pour de plus amples informations.</div>
+          <ol>
+            <li>Assurez-vous d'inclure le code de "REFERENCE" fournit ci-dessous. Ce code identifie les dépôts avec votre compte.</li>
+            <li>Ne dépassez pas plafond de retraits journaliers / mensuels. Si vous dépassez ce plafond, votre compte sera gelé jusqu'a ce que ce plafond soit changé ou que votre argent vous soit retourné.</li>
+            <li>La reproduction de dépôts de la même somme dans une courte période (jours) peut être retardée voire cassée. SI vous êtes amenés à effectuer plusieurs dépôts, assurez-vous que les montants varient de l'un à l'autre.</li>
+            <li>IMPORTANT: Le nom du compte en banque duquel vous envoyez des fonds doit impérativement correspondre au nom fournit lors de la vérification de votre compte sur lequel vous effectuez un dépôt.</li>
+          </ol>
+
+      deposit_btc:
+        title: Dépôt de BTC
+
+      deposit_bch:
+        title: Dépot de BCH
+
+      deposit_ltc:
+        title: Dépôt de LTC
+
+      deposit_xrp:
+        title: Dépôt de XRP
+
+      deposit_dash:
+        title: Dépôt de DASH
+
+      deposit_coin:
+        address: Adresse
+        new_address: Nouvelle Adresse
+        confirm_gen_new_address: Etes-vous sur de vouloir générer une nouvelle adresse ?
+        open-wallet: Veuillez utiliser votre porte-monnaie habituel, sélectionner un moyen de paiement puis envoyer.
+        detail: Veuillez copier l'adresse de reception, indiquer le montqnt du dépôt pius confirmer et envoyer.
+        scan-qr: Scanner le QR-code pour payer depuis un mobile.
+        after_deposit: Une fois l'envois effectué vous pouvez vérifier l'avancementt ci-dessous.
+        generate-new: Générer une nouvelle adresse. 
+
+      deposit_history:
+        title: Deposit History
+        number: '#'
+        identification: Identification Code
+        time: Time
+        txid: Identifiant de transaction
+        confirmations: Confirmations
+        from: From
+        amount: Amount
+        state_and_action: "State/Action"
+        cancel: cancel
+        no_data: There is no history data
+
+        submitting: Submitting
+        cancelled: Cancelled
+        submitted: Submitted
+        accepted: Accepted
+        rejected: Rejected
+        checked: Checked
+        warning: Warning
+        suspect: Suspect
+
+      withdraw_fiat:
+        title: '{{currency}} retrait'
+        intro: Select the bank to cash withdrawal amount and enter the account number and complete submission.
+        intro_2: Your bank account and name must be consistent with the real-name authentication name.
+        attention: "Horaires d'ouverture: 9:00 - 18:00"
+        account_name: Nom du compte
+        withdraw_address: Adresse de retrait
+        balance: Balance
+        withdraw_amount: Montant de retrait
+        manage_withdraw: Gérer les retraits
+        min: min
+        withdraw_all: Tout retirer
+
+      withdraw_btc:
+        title: Retirer BTC
+
+      withdraw_bch:
+        title: Retirer BCH
+
+      withdraw_ltc:
+        title: Retirer LTC
+
+      withdraw_xrp:
+        title: Retirer XRP
+
+      withdraw_dash:
+        title: Retirer Dash
+
+      withdraw_coin:
+        intro: Veuillez compléter l'adresse ainsi que le montant à retirer. Ensuite validez, cela sera confirmé sous une dizaine de minutes.
+        label: Label
+        balance: Balance
+        amount: Montant
+        manage_withdraw: Gérer les retraits
+        min: min
+        withdraw_all: Tout retirer
+
+      withdraw_history:
+        title: Historique des retraits
+        number: Numéro
+        withdraw_time: Quand
+        withdraw_account: Compte
+        withdraw_address: Adresse
+        withdraw_amount: Montant
+        actual_amount: Montant actuel
+        fee: Taxe
+        miner_fee: Taxe
+        state_and_action: "Etat/Action"
+        cancel: Annuler
+        no_data: Il n'y a pas d'historique.
+
+        submitting: Soumettre
+        submitted: Soumis
+        rejected: Refusé
+        accepted: Accepté
+        suspect: Suspect
+        processing: En cours
+        coin_ready: Coin Ready
+        coin_done: Coin Done
+        done: Terminé
+        canceled: Annulé
+        failed: Echec
