@@ -242,10 +242,7 @@ describe APIv2::Orders, type: :request do
 
       expect do
         api_post '/api/v2/orders/clear', token: token
-        expect(response).to be_success
-
-        result = JSON.parse(response.body)
-        expect(result.size).to eq 2
+        expect(response.code).to eq '200'
       end.not_to change(Order, :count)
     end
 
@@ -256,11 +253,7 @@ describe APIv2::Orders, type: :request do
 
       expect do
         api_post '/api/v2/orders/clear', token: token, params: { side: 'sell' }
-        expect(response).to be_success
-
-        result = JSON.parse(response.body)
-        expect(result.size).to eq 1
-        expect(result.first['id']).to eq member.orders.where(type: 'OrderAsk').first.id
+        expect(response.code).to eq '200'
       end.not_to change(Order, :count)
     end
   end

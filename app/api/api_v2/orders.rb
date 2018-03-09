@@ -81,7 +81,7 @@ module APIv2
           orders = orders.where(type: type)
         end
         orders.each {|o| Ordering.new(o).cancel }
-        present orders, with: APIv2::Entities::Order
+        status 200
       rescue
         raise CancelOrderError, $!
       end
