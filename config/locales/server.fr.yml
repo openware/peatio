@@ -1,4 +1,4 @@
-en:
+fr:
   activerecord:
     models:
       api_tokens: API Token
@@ -1186,16 +1186,21 @@ en:
       confirmations: Confirmations
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
-    duff:
     bitcoin_cash:
-     amount: Montant
+      amount: Montant
       txid: TxId
       created_at: Créé le
       confirmations: Confirmations
       state_and_actions: Etat/Actions
       currency_obj_key_text: Monnaie
-    duff:
     litoshi:
+      amount: Montant
+      txid: TxId
+      created_at: Créé le
+      confirmations: Confirmations
+      state_and_actions: Etat/Actions
+      currency_obj_key_text: Monnaie
+    ripple:
       amount: Montant
       txid: TxId
       created_at: Créé le
@@ -1484,8 +1489,8 @@ en:
         account_info: Info de compte.
         payment_address: Adresse de paiement.
     alert:
-      modern: Afin d'optimiser votre expérience ici, veuilez utiliser un Browser plus récent tel que : <a target='_blank' href='https://www.google.com/#q=google+chrome'>Google
-        Chrome</a>。
+      modern: "Afin d'optimiser votre expérience ici, veuilez utiliser un Browser plus récent tel que :<a target='_blank' href='https://www.google.com/#q=google+chrome'>Google
+        Chrome</a>。"
       pusher_unavailable: La connexion est momentanément indisponible. <a
         href='#' class='alert-link'>Please refresh</a>.
     header:
@@ -1545,11 +1550,10 @@ en:
     ethereum:
       key: Blockchain
       title: Blockchain Ethereum
-      intro:Retirer des Ethereum vers votre porte-monnaie Ethereum
+      intro: Retirer des Ethereum vers votre porte-monnaie Ethereum
       latency: 30 minutes
       transfer: Manuel
       go: Retrait
-
   withdraws:
     invalid_address: N'est pas valide, vous ne pouvez pas retirer depuis cette adresse.
   withdraws/bank:
