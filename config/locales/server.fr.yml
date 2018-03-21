@@ -1225,36 +1225,27 @@ fr:
       sn: SN
       amount: Montant
       created_at: Créé le
-      fund_source: Fonds
       memo: Memo
-      state_and_actions: Etat/Action
-      currency_obj_key_text: Monnaie
+      state_and_actions: Etat/Actions
   enumerize:
     account_version:
       reason:
         fix: FIX
-        unknown: Inconnu
-        strike_add: Plus
-        strike_sub: Soumit
-        strike_fee: Commission
-        strike_unlock: Déverrouillé
-        order_cancel: Annulé
-        order_submit: Soumis
-        deposit: Dépôt
-        withdraw: Retrait
-        withdraw_lock: Retrait verrouillé
-        withdraw_unlock: Retrait déverrouillé
+        unknown: INCONNU
+        strike_add: TRADE PLUS
+        strike_sub: TRADE SUB
+        strike_fee: TRADE FEE
+        strike_unlock: TRADE UNLOCK
+        order_cancel: Annuler la commande
+        order_submit: Soumettre la commande
+        deposit: DEPOT
+        withdraw: RETRAIT
+        withdraw_lock: RETRAIT VERROUILLE
+        withdraw_unlock: RETRAIT DEVEROUILLE
     state:
       done: Terminé
-      wait: En attente
+      wait: en attente
       cancel: Annuler
-    currency:
-      btc: BTC
-      bch: BCH
-      ltc: LTC
-      xrp: XRP
-      dash: Dash
-      eth: ETH
     order:
       state:
         done: TERMINÉ
@@ -1263,7 +1254,7 @@ fr:
     deposit:
       aasm_state:
         submitted: Soumis
-        submitting: Soumttre
+        submitting: Soumettre
         accepted: Accepté
         cancelled: Annulé
         rejected: Rejeté
@@ -1279,10 +1270,6 @@ fr:
         processing: En cours
         done: Terminé
         canceled: Annulé
-    fund_source:
-      category:
-        satoshi: Bitcoin
-        bank: Banque
   views:
     pagination:
       first: "&laquo; First"
@@ -1293,44 +1280,44 @@ fr:
 
   mailer:
     dear_user: Cher utilisateur,
-    signature: Merci,<br/>l'équipe Peatio
-    please_contact: S'il ne s'agit pas de vous, merci <a href='mailto:%{contact_mail}'>de nous contacter</a> ASAP.
-    footer: Ceci est un mail automatique, merci de ne pas y répondre. Si vous avez la moindre question, merci de nous contacter <a href="mailto:%{contact_mail}"></a>.
+    signature: Merci,<br/> l'Ã©quipe Peatio
+    please_contact: Ceci est un mail automatique, merci de ne pas y rÃ©pondre, si vous avez des quesitons, merci de  <a href="mailto:%{contact_mail}">nous contacter</a>.
+    footer: Ceci est un mail automatique, merci de ne pas y rÃ©pondre, si vous avez des quesitons, merci de  <a href="mailto:%{contact_mail}">nous contacter</a>.
   deposit_mailer:
     accepted:
-      subject: "[Peatio] Votre dépôt a bien été crédité sur votre compte"
-      content: Votre dépôt de %{currency} a bien été crédité sur votre compte.
+      subject: "[Peatio] Votre dÃ©pÃ´t a bien Ã©tÃ© effectuÃ©"
+      content: VOtre dÃ©pÃ´t de %{currency} a Ã©tÃ© crÃ©ditÃ© sur votre compte.
   system_mailer:
     daily_stats:
-      member_stats: Membres
+      member_stats: Stats de Membres
       signup: S'inscrire
-      activation: Activation
+      activation: Activer
       asset_stats: Assets Changes
       trade_stats: Trades Changes
-      asset_value_change_total: Total des porte-monnaie.
-      trades_change_total: Total
+      asset_value_change_total: Digital Assets Changes Total
+      trades_change_total: Trades Changes Total
   withdraw_mailer:
     submitted:
-      subject: "[Peatio] Mise à jour de votre portefeuille"
-      content: La requête pour votre retrait de %{currency} a été soumise, nous y procédons aussi vite que possible. Merci d'être patient avec nous. Contactez nous en cas de besoin.
+      subject: "[Peatio] Votre compte a Ã©tÃ© mis Ã  jour"
+      content: VOtre demande de retrait de %{currency} a bien Ã©tÃ© prise en compte, nous y procÃ¨derons dans les meilleurts dÃ©lais. Merci d'Ãªtre patient. Contactez-nous en cas de besoin.
     processing:
-      subject: "[Peatio] Mise a jour de votre retrait"
-      content: La requête de votre retrait de %{currency} est en cours. Merci d'être patient avec nous. Contactez nous en cas de besoin.
+      subject: "[Peatio] Votre retrait a Ã©tÃ© mis a jour"
+      content: Votre demande de votre retrait de %{currency} est en cours. Merci Ãªtre patient nous. Contactez nous en cas de besoin.
     done:
-      subject: "[Peatio] Mise a jour de votre retrait"
-      content: La requête de votre retrait de %{currency} est terminée. Merci de vérifier. Contactez-nous en cas de besoin.
+      subject: "[Peatio] Votre demande de retrait est a jour"
+      content: Votre demande de retrait de %{currency} est terminÃ©e. Contactez-nous en cas de besoin.
     withdraw_state:
-      subject: "[Peatio] Mise a jour de votre retrait"
+      subject: "[Peatio] Votre retrait a Ã©tÃ© mis a jour"
       your_state: 'Your withdrawal state: '
 
-  'true': true
-  'false': false
-  view_on_github: View on Github
+  'true': vraie
+  'false': faux
+  view_on_github: Voir sur Github
   slogan:
     heading: Peatio Open-Source Exchange
-    subheading: Cloud deployment made simple and secure
+    subheading: Cloud deployment plus simple et plus sur
     text1: Peatio - Cryptocurrency exchange for managing digital currency.
-    text2: We provide Peatio installation and configuration services.
+    text2: Nous fournissons une installation Peatio ainsi que des services de configuration.
   trade:
     markets: Marchés
     realtime_price:
@@ -1342,11 +1329,11 @@ fr:
     bid: Offre
     notification:
       title: Peatio Exchange
-      enabled: Notifications désactivées.
+      enabled: Notifications activÃ©es
       new_trade: "%{kind} order#%{id} executed at %{price} %{quote_unit} for %{volume} %{base_unit}。"
-  back: Back
-  invalid_password: MOt de pase non-valide
-  all: Tout
+  back: Retour
+  invalid_password: Mot de passe non valide
+  all: TOUT
   date:
     formats:
       date-short: "%m-%d"
@@ -1359,55 +1346,55 @@ fr:
       default: "%m/%d/%Y %H:%M"
   header:
     home: Home
-    dashboard: Tableau de Bord
+    dashboard: Tableau de bord
     admin: Admin Panel
     market: Trade
     settings: Profil
-    signout: Quitter
+    signout: DÃ©connecter
     funds: Fonds
     getstart: Marchés
     assets: Solvabilité
     history: Historique
-    order_history: Historique de commande
-    trade_history: Historique de trade
+    order_history: Historique de commandes
+    trade_history: Historique de trades
     account_history: Historique de compte
     my_profile: Mon Profil
-    account_balance: Total 
+    account_balance: Total
     back: Retour
     total: Total
     deposit: Dépôt
-    withdraw: Retirer
+    withdraw: Retrait
   admin_header:
     deposits: Dépôts
     withdraws: Retraits
-    statistics: Statistiques
+    statistics: Stats des donnÃ©es
   footer:
     about: A propos
-    privacy: Privé
+    privacy: Privacy
     contact: Nous contacter
     price: Prix
-    liability_proof: Preuves
+    liability_proof: Preuve de confiance
   actions:
     go: Aller
     submit: Soumettre
     deposit: Dépôt
     select: Veuillez séléctionner
-    unlock: Débloquer
+    unlock: DÃ©verrouiller
     confirm: Confirmer
     back: Retour
-    block: VOir dans le bloc
+    block: voir dans le bloc
     destroy: Effacer
-    destroy_confirm: Etes-vous certains de vouloir supprimer ?
+    destroy_confirm: Etes-vous sur de vouloir effacer?
     detail: Details
     publish: Publier
     edit: Editer
-    preview: Previsualiser
+    preview: PrÃ©vusualiser
     close: Fermer
     cancel: Annuler
-    view: Vue
+    view: Voir
     member: Membre
-    transact: Transiter
-    reject: Refusé
+    transact: Transactions
+    reject: Rejeter
     clipboard:
       click: Cliquer pour copier
       done: Copié
@@ -1415,13 +1402,13 @@ fr:
     open: Ouvert
     high: Elevé
     low: Faible
-    close: Fermer
+    close: FermÃ©
     price: Prix
     volume: Volume
     candlestick: 'Candlestick'
     line: 'Ligne'
-    minute: minute
-    hour: Hour
+    minute: m
+    hour: Heure
     day: Jour
     week: Semaine
     month: Mois
@@ -1436,7 +1423,7 @@ fr:
   helpers:
     action:
       view: Voir
-      customer_service: Nous contacter
+      customer_service: nous contacter
     submit:
       order_ask:
         create: DEMANDE
@@ -1444,22 +1431,20 @@ fr:
         create: OFFRE
       member:
         update: Ouvrir un compte
-      fund_source:
-        create: Enregistrer
       deposit:
         create: Dépôt
       withdraw:
-        create: Soumettre
+        create: CrÃ©er
   activations:
     new:
-      login_required: Veuilez vous inscrire.
+      login_required: Veuilelz vous connecter.
   layouts:
     admin:
       menus:
         sections:
           members: Membres
           deposits: Dépôts
-          sites_statistics: Statistiques
+          sites_statistics: Analyses
           operating: Operations
         items:
           operating:
@@ -1467,18 +1452,21 @@ fr:
             deposits: Dépôts
             withdraws: Retraits
           deposits:
-            currency: Dépôt.
+            currency: DÃ©pÃ´ts.
     application:
-      close: Fermé
+      close: Fermer
   members:
     edit:
-      name: Veuillez remplir l'application.
+      name: Veuillez.
   sessions:
     new:
     create:
-      disabled: Votre compte a été désactivé. Veuillez contater les administrateurs en cas de problème.
-      account_locked: Trop d'erreurs. Afin d'assurer la sécurité de votre compte, nous avons verrouillé l'accès. Veuillez vous référer à l'onglet "Mot de passe oublié".
-      error: Mauvais identifiants, veuillez réessayer.
+      disabled: VOtre compte a Ã©tÃ© dÃ©sactivÃ©, contactez les administrateurs en cas de problÃ¨me.
+    failure:
+      account_locked: Trop de tentatives Ã©chouÃ©es.
+        Afin d'assurer votre sÃ©curitÃ©, votre compte a Ã©tÃ© a Ã©tÃ© verrouillÃ©.
+        Pour le dÃ©verrouiller changez votre mot de passe en cliquant sur "mot de passe oubliÃ©".
+      error: Erreur d'ID client ou mot de passe. Merci de rÃ©essayer.Trop de tentatives Ã©chouÃ©es.
   shared:
     admin:
       member:
