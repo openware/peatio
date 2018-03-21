@@ -781,22 +781,22 @@ fr:
       show:
         error: Echec
         success: Succés
-        analysis_panel: Statistiques
+        analysis_panel: Analyses
         help_panel: Aide
         done: Terminé
-        cancel: ANNULER
-        cancel_confirm: Etes vous certains de vouloir annuler ?
+        cancel: Annuler
+        cancel_confirm: Etes-vous certains de vouloir annuler la commande ?
         confirm: CONFIRMER
-        ask_order: 'Demande ##sn#'
-        bid_order: 'Offre ##sn#'
-        my_active_order: Activé
+        ask_order: 'DEMANDE ##sn#'
+        bid_order: 'OFFRE ##sn#'
+        my_active_order: Actif
         my_done_order: Terminé
         trades: Trading
         chat: Chat Channel
       market_list:
-        all: All Markets
-        all_html: "<i class='fa fa-check'></i><span>Tous les marchés</span>"
-        ccy_html: "<i class='fa fa-check'></i><span>%{currency} Marchés</span>"
+        all: Tous les MarchÃ©s
+        all_html: "<i class='fa fa-check'></i><span>Tous les  MarchÃ©s</span>"
+        ccy_html: "<i class='fa fa-check'></i><span>%{currency}  MarchÃ©s</span>"
         price: Prix
         change: "24h %"
       range_switch:
@@ -809,9 +809,9 @@ fr:
         switch_240: 4h
         switch_360: 6h
         switch_720: 12h
-        switch_1440: 1j
-        switch_4320: 3j
-        switch_10080: 1s
+        switch_1440: 1d
+        switch_4320: 3d
+        switch_10080: 1w
       depths:
         price: Prix
         amount: Montant
@@ -820,12 +820,12 @@ fr:
         ask_orders: Vendre
         bid_orders: Acheter
       ticker:
-        last: Dernier prix
-        ask: Demande
-        bid: Offre
+        last: Dernier Prix
+        ask: DEMANDE
+        bid: OFFRE
       account_balance:
         title: Balance
-        available: Dipsonible %{currency}
+        available: Disponible %{currency}
       bid_entry:
         action: "Acheter %{currency}"
         price: Prix
@@ -833,16 +833,16 @@ fr:
         amount: Montant
         total: Total
       ask_entry:
-        action: "Vendre %{currency}"
+        action: "Disponible %{currency}"
         price: Prix
-        last_price: Dernier prix
+        last_price: Dernier Prix
         amount: Montant
         total: Total
       place_order:
-        price_high: ELEVE
-        price_low: FAIBLE
-        full_bid: PLEIN
-        full_ask: VIDE
+        price_high: Ã‰levÃ©
+        price_low: Faible
+        full_bid: Plein
+        full_ask: Vide
       order_book:
         title: Cahier des commandes
         volume: Volume
