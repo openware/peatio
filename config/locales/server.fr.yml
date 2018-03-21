@@ -1482,17 +1482,16 @@ fr:
   shared:
     admin:
       member:
-        member_info: Info des membres
+        member_info: Infos membres
         inactive: Inactif
-        deactive: Desactivé
+        deactive: DÃ©sactivÃ©
       account:
-        account_info: Info de compte.
-        payment_address: Adresse de paiement.
+        account_info: Infos de compte.
+        payment_address: Adresse de dÃ©pÃ´t
     alert:
-      modern: "Afin d'optimiser votre expérience ici, veuilez utiliser un Browser plus récent tel que :<a target='_blank' href='https://www.google.com/#q=google+chrome'>Google
-        Chrome</a>。"
-      pusher_unavailable: La connexion est momentanément indisponible. <a
-        href='#' class='alert-link'>Please refresh</a>.
+      modern: "Afin de ne pas altÃ©rer votre expÃ©rience de trading, merci d'utiliser l'un des browsers les plus
+        utilisÃ©s, nous vous recommandons <a target='_blank' href='https://www.google.com/#q=google+chrome'>Google Chrome</a>Ã£Â€Â‚"
+      pusher_unavailable: Impossible de se connecter... <a href='#' class='alert-link'>Rafraichier la page</a>.
     header:
       balance: Balance
     header_account_balance:
@@ -1501,56 +1500,24 @@ fr:
       ticker:
         ask_price: Demande
         bid_price: Offre
-        high_price: High
-        low_price: Low
+        high_price: ElevÃ©
+        low_price: Faible
         volume: Volume
-        latest_price: Last
+        latest_price: Dernier
     frame:
-      deposit_now: Deposit Now
+      deposit_now: DÃ©pÃ´ser maintenant
   withdraw_channel:
-    bank:
-      key: Transfert bancaire
-      title: Transfert
-      intro: Dépôt bancaire
+    fiat:
+      key: TransfÃ¨re bancaire
+      title: TransfÃ¨re bancaire
+      intro: DÃ©pÃ´ts bancaire, RecommandÃ© pour les dÃ©pÃ´ts Ã©levÃ©s
       latency: 30 minutes
       transfer: Transférer manuellement
       go: Retirer
-    satoshi:
+    coin:
       key: Blockchain
-      Title: Bitcoin Blockchain
-      intro: Envoyer des Bitcoins vers votre propre porte-monnaie BTC.
-    bitcoin_cash:
-      key: Blockchain
-      title: Bitcoin Cash Blockchain
-      intro: Envoyer Bitcoin Cash vers votre porte-monaie Bitcoin-Cash.
-      latency: 30 minutes
-      transfer: Manuel
-      go: Retirer.
-    litoshi:
-      key: Blockchain
-      title: Litoshi Blockchain
-      intro: Envoyer Litoshi vers votre porte-monnaie Litoshi.
-      latency: 30 minutes
-      transfer: Manuel
-      go: Retirer.
-    ripple:
-      key: Blockchain
-      title: Ripple Blockchain
-      intro: Envoyer XRP vers votre porte-monnaie Ripple.
-      latency: 30 minutes
-      transfer: Manuel
-      go: Retirer.
-    duff:
-      key: Blockchain
-      title: Dash Blockchain
-      intro: Envoyer Dash vers votre porte-monnaie Dash
-      latency: 30 minutes
-      transfer: Manuel
-      go: Retirer.
-    ethereum:
-      key: Blockchain
-      title: Blockchain Ethereum
-      intro: Retirer des Ethereum vers votre porte-monnaie Ethereum
+      title: Blockchain
+      intro: Retirer de la monnaie à votre propre porte-monnaieRetirer de la monnaie à votre propre porte-monnaie
       latency: 30 minutes
       transfer: Manuel
       go: Retrait
@@ -1560,65 +1527,21 @@ fr:
     aasm_state:
       submitting: Soumettre
       submitted: Soumis
-      rejected: Refusé
+      rejected: RejetÃ©
       accepted: Accepté
       suspect: Suspect
       processing: En cours
       done: Terminé
       canceled: Annulé
-      failed: Echec
-  withdraws/satoshi:
+      failed: EchouÃ
+  withdraws/coin:
     aasm_state:
       submitting: Soumettre
       submitted: Soumis
-      rejected: Refusé
+      rejected: RejetÃ©
       accepted: Accepté
       suspect: Suspect
       processing: En cours
       done: Terminé
       canceled: Annulé
-      failed: Echec
-  withdraws/bitcoin_cash:
-    aasm_state:
-      submitting: Soumettre
-      submitted: Soumis
-      rejected: Refusé
-      accepted: Accepté
-      suspect: Suspect
-      processing: En cours
-      done: Terminé
-      canceled: Annulé
-      failed: Echec
-  withdraws/litoshi:
-    aasm_state:
-      submitting: Soumettre
-      submitted: Soumis
-      rejected: Refusé
-      accepted: Accepté
-      suspect: Suspect
-      processing: En cours
-      done: Terminé
-      canceled: Annulé
-      failed: Echec
-  withdraws/duff:
-    aasm_state:
-      submitting: Soumettre
-      submitted: Soumis
-      rejected: Refusé
-      accepted: Accepté
-      suspect: Suspect
-      processing: En cours
-      done: Terminé
-      canceled: Annulé
-      failed: Echec
-  withdraws/ripple:
-    aasm_state:
-      submitting: Soumettre
-      submitted: Soumis
-      rejected: Refusé
-      accepted: Accepté
-      suspect: Suspect
-      processing: En cours
-      done: Terminé
-      canceled: Annulé
-      failed: Echec
+      failed: EchouÃ
