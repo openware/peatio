@@ -844,35 +844,35 @@ fr:
         full_bid: PLEIN
         full_ask: VIDE
       order_book:
-        title: Carnet de commandes
+        title: Cahier des commandes
         volume: Volume
         price: Prix
         amount: Montant
-        ask: Demande
-        bid: Offre
+        ask: demande
+        bid: offre
         fade_toggle_depth: Profondeur de Marché
       trade_state:
         new: Nouveau
         partial: Partiel
       market_trades:
         all: Tout
-        my: Personnel
+        my: Les miens
         all_html: "<i class='fa fa-check'></i><span>Tout</span>"
-        my_html: "<i class='fa fa-check'></i><span>les miens</span>"
-        time: Heure
+        my_html: "<i class='fa fa-check'></i><span>Les miens</span>"
+        time: Quand
         price: Prix
         volume: Volume
       header:
-        network: Connection
+        network: Connexion
         vol: 24h Volume
-        high: ELevé
-        low: faible
+        high: ElevÃ©
+        low: Faible
         change: Changer
       settings:
         sound: Sons
         notification: Notifications
         funds: "Fonds"
-        signout: "Quitter"
+        signout: "DÃ©connecter"
         settings: "Profil"
         history: "Historique"
       account_summary:
@@ -881,7 +881,7 @@ fr:
         amount: Montant
         locked: Geler
         view_all_accounts: "Tout voir"
-        hide_all_accounts: "Masquer"
+        hide_all_accounts: "Cacher le reste"
       my_orders:
         orders_wait: Dernières commandes
         orders_done: Finaliser les commandes
@@ -896,50 +896,32 @@ fr:
         price: Prix
         volume: Volume
         amount: Montant
-        time: Heure locale
+        time: Date
       mask:
-        warning: Veuillez <a class=text-up href='/'>Vous inscrire</a> or <a class=text-up
-          href='/'>Vous connecter</a>
+        warning: <a class=text-up href='/'>S'inscrire</a> ou <a class=text-up href='/'>Se connecter</a> for operation
       klime_chart:
         title: Candlestick Charts
       global:
-        global_orders_title: Commandes
+        global_orders_title: COMMANDES
         global_trades_title: TRADES
       chat:
         title: Chat Channel
     settings:
       success: Paramétres mis a jour.
-      failure: Mot de apsse non valide, merci de ré-essayer.
+      failure: Mot de passe non valide, veuillez rÃ©essayer.
       index:
         reauthenticate: Authentification
-        auth-verified: Veuillez d'abord vérifier votre identité.
-        api_tokens:
-          title: API Tokens
-          description: Créer et gérer vos  API tokens.
-          go: OK
+        auth-verified: Veuilelz d'abord confirmer votre identitÃ©.
   guides:
     private:
       settings:
-        panel: Paramétres
+        panel: ParamÃ¨tres
         index:
-          intro: Administrer votre profil.
-      api_tokens:
-        panel: API Tokens
-        index:
-          title: My Tokens
-          intro: Une liste de tout vos API tokens. Une 'IP Whitelist' vide signifie que toutes ces IP sont autorisées à utiliser les tokens.
-        new:
-          title: Créer API Token
-        create:
-          title: Créer API Token
-        edit:
-          title: Editer API Token
-        update:
-          title: Editer API Token
+          intro: GÃ©rer votre profil.
     panels:
-      balance: Compte
+      balance: Balance
     sessions:
-      panel: Se connecter 
+      panel: Se connecter
       new:
         title: Se connecter
         intro: Se connecter à Peatio.
@@ -952,44 +934,30 @@ fr:
         bank:
           amount: Montant minimum 100
       session:
-        email: E-mail
+        email: Adresse E-mail
         password: Mot de passe
       order_bid:
-        origin_volume: Volume d'achat. 
-        sum: Total
+        origin_volume: Acheter
+        sum: Somme
       order_ask:
-        origin_volume: Volume de vente
+        origin_volume: Vendre
         sum: Total
       withdraw:
-        bank:
+        fiat:
           sum: Montant minimum 100
-        satoshi:
+        coin:
           sum: Montant minimum 0.001
-          fund_extra: Donner un nom à cette adresse (optionel)
-        ripple:
-          sum: Montant minimum 0.001
-          fund_extra: Donner un nom à cette adresse (optionel)
     hints:
       deposit:
         bank:
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
+          sum: "<a target='_balance' href='#'>Commissions</a>"
           member_name: "<span class='text-danger'>Le nom du compte en Banque doit correspondre au nom indiqué sur votre compte</span>"
-          sn: "<span class='text-danger'>Veuillez copie rle code SN pour votre transfère, sans quoi nous ne pourrons procéder à ce dernier rapidement.</span>"
+          sn: "<span class='text-danger'>Veuillez copier le code SN lors de votre transfÃ¨re bancaire, sans cela nous ne pourrons traiter votre demande rapidement.</span>"
       withdraw:
         bank:
-          member_name: "<span class='text-danger'>Le nom du compte en Banque doit correspondre au nom indiqué sur votre compte</span>"
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
-          fund_extra: SI votre banque n'est pas répertoriée, merci de contacter le service client.
+          sum: "<a target='_balance' href='#'>Commission</a>"
         satoshi:
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
-        bitcoin_cash:
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
-        litoshi:
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
-        ripple:
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
-        duff:
-          sum: "<a target='_balance' href='#'>Fee structure</a>"
+          sum: "<a target='_balance' href='#'>Commission</a>"
     creating: Création...
     updating: Mise a jour...
     buttons:
@@ -998,10 +966,10 @@ fr:
     'yes': 'Oui'
     'no': 'Non'
     required:
-      text: requis
+      text: requit
       mark: "*"
     error_notification:
-      default_message: 'Veuillez vérifier les problèmes ci-dessous:'
+      default_message: 'Veuillez-vÃ©rifier :'
     labels:
       defaults:
         title: Titre
@@ -1010,86 +978,48 @@ fr:
         address: Adresse
         category: Categorie
       withdraw:
-        bank:
-          fund_extra: Banque
+        fiat:
           sum: Montant
           account_balance: Balance
-          member_name: Détenteur du compte
-        satoshi:
+        coin:
           fee: Commission
-          sum: Montant
-          fund_uid: Adresse Bitcoin
-          fund_extra: Label
-          account_balance: Balance du compte
-          member_name: Compte
-        bitcoin_cash:
-          fee: Commission
-          sum: Montant
-          fund_uid: Adresse Bitcoin Cash
-          fund_extra: Label
-          account_balance: Blance du compte
-          member_name: Compte
-        litoshi:
-          fee: Commissions
-          sum: Montant
-          fund_uid: Adresse Litoshi
-          fund_extra: Label
-          account_balance: Balance du compte
-          member_name: Compte
-        ripple:
-          fee: Commission
-          sum: Montant
-          fund_uid: Adresse Bitcoin
-          fund_extra: Label
-          account_balance: Balance du compte
-          member_name: Compte
-        duff:
-          fee: Commission
-          sum: Montant
-          fund_uid: Adresse Duff
-          fund_extra: Label
-          account_balance: Balance du compte
-          member_name: Compte
+          sum: Somme
+          account_balance: Balance
   admin:
     deposits:
-      banks:
-        index:
-          oneday: Demandes de ces dernières 24heures
-          available: Demandes en attente
+      fiats:
         show:
-          alert: Impossible de localiser.
-          notice: Approvisionnement réussi.
-          deposit: Demande de dépôt
+          alert: Ne peut Ãªtre localisÃ©.
+          notice: Recharge rÃ©ussit avec succÃ¨s.
+          deposit: Demande de dÃ©pÃ´t
           accept: Accepter
-          target_deposit: Virement bancaire
-          confirm: Confirmer?
-        update:
-          blank_txid: TxID ne peut rester vide.
+          target_deposit: Wire TransfÃ¨re
+          confirm: Confirmer ?
       coins:
         update:
-          notice: Dépôt réussi.
+          notice: Le dÃ©pÃ´t a Ã©tÃ© effectuÃ© avec succÃ¨s
         index:
           accept: Accepter
-          accept_confirm: Confirmer le dépôt ? 
+          accept_confirm: Confirmer le dÃ©pÃ´t?
     members:
       index:
-        search: Recherche
+        search: Rechercher
         members: Membres
         email: Email
         name: Nom
-        wallet_address: Adresse porte-monnaie
+        wallet_address: Adresses de porte-monnaie
       show:
-        member_title: Informations utilisateurs
+        member_title: Info utilisateurs
         actions_title: Action
-        accounts_title: Info du compte
-        account_versions_title: Enregitrés
+        accounts_title: Informations de compte
+        account_versions_title: EnregistrÃ©s
     dashboard:
       index:
-        accounts_title: Résumé du compte
+        accounts_title: Sommaire du compte
     statistic:
       filter: Filtre
       summary: Sommaire
-      click-to-expand: Etirer
+      click-to-expand: Etendre
       members:
         show:
           table: Resultats
@@ -1097,17 +1027,17 @@ fr:
         show:
           avg: Moyenne
           sum: Volume des commandes
-          sum_strike: Par volume
+          sum_strike: Par Volume
           count: Compte
       trades:
         show:
           count: Transactions
           volume: Volume
-          amount: Montant total
+          amount: Montant Total
           min_price: Prix minimum
           max_price: Prix maximum
           avg_price: Prix moyen
-          amount_fee: Frais de transaction
+          amount_fee: Commissions de transactions
           volume_fee: Total des commissions
       deposits:
         show:
@@ -1119,114 +1049,47 @@ fr:
           amount: Montant total
           fee: Commission
     withdraws:
-      banks:
+      fiats:
         index:
           one: Demandes de retraits en attente
           all: 24h
-          empty: Pas d'info
+          empty: Pas de donnÃ©es
         show:
           process: En cours
-          succeed: Réussi
-          reject: Rejeter
-          succeed_confirm: Confirmer ?
-          reject_confirm: Confirmer le rejet?
+          succeed: SuccÃ¨s
+          reject: RejetÃ©
+          succeed_confirm: Confirmer?
+          reject_confirm: Rejecter?
           withdraw: Retrait
-          empty: Pas d'info
+          empty: Pas de donnÃ©es
       coins:
-        index:
-          one: Retraits en attente
-          all: Dernières 24h
-          empty: Pas d'info
         show:
-          process: Accepté
-          succeed: Retiré
+          process: En cours
+          succeed: SuccÃ¨s
           reject: Rejeté
           succeed_confirm: Procéder au retrait ?
-          reject_confirm: Refuser le retrait?
-          withdraw: Retraits
+          reject_confirm: Se dÃ©sister ?
+          withdraw: Retirer
         update:
-          notice: Mis à jour.
+          notice: Mis a jour avec succÃ¨s.
         destroy:
-          notice: Détruit.
-  deposits/satoshi:
-    aasm_state:
-      submitted: Soumit
-      accepted: Accepté
-      checked: Vérifié
-      warning: Attention
-  deposits/bitcoin_cash:
-    aasm_state:
-      submitted: Soumit
-      accepted: Accepté
-      checked: Vérifié
-      warning: Attention
-  deposits/litoshi:
-    aasm_state:
-      submitted: Soumit
-      accepted: Accepté
-      checked: Vérifié
-      warning: Attention
-  deposits/ripple:
-    aasm_state:
-      submitted: Soumit
-      accepted: Accepté
-      checked: Vérifié
-      warning: Attention
-  deposits/duff:
-    aasm_state:
-      submitted: Soumit
-      accepted: Accepté
-      checked: Vérifié
-      warning: Attention
+          notice: DÃ©truit avec succÃ¨s.
+  deposits/coin:
+    submitted: Soumis
+    accepted: AcceptÃ©
+    checked: VÃ©rifiÃ©
+    warning: Attention
   easy_table:
-    satoshi:
+    coin:
       amount: Montant
       txid: TxId
-      created_at: Créé le
+      created_at: CrÃ©Ã© le
       confirmations: Confirmations
       state_and_actions: Etat/Actions
-      currency_obj_key_text: Monnaie
-    bitcoin_cash:
-      amount: Montant
-      txid: TxId
-      created_at: Créé le
-      confirmations: Confirmations
-      state_and_actions: Etat/Actions
-      currency_obj_key_text: Monnaie
-    litoshi:
-      amount: Montant
-      txid: TxId
-      created_at: Créé le
-      confirmations: Confirmations
-      state_and_actions: Etat/Actions
-      currency_obj_key_text: Monnaie
-    ripple:
-      amount: Montant
-      txid: TxId
-      created_at: Créé le
-      confirmations: Confirmations
-      state_and_actions: Etat/Actions
-      currency_obj_key_text: Monnaie
-    duff:
-      amount: Montant
-      txid: TxId
-      created_at: Créé le
-      confirmations: Confirmations
-      state_and_actions: Etat/Actions
-      currency_obj_key_text: Monnaie
-    duff:
-      amount: Montant
-      txid: TxId
-      created_at: Créé le
-      confirmations: Confirmations
-      state_and_actions: Etat/Actions
-      currency_obj_key_text: Monnaie
-    bank:
+    fiat:
       sn: SN
       amount: Montant
-      created_at: Créé le
-      memo: Memo
-      state_and_actions: Etat/Actions
+      created_at: CrÃ©Ã© le
   enumerize:
     account_version:
       reason:
