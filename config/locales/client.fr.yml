@@ -30,25 +30,9 @@ fr:
             <li>Les envois multiples de sommes identiques sur de courts délais peuvent mal fonctionner. Essayez d'envoyer des sommes différentes afin d'évuiter tout désagrement.</li>
             <li>IMPORTANT: Le nom figurant sur le compte de dépôt doit impérativement correspondre au nom fournit lors de votre inscription.</li>
           </ol>
-      deposit_btc:
-        title: Dépôt de BTC
-
-      deposit_bch:
-        title: Dépôt de BCH
-
-      deposit_ltc:
-        title: Dépôt de LTC
-
-      deposit_xrp:
-        title: Dépôt de XRP
-
-      deposit_dash:
-        title: Dépôt de Dash
-
-      deposit_eth:
-        title: Dépôt d'ETH
 
       deposit_coin:
+        title: 'Depot de {{currency}} '
         address: Adresse
         open-wallet: Veuillez utiliser votre porte-monnaie habituel, séléctionnez un mode de paiement, et envoyez. 
         detail: Veuillez coller l'adresse fournie avec votre porte-monnaie, introduisez le montant de votre dépôt puis confirmez/envoyez.
@@ -83,7 +67,6 @@ fr:
         intro: Séléctionnez le compte en banque à débiter, entrez le numéro de compte puis validez.
         intro_2: Les noms figurants sur le compte en banque ainsi que votre compte doivent être identiques.
         attention: "Working Hours: 9:00 - 18:00"
-        account_name: Nom du compte
         withdraw_address: Adresse de retrait
         balance: Balance
         withdraw_amount: Montant du retrait
@@ -91,25 +74,8 @@ fr:
         min: Au moins 
         withdraw_all: Tout retirer
 
-      withdraw_btc:
-        title: Retrait de BTC
-
-      withdraw_bch:
-        title: Retrait de BCH
-
-      withdraw_ltc:
-        title: Retrait de LTC
-
-      withdraw_xrp:
-        title: Retrait d'XRP
-
-      withdraw_dash:
-        title: Retrait de Dash
-
-      withdraw_eth:
-        title: Retrait d'ETH
-
       withdraw_coin:
+        title: 'Retrait de {{currency}}'
         intro: Veuillez remplir les blancs puis valider. Cela sera confirmé sous 1 minutes.
         label: Label
         balance: Balance
