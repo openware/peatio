@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+require 'faye/websocket'
+
 module APITestHelpers
   extend Memoist
 
@@ -38,6 +42,11 @@ module APITestHelpers
       sub: 'session',
       iss: 'peatio',
       aud: ['peatio']
+  end
+
+  # Generates websocket client connection
+  def ws_conn(url = 'localhost', port = 8080)
+    Faye::WebSocket::Client.new "ws://#{url}:#{port}"
   end
 
   #
