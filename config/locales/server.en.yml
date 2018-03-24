@@ -457,6 +457,7 @@ en:
         total: 'Total %{currency} Assets'
       partial_tree:
         success: 'Success! Verification data generated at: %{timestamp}'
+      liability-proof-generating: Proof of Liability generation in process.
     markets:
       show:
         error: Failed
