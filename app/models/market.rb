@@ -68,8 +68,14 @@ class Market < ActiveRecord::Base
   end
 
   def name
-    "#{ask_unit}/#{bid_unit}"
+    "#{ask_unit}/#{bid_unit}".upcase
   end
+
+  def as_json(*)
+    super.merge!(name: name)
+  end
+
+  "#{ask_unit}/#{bid_unit}" => "#{ask_unit}/#{bid...
 
   alias to_s name
 
