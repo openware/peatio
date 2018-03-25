@@ -75,8 +75,6 @@ class Market < ActiveRecord::Base
     super.merge!(name: name)
   end
 
-  "#{ask_unit}/#{bid_unit}" => "#{ask_unit}/#{bid...
-
   alias to_s name
 
   def latest_price
