@@ -7,7 +7,7 @@ class CreateMarkets < ActiveRecord::Migration
       t.decimal :bid_fee,       null: false,            default: 0, precision: 7, scale: 6
       t.integer :ask_precision, null: false, limit: 1,  default: 4
       t.integer :bid_precision, null: false, limit: 1,  default: 4
-      t.integer :position,      null: false, limit: 1,  default: 0, index: true
+      t.integer :position,      null: false,            default: 0, index: true
       t.integer :visible,       null: false, limit: 1,  default: 1, index: true
       t.timestamps null: false
     end

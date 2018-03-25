@@ -47,14 +47,6 @@ module Private
     end
 
     def trading_ui_variables
-      markets = @markets.map do |m|
-        { id:         m.id,
-          name:       m.name,
-          quote_unit: m.quote_unit,
-          base_unit:  m.base_unit,
-          ticker:     Global[m].ticker }
-      end
-
       accounts = @member&.accounts&.map do |x|
         { id:         x.id,
           locked:     x.locked,
@@ -71,7 +63,7 @@ module Private
         market_groups:  @market_groups,
         currencies:     Currency.order(id: :asc).map { |c| { code: c.code, type: c.type } },
         current_member: @member,
-        markets:        markets,
+        markets:        @markets.map { |m| m.as_json.merge!(ticker: Global[m].ticker) },
         my_accounts:    accounts,
         csrf_token:     form_authenticity_token
       }

@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 20180325001828) do
     t.decimal  "bid_fee",                 precision: 7, scale: 6, default: 0.0, null: false
     t.integer  "ask_precision", limit: 1,                         default: 4,   null: false
     t.integer  "bid_precision", limit: 1,                         default: 4,   null: false
-    t.integer  "position",      limit: 1,                         default: 0,   null: false
+    t.integer  "position",      limit: 4,                         default: 0,   null: false
     t.integer  "visible",       limit: 1,                         default: 1,   null: false
     t.datetime "created_at",                                                    null: false
     t.datetime "updated_at",                                                    null: false
