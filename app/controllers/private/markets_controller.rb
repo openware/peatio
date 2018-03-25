@@ -15,7 +15,7 @@ module Private
 
       @market        = current_market
       @markets       = Market.all.sort
-      @market_groups = @markets.map(&:quote_unit).uniq
+      @market_groups = @markets.map(&:ask_unit).uniq
 
       @bids   = @market.bids
       @asks   = @market.asks
@@ -33,7 +33,7 @@ module Private
     private
 
     def visible_market?
-      redirect_to trading_path(Market.first) if not current_market.visible?
+      redirect_to trading_path(Market.first) unless current_market.visible?
     end
 
     def set_default_market
@@ -66,7 +66,7 @@ module Private
             icon_url: currency_icon_url(x.currency) } }
       end
 
-      { current_market: @market.as_json.tap { |data| data.merge!(data.delete('attributes')) },
+      { current_market: @market.as_json,
         gon_variables:  gon.all_variables,
         market_groups:  @market_groups,
         currencies:     Currency.order(id: :asc).map { |c| { code: c.code, type: c.type } },

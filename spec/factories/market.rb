@@ -1,0 +1,25 @@
+FactoryBot.define do
+  factory :market do
+
+  end
+end
+
+#
+# - id: btcusd
+# code: 3
+# base_unit: btc
+# quote_unit: usd
+# bid: {fee: 0, currency: usd, fixed: 2}
+# ask: {fee: 0, currency: btc, fixed: 4}
+# - id: ptsbtc
+# code: 6
+# base_unit: pts
+# quote_unit: btc
+# bid: {fee: 0, currency: btc, fixed: 4}
+# ask: {fee: 0, currency: pts, fixed: 4}
+# visible: false
+
+
+# id: btc/usd
+# fee:
+
