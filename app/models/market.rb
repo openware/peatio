@@ -31,16 +31,10 @@ class Market < ActiveRecord::Base
       where('CONCAT(ask_unit, bid_unit) = ?', name)
     end
 
-    def to_hash
-      all.each_with_object({}) do |market, memo|
-        memo[market.commodity_pair] = { name: market.name, bid_unit: market.bid_unit, ask_unit: market.ask_unit }
-      end
-    end
-    memoize :to_hash
   end
 
   def self.enumerize
-    all.inject({}) {|hash, i| hash[i.name.to_sym] = i.id; hash }
+    all.inject({}) {|hash, i| hash[i.id] = i.id; hash }
   end
 
   def commodity_pair
@@ -83,8 +77,7 @@ class Market < ActiveRecord::Base
 
   # type is :ask or :bid
   def fix_number_precision(type, d)
-    digits = send(type)['fixed']
-    d.round digits, BigDecimal::ROUND_DOWN
+    d.round send("#{type}_precision"), BigDecimal::ROUND_DOWN
   end
 
   # shortcut of global access
@@ -118,7 +111,7 @@ class Market < ActiveRecord::Base
   end
 
   def global
-    Global[commodity_pair]
+    Global[id]
   end
 end
 

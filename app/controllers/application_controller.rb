@@ -64,7 +64,6 @@ class ApplicationController < ActionController::Base
     gon.local = I18n.locale
     gon.market = current_market.attributes
     gon.ticker = current_market.ticker
-    gon.markets = Market.to_hash
     gon.host = request.base_url
     gon.pusher = {
       key:       ENV.fetch('PUSHER_CLIENT_KEY'),
