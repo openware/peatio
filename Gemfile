@@ -74,6 +74,7 @@ gem 'validates_lengths_from_database', '~> 0.7.0'
 gem 'ejs','~> 1.1'
 
 group :development, :test do
+  gem 'bullet', '~> 5.7'
   gem 'factory_bot_rails'
   gem 'faker', '~> 1.4.3'
   gem 'binding_of_caller'
