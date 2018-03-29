@@ -85,6 +85,7 @@ end
 
 group :development do
   gem 'annotate', '~> 2.7'
+  gem 'better_errors'
 end
 
 group :test do
