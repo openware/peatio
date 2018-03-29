@@ -14,11 +14,11 @@
             <div class="col-xs-offset-4 col-xs-16">
               <span class="pull-left"><%= t('.total', translation_data) %></span>
               <span class="pull-right">
-                <%= coin_proof.present? ? coin_proof.sum : t('private.assets.liability-proof-generating') %>
+                <%= coin_proof ? coin_proof.sum : t('private.assets.liability_proof_generation') %>
               </span>
             </div>
           </div>
-          <% unless coin_proof.blank? || coin_proof.addresses.empty? %>
+          <% unless coin_proof&.addresses.blank? %>
             <div class="clearfix"></div>
             <div class="row">
               <table class="table">
