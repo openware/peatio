@@ -77,6 +77,7 @@ GEM
     bourbon (4.3.4)
       sass (~> 3.4)
       thor (~> 0.19)
+    brakeman (4.2.1)
     browser (0.8.0)
     builder (3.2.3)
     bunny (2.9.0)
@@ -427,6 +428,7 @@ DEPENDENCIES
   binding_of_caller
   bootstrap-sass (~> 3.2.0.2)
   bourbon
+  brakeman
   browser (~> 0.8.0)
   bunny (~> 2.9.0)
   cancancan
