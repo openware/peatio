@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 20180329154130) do
   create_table "orders", force: :cascade do |t|
     t.integer  "bid",            limit: 4
     t.integer  "ask",            limit: 4
-    t.string   "currency",       limit: 10
+    t.string   "market_id",      limit: 10
     t.decimal  "price",                      precision: 32, scale: 16
     t.decimal  "volume",                     precision: 32, scale: 16
     t.decimal  "origin_volume",              precision: 32, scale: 16
@@ -167,7 +167,7 @@ ActiveRecord::Schema.define(version: 20180329154130) do
     t.integer  "trades_count",   limit: 4,                             default: 0
   end
 
-  add_index "orders", ["currency", "state"], name: "index_orders_on_currency_and_state", using: :btree
+  add_index "orders", ["market_id", "state"], name: "index_orders_on_market_id_and_state", using: :btree
   add_index "orders", ["member_id", "state"], name: "index_orders_on_member_id_and_state", using: :btree
   add_index "orders", ["member_id"], name: "index_orders_on_member_id", using: :btree
   add_index "orders", ["state"], name: "index_orders_on_state", using: :btree
@@ -227,17 +227,17 @@ ActiveRecord::Schema.define(version: 20180329154130) do
   add_index "proofs", ["currency_id"], name: "index_proofs_on_currency_id", using: :btree
 
   create_table "trades", force: :cascade do |t|
-    t.decimal  "price",                   precision: 32, scale: 16
-    t.decimal  "volume",                  precision: 32, scale: 16
+    t.decimal  "price",                    precision: 32, scale: 16
+    t.decimal  "volume",                   precision: 32, scale: 16
     t.integer  "ask_id",        limit: 4
     t.integer  "bid_id",        limit: 4
     t.integer  "trend",         limit: 4
-    t.integer  "currency",      limit: 4
+    t.string   "market_id",     limit: 10
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "ask_member_id", limit: 4
     t.integer  "bid_member_id", limit: 4
-    t.decimal  "funds",                   precision: 32, scale: 16
+    t.decimal  "funds",                    precision: 32, scale: 16
   end
 
   add_index "trades", ["ask_id"], name: "index_trades_on_ask_id", using: :btree
@@ -245,7 +245,7 @@ ActiveRecord::Schema.define(version: 20180329154130) do
   add_index "trades", ["bid_id"], name: "index_trades_on_bid_id", using: :btree
   add_index "trades", ["bid_member_id"], name: "index_trades_on_bid_member_id", using: :btree
   add_index "trades", ["created_at"], name: "index_trades_on_created_at", using: :btree
-  add_index "trades", ["currency"], name: "index_trades_on_currency", using: :btree
+  add_index "trades", ["market_id"], name: "index_trades_on_market_id", using: :btree
 
   create_table "versions", force: :cascade do |t|
     t.string   "item_type",  limit: 255,   null: false

@@ -4,7 +4,6 @@ class Trade < ActiveRecord::Base
 
   extend Enumerize
   enumerize :trend, in: {:up => 1, :down => 0}
-  enumerize :currency, in: Market.enumerize, scope: true
 
   belongs_to :market, class_name: 'Market', foreign_key: 'currency'
   belongs_to :ask, class_name: 'OrderAsk', foreign_key: 'ask_id'
@@ -72,7 +71,7 @@ class Trade < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180227163417
+# Schema version: 20180329154130
 #
 # Table name: trades
 #
@@ -82,7 +81,7 @@ end
 #  ask_id        :integer
 #  bid_id        :integer
 #  trend         :integer
-#  currency      :integer
+#  market_id     :string(10)
 #  created_at    :datetime
 #  updated_at    :datetime
 #  ask_member_id :integer
@@ -96,5 +95,5 @@ end
 #  index_trades_on_bid_id         (bid_id)
 #  index_trades_on_bid_member_id  (bid_member_id)
 #  index_trades_on_created_at     (created_at)
-#  index_trades_on_currency       (currency)
+#  index_trades_on_market_id      (market_id)
 #

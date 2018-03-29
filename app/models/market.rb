@@ -33,10 +33,6 @@ class Market < ActiveRecord::Base
 
   end
 
-  def self.enumerize
-    all.inject({}) {|hash, i| hash[i.id] = i.id; hash }
-  end
-
   def commodity_pair
     (ask_unit + bid_unit).to_sym
   end
