@@ -38,6 +38,7 @@ gem 'pusher'
 gem 'eventmachine', '~> 1.0.4'
 gem 'em-websocket', '~> 0.5.1'
 
+gem 'rails-html-sanitizer', '~> 1.0.4'
 gem 'simple_form', '~> 3.1.0'
 gem 'slim-rails'
 gem 'sass-rails'
@@ -85,6 +86,7 @@ end
 
 group :development do
   gem 'annotate', '~> 2.7'
+  gem 'brakeman', require: false
 end
 
 group :test do
