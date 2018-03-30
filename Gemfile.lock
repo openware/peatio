@@ -296,8 +296,8 @@ GEM
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6)
       rails-deprecated_sanitizer (>= 1.0.1)
-    rails-html-sanitizer (1.0.3)
-      loofah (~> 2.0)
+    rails-html-sanitizer (1.0.4)
+      loofah (~> 2.2, >= 2.2.2)
     rails-i18n (4.0.9)
       i18n (~> 0.7)
       railties (~> 4.0)
@@ -485,6 +485,7 @@ DEPENDENCIES
   rack-attack (~> 4.3.1)
   rack_session_access (~> 0.1)
   rails (~> 4.2)
+  rails-html-sanitizer (~> 1.0.4)
   rails-i18n
   rails-observers
   rbtree

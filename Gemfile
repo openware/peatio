@@ -38,6 +38,7 @@ gem 'pusher'
 gem 'eventmachine', '~> 1.0.4'
 gem 'em-websocket', '~> 0.5.1'
 
+gem 'rails-html-sanitizer', '~> 1.0.4'
 gem 'simple_form', '~> 3.1.0'
 gem 'slim-rails'
 gem 'sass-rails'
