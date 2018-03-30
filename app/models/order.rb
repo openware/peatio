@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base
   extend Enumerize
 
-  belongs_to :market, foreign_key: :currency
+  belongs_to :market
   enumerize :state, in: {:wait => 100, :done => 200, :cancel => 0}, scope: true
 
   ORD_TYPES = %w(market limit)
@@ -43,7 +43,7 @@ class Order < ActiveRecord::Base
   end
 
   def config
-    @config ||= Market.find(currency)
+    @config ||= Market.find(market_id)
   end
 
   def trigger
@@ -99,10 +99,6 @@ class Order < ActiveRecord::Base
 
   def at
     created_at.to_i
-  end
-
-  def market
-    currency
   end
 
   def to_matching_attributes

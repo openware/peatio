@@ -4,7 +4,6 @@ module Private
 
     def create
       @order = OrderBid.new(order_params(:order_bid))
-      order_submit
     end
 
     def clear

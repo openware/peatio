@@ -20,6 +20,8 @@ class Trade < ActiveRecord::Base
 
   alias_method :sn, :id
 
+  scope :with_market, ->(market) { where(market_id: Market === market ? market : Market.find(market).id) }
+
   class << self
     def latest_price(currency)
       with_currency(currency).order(:id).reverse_order
@@ -27,7 +29,7 @@ class Trade < ActiveRecord::Base
     end
 
     def filter(market, timestamp, from, to, limit, order)
-      trades = with_currency(market).order(order)
+      trades = with_market(market).order(order)
       trades = trades.limit(limit) if limit.present?
       trades = trades.where('created_at <= ?', timestamp) if timestamp.present?
       trades = trades.where('id > ?', from) if from.present?
