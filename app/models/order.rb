@@ -32,7 +32,8 @@ class Order < ActiveRecord::Base
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
   scope :position, -> { group("price").pluck(:price, 'sum(volume)') }
-  scope :best_price, ->(currency) { where(ord_type: 'limit').active.with_currency(currency).matching_rule.position }
+  scope :best_price, ->(currency) { where(ord_type: 'limit').active.with_market(currency).matching_rule.position }
+  scope :with_market, -> (market) { where(market_id: Market === market ? market : Market.find(market).id) }
 
   def funds_used
     origin_locked - locked
@@ -94,7 +95,7 @@ class Order < ActiveRecord::Base
   end
 
   def self.head(currency)
-    active.with_currency(currency).matching_rule.first
+    active.with_market(currency).matching_rule.first
   end
 
   def at

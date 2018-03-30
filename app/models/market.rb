@@ -15,6 +15,8 @@
 
 class Market < ActiveRecord::Base
 
+  default_scope { order(position: :asc) }
+
   class << self
     extend Memoist
 

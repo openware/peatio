@@ -16,7 +16,7 @@ module APIv2
     get "/orders" do
       orders = current_user.orders
         .order(order_param)
-        .with_currency(current_market)
+        .with_market(current_market)
         .with_state(params[:state])
         .page(params[:page])
         .per(params[:limit])

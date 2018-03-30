@@ -70,7 +70,7 @@ module Worker
     end
 
     def load_orders(market)
-      ::Order.active.with_currency(market.id).order('id asc').each do |order|
+      ::Order.active.with_market(market.id).order('id asc').each do |order|
         submit build_order(order.to_matching_attributes)
       end
     end
