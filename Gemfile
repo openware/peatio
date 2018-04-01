@@ -96,4 +96,5 @@ group :test do
   gem 'chromedriver-helper', '~> 1.1'
   gem 'rack_session_access', '~> 0.1'
   gem 'webmock',             '~> 3.3'
+  gem 'faye-websocket',      '~> 0.10.7'
 end
