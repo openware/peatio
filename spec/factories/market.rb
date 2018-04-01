@@ -1,25 +1,27 @@
 FactoryBot.define do
   factory :market do
+    trait :btcusd do
+      id            'btcusd'
+      ask_unit      'btc'
+      bid_unit      'usd'
+      ask_fee       0.0015
+      bid_fee       0.0015
+      ask_precision 4
+      bid_precision 2
+      position      1
+      visible       true
+    end
 
+    trait :dashbtc do
+      id            'dashbtc'
+      ask_unit      'dash'
+      bid_unit      'btc'
+      ask_fee       0.0015
+      bid_fee       0.0015
+      ask_precision 4
+      bid_precision 4
+      position      2
+      visible       false
+    end
   end
 end
-
-#
-# - id: btcusd
-# code: 3
-# base_unit: btc
-# quote_unit: usd
-# bid: {fee: 0, currency: usd, fixed: 2}
-# ask: {fee: 0, currency: btc, fixed: 4}
-# - id: ptsbtc
-# code: 6
-# base_unit: pts
-# quote_unit: btc
-# bid: {fee: 0, currency: btc, fixed: 4}
-# ask: {fee: 0, currency: pts, fixed: 4}
-# visible: false
-
-
-# id: btc/usd
-# fee:
-

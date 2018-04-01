@@ -15,7 +15,10 @@
 
 class Market < ActiveRecord::Base
 
+  # TODO: Don't use default_scope. Refactor to scopes!
   default_scope { order(position: :asc) }
+
+  scope :visible, -> { where(visible: true) }
 
   class << self
     extend Memoist
@@ -70,7 +73,7 @@ class Market < ActiveRecord::Base
   alias to_s name
 
   def latest_price
-    Trade.latest_price(id.to_sym)
+    Trade.latest_price(self)
   end
 
   # type is :ask or :bid
@@ -114,7 +117,7 @@ class Market < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180303121013
+# Schema version: 20180329154130
 #
 # Table name: markets
 #
@@ -126,7 +129,7 @@ end
 #  ask_precision :integer          default(4), not null
 #  bid_precision :integer          default(4), not null
 #  position      :integer          default(0), not null
-#  visible       :integer          default(1), not null
+#  visible       :boolean          default(TRUE), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #

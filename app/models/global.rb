@@ -27,7 +27,7 @@ class Global
     if market.is_a? Market
       self.new(market.id)
     else
-      self.new(market)
+      self.new(market.to_s)
     end
   end
 

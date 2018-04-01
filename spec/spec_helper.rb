@@ -71,6 +71,7 @@ RSpec.configure do |config|
     KlineDB.stubs(:kline).returns([])
     I18n.locale = :en
     %i[ usd btc dash eth xrp ].each { |ccy| FactoryBot.create(:currency, ccy) }
+    %i[ btcusd dashbtc ].each { |market| FactoryBot.create(:market, market) }
   end
 
   config.after :each do

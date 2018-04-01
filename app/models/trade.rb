@@ -20,11 +20,11 @@ class Trade < ActiveRecord::Base
 
   alias_method :sn, :id
 
-  scope :with_market, -> (market) { where(market_id: Market === market ? market : Market.find(market).id) }
+  scope :with_market, -> (market) { where(market: Market === market ? market : Market.find(market)) }
 
   class << self
-    def latest_price(currency)
-      with_market(currency).order(:id).reverse_order
+    def latest_price(market)
+      with_market(market).order(:id).reverse_order
         .limit(1).first.try(:price) || "0.0".to_d
     end
 

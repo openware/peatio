@@ -33,14 +33,14 @@ class Order < ActiveRecord::Base
   scope :active, -> { with_state(:wait) }
   scope :position, -> { group("price").pluck(:price, 'sum(volume)') }
   scope :best_price, ->(currency) { where(ord_type: 'limit').active.with_market(currency).matching_rule.position }
-  scope :with_market, -> (market) { where(market_id: Market === market ? market : Market.find(market).id) }
+  scope :with_market, -> (market) { where(market: Market === market ? market : Market.find(market)) }
 
   def funds_used
     origin_locked - locked
   end
 
   def fee
-    config[kind.to_sym]["fee"]
+    config.public_send("#{kind}_fee")
   end
 
   def config
@@ -104,7 +104,7 @@ class Order < ActiveRecord::Base
 
   def to_matching_attributes
     { id: id,
-      market: market,
+      market: market.id,
       type: type[-3, 3].downcase.to_sym,
       ord_type: ord_type,
       volume: volume,
