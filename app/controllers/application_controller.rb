@@ -64,6 +64,7 @@ class ApplicationController < ActionController::Base
     gon.local = I18n.locale
     gon.market = current_market.attributes
     gon.ticker = current_market.ticker
+    gon.markets = Market.find_each.each_with_object({}) { |market, memo| memo[market.id] = market.as_json }
     gon.host = request.base_url
     gon.pusher = {
       key:       ENV.fetch('PUSHER_CLIENT_KEY'),
