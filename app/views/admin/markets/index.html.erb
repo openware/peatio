@@ -1,3 +1,4 @@
+<%= link_to 'New Market', new_admin_market_path %>
 <div class="row">
   <div class="panel panel-primary">
     <div class="panel-heading">
@@ -5,7 +6,7 @@
     </div>
     <div class="panel-body">
       <%= table_for @markets, class: 'table table-condensed table-hover' do |t| %>
-        <% t.column 'Name', class: 'col-xs-3' do |x| %>
+        <% t.column 'Name', class: 'col-xs-2' do |x| %>
           <%= x.name %>
         <% end %>
 
@@ -23,6 +24,10 @@
 
         <% t.column 'Visible', class: 'col-xs-2' do |x| %>
           <%= x.visible %>
+        <% end %>
+
+        <% t.column 'Actions', class: 'col-xs-1' do |x| %>
+          <%= link_to t('actions.view'), url_for([:admin, x]), target: '_blank' %>
         <% end %>
       <% end %>
 

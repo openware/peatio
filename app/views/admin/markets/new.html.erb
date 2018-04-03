@@ -1,0 +1,26 @@
+<%= form_for @market, url: admin_markets_url do |f| %>
+<div class="col-xs-10">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <span>Market info</span>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal dl-member">
+        <dt>Bid unit</dt>
+        <dd><%= f.select :bid_unit, Currency.codes(upcase: true) %></dd>
+        <dt>Bid fee</dt>
+        <dd><%= f.number_field :bid_fee, class: 'col-xs-24' %></dd>
+        <hr class="split">
+        <dt>Ask unit</dt>
+        <dd><%= f.select :ask_unit, Currency.codes(upcase: true) %></dd>
+        <dt>Ask fee</dt>
+        <dd><%= f.number_field :ask_fee, class: 'col-xs-24' %></dd>
+        <dt>Visible</dt>
+        <dd><%= f.check_box :visible, class: 'col-xs-24' %></dd>
+        <%= f.submit 'Accept', class: 'btn btn-primary pull-right' %>
+      </dl>
+    </div>
+  </div>
+</div>
+<% end %>
+
