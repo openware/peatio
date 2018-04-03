@@ -20,28 +20,6 @@ class Market < ActiveRecord::Base
 
   scope :visible, -> { where(visible: true) }
 
-  class << self
-    extend Memoist
-
-    def ask_units
-      order(id: :asc).pluck(:ask_unit)
-    end
-
-    def bid_units
-      order(id: :asc).pluck(:bid_unit)
-    end
-
-    # TODO: Rename to find_by_commodity_pair.
-    def by_name(name)
-      where('CONCAT(ask_unit, bid_unit) = ?', name)
-    end
-
-  end
-
-  def commodity_pair
-    (ask_unit + bid_unit).to_sym
-  end
-
   # @deprecated
   def base_unit
     ask_unit
@@ -86,14 +64,6 @@ class Market < ActiveRecord::Base
   def asks;   global.asks   end
   def trades; global.trades end
   def ticker; global.ticker end
-
-  def ask_currency
-    Currency.find_by!(code: ask_unit)
-  end
-
-  def bid_currency
-    Currency.find_by!(code: bid_unit)
-  end
 
   def scope?(account_or_currency)
     code = if account_or_currency.is_a? Account
