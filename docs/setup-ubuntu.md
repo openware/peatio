@@ -2,7 +2,7 @@
 
 ## Docker & peatio-workbench
 
-#### We advise you to use power of [docker](https://www.docker.com) and [peatio-workbench](https://github.com/rubykube/peatio-workbench) as local development environment
+#### We advice you to use power of [docker](https://www.docker.com) and [peatio-workbench](https://github.com/rubykube/peatio-workbench) as local development environment
 
 #### Follow [this](setup-with-docker.md) guide for container-based development environmetnt setup
 
@@ -35,7 +35,7 @@ gpg --keyserver hkp://keys.gnupg.net \
     --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 \
                 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 
-\curl -sSL https://get.rvm.io | bash -s stable --ruby=2.2.8 --gems=rails
+\curl -sSL https://get.rvm.io | bash -s stable --ruby=2.5.0 --gems=rails
 ```
 
 If you want to skip fetching documentation when installing gems,
@@ -50,6 +50,14 @@ echo "gem: --no-ri --no-rdoc" > ~/.gemrc
 ```shell
 sudo apt-get install mysql-server mysql-client libmysqlclient-dev
 ```
+
+Login to mysql and set the password for the root user
+
+Add the environement variable (ideally in .bashrc)
+
+    export DATABASE_HOST=<host of your sql>
+    export DATABASE_USER=<username for root usually>
+    export DATABASE_PASS=<pwd for root>
 
 ### Step 3: Install Redis
 
@@ -172,7 +180,7 @@ sudo apt-get install imagemagick
 Clone the project:
 
 ```shell
-git clone git://github.com/peatio/peatio.git
+git clone git@github.com:rubykube/peatio.git
 cd peatio
 bundle install
 ```
@@ -182,6 +190,12 @@ Prepare configuration files:
 ```shell
 bin/init_config
 ```
+
+Then install and run yarn:
+
+    $ npm install -g yarn
+    $ bundle exec rake tmp:create yarn:install assets:precompile
+
 
 #### Setup Pusher
 
@@ -210,9 +224,12 @@ bundle exec rake db:setup
 
 #### Run daemons
 
-Read how to deal with Peatio daemons at [Peatio daemons](https://github.com/rubykube/peatio/blob/master/docs/peatio/daemons.md).
+Make sure you are in /peatio directory
+run `$ god -c lib/daemons/daemons.god` to start the deamon
 
-#### Genetare liability proof
+More info about Peatio daemons at [Peatio daemons](https://github.com/rubykube/peatio/blob/master/docs/peatio/daemons.md).
+
+#### Generate liability proof
 
 To generate liability proof run:
 
@@ -221,7 +238,28 @@ bundle exec rake solvency:liability_proof
 ```
 Otherwise you will get an exception at the "Solvency" page.
 
+
+#### Setup the Google Authentication
+
+- By default, it ask for Google Authentication. This parameter can be changed in `/config/application.yml` -> `OAUTH2_SIGN_IN_PROVIDER:    google`
+- Setup a new Web application on https://console.developers.google.com
+- Configure the Google Id, Secret and callback in `/config/application.yml`
+- Make sure your host ISN'T an IP in the callback config.  Looks like Google auth expect a callback to a DNS only
+
+```
+  GOOGLE_CLIENT_ID: <Google id>
+  GOOGLE_CLIENT_SECRET: <Google secret>
+  GOOGLE_OAUTH2_REDIRECT_URL: http://ec2-xx-xx-xx-xx.compute-1.amazonaws.com:3000/auth/google_oauth2/callback
+```
+
+
+
 #### Run Peatio
+
+Finalize the config; open /config/application.yml
+Set the DNS of your host (IP won't work if you use Google Authentication) 
+    
+    URL_HOST: ec2-34-xxx-xxx-xx.compute-1.amazonaws.com:3000
 
 Start the server:
 
@@ -229,9 +267,15 @@ Start the server:
 bundle exec rails server
 ```
 
+IF you setup peatio-workbench on a server (like AWS ec2)
+- Make sure the port 3000 is open your server
+- Start the server by passing the ip in parameter
+
+    $ bundle exec rails server -b 0.0.0.0
+
+
 Once server is up and running, **visit [http://localhost:3000](http://localhost:3000)**
 
-Sign in:
+Sign in with Google SSO
 
-* user: admin@peatio.dev
-* pass: Pass@word8
+NOTE : Looks like the trading/MArket UI is broken.  Install an run https://github.com/rubykube/peatio-trading-ui in parallel of peatio. 
