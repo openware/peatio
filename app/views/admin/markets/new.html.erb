@@ -1,4 +1,3 @@
-<%= form_for @market, url: admin_markets_url do |f| %>
 <div class="col-xs-10">
   <div class="panel panel-info">
     <div class="panel-heading">
@@ -6,21 +5,28 @@
     </div>
     <div class="panel-body">
       <dl class="dl-horizontal dl-member">
-        <dt>Bid unit</dt>
-        <dd><%= f.select :bid_unit, Currency.codes(upcase: true) %></dd>
-        <dt>Bid fee</dt>
-        <dd><%= f.number_field :bid_fee, class: 'col-xs-24' %></dd>
-        <hr class="split">
-        <dt>Ask unit</dt>
-        <dd><%= f.select :ask_unit, Currency.codes(upcase: true) %></dd>
-        <dt>Ask fee</dt>
-        <dd><%= f.number_field :ask_fee, class: 'col-xs-24' %></dd>
-        <dt>Visible</dt>
-        <dd><%= f.check_box :visible, class: 'col-xs-24' %></dd>
-        <%= f.submit 'Accept', class: 'btn btn-primary pull-right' %>
+        <%= form_for @market, url: admin_markets_url do |f| %>
+          <dt>Bid unit</dt>
+          <dd><%= f.select :bid_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
+          <dt>Bid fee</dt>
+          <dd><%= f.number_field :bid_fee, class: 'col-xs-24' %></dd>
+          <dt>Bid precision</dt>
+          <dd><%= f.number_field :bid_precision, class: 'col-xs-24' %></dd>
+          <hr class="split">
+          <dt>Ask unit</dt>
+          <dd><%= f.select :ask_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
+          <dt>Ask fee</dt>
+          <dd><%= f.number_field :ask_fee, class: 'col-xs-24' %></dd>
+          <dt>Ask precision</dt>
+          <dd><%= f.number_field :ask_precision, class: 'col-xs-24' %></dd>
+          <hr class="split">
+          <dt>Visible</dt>
+          <dd><%= f.check_box :visible, class: 'col-xs-24' %></dd>
+          <dt>Position</dt>
+          <dd><%= f.number_field :position, in: 0..4, class: 'col-xs-24' %></dd>
+          <%= f.submit 'Accept', class: 'btn btn-primary pull-right' %>
+        <% end %>
       </dl>
     </div>
   </div>
 </div>
-<% end %>
-
