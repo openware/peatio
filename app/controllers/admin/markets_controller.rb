@@ -22,7 +22,6 @@ module Admin
     end
 
     def show
-      binding.pry
       @market = Market.find_by_id(params[:id])
     end
 
