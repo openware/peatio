@@ -46,4 +46,10 @@ describe Market do
       expect(log.ticker).to be
     end
   end
+
+  it 'validates uniqueness of ID' do
+    record = Market.new(ask_unit: :btc, bid_unit: :usd)
+    record.save
+    expect(record.errors.full_messages).to include(/id has already been taken/i)
+  end
 end

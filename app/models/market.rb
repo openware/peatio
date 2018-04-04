@@ -19,8 +19,13 @@ class Market < ActiveRecord::Base
   default_scope { order(position: :asc) }
 
   scope :visible, -> { where(visible: true) }
-  #validates_uniqueness_of :id
-  validate :bid_ask_pair_uniqueness
+  validate { errors.add(:ask_unit, :invalid) if ask_unit == bid_unit }
+  validates :id, uniqueness: { case_sensitive: false }, presence: true
+  validates :ask_unit, :bid_unit, presence: true
+  validates :ask_fee, :bid_fee, numericality: { greater_than_or_equal_to: 0 }
+  validates :ask_precision, :bid_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+
+  before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
 
   # @deprecated
   def base_unit
@@ -85,13 +90,6 @@ class Market < ActiveRecord::Base
 
   def global
     Global[id]
-  end
-
-  def bid_ask_pair_uniqueness
-    if self.class.where(bid_unit: bid_unit, ask_unit: ask_unit).exists? ||
-       self.class.where(bid_unit: ask_unit, ask_unit: bid_unit).exists?
-      errors.add(:base, "#{bid_unit.upcase}/#{ask_unit.upcase} pair already exists")
-    end
   end
 end
 
