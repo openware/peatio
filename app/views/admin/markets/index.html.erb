@@ -27,7 +27,7 @@
         <% end %>
 
         <% t.column 'Actions', class: 'col-xs-1' do |x| %>
-          <%= link_to t('actions.view'), url_for([:admin, x]), target: '_blank' %>
+          <%= link_to t('actions.view'), admin_market_path, target: '_blank' %>
         <% end %>
       <% end %>
 
@@ -35,3 +35,4 @@
     </div>
   </div>
 </div>
+

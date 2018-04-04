@@ -7,7 +7,7 @@ module Admin
     end
 
     def new
-      @deposit = Market.new
+      @market = Market.new
     end
 
     def create
@@ -21,19 +21,29 @@ module Admin
       end
     end
 
-    private
-    def market_id
-      raw_params[:bid_unit] + raw_params[:ask_unit]
+    def show
+      binding.pry
+      @market = Market.find_by_id(params[:id])
     end
 
+    def update
+      @market = Market.find_by_id(params[:id])
+      if @market.update(market_params)
+        redirect_to admin_markets_path
+      else
+        flash[:alert] = @market.errors.full_messages.first
+        render :new
+      end
+    end
+
+  private
     def market_params
-      raw_params.slice(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
-          .merge(id: market_id)
+      binding.pry
+      params
+          .require(:market)
+          .slice(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
+          .tap { |p| p.merge!(id: p[:bid_unit] + p[:ask_unit]) if p[:id].blank? }
           .permit!
-    end
-
-    def raw_params
-      params.require(:market)
     end
   end
 end

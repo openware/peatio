@@ -5,16 +5,16 @@
     </div>
     <div class="panel-body">
       <dl class="dl-horizontal dl-member">
-        <%= form_for @market, url: admin_markets_url do |f| %>
+        <%= form_for @market, url: admin_markets_url(@market.id) do |f| %>
           <dt>Bid unit</dt>
-          <dd><%= f.select :bid_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
+          <dd><%= @market.bid_unit.upcase %></dd>
           <dt>Bid fee</dt>
           <dd><%= f.number_field :bid_fee, step: 0.1, class: 'col-xs-24' %></dd>
           <dt>Bid precision</dt>
           <dd><%= f.number_field :bid_precision, class: 'col-xs-24' %></dd>
           <hr class="split">
           <dt>Ask unit</dt>
-          <dd><%= f.select :ask_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
+          <dd><%= @market.ask_unit.upcase %></dd>
           <dt>Ask fee</dt>
           <dd><%= f.number_field :ask_fee, step: 0.1, class: 'col-xs-24' %></dd>
           <dt>Ask precision</dt>
