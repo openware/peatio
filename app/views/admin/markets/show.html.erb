@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body">
       <dl class="dl-horizontal dl-member">
-        <%= form_for @market, url: admin_markets_url(@market.id) do |f| %>
+        <%= form_for @market, url: admin_market_url(@market.id) do |f| %>
           <dt>Bid unit</dt>
           <dd><%= @market.bid_unit.upcase %></dd>
           <dt>Bid fee</dt>

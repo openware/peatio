@@ -12,7 +12,6 @@ module Admin
 
     def create
       @market = Market.new(market_params)
-      binding.pry
       if @market.save
         redirect_to admin_markets_path
       else
@@ -37,11 +36,10 @@ module Admin
 
   private
     def market_params
-      binding.pry
       params
           .require(:market)
           .slice(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
-          .tap { |p| p.merge!(id: p[:bid_unit] + p[:ask_unit]) if p[:id].blank? }
+          .tap { |p| p.merge!(id: p[:bid_unit] + p[:ask_unit]) if p[:bid_unit].present? && p[:ask_unit].present? }
           .permit!
     end
   end
