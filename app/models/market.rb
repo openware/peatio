@@ -19,6 +19,8 @@ class Market < ActiveRecord::Base
   default_scope { order(position: :asc) }
 
   scope :visible, -> { where(visible: true) }
+  #validates_uniqueness_of :id
+  validate :bid_ask_pair_uniqueness
 
   # @deprecated
   def base_unit
@@ -84,10 +86,17 @@ class Market < ActiveRecord::Base
   def global
     Global[id]
   end
+
+  def bid_ask_pair_uniqueness
+    if self.class.where(bid_unit: bid_unit, ask_unit: ask_unit).exists? ||
+       self.class.where(bid_unit: ask_unit, ask_unit: bid_unit).exists?
+      errors.add(:base, "#{bid_unit.upcase}/#{ask_unit.upcase} pair already exists")
+    end
+  end
 end
 
 # == Schema Information
-# Schema version: 20180403115050
+# Schema version: 20180403231931
 #
 # Table name: markets
 #
@@ -99,7 +108,7 @@ end
 #  ask_precision :integer          default(4), not null
 #  bid_precision :integer          default(4), not null
 #  position      :integer          default(0), not null
-#  visible       :integer          default(1), not null
+#  visible       :boolean          default(TRUE), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
