@@ -47,27 +47,47 @@ describe Market do
     end
   end
 
-  it 'validates equivalence of units' do
-    record = Market.new(ask_unit: :btc, bid_unit: :btc)
-    record.save
-    expect(record.errors.full_messages).to include(/ask unit is invalid/i)
-  end
+  context 'validations' do
+    it 'creates valid record' do
+      record = Market.new(market_params)
+      expect(record.save).to eq true
+    end
 
-  it 'validates presence of units' do
-    record = Market.new(ask_unit: :btc)
-    record.save
-    expect(record.errors.full_messages).to include(/bid unit can't be blank/i)
-  end
+    it 'validates equivalence of units' do
+      record = Market.new(market_params.merge(bid_unit: market_params[:ask_unit]))
+      record.save
+      expect(record.errors.full_messages).to include(/ask unit is invalid/i)
+    end
 
-  it 'validates presence of units fee' do
-    record = Market.new(ask_unit: :btc)
-    record.save
-    expect(record.errors.full_messages).to include(/bid unit can't be blank/i)
-  end
+    it 'validates uniqueness of ID' do
+      record = build(:market, :btcusd)
+      record.save
+      expect(record.errors.full_messages).to include(/id has already been taken/i)
+    end
 
-  it 'validates uniqueness of ID' do
-    record = Market.new(ask_unit: :btc, bid_unit: :usd)
-    record.save
-    expect(record.errors.full_messages).to include(/id has already been taken/i)
+    it 'validates presence of units' do
+      %i[bid ask].each do |unit|
+        record = Market.new(market_params.except("#{unit}_unit".to_sym))
+        record.save
+        expect(record.errors.full_messages).to include(/#{unit} unit can't be blank/i)
+      end
+    end
+
+    it 'validates that units fee numericality greater than 0' do
+      %i[bid ask].each do |unit|
+        record = Market.new(market_params.merge("#{unit}_fee".to_sym => -1))
+        record.save
+        expect(record.errors.full_messages).to include(/#{unit} fee must be greater than or equal to 0/i)
+      end
+    end
+
+    def market_params
+      { ask_unit: :btc,
+        bid_unit: :xrp,
+        bid_fee: 0.1,
+        ask_fee: 0.2,
+        ask_precision: 3,
+        bid_precision: 4 }
+    end
   end
 end
