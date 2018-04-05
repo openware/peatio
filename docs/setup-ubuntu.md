@@ -17,6 +17,8 @@
 7. Install JavaScript Runtime
 8. Install ImageMagick
 9. Configure Peatio
+10. Configure peatio-trading-ui
+11. Setup the nginx reverse-proxy
 
 ### Step 1: Install Ruby
 
