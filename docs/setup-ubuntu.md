@@ -332,7 +332,7 @@ Replace the content of the file by the following
 
 ```
 server {
-  server_name peatio.local;
+  server_name http://peatio.local;
   listen      80 default_server;
 
   location ~ ^/(?:trading|trading-ui-assets)\/ {
@@ -345,7 +345,7 @@ server {
 }
 ```
 
-Make sure to replace `peatio.local` with your actual server DNS
+Make sure to replace `http://peatio.local` with your actual server DNS
 
 Verify that the syntax of the config file is valid : `$ sudo nginx -t`
 
