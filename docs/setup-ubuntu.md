@@ -278,4 +278,8 @@ Once server is up and running, **visit [http://localhost:3000](http://localhost:
 
 Sign in with Google SSO
 
-NOTE : Looks like the trading/MArket UI is broken.  Install an run https://github.com/rubykube/peatio-trading-ui in parallel of peatio. 
+
+#### Run Peatio Trading UI
+
+Install and run https://github.com/rubykube/peatio-trading-ui in parallel of peatio.
+Refer to the release note here : https://github.com/rubykube/peatio/blob/master/docs/releases/1.5.0.md
