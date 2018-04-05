@@ -47,29 +47,27 @@ describe Market do
     end
   end
 
-  context 'fields validations' do
-    it 'validates units non equivalence' do
-      record = Market.new(ask_unit: :btc, bid_unit: :btc)
-      record.save
-      expect(record.errors.full_messages).to include(/Ask unit is invilid/i)
-    end
+  it 'validates equivalence of units' do
+    record = Market.new(ask_unit: :btc, bid_unit: :btc)
+    record.save
+    expect(record.errors.full_messages).to include(/ask unit is invalid/i)
+  end
 
-    it 'validates units presence' do
-      record = Market.new(ask_unit: :btc)
-      record.save
-      expect(record.errors.full_messages).to include(/Bid unit can't be blank/i)
-    end
+  it 'validates presence of units' do
+    record = Market.new(ask_unit: :btc)
+    record.save
+    expect(record.errors.full_messages).to include(/bid unit can't be blank/i)
+  end
 
-    it 'validates units fee presence' do
-      record = Market.new(ask_unit: :btc)
-      record.save
-      expect(record.errors.full_messages).to include(/Bid unit can't be blank/i)
-    end
+  it 'validates presence of units fee' do
+    record = Market.new(ask_unit: :btc)
+    record.save
+    expect(record.errors.full_messages).to include(/bid unit can't be blank/i)
+  end
 
-    it 'validates uniqueness of ID' do
-      record = Market.new(ask_unit: :btc, bid_unit: :usd)
-      record.save
-      expect(record.errors.full_messages).to include(/id has already been taken/i)
-    end
+  it 'validates uniqueness of ID' do
+    record = Market.new(ask_unit: :btc, bid_unit: :usd)
+    record.save
+    expect(record.errors.full_messages).to include(/id has already been taken/i)
   end
 end
