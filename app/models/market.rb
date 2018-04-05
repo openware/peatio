@@ -24,7 +24,7 @@ class Market < ActiveRecord::Base
   validates :ask_unit, :bid_unit, presence: true
   validates :ask_fee, :bid_fee, numericality: { greater_than_or_equal_to: 0 }
   validates :ask_precision, :bid_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
-  validates :ask_unit, :bid_unit, inclusion: { in: Currency.codes(bothcase: true) }
+  validates :ask_unit, :bid_unit, inclusion: { in: -> (_) { Currency.codes(bothcase: true) } }
 
   before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
 

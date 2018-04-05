@@ -36,7 +36,8 @@ module Admin
 
   private
     def market_params
-      params.require(:market_info)
+      # NOTE: use market_params because market is reserved in ApplicationController #current_market
+      params.require(:market_params)
         .except(:id)
         .permit(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
     end
