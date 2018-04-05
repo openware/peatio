@@ -53,7 +53,7 @@ sudo apt-get install mysql-server mysql-client libmysqlclient-dev
 
 Login to mysql and set the password for the root user
 
-Add the environement variable (ideally in .bashrc)
+Add the environement variable (ideally in .bashrc, and don't forget to `$ source ~/.bashrc` after editing the file)
 
     export DATABASE_HOST=<host of your sql>
     export DATABASE_USER=<username for root usually>
@@ -180,8 +180,11 @@ sudo apt-get install imagemagick
 Clone the project:
 
 ```shell
-git clone git@github.com:rubykube/peatio.git
+mkdir code
+cd code
+git clone https://github.com/rubykube/peatio.git
 cd peatio
+git checkout 1-5-stable  // Choose your version, but make sure you'll install the same version for peatio-trading-ui
 bundle install
 ```
 
@@ -204,13 +207,13 @@ A development key/secret pair for development/test
 is provided in `config/application.yml`.
 PLEASE USE IT IN DEVELOPMENT/TEST ENVIRONMENT ONLY!
 
-Set (or simply uncomment) pusher-related settings in `config/application.yml`.
+Set pusher-related settings in `config/application.yml`.
 
 You can always find more details about pusher configuration at [pusher website](http://pusher.com)
 
 #### Setup bitcoind rpc endpoint
 
-Edit `config/currencies.yml`.
+Edit `config/seed/currencies.yml`.
 
 Replace `username:password` and `port`.
 `username` and `password` should only contain letters and numbers,
@@ -225,9 +228,11 @@ bundle exec rake db:setup
 #### Run daemons
 
 Make sure you are in /peatio directory
-run `$ god -c lib/daemons/daemons.god` to start the deamon
+
+Run `$ god -c lib/daemons/daemons.god` to start the deamon
 
 More info about Peatio daemons at [Peatio daemons](https://github.com/rubykube/peatio/blob/master/docs/peatio/daemons.md).
+
 
 #### Generate liability proof
 
@@ -244,7 +249,7 @@ Otherwise you will get an exception at the "Solvency" page.
 - By default, it ask for Google Authentication. This parameter can be changed in `/config/application.yml` -> `OAUTH2_SIGN_IN_PROVIDER:    google`
 - Setup a new Web application on https://console.developers.google.com
 - Configure the Google Id, Secret and callback in `/config/application.yml`
-- Make sure your host ISN'T an IP in the callback config.  Looks like Google auth expect a callback to a DNS only
+- Note: Make sure your host ISN'T an IP in the callback config.  Looks like Google auth expect a callback to a DNS only
 
 ```
   GOOGLE_CLIENT_ID: <Google id>
@@ -256,30 +261,90 @@ Otherwise you will get an exception at the "Solvency" page.
 
 #### Run Peatio
 
-Finalize the config; open /config/application.yml
+Finalize the config; open `/config/application.yml`
 Set the DNS of your host (IP won't work if you use Google Authentication) 
-    
-    URL_HOST: ec2-34-xxx-xxx-xx.compute-1.amazonaws.com:3000
+
+```shell
+URL_HOST: ec2-34-xxx-xxx-xx.compute-1.amazonaws.com:3000
+```
 
 Start the server:
 
 ```shell
-bundle exec rails server
+$ bundle exec rails server
 ```
 
-IF you setup peatio-workbench on a server (like AWS ec2)
+If you setup peatio-workbench on a server (like AWS ec2)
 - Make sure the port 3000 is open your server
 - Start the server by passing the ip in parameter
 
-    $ bundle exec rails server -b 0.0.0.0
+```shell
+$ bundle exec rails server -b 0.0.0.0
+```
 
+Validate the server is working:
 
-Once server is up and running, **visit [http://localhost:3000](http://localhost:3000)**
+**visit [http://localhost:3000](http://localhost:3000)** or the public DNS of your server
 
 Sign in with Google SSO
 
+NOTE: At this point, the "trade" screen isn't working as you need to setup the trading server.  See next step.
 
-#### Run Peatio Trading UI
 
-Install and run https://github.com/rubykube/peatio-trading-ui in parallel of peatio.
+### Step 10. Run Peatio Trading UI
+
+Clone the repo and setup the Trading UI
+
+```shell
+cd ~/code
+git clone https://github.com/rubykube/peatio-trading-ui.git
+cd peatio-trading-ui
+bundle install
+bin/init_config
+```
+
+Edit the `/config/application.yml` and set your app DNS.  Ex: 
+
+```shell
+PLATFORM_ROOT_URL: http://ec2-xx-xx-xxx-xxx.compute-1.amazonaws.com
+```
+
 Refer to the release note here : https://github.com/rubykube/peatio/blob/master/docs/releases/1.5.0.md
+
+
+### Step 11. Install nginx to setup a reverse proxy
+
+```
+sudo apt-get update
+sudo apt-get install nginx
+sudo ufw allow 'Nginx HTTP'
+systemctl status nginx
+
+```
+At this point you should see nginx running
+
+But you need to edit the default config to setup the reverse proxy.
+Open `/etc/nginx/sites-available/default` in your favorite editor
+
+Replace the content of the file by the following
+
+```
+server {
+  server_name peatio.local;
+  listen      80 default_server;
+
+  location ~ ^/(?:trading|trading-ui-assets)\/ {
+    proxy_pass http://127.0.0.1:4000;
+  }
+
+  location / {
+    proxy_pass http://127.0.0.1:3000;
+  }
+}
+```
+
+Make sure to replace `peatio.local` with your actual server DNS
+
+Verify that the syntax of the config file is valid : `$ sudo nginx -t`
+
+Restart nginx by running `sudo systemctl restart nginx`
