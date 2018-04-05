@@ -3,7 +3,7 @@ module Admin
     load_and_authorize_resource
 
     def index
-      @markets = Market.all.page params[:page]
+      @markets = Market.all.page(params[:page])
     end
 
     def new
@@ -36,11 +36,9 @@ module Admin
 
   private
     def market_params
-      params
-          .require(:market)
-          .slice(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
-          .tap { |p| p.merge!(id: p[:bid_unit] + p[:ask_unit]) if p[:bid_unit].present? && p[:ask_unit].present? }
-          .permit!
+      params.require(:market_info)
+        .except(:id)
+        .permit(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
     end
   end
 end

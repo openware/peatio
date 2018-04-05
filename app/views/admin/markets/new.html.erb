@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body">
       <dl class="dl-horizontal dl-member">
-        <%= form_for @market, url: admin_markets_url do |f| %>
+        <%= form_for @market, as: :market_info, url: admin_markets_url do |f| %>
           <dt>Bid unit</dt>
           <dd><%= f.select :bid_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
           <dt>Bid fee</dt>
