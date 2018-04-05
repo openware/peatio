@@ -66,18 +66,34 @@ describe Market do
     end
 
     it 'validates presence of units' do
-      %i[bid ask].each do |unit|
-        record = Market.new(market_params.except("#{unit}_unit".to_sym))
+      %i[bid_unit ask_unit].each do |field|
+        record = Market.new(market_params.except(field))
         record.save
-        expect(record.errors.full_messages).to include(/#{unit} unit can't be blank/i)
+        expect(record.errors.full_messages).to include(/#{to_readable(field)} can't be blank/i)
       end
     end
 
-    it 'validates that units fee numericality greater than 0' do
-      %i[bid ask].each do |unit|
-        record = Market.new(market_params.merge("#{unit}_fee".to_sym => -1))
+    it 'validates fields to be greater than or equal to 0' do
+      %i[bid_fee ask_fee bid_precision ask_precision position].each do |field|
+        record = Market.new(market_params.merge(field => -1))
         record.save
-        expect(record.errors.full_messages).to include(/#{unit} fee must be greater than or equal to 0/i)
+        expect(record.errors.full_messages).to include(/#{to_readable(field)} must be greater than or equal to 0/i)
+      end
+    end
+
+    it 'validates fields to be integer' do
+      %i[bid_precision ask_precision position].each do |field|
+        record = Market.new(market_params.merge(field => 0.1))
+        record.save
+        expect(record.errors.full_messages).to include(/#{to_readable(field)} must be an integer/i)
+      end
+    end
+
+    it 'validates unit codes to be inclusion of currency codes' do
+      %i[bid_unit ask_unit].each do |field|
+        record = Market.new(market_params.merge(field => :bad))
+        record.save
+        expect(record.errors.full_messages).to include(/#{to_readable(field)} is not included in the list/i)
       end
     end
 
@@ -87,7 +103,12 @@ describe Market do
         bid_fee: 0.1,
         ask_fee: 0.2,
         ask_precision: 3,
-        bid_precision: 4 }
+        bid_precision: 4,
+        position: 100 }
+    end
+
+    def to_readable(field)
+      field.to_s.humanize.downcase
     end
   end
 end
