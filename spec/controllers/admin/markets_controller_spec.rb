@@ -12,46 +12,51 @@ describe Admin::MarketsController, type: :controller do
   end
   before { session[:member_id] = member.id }
 
-  describe 'POST create' do
+  describe '#create' do
     it 'creates market with valid attributes' do
-      params = { market_params: valid_market_attributes }
       expect do
-        post :create, params
+        post :create, trading_pair: valid_market_attributes
         expect(response).to redirect_to admin_markets_path
       end.to change(Market, :count)
     end
 
     it 'doesn\'t create market if commodity pair already exists' do
       existing = Market.first
-      params = { market_params: valid_market_attributes.merge(bid_unit: existing.bid_unit, ask_unit: existing.ask_unit) }
+      params   = valid_market_attributes.merge(bid_unit: existing.bid_unit, ask_unit: existing.ask_unit)
       expect do
-        post :create, params
+        post :create, trading_pair: params
         expect(response).not_to redirect_to admin_markets_path
       end.not_to change(Market, :count)
     end
   end
 
-  describe 'PUT update' do
+  describe '#update' do
     let(:existing_market) { Market.first }
-    let(:updatable_market_attributes) { valid_market_attributes.except(:bid_unit, :ask_unit) }
+    before { valid_market_attributes.except!(:bid_unit, :ask_unit) }
     before { request.env['HTTP_REFERER'] = '/admin/markets' }
 
     it 'updates market attributes' do
-      params = { market_params: updatable_market_attributes, id: existing_market.id }
-      post :update, params
+      post :update, trading_pair: valid_market_attributes, id: existing_market.id
       expect(response).to redirect_to admin_markets_path
-      updatable_market_attributes.each do |k, v|
+      valid_market_attributes.each do |k, v|
         expect(existing_market.reload.method(k).call).to eq v
       end
     end
 
-    it 'doesn\'t update market units and id' do
-      params = { market_params: { bid_unit: :btc }, id: existing_market.id }
-      post :update, params
+    it 'doesn\'t update units and ID' do
+      post :update, trading_pair: { bid_unit: :btc }, id: existing_market.id
       old_id = existing_market.id
       expect(response).to redirect_to '/admin/markets'
       expect(existing_market.reload.bid_unit).not_to eq :btc
       expect(existing_market.reload.id).to eq old_id
+    end
+  end
+
+  describe '#destroy' do
+    let(:existing_market) { Market.first }
+
+    it 'doesn\'t support deletion of markets' do
+      expect { delete :destroy, id: existing_market.id }.to raise_error(ActionController::UrlGenerationError)
     end
   end
 end

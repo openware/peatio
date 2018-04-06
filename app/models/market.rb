@@ -21,6 +21,7 @@ class Market < ActiveRecord::Base
   default_scope { order(position: :asc) }
 
   scope :visible, -> { where(visible: true) }
+
   validate { errors.add(:ask_unit, :invalid) if ask_unit == bid_unit }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
   validates :ask_unit, :bid_unit, presence: true
@@ -97,7 +98,7 @@ class Market < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180403115050
+# Schema version: 20180406080444
 #
 # Table name: markets
 #
@@ -109,7 +110,7 @@ end
 #  ask_precision :integer          default(4), not null
 #  bid_precision :integer          default(4), not null
 #  position      :integer          default(0), not null
-#  visible       :integer          default(1), not null
+#  visible       :boolean          default(TRUE), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
