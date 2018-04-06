@@ -1,0 +1,27 @@
+<dt>Bid unit</dt>
+<% if @market.bid_unit.blank? %>
+  <dd><%= form.select :bid_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
+<% else %>
+  <dd><%= @market.bid_unit.upcase %></dd>
+<% end %>
+<dt>Bid fee</dt>
+<dd><%= form.number_field :bid_fee, step: 0.1, class: 'col-xs-24' %></dd>
+<dt>Bid precision</dt>
+<dd><%= form.number_field :bid_precision, in: 0..4, class: 'col-xs-24' %></dd>
+<hr class="split">
+<dt>Ask unit</dt>
+<% if @market.ask_unit.blank? %>
+  <dd><%= form.select :ask_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
+<% else %>
+  <dd><%= @market.ask_unit.upcase %></dd>
+<% end %>
+<dt>Ask fee</dt>
+<dd><%= form.number_field :ask_fee, step: 0.1, class: 'col-xs-24' %></dd>
+<dt>Ask precision</dt>
+<dd><%= form.number_field :ask_precision, in: 0..4, class: 'col-xs-24' %></dd>
+<hr class="split">
+<dt>Visible</dt>
+<dd><%= form.check_box :visible, class: 'col-xs-24' %></dd>
+<dt>Position</dt>
+<dd><%= form.number_field :position, class: 'col-xs-24' %></dd>
+<%= form.submit 'Submit', class: 'btn btn-primary pull-right' %>
