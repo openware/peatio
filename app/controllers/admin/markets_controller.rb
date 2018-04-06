@@ -3,11 +3,12 @@ module Admin
     load_and_authorize_resource
 
     def index
-      @markets = Market.page(params[:page])
+      @markets = Market.page(params[:page]).per(100)
     end
 
     def new
       @market = Market.new
+      render :show
     end
 
     def create
@@ -16,16 +17,16 @@ module Admin
         redirect_to admin_markets_path
       else
         flash[:alert] = @market.errors.full_messages.first
-        render :new
+        render :show
       end
     end
 
     def show
-      @market = Market.find_by_id!(params[:id])
+      @market = Market.find(params[:id])
     end
 
     def update
-      @market = Market.find_by_id!(params[:id])
+      @market = Market.find(params[:id])
       if @market.update(market_params)
         redirect_to admin_markets_path
       else
@@ -36,10 +37,9 @@ module Admin
 
   private
     def market_params
-      # NOTE: use market_params because market is reserved in ApplicationController #current_market
       params.require(:trading_pair)
-        .except(:id)
-        .permit(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
+            .except(:id)
+            .permit(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
     end
   end
 end
