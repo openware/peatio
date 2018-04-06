@@ -48,13 +48,23 @@ describe Market do
   end
 
   context 'validations' do
+    let(:valid_attributes) do
+      { ask_unit: :btc,
+        bid_unit: :xrp,
+        bid_fee: 0.1,
+        ask_fee: 0.2,
+        ask_precision: 3,
+        bid_precision: 4,
+        position: 100 }
+    end
+
     it 'creates valid record' do
-      record = Market.new(market_params)
+      record = Market.new(valid_attributes)
       expect(record.save).to eq true
     end
 
     it 'validates equivalence of units' do
-      record = Market.new(market_params.merge(bid_unit: market_params[:ask_unit]))
+      record = Market.new(valid_attributes.merge(bid_unit: valid_attributes[:ask_unit]))
       record.save
       expect(record.errors.full_messages).to include(/ask unit is invalid/i)
     end
@@ -67,7 +77,7 @@ describe Market do
 
     it 'validates presence of units' do
       %i[bid_unit ask_unit].each do |field|
-        record = Market.new(market_params.except(field))
+        record = Market.new(valid_attributes.except(field))
         record.save
         expect(record.errors.full_messages).to include(/#{to_readable(field)} can't be blank/i)
       end
@@ -75,7 +85,7 @@ describe Market do
 
     it 'validates fields to be greater than or equal to 0' do
       %i[bid_fee ask_fee bid_precision ask_precision position].each do |field|
-        record = Market.new(market_params.merge(field => -1))
+        record = Market.new(valid_attributes.merge(field => -1))
         record.save
         expect(record.errors.full_messages).to include(/#{to_readable(field)} must be greater than or equal to 0/i)
       end
@@ -83,7 +93,7 @@ describe Market do
 
     it 'validates fields to be integer' do
       %i[bid_precision ask_precision position].each do |field|
-        record = Market.new(market_params.merge(field => 0.1))
+        record = Market.new(valid_attributes.merge(field => 0.1))
         record.save
         expect(record.errors.full_messages).to include(/#{to_readable(field)} must be an integer/i)
       end
@@ -91,20 +101,10 @@ describe Market do
 
     it 'validates unit codes to be inclusion of currency codes' do
       %i[bid_unit ask_unit].each do |field|
-        record = Market.new(market_params.merge(field => :bad))
+        record = Market.new(valid_attributes.merge(field => :bad))
         record.save
         expect(record.errors.full_messages).to include(/#{to_readable(field)} is not included in the list/i)
       end
-    end
-
-    def market_params
-      { ask_unit: :btc,
-        bid_unit: :xrp,
-        bid_fee: 0.1,
-        ask_fee: 0.2,
-        ask_precision: 3,
-        bid_precision: 4,
-        position: 100 }
     end
 
     def to_readable(field)
