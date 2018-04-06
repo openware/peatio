@@ -49,13 +49,13 @@ describe Market do
 
   context 'validations' do
     let(:valid_attributes) do
-      { ask_unit: :btc,
-        bid_unit: :xrp,
-        bid_fee: 0.1,
-        ask_fee: 0.2,
+      { ask_unit:      :btc,
+        bid_unit:      :xrp,
+        bid_fee:       0.1,
+        ask_fee:       0.2,
         ask_precision: 3,
         bid_precision: 4,
-        position: 100 }
+        position:      100 }
     end
 
     it 'creates valid record' do

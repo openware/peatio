@@ -15,6 +15,8 @@
 
 class Market < ActiveRecord::Base
 
+  attr_readonly :ask_unit, :bid_unit
+
   # TODO: Don't use default_scope. Refactor to scopes!
   default_scope { order(position: :asc) }
 

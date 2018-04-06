@@ -30,7 +30,7 @@ module Admin
         redirect_to admin_markets_path
       else
         flash[:alert] = @market.errors.full_messages.first
-        render :new
+        redirect_to :back
       end
     end
 
