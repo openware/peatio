@@ -3,7 +3,7 @@ module Admin
     load_and_authorize_resource
 
     def index
-      @markets = Market.all.page(params[:page])
+      @markets = Market.page(params[:page])
     end
 
     def new
@@ -21,11 +21,11 @@ module Admin
     end
 
     def show
-      @market = Market.find_by_id(params[:id])
+      @market = Market.find_by_id!(params[:id])
     end
 
     def update
-      @market = Market.find_by_id(params[:id])
+      @market = Market.find_by_id!(params[:id])
       if @market.update(market_params)
         redirect_to admin_markets_path
       else
@@ -37,7 +37,7 @@ module Admin
   private
     def market_params
       # NOTE: use market_params because market is reserved in ApplicationController #current_market
-      params.require(:market_params)
+      params.require(:trading_pair)
         .except(:id)
         .permit(:bid_unit, :bid_fee, :bid_precision, :ask_unit, :ask_fee, :ask_precision, :visible, :position)
     end

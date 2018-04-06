@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body">
       <dl class="dl-horizontal dl-member">
-        <%= form_for @market, as: :market_params, url: admin_market_url(@market.id) do |f| %>
+        <%= form_for @market, as: :trading_pair, url: admin_market_url(@market.id) do |f| %>
           <dt>Bid unit</dt>
           <dd><%= @market.bid_unit.upcase %></dd>
           <dt>Bid fee</dt>
@@ -24,7 +24,7 @@
           <dd><%= f.check_box :visible, class: 'col-xs-24' %></dd>
           <dt>Position</dt>
           <dd><%= f.number_field :position, class: 'col-xs-24' %></dd>
-          <%= f.submit 'Accept', class: 'btn btn-primary pull-right' %>
+          <%= f.submit 'Submit', class: 'btn btn-primary pull-right' %>
         <% end %>
       </dl>
     </div>

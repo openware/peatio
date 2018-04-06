@@ -12,7 +12,6 @@ describe Admin::MarketsController, type: :controller do
   end
   before { session[:member_id] = member.id }
 
-
   describe 'POST create' do
     it 'creates market with valid attributes' do
       params = { market_params: valid_market_attributes }

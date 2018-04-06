@@ -1,4 +1,4 @@
-<%= link_to 'New Market', new_admin_market_path %>
+<%= link_to 'New market', new_admin_market_path %>
 <div class="row">
   <div class="panel panel-primary">
     <div class="panel-heading">
@@ -11,7 +11,7 @@
         <% end %>
 
         <% t.column 'Bid fee', class: 'col-xs-2' do |x| %>
-          <%= x.bid_fee%>
+          <%= x.bid_fee %>
         <% end %>
 
         <% t.column 'Ask fee', class: 'col-xs-2' do |x| %>
@@ -19,11 +19,11 @@
         <% end %>
 
         <% t.column 'Created at', class: 'col-xs-3' do |x| %>
-          <%= x.created_at %>
+          <%= l(x.created_at, format: :long) %>
         <% end %>
 
         <% t.column 'Visible', class: 'col-xs-2' do |x| %>
-          <%= x.visible %>
+          <%= x.visible? ? 'Yes' : 'No' %>
         <% end %>
 
         <% t.column 'Actions', class: 'col-xs-1' do |x| %>

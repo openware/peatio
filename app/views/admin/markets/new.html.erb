@@ -11,20 +11,20 @@
           <dt>Bid fee</dt>
           <dd><%= f.number_field :bid_fee, step: 0.1, class: 'col-xs-24' %></dd>
           <dt>Bid precision</dt>
-          <dd><%= f.number_field :bid_precision, class: 'col-xs-24' %></dd>
+          <dd><%= f.number_field :bid_precision, in: 0..4, class: 'col-xs-24' %></dd>
           <hr class="split">
           <dt>Ask unit</dt>
           <dd><%= f.select :ask_unit, Currency.codes.map { |code| [code.upcase, code] } %></dd>
           <dt>Ask fee</dt>
           <dd><%= f.number_field :ask_fee, step: 0.1, class: 'col-xs-24' %></dd>
           <dt>Ask precision</dt>
-          <dd><%= f.number_field :ask_precision, class: 'col-xs-24' %></dd>
+          <dd><%= f.number_field :ask_precision, in: 0..4, class: 'col-xs-24' %></dd>
           <hr class="split">
           <dt>Visible</dt>
           <dd><%= f.check_box :visible, class: 'col-xs-24' %></dd>
           <dt>Position</dt>
-          <dd><%= f.number_field :position, in: 0..4, class: 'col-xs-24' %></dd>
-          <%= f.submit 'Accept', class: 'btn btn-primary pull-right' %>
+          <dd><%= f.number_field :position, class: 'col-xs-24' %></dd>
+          <%= f.submit 'Submit', class: 'btn btn-primary pull-right' %>
         <% end %>
       </dl>
     </div>
