@@ -1,0 +1,73 @@
+// GENERAL
+
+body {
+  height: 100vh;
+}
+footer {
+  height: 60px;
+}
+.admin-header, .sidebar-header {
+  height: 75px;
+}
+.sidebar-header {
+  margin-top: -1px;
+  img {
+    margin-top: -3px;
+  }
+}
+
+.wrapper {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  margin-left: 250px;
+  .top-logo, .user-name {
+    display: block;
+  }
+  .top-logo-icon {
+    display: none;
+  }
+
+  // closed sidebar
+  &.sidebar-closed {
+    margin-left: 80px;
+    .top-logo, .user-name {
+      display: none;
+    }
+    .top-logo-icon {
+      display: block;
+    }
+    .sidebar-menu li.active a {
+      border-left: 0;
+    }
+  }
+}
+
+// SIDEBAR
+
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+}
+
+#sidebar.active {
+  min-width: 80px;
+  max-width: 80px;
+}
+
+.sidebar-menu .sub-menu {
+  list-style-type: none;
+  li a {
+    padding: 5px 15px;
+    font-size: 90%;
+    &::before {
+      content: "\f105";
+      font-family: FontAwesome;
+      margin-right: 8px;
+      opacity: .5;
+    }
+  }
+}

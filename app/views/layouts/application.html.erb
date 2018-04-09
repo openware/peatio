@@ -20,10 +20,10 @@
   </head>
 
   <body data-lang="<%= locale_name %>" id="<%= body_id %>">
-    <%= render 'shared/alert' %>
 
     <div id="wrap">
       <%= content_for?(:header) ? yield(:header) : render('shared/header') %>
+      <%= render 'shared/alert' %>
       <%= content_for?(:frame) ? yield(:frame) : render('shared/frame') %>
 
       <div id="push"></div>
