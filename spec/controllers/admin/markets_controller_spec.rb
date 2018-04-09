@@ -59,4 +59,15 @@ describe Admin::MarketsController, type: :controller do
       expect { delete :destroy, id: existing_market.id }.to raise_error(ActionController::UrlGenerationError)
     end
   end
+
+  describe 'routes' do
+    let(:base_route) { '/admin/markets' }
+    it 'routes to MarketsController' do
+      expect(get: base_route).to be_routable
+      expect(post: base_route).to be_routable
+      expect(get: "#{base_route}/new").to be_routable
+      expect(get: "#{base_route}/#{Market.first.id}").to be_routable
+      expect(put: "#{base_route}/#{Market.first.id}").to be_routable
+    end
+  end
 end

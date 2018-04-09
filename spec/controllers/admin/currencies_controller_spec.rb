@@ -55,5 +55,15 @@ describe Admin::CurrenciesController, type: :controller do
       expect { delete :destroy, id: existing_currency.id }.to raise_error(ActionController::UrlGenerationError)
     end
   end
-end
 
+  describe 'routes' do
+    let(:base_route) { '/admin/currencies' }
+    it 'routes to CurrenciesController' do
+      expect(get: base_route).to be_routable
+      expect(post: base_route).to be_routable
+      expect(get: "#{base_route}/new").to be_routable
+      expect(get: "#{base_route}/#{Currency.first.id}").to be_routable
+      expect(put: "#{base_route}/#{Currency.first.id}").to be_routable
+    end
+  end
+end
