@@ -27,7 +27,7 @@ module Admin
 
     def update
       @currency = Currency.find(params[:id])
-      if @currency.update(market_params)
+      if @currency.update(currency_params)
         redirect_to admin_currencies_path
       else
         flash[:alert] = @currency.errors.full_messages.first
@@ -38,7 +38,24 @@ module Admin
     private
     def currency_params
       params.require(:currency)
-            .permit(:code, :etc)
+            .permit :code,
+                    :symbol,
+                    :type,
+                    :quick_withdraw_limit,
+                    :visible,
+                    :base_factor,
+                    :precision,
+                    :api_client,
+                    :json_rpc_endpoint,
+                    :rest_api_endpoint,
+                    :bitgo_test_net,
+                    :bitgo_wallet_id,
+                    :bitgo_wallet_address,
+                    :bitgo_wallet_passphrase,
+                    :bitgo_rest_api_root,
+                    :bitgo_rest_api_access_token,
+                    :wallet_url_template,
+                    :transaction_url_template
     end
   end
 end
