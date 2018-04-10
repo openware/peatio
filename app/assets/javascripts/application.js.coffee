@@ -7,7 +7,6 @@
 #= require jquery_ujs
 #= require jquery-timing.min
 #= require bootstrap
-#= require bootstrap-switch.min
 #= require scrollIt
 #= require moment
 #= require bignumber
@@ -21,7 +20,6 @@
 #= require qrcode
 #= require cookies.min
 
-#= require ./lib/notifier
 #= require ./lib/pusher_connection
 #= require ./lib/tiny-pubsub
 
