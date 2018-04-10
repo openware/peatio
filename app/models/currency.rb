@@ -82,7 +82,7 @@ class Currency < ActiveRecord::Base
   end
 
   Currency.types.each do |t|
-    define_method(t.to_s + '?') { type == t }
+    define_method(t.to_s + '?') { type.to_sym == t }
   end
 
   def as_json(*)
