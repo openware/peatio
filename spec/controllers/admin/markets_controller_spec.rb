@@ -69,5 +69,9 @@ describe Admin::MarketsController, type: :controller do
       expect(get: "#{base_route}/#{Market.first.id}").to be_routable
       expect(put: "#{base_route}/#{Market.first.id}").to be_routable
     end
+
+    it 'doesn\'t routes to CurrenciesController' do
+      expect(delete: "#{base_route}/#{existing_currency.id}").to_not be_routable
+    end
   end
 end

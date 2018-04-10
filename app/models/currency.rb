@@ -4,7 +4,7 @@ class Currency < ActiveRecord::Base
   # NOTE: type column reserved for STI
   self.inheritance_column = nil
 
-  validates :type, inclusion: { in: ->(_) { Currency.types } }
+  validates :type, inclusion: { in: ->(_) { Currency.types.map(&:to_s) } }
   validates :code, presence: true, uniqueness: true
   validates :symbol, presence: true, length: { maximum: 1 }
   validates :json_rpc_endpoint, :rest_api_endpoint, length: { maximum: 200 }, url: { allow_blank: true }
@@ -47,7 +47,7 @@ class Currency < ActiveRecord::Base
     end
 
     def types
-      %w[fiat coin token]
+      %i[fiat coin token]
     end
   end
 
@@ -82,7 +82,7 @@ class Currency < ActiveRecord::Base
   end
 
   Currency.types.each do |t|
-    define_method(t + '?') { type == t }
+    define_method(t.to_s + '?') { type == t }
   end
 
   def as_json(*)

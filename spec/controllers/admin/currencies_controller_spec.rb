@@ -5,6 +5,8 @@ describe Admin::CurrenciesController, type: :controller do
       type:   'coin',
       symbol: 'N' }
   end
+  let(:existing_currency) { Currency.first }
+
   before { session[:member_id] = member.id }
 
   describe '#create' do
@@ -17,7 +19,6 @@ describe Admin::CurrenciesController, type: :controller do
   end
 
   describe '#update' do
-    let(:existing_currency) { Currency.first }
     before do
       valid_currency_attributes.merge! \
         quick_withdraw_limit:         1000,
@@ -49,8 +50,6 @@ describe Admin::CurrenciesController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:existing_currency) { Currency.first }
-
     it 'doesn\'t support deletion of currencies' do
       expect { delete :destroy, id: existing_currency.id }.to raise_error(ActionController::UrlGenerationError)
     end
@@ -62,8 +61,12 @@ describe Admin::CurrenciesController, type: :controller do
       expect(get: base_route).to be_routable
       expect(post: base_route).to be_routable
       expect(get: "#{base_route}/new").to be_routable
-      expect(get: "#{base_route}/#{Currency.first.id}").to be_routable
-      expect(put: "#{base_route}/#{Currency.first.id}").to be_routable
+      expect(get: "#{base_route}/#{existing_currency.id}").to be_routable
+      expect(put: "#{base_route}/#{existing_currency.id}").to be_routable
+    end
+
+    it 'doesn\'t routes to CurrenciesController' do
+      expect(delete: "#{base_route}/#{existing_currency.id}").to_not be_routable
     end
   end
 end
