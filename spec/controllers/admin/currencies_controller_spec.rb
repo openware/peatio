@@ -1,6 +1,6 @@
 describe Admin::CurrenciesController, type: :controller do
   let(:member) { create(:admin_member) }
-  let(:valid_currency_attributes) do
+  let :valid_currency_attributes  do
     { code:   'new',
       type:   'coin',
       symbol: 'N' }

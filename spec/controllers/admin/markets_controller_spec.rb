@@ -10,6 +10,8 @@ describe Admin::MarketsController, type: :controller do
       visible: true,
       position: 100 }
   end
+  let(:existing_market) { Market.first }
+
   before { session[:member_id] = member.id }
 
   describe '#create' do
@@ -31,7 +33,6 @@ describe Admin::MarketsController, type: :controller do
   end
 
   describe '#update' do
-    let(:existing_market) { Market.first }
     before { valid_market_attributes.except!(:bid_unit, :ask_unit) }
     before { request.env['HTTP_REFERER'] = '/admin/markets' }
 
@@ -53,8 +54,6 @@ describe Admin::MarketsController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:existing_market) { Market.first }
-
     it 'doesn\'t support deletion of markets' do
       expect { delete :destroy, id: existing_market.id }.to raise_error(ActionController::UrlGenerationError)
     end
@@ -71,7 +70,7 @@ describe Admin::MarketsController, type: :controller do
     end
 
     it 'doesn\'t routes to CurrenciesController' do
-      expect(delete: "#{base_route}/#{existing_currency.id}").to_not be_routable
+      expect(delete: "#{base_route}/#{existing_market.id}").to_not be_routable
     end
   end
 end
