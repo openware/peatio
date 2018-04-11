@@ -7,6 +7,5 @@ module Worker
     rescue
       raise $!
     end
-
   end
 end
