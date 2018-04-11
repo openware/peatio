@@ -1,7 +1,7 @@
 namespace :barong do
   desc 'Refresh access level for Barong members.'
   task levels: :environment do
-    url = "https://#{ENV.fetch('BARONG_DOMAIN')}/api/account"
+    url = "https://#{ENV.fetch('BARONG_DOMAIN')}/api/#{ENV['BARONG_API_VERSION']}/account"
     t   = Authentication.arel_table
     Authentication
       .where(provider: :barong)
