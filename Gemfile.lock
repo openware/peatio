@@ -133,8 +133,6 @@ GEM
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
-    email_validator (1.6.0)
-      activemodel
     enumerize (2.1.2)
       activesupport (>= 3.2)
     equalizer (0.0.11)
@@ -442,7 +440,6 @@ DEPENDENCIES
   datagrid
   easy_table
   em-websocket (~> 0.5.1)
-  email_validator (~> 1.6)
   enumerize
   eventmachine (~> 1.0.4)
   factory_bot_rails (~> 4.8)

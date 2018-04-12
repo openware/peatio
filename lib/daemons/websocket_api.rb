@@ -25,6 +25,7 @@ EM.run do
       cert_chain_file: Rails.root.join(ENV['WEBSOCKET_SSL_CERT']).to_s
     }
   end
+
   EM::WebSocket.run(config) do |ws|
     logger.debug "New WebSocket connection: #{ws.inspect}"
 
