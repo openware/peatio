@@ -20,6 +20,8 @@ class Market < ActiveRecord::Base
 
   scope :visible, -> { where(visible: true) }
 
+  after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
+
   # @deprecated
   def base_unit
     ask_unit
