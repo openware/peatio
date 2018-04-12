@@ -61,7 +61,6 @@ gem 'rack-attack', '~> 4.3.1'
 gem 'easy_table'
 gem 'faraday', '~> 0.12'
 gem 'jwt', '~> 2.1'
-gem 'email_validator', '~> 1.6'
 gem 'validate_url', '~> 1.0.2'
 gem 'clipboard-rails', '~> 1.7'
 gem 'god', '~> 0.13.7', require: false
