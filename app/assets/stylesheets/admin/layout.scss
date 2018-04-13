@@ -3,8 +3,12 @@
 body {
   height: 100vh;
 }
-footer {
+footer.sticky-bottom-footer {
   height: 60px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 999;
 }
 .admin-header, .sidebar-header {
   height: 75px;
@@ -17,9 +21,9 @@ footer {
 }
 
 .wrapper {
+  padding-bottom: 80px; // footer + 20
   display: flex;
   align-items: stretch;
-  position: relative;
   margin-left: 250px;
   .top-logo, .user-name {
     display: block;

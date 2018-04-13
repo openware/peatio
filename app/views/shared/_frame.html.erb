@@ -8,7 +8,7 @@
     </div>
     <div class="card-body">
       <div class="row">
-        <div id="guide" class="col-8">
+        <div id="guide" class="col-4">
           <% if content_for?(:guide_title) %>
             <%= yield(:guide_title) %>
           <% else %>
@@ -19,7 +19,7 @@
             <%= yield(:guide) %>
           <% end %>
         </div>
-        <div id="content" class="col-16">
+        <div id="content" class="col-8">
           <%= render 'shared/flash' %>
           <%= yield %>
         </div>

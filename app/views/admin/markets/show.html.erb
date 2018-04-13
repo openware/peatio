@@ -11,16 +11,16 @@
         <div class="form-group">
           <label>Bid unit</label>
           <% if @market.new_record? %>
-            <%= f.select :bid_unit, Currency.codes.map { |code| [code.upcase, code] }, {}, { class: "form-control" } %>
+            <%= f.select :bid_unit, Currency.codes.map { |code| [code.upcase, code] }, {}, { class: "form-control mb-3" } %>
           <% else %>
-            <%= @market.bid_unit.upcase %>
+            <div class="mb-3"><%= @market.bid_unit.upcase %></div>
           <% end %>
 
           <label>Bid fee</label>
-          <%= f.text_field :bid_fee, class: 'form-control' %>
+          <%= f.text_field :bid_fee, class: 'form-control mb-3' %>
 
           <label>Bid precision</label>
-          <%= f.number_field :bid_precision, class: 'form-control' %>
+          <%= f.number_field :bid_precision, class: 'form-control mb-3' %>
         </div>
       </div>
     </div>
@@ -30,12 +30,12 @@
         <div class="form-group">
           <label>Ask unit</label>
           <% if @market.new_record? %>
-            <%= f.select :ask_unit, Currency.codes.map { |code| [code.upcase, code] }, {}, { class: "form-control" } %>
+            <%= f.select :ask_unit, Currency.codes.map { |code| [code.upcase, code] }, {}, { class: "form-control mb-3" } %>
           <% else %>
             <%= @market.ask_unit.upcase %>
           <% end %>
           <label>Ask fee</label>
-          <%= f.text_field :ask_fee, class: 'form-control' %>
+          <%= f.text_field :ask_fee, class: 'form-control mb-3' %>
           <label>Ask precision</label>
           <%= f.number_field :ask_precision, class: 'form-control' %>
         </div>

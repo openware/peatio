@@ -213,9 +213,9 @@ module ApplicationHelper
 
   def yesno(val)
     if val
-      content_tag(:span, 'YES', class: 'label label-success')
+      content_tag(:span, 'YES', class: 'badge badge-success')
     else
-      content_tag(:span, 'NO', class: 'label label-danger')
+      content_tag(:span, 'NO', class: 'badge badge-danger')
     end
   end
 
