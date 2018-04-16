@@ -1,6 +1,8 @@
 class Currency < ActiveRecord::Base
   serialize :options, JSON
 
+  attr_readonly :code, :type
+
   # NOTE: type column reserved for STI
   self.inheritance_column = nil
 
