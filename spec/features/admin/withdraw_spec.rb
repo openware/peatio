@@ -3,10 +3,10 @@ feature 'withdraw', js: true do
   let!(:admin_member) { create :member, :verified_identity, email: Member.admins.first }
 
   let!(:usd_account) do
-    member.get_account(:usd).tap { |a| a.update_attributes locked: 8000, balance: 10_000 }
+    member.get_account(:usd).tap { |a| a.update!(locked: 8000, balance: 10_000) }
   end
   let!(:btc_account) do
-    member.get_account(:btc).tap { |a| a.update_attributes locked: 10, balance: 50}
+    member.get_account(:btc).tap { |a| a.update!(locked: 10, balance: 50) }
   end
   let!(:usd_withdraw) { create :usd_withdraw, member: member, sum: 5000, aasm_state: :accepted, account: usd_account }
   let!(:btc_withdraw) { create :btc_withdraw, member: member, sum: 10, aasm_state: :accepted, account: btc_account }
@@ -25,7 +25,7 @@ feature 'withdraw', js: true do
   end
 
 
-  it 'admin view usd withdraws' do
+  it 'allows admin to view USD withdraws' do
     visit_admin_withdraw_page
     click_link usd_withdraw.currency.code.upcase
 
@@ -38,7 +38,7 @@ feature 'withdraw', js: true do
     end
   end
 
-  it 'admin process usd withdraw' do
+  it 'allows admin to process USD withdraw' do
     visit_admin_withdraw_page
     click_link usd_withdraw.currency.code.upcase
     click_link I18n.t('actions.view')
@@ -50,7 +50,7 @@ feature 'withdraw', js: true do
     expect(usd_account.reload.balance).to be_d '10000'
   end
 
-  it 'admin reject usd withdraw' do
+  it 'allows admin to reject USD withdraw' do
     visit_admin_withdraw_page
 
     click_link usd_withdraw.currency.code.upcase
@@ -64,7 +64,7 @@ feature 'withdraw', js: true do
     expect(usd_account.reload.balance).to be_d '15000.0000'
   end
 
-  it 'admin view btc withdraws' do
+  it 'allows admin to view BTC withdraws' do
     visit_admin_withdraw_page
     click_link btc_withdraw.currency.code.upcase
 
@@ -77,7 +77,7 @@ feature 'withdraw', js: true do
     end
   end
 
-  it 'admin process btc withdraw' do
+  it 'allows admin to process BTC withdraw' do
     visit_admin_withdraw_page
     click_link btc_withdraw.currency.code.upcase
     click_link I18n.t('actions.view')
@@ -91,7 +91,7 @@ feature 'withdraw', js: true do
     expect(btc_withdraw.reload.processing?).to be true
   end
 
-  it 'admin reject btc withdraw' do
+  it 'allows admin to reject BTC withdraw' do
     visit_admin_withdraw_page
 
     click_link btc_withdraw.currency.code.upcase
