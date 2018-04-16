@@ -3,7 +3,7 @@ module Admin
     load_and_authorize_resource
 
     def index
-      @currencies = Currency.page(params[:page])
+      @currencies = Currency.page(params[:page]).per(100)
     end
 
     def new
