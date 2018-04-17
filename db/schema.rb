@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20180417085823) do
+=======
+ActiveRecord::Schema.define(version: 20180417111305) do
+>>>>>>> Use withdraw_fee 1
 
   create_table "account_versions", force: :cascade do |t|
     t.integer  "member_id",       limit: 4
@@ -85,6 +89,7 @@ ActiveRecord::Schema.define(version: 20180417085823) do
     t.integer  "precision",            limit: 1,                              default: 8,      null: false
     t.datetime "created_at",                                                                   null: false
     t.datetime "updated_at",                                                                   null: false
+    t.decimal  "withdraw_fee",                      precision: 7,  scale: 6,  default: 0.0,    null: false
   end
 
   add_index "currencies", ["code"], name: "index_currencies_on_code", unique: true, using: :btree
