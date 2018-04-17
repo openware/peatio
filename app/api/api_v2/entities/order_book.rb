@@ -1,4 +1,4 @@
-require 'api_v2/entities/order'
+require_dependency 'api_v2/entities/order'
 
 module APIv2
   module Entities
