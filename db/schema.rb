@@ -11,11 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20180417085823) do
-=======
 ActiveRecord::Schema.define(version: 20180417111305) do
->>>>>>> Use withdraw_fee 1
 
   create_table "account_versions", force: :cascade do |t|
     t.integer  "member_id",       limit: 4
