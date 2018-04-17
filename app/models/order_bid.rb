@@ -37,7 +37,7 @@ class OrderBid < Order
 end
 
 # == Schema Information
-# Schema version: 20180417111305
+# Schema version: 20180329154130
 #
 # Table name: orders
 #
