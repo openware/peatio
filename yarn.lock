@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"cryptocurrency-icons@https://github.com/cjdowner/cryptocurrency-icons.git":
-  version "0.0.1"
-  resolved "https://github.com/cjdowner/cryptocurrency-icons.git#d31bf7c3afd479ce9d2adc200a6149cdcbe64835"
+"@icon/cryptocurrency-icons@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@icon/cryptocurrency-icons/-/cryptocurrency-icons-0.0.3.tgz#09176ddcbaff495d400a3db7318469afc29b6ef0"
 
-"currency-flags@https://github.com/transferwise/currency-flags.git":
-  version "1.2.1"
-  resolved "https://github.com/transferwise/currency-flags.git#49868469160852b34e2b7d30351b50ec3ae77d86"
+currency-flags@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/currency-flags/-/currency-flags-1.5.0.tgz#21dec87670fff6c51a24f6d7c2e915ce561de6c8"
 
 raven-js@^3.22.1:
   version "3.22.1"
