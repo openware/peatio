@@ -79,13 +79,13 @@ ActiveRecord::Schema.define(version: 20180417111305) do
     t.string   "symbol",               limit: 1,                                               null: false
     t.string   "type",                 limit: 30,                             default: "coin", null: false
     t.decimal  "quick_withdraw_limit",              precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "withdraw_fee",                      precision: 7,  scale: 6,  default: 0.0,    null: false
     t.string   "options",              limit: 1000,                           default: "{}",   null: false
     t.boolean  "visible",                                                     default: true,   null: false
     t.integer  "base_factor",          limit: 8,                              default: 1,      null: false
     t.integer  "precision",            limit: 1,                              default: 8,      null: false
     t.datetime "created_at",                                                                   null: false
     t.datetime "updated_at",                                                                   null: false
-    t.decimal  "withdraw_fee",                      precision: 7,  scale: 6,  default: 0.0,    null: false
   end
 
   add_index "currencies", ["code"], name: "index_currencies_on_code", unique: true, using: :btree
