@@ -19,7 +19,6 @@ class Withdraw < ActiveRecord::Base
   has_many :account_versions, as: :modifiable
 
   delegate :balance, to: :account, prefix: true
-  delegate :id, to: :channel, prefix: true
   delegate :coin?, :fiat?, to: :currency
 
   before_validation :fix_precision
@@ -42,10 +41,6 @@ class Withdraw < ActiveRecord::Base
 
   scope :completed, -> { where aasm_state: COMPLETED_STATES }
   scope :not_completed, -> { where.not aasm_state: COMPLETED_STATES }
-
-  def channel
-    WithdrawChannel.find_by!(currency: currency.code)
-  end
 
   aasm whiny_transitions: false do
     state :prepared, initial: true

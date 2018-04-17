@@ -153,13 +153,13 @@ end
 #  symbol               :string(1)        not null
 #  type                 :string(30)       default("coin"), not null
 #  quick_withdraw_limit :decimal(32, 16)  default(0.0), not null
+#  withdraw_fee         :decimal(7, 6)    default(0.0), not null
 #  options              :string(1000)     default({}), not null
 #  visible              :boolean          default(TRUE), not null
 #  base_factor          :integer          default(1), not null
 #  precision            :integer          default(8), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  withdraw_fee         :decimal(7, 6)    default(0.0), not null
 #
 # Indexes
 #
