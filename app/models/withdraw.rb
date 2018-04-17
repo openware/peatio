@@ -147,7 +147,6 @@ private
 
   def calc_fee
     self.sum ||= 0.0
-    # You can set fee for each currency in withdraw_channels.yml.
     self.fee ||= currency.withdraw_fee
     self.amount = sum - fee
   end
