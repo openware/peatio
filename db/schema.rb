@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(version: 20180417111305) do
     t.decimal  "price",                      precision: 32, scale: 16
     t.decimal  "volume",                     precision: 32, scale: 16
     t.decimal  "origin_volume",              precision: 32, scale: 16
+    t.decimal  "fee",                        precision: 7,  scale: 6,  default: 0.0, null: false
     t.integer  "state",          limit: 4
     t.datetime "done_at"
     t.string   "type",           limit: 8
@@ -163,7 +164,6 @@ ActiveRecord::Schema.define(version: 20180417111305) do
     t.decimal  "origin_locked",              precision: 32, scale: 16
     t.decimal  "funds_received",             precision: 32, scale: 16, default: 0.0
     t.integer  "trades_count",   limit: 4,                             default: 0
-    t.decimal  "fee",                        precision: 7,  scale: 6,  default: 0.0, null: false
   end
 
   add_index "orders", ["market_id", "state"], name: "index_orders_on_market_id_and_state", using: :btree

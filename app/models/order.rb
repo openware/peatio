@@ -89,7 +89,7 @@ class Order < ActiveRecord::Base
   end
 
   def kind
-    type.underscore[-3, 3]
+    self.class.name.underscore[-3, 3]
   end
 
   def self.head(currency)
@@ -152,7 +152,7 @@ class Order < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180416160438
+# Schema version: 20180417111305
 #
 # Table name: orders
 #
@@ -163,6 +163,7 @@ end
 #  price          :decimal(32, 16)
 #  volume         :decimal(32, 16)
 #  origin_volume  :decimal(32, 16)
+#  fee            :decimal(7, 6)    default(0.0), not null
 #  state          :integer
 #  done_at        :datetime
 #  type           :string(8)
@@ -176,7 +177,6 @@ end
 #  origin_locked  :decimal(32, 16)
 #  funds_received :decimal(32, 16)  default(0.0)
 #  trades_count   :integer          default(0)
-#  fee            :decimal(7, 6)    default(0.0), not null
 #
 # Indexes
 #
