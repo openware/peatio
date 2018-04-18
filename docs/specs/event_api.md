@@ -2,13 +2,18 @@
 
 ## Overview of RabbitMQ details
 
-Peatio submits all events into single exchange called `peatio.events`.
+Peatio submits all events into three exchanges depending on event category (read next).
 
-The routing key (same as event name) consists of two parts: 
+The exchange name consists of three parts: 
 
-  1) category of events or subject, like `deposit`, `withdraw`, `system`.
+  1) application name, like `peatio`, `barong`.
 
-  2) event name, like `created`, `updated`, `destroyed`, `low_hot_wallet_balance`.
+  2) fixed keyword `events`.
+
+  3) category of event, like `system` (generic system event), `model` (the attributes of some record were updated), `market` (trading events).
+
+The routing key looks like `deposit.updated`, `btcusd.new_order`.
+The event name matches the routing key but with event category appended at the beginning, like `model.deposit.updated`, `market.btcusd.new_order`.
 
 ## Overview of RabbitMQ message
 
@@ -54,7 +59,7 @@ The typical event looks like (JSON):
 
 ```ruby
 event: {
-  name: "deposit.updated",
+  name: "]model.deposit.updated",
   foo:  "...",
   bar:  "...",
   qux:  "..."
@@ -68,7 +73,7 @@ The fields `foo`, `bar`, `qux` (just for example) are fields which carry useful 
 
 ```ruby
 event: {
-  name: "deposit.created",
+  name: "model.deposit.created",
   record: {
     tid:                      "TID9493F6CD41",
     uid:                      "ID092B2AF8E87",
@@ -89,11 +94,11 @@ event: {
 | ---------- | ----------------------------------- |
 | `record`   | The up-to-date deposit attributes.  |
 
-## Format of `deposit.updated` event
+## Format of `model.deposit.updated` event
 
 ```ruby
 event: {
-  name: "deposit.updated",
+  name: "model.deposit.updated",
   record: {
     tid:                      "TID9493F6CD41",
     uid:                      "ID092B2AF8E87",
@@ -121,11 +126,11 @@ event: {
 | `record`   | The up-to-date deposit attributes.               |
 | `changes`  | The changed deposit attributes and their values. |
 
-## Format of `withdraw.created` event
+## Format of `model.withdraw.created` event
 
 ```ruby
 event: {
-  name: "withdraw.created",
+  name: "model.withdraw.created",
   record: {
     tid:             "TID892F29F094",
     uid:             "ID092B2AF8E87",
@@ -146,11 +151,11 @@ event: {
 | ---------- | ------------------------------------ |
 | `record`   | The up-to-date withdraw attributes.  |
 
-## Format of `withdraw.updated` event
+## Format of `events.model.withdraw.updated` event
 
 ```ruby
 event: {
-  name: "withdraw.updated",
+  name: "model.withdraw.updated",
   record: {
     tid:             "TID892F29F094",
     uid:             "ID092B2AF8E87",
@@ -189,7 +194,7 @@ end
 
 Bunny.run host: "localhost", port: 5672, username: "guest", password: "guest" do |session|
   channel     = session.channel
-  exchange    = channel.direct("peatio.events")
+  exchange    = channel.direct("peatio.events.model")
   jwt_payload = {
     iss:  "peatio",
     jti:  SecureRandom.uuid,
@@ -197,7 +202,7 @@ Bunny.run host: "localhost", port: 5672, username: "guest", password: "guest" do
     exp:  Time.now.to_i + 60,
     data: {
       event: {
-        name: "deposit.created",
+        name: "model.deposit.created",
         record: {
           tid:                      "TID9493F6CD41",
           uid:                      "ID092B2AF8E87",
@@ -222,7 +227,7 @@ IMPORTANT: Don't forget to implement the logic for JWT exception handling!
 
 ## Producing events using `rabbitmqadmin`
 
-`rabbitmqadmin publish routing_key=deposit.created payload=JWT exchange=peatio.events`
+`rabbitmqadmin publish routing_key=deposit.created payload=JWT exchange=peatio.events.model`
 
 Don't forget to pass environment variable `JWT`.
 
@@ -237,9 +242,9 @@ end
 
 Bunny.run host: "localhost", port: 5672, username: "guest", password: "guest" do |session|
   channel  = session.channel
-  exchange = channel.direct("peatio.events")
+  exchange = channel.direct("peatio.events.model")
   queue    = channel.queue("", auto_delete: true, durable: true, exclusive: true)
-                    .bind(exchange, routing_key: "deposit.update")
+                    .bind(exchange, routing_key: "deposit.updated")
   queue.subscribe manual_ack: true, block: true do |delivery_info, metadata, payload|
     Kernel.puts verify_jwt(JSON.parse(payload)).fetch(:data)
     channel.ack(delivery_info.delivery_tag)
