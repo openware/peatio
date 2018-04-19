@@ -11,13 +11,12 @@ module Worker
         return withdraw.suspect! if balance < withdraw.sum
 
         pa = withdraw.account.payment_address
-
         txid = CoinAPI[withdraw.currency.code.to_sym].create_withdrawal!(
           { address: pa.address, secret: pa.secret },
           { address: withdraw.rid },
-          withdraw.amount.to_d
+          withdraw.amount.to_d,
+          {contract_address: withdraw.currency.contract_address}
         )
-
         withdraw.whodunnit 'Worker::WithdrawCoin' do
           withdraw.update_columns(txid: txid, done_at: Time.current)
 

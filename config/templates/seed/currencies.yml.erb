@@ -209,4 +209,32 @@
     # Block explorer configuration.
     wallet_url_template:      https://etherscan.io/address/#{address}
     transaction_url_template: https://etherscan.io/tx/#{txid}
+
+- id:                   8
+  code:                 trst
+  symbol:               'Ξ'
+  type:                 coin
+  precision:            6
+  base_factor:          1_000_000
+  visible:              true
+  quick_withdraw_limit: 2
+  options:
+    contract_address:   "0x87099adD3bCC0821B5b151307c147215F839a110"
+    # API client configuration.
+    api_client: ERC20
+    #
+    # Ethereum node specific configuration.
+    json_rpc_endpoint: http://127.0.0.1:8545
+    #
+    # BitGo specific configuration.
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
+    #
+    # Block explorer configuration.
+    wallet_url_template:      https://etherscan.io/address/#{address}
+    transaction_url_template: https://etherscan.io/tx/#{txid}
 <% end %>

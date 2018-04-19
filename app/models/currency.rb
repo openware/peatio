@@ -123,6 +123,7 @@ class Currency < ActiveRecord::Base
 
   nested_attr \
     :api_client,
+    :contract_address,
     :json_rpc_endpoint,
     :rest_api_endpoint,
     :deposit_confirmations,
