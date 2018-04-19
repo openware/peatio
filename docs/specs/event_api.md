@@ -28,11 +28,11 @@ require "jwt-multisig"
 require "securerandom"
 
 jwt_payload = {
-  iss:  "peatio",
-  jti:  SecureRandom.uuid,
-  iat:  Time.now.to_i,
-  exp:  Time.now.to_i + 60,
-  data: {}
+  iss:   "peatio",
+  jti:   SecureRandom.uuid,
+  iat:   Time.now.to_i,
+  exp:   Time.now.to_i + 60,
+  event: {}
 }
 
 require "openssl"
@@ -51,7 +51,7 @@ decoded_jwt_payload = verification_result[:payload]
 Kernel.puts "MATCH AFTER VERIFICATION: #{jwt_payload == decoded_jwt_payload}."
 ```
 
-The RabbitMQ message is stored in JWT field called `data`.
+The RabbitMQ message is stored in JWT field called `event`.
 
 ## Overview of Event API message
 
@@ -231,27 +231,25 @@ Bunny.run host: "localhost", port: 5672, username: "guest", password: "guest" do
   channel     = session.channel
   exchange    = channel.direct("peatio.events.model")
   jwt_payload = {
-    iss:  "peatio",
-    jti:  SecureRandom.uuid,
-    iat:  Time.now.to_i,
-    exp:  Time.now.to_i + 60,
-    data: {
-      event: {
-        name: "model.deposit.created",
-        record: {
-          tid:                      "TID9493F6CD41",
-          uid:                      "ID092B2AF8E87",
-          currency:                 "btc",
-          amount:                   "0.0855",
-          state:                    "submitted",
-          created_at:               "2018-04-12T17:16:06+03:00",
-          updated_at:               "2018-04-12T17:16:06+03:00",
-          completed_at:             nil,
-          blockchain_address:       "n1Ytj6Hy57YpfueA2vtmnwJQs583bpYn7W",
-          blockchain_txid:          "c37ae1677c4c989dbde9ac22be1f3ff3ac67ed24732a9fa8c9258fdff0232d72",
-          blockchain_confirmations: 1
-        }      
-      }
+    iss:   "peatio",
+    jti:   SecureRandom.uuid,
+    iat:   Time.now.to_i,
+    exp:   Time.now.to_i + 60,
+    event: {
+      name: "model.deposit.created",
+      record: {
+        tid:                      "TID9493F6CD41",
+        uid:                      "ID092B2AF8E87",
+        currency:                 "btc",
+        amount:                   "0.0855",
+        state:                    "submitted",
+        created_at:               "2018-04-12T17:16:06+03:00",
+        updated_at:               "2018-04-12T17:16:06+03:00",
+        completed_at:             nil,
+        blockchain_address:       "n1Ytj6Hy57YpfueA2vtmnwJQs583bpYn7W",
+        blockchain_txid:          "c37ae1677c4c989dbde9ac22be1f3ff3ac67ed24732a9fa8c9258fdff0232d72",
+        blockchain_confirmations: 1
+      }      
     }  
   }
   exchange.publish(generate_jwt(jwt_payload), routing_key: "deposit.created")
@@ -281,7 +279,7 @@ Bunny.run host: "localhost", port: 5672, username: "guest", password: "guest" do
   queue    = channel.queue("", auto_delete: true, durable: true, exclusive: true)
                     .bind(exchange, routing_key: "deposit.updated")
   queue.subscribe manual_ack: true, block: true do |delivery_info, metadata, payload|
-    Kernel.puts verify_jwt(JSON.parse(payload)).fetch(:data)
+    Kernel.puts verify_jwt(JSON.parse(payload)).fetch(:event)
     channel.ack(delivery_info.delivery_tag)
   rescue => e
     channel.nack(delivery_info.delivery_tag, false, true)
