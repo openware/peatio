@@ -15,7 +15,7 @@ class Currency < ActiveRecord::Base
   validates :quick_withdraw_limit, numericality: { greater_than_or_equal_to: 0 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :deposit_confirmations, numericality: { greater_than_or_equal_to: 0, only_integer: true }, if: :coin?
-  validates :withdraw_fee, numericality: { greater_than_or_equal_to: 0 }
+  validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
   validate { errors.add(:options, :invalid) unless Hash === options }
 
   scope :visible, -> { where(visible: true) }

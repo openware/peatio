@@ -77,9 +77,8 @@ private
   end
 
   def calc_fee
-    self.sum ||= 0.0
     self.fee ||= currency.deposit_fee
-    self.amount = sum - fee
+    self.amount -= fee
   end
 
   def sync_update
