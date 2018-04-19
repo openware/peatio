@@ -1,3 +1,6 @@
+# IMPORTANT: This file is EXPERIMENTAL feature of Peatio 1.7. Don't ever try to use it in production.
+# Specifications are available in docs/specs/event_api.md.
+
 require 'active_support/concern'
 require 'active_support/lazy_load_hooks'
 
@@ -154,6 +157,7 @@ module EventAPI
   end
 
   middlewares << Middlewares::IncludeEventMetadata.new
+  middlewares << Middlewares::GenerateJWT.new
   middlewares << Middlewares::PrintToScreen.new
   middlewares << Middlewares::PublishToAbstractRabbitMQ.new
 end
