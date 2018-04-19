@@ -43,7 +43,7 @@ module EventAPI
       end
 
       def notify_record_created
-        notify(:created, record: as_json_for_event_api)
+        notify(:created, record: record.as_json_for_event_api.compact)
       end
 
       def notify_record_updated
@@ -69,7 +69,7 @@ module EventAPI
         # We add «after_commit» callbacks immediately after inclusion.
         %i[create update].each do |event|
           after_commit on: event, prepend: true do
-            if event.in?(self.class.event_api_settings.fetch(:on))
+            if self.class.event_api_settings[:on]&.include?(event)
               event_api.public_send("notify_record_#{event}d")
             end
           end
