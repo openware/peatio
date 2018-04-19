@@ -9,7 +9,7 @@ class Withdraw < ActiveRecord::Base
   include AASM::Locking
   include Currencible
   include TIDIdentifiable
-  include Feevable
+  include FeeChargeable
 
   has_paper_trail on: %i[update destroy]
 

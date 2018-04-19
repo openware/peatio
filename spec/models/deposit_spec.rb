@@ -7,16 +7,16 @@ describe Deposit do
     expect(deposit.amount).to eql 100.to_d
   end
 
-  context 'when deposit fee 10%' do
-    let(:deposit) { create(:deposit_usd, member: member, currency: Currency.find_by!(code: :usd), amount: 100.to_d) }
+  context 'when deposit fee is fixed with value 10' do
+    let(:deposit) { create(:deposit_usd, member: member, currency: Currency.find_by!(code: :usd), amount: 200.to_d) }
 
     before do
-      Deposit.any_instance.expects(:calc_fee).once.returns([90, 10])
+      Currency.any_instance.expects(:deposit_fee).once.returns(10)
     end
 
     it 'should compute fee' do
       expect(deposit.fee).to eql 10.to_d
-      expect(deposit.amount).to eql 100.to_d
+      expect(deposit.amount).to eql 190.to_d
     end
   end
 

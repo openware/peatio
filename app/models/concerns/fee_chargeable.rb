@@ -1,4 +1,4 @@
-module Feevable
+module FeeChargeable
   extend ActiveSupport::Concern
 
   included do
