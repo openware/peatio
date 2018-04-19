@@ -3,8 +3,8 @@ require 'active_support/lazy_load_hooks'
 
 module EventAPI
   class << self
-    def notify(event_name, event_payload, options = {})
-      arguments = [event_name, event_payload, options]
+    def notify(event_name, event_payload)
+      arguments = [event_name, event_payload]
       middlewares.each do |middleware|
         returned_value = middleware.call(*arguments)
         case returned_value
@@ -26,78 +26,95 @@ module EventAPI
     end
   end
 
-  module ActiveRecordExtension
-    extend ActiveSupport::Concern
+  module ActiveRecord
+    class Mediator
+      attr_reader :record
 
-    included do
-      # We add «after_commit» callbacks immediately after inclusion.
-      after_commit on: :create, prepend: true do
-        notify_record_created
+      def initialize(record)
+        @record = record
       end
 
-      after_commit on: :update, prepend: true do
-        notify_record_updated
+      def notify(partial_event_name, event_payload)
+        tokens = ['model']
+        tokens << record.class.event_api_settings.fetch(:prefix) { record.class.name.underscore.gsub(/\//, '_') }
+        tokens << partial_event_name.to_s
+        full_event_name = tokens.join('.')
+        EventAPI.notify(full_event_name, event_payload)
+      end
+
+      def notify_record_created
+        notify(:created, record: as_json_for_event_api)
+      end
+
+      def notify_record_updated
+        current_record  = record
+        previous_record = record.dup
+        record.previous_changes.each { |attribute, values| previous_record.send("#{attribute}=", values.first) }
+
+        previous_record.created_at ||= current_record.created_at
+
+        before = previous_record.as_json_for_event_api.compact
+        after  = current_record.as_json_for_event_api.compact
+
+        notify :updated, \
+          record:  after,
+          changes: before.delete_if { |attribute, value| after[attribute] == value }
       end
     end
 
-    module ClassMethods
-      def notifies_about_events(options = {})
-        @event_api_behavior = event_api_behavior.merge(options)
+    module Extension
+      extend ActiveSupport::Concern
+
+      included do
+        # We add «after_commit» callbacks immediately after inclusion.
+        %i[create update].each do |event|
+          after_commit on: event, prepend: true do
+            if event.in?(self.class.event_api_settings.fetch(:on))
+              event_api.public_send("notify_record_#{event}d")
+            end
+          end
+        end
       end
 
-      def event_api_behavior
-        @event_api_behavior || superclass.instance_variable_get(:@event_api_behavior) || {}
+      module ClassMethods
+        def acts_as_eventable(settings = {})
+          settings[:on] = %i[create update] unless settings.key?(:on)
+          @event_api_settings = event_api_settings.merge(settings)
+        end
+
+        def event_api_settings
+          @event_api_settings || superclass.instance_variable_get(:@event_api_settings) || {}
+        end
       end
-    end
 
-    def to_event_api_payload
-      as_json
-    end
+      def event_api
+        @event_api ||= Mediator.new(self)
+      end
 
-    def notify(partial_event_name, event_payload)
-      tokens = ['model']
-      tokens << self.class.event_api_behavior.fetch(:prefix) { self.class.name.underscore.gsub(/\//, '_') }
-      tokens << partial_event_name.to_s
-      full_event_name = tokens.join('.')
-      EventAPI.notify(full_event_name, event_payload)
-    end
-
-    def notify_record_created
-      notify(:created, record: to_event_api_payload)
-    end
-
-    def notify_record_updated
-      current_record  = self
-      previous_record = dup
-      previous_changes.each { |attribute, values| previous_record.send("#{attribute}=", values.first) }
-
-      previous_record.created_at ||= current_record.created_at
-
-      before = previous_record.to_event_api_payload.compact
-      after  = current_record.to_event_api_payload.compact
-
-      notify :updated, \
-        record:  after,
-        changes: before.delete_if { |attribute, value| after[attribute] == value }
+      def as_json_for_event_api
+        as_json
+      end
     end
   end
 
+  # To continue processing by further middlewares return array with event name and payload.
+  # To stop processing event return any value which isn't an array.
   module Middlewares
     class IncludeEventMetadata
-      def call(event_name, event_payload, options)
+      def call(event_name, event_payload)
         event_payload[:name] = event_name
-        [event_name, event_payload, options]
+        [event_name, event_payload]
       end
     end
 
     class GenerateJWT
-      def call(event_name, event_payload, options)
-        [event_name, event_payload, options]
+      def call(event_name, event_payload)
+        [event_name, event_payload]
       end
     end
 
     class PrintToScreen
-      def call(event_name, event_payload, options = {})
+      def call(event_name, event_payload)
         Rails.logger.debug do
           ['',
            'Produced new event at ' + Time.current.to_s + ': ',
@@ -105,12 +122,12 @@ module EventAPI
            'payload = ' + event_payload.to_json,
            ''].join("\n")
         end
-        [event_name, event_payload, options]
+        [event_name, event_payload]
       end
     end
 
     class PublishToAbstractRabbitMQ
-      def call(event_name, event_payload, options)
+      def call(event_name, event_payload)
         Rails.logger.debug do
           ['',
            'Published new message to RabbitMQ (abstractly):',
@@ -120,11 +137,12 @@ module EventAPI
            ''
           ].join("\n")
         end
-        [event_name, event_payload, options]
+        [event_name, event_payload]
       end
 
     private
-      # TODO: Validate.
+
+      # TODO: Validate that key include event category.
       def exchange_name(event_name)
         "peatio.events.#{event_name.split('.').first}"
       end
@@ -140,4 +158,4 @@ module EventAPI
   middlewares << Middlewares::PublishToAbstractRabbitMQ.new
 end
 
-ActiveSupport.on_load(:active_record) { ActiveRecord::Base.include EventAPI::ActiveRecordExtension }
+ActiveSupport.on_load(:active_record) { ActiveRecord::Base.include EventAPI::ActiveRecord::Extension }
