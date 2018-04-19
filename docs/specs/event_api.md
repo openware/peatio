@@ -59,7 +59,7 @@ The typical event looks like (JSON):
 
 ```ruby
 event: {
-  name: "]model.deposit.updated",
+  name: "model.deposit.updated",
   foo:  "...",
   bar:  "...",
   qux:  "..."
