@@ -16,7 +16,7 @@
     </code>
   <% end %>
   <% t.column :state_and_action do |x| %>
-    <span><%= x.aasm_state_text %> / </span>
-    <%= link_to t('actions.view'), admin_withdraw_path(currency: x.currency.code, id: x), target: '_blank' %>
+    <span class="badge badge-<%= x.aasm_state_text.downcase %>"><%= x.aasm_state_text %></span>
+    <%= link_to t('actions.view'), admin_withdraw_path(currency: x.currency.code, id: x), target: '_blank', class: "ml-2" %>
   <% end %>
 <% end %>

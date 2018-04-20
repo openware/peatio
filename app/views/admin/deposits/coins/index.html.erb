@@ -21,9 +21,8 @@
       <span class="badge"><%= x.confirmations %></span>
     <% end %>
     <% t.column :state_and_actions do |x| %>
-      <span><%= x.aasm_state_text %></span>
+      <span class="badge badge-<%= x.aasm_state_text.downcase %>"><%= x.aasm_state_text %></span>
       <% if x.may_accept? %>
-        <span> / </span>
         <%= link_to t('admin.deposits.coins.index.accept'),
                     admin_deposit_path(x.currency.code, x),
                     method:  'PATCH',
