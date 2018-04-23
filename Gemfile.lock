@@ -79,6 +79,7 @@ GEM
     bourbon (4.3.4)
       sass (~> 3.4)
       thor (~> 0.19)
+    browser (0.8.0)
     builder (3.2.3)
     bullet (5.7.5)
       activesupport (>= 3.0.0)
@@ -430,6 +431,7 @@ DEPENDENCIES
   arel-is-blank (~> 1.0)
   bootstrap (~> 4.0.0)
   bourbon
+  browser (~> 0.8.0)
   bullet (~> 5.7)
   bunny (~> 2.9.0)
   cancancan
