@@ -19,6 +19,7 @@
 
   <body id="<%= body_id %>" data-lang="<%= locale_name %>">
     <div id="wrap">
+      <%= render 'shared/alert' %>
       <%= yield %>
       <div id="push"></div>
     </div>
