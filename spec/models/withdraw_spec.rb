@@ -237,7 +237,7 @@ describe Withdraw do
       Currency.any_instance.expects(:withdraw_fee).once.returns(10)
     end
 
-    it 'should compute fee' do
+    it 'computes fee' do
       expect(withdraw.fee).to eql 10.to_d
       expect(withdraw.amount).to eql 190.to_d
     end

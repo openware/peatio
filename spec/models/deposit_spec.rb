@@ -14,7 +14,7 @@ describe Deposit do
       Currency.any_instance.expects(:deposit_fee).once.returns(10)
     end
 
-    it 'should compute fee' do
+    it 'computes fee' do
       expect(deposit.fee).to eql 10.to_d
       expect(deposit.amount).to eql 190.to_d
     end
