@@ -66,5 +66,21 @@ FactoryBot.define do
         transaction_url_template: 'https://bithomp.com/explorer/#{address}',
         deposit_confirmations:    1
     end
+
+    trait :erc20 do
+      code                 'trst'
+      symbol               'Ξ'
+      type                 'coin'
+      base_factor          1_000_000
+      quick_withdraw_limit 2
+      withdraw_fee         0.025
+      options \
+        contract_address:   '0x87099adD3bCC0821B5b151307c147215F839a110',
+        api_client:               'ERC20',
+        json_rpc_endpoint:        'http://127.0.0.1:8545',
+        wallet_url_template:      'https://etherscan.io/address/#{address}',
+        transaction_url_template: 'https://etherscan.io/tx/#{txid}',
+        deposit_confirmations:    1
+    end
   end
 end
