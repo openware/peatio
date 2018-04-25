@@ -81,6 +81,7 @@ en:
         rejected: Rejected
         accepted: Accepted
         suspected: Suspected
+        prepared: Prepared
         processing: Processing
         coin_ready: Coin Ready
         coin_done: Coin Done
