@@ -143,3 +143,27 @@ class Currency < ActiveRecord::Base
   end
 end
 
+# == Schema Information
+# Schema version: 20180425094920
+#
+# Table name: currencies
+#
+#  id                   :integer          not null, primary key
+#  code                 :string(30)       not null
+#  symbol               :string(1)        not null
+#  type                 :string(30)       default("coin"), not null
+#  quick_withdraw_limit :decimal(32, 16)  default(0.0), not null
+#  withdraw_fee         :decimal(32, 16)  default(0.0), not null
+#  deposit_fee          :decimal(32, 16)  default(0.0), not null
+#  options              :string(1000)     default({}), not null
+#  visible              :boolean          default(TRUE), not null
+#  base_factor          :integer          default(1), not null
+#  precision            :integer          default(8), not null
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
+#
+# Indexes
+#
+#  index_currencies_on_code     (code) UNIQUE
+#  index_currencies_on_visible  (visible)
+#
