@@ -71,7 +71,7 @@ module CoinAPI
 
       def build_deposit_collection(txs, current_block, latest_block)
         txs.map do |tx|
-         if tx.fetch('input').hex >= 0 and tx.fetch('to').try(:downcase) == currency.contract_address.try(:downcase)
+         if tx.fetch('input').hex > 0 and tx.fetch('to').try(:downcase) == currency.contract_address.try(:downcase)
            input_data = tx.fetch('input').bytes.map(&:chr).drop(10).join
            { id:            tx.fetch('hash'),
              confirmations: latest_block.fetch('number').hex - current_block.fetch('number').hex,
