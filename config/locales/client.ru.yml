@@ -62,8 +62,8 @@ ru:
         miner_fee: Комиссия
         cancel: Отмена
         no_data: Нет исторических данных
-        submitted: Подгтовлено
-        submitted: Подтверждено
+        submitted: Подготовлено
+        prepared: Подготовлено
         rejected: Отклонено
         accepted: Принято
         prepared: Подготовлено
