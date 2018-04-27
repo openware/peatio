@@ -20,7 +20,7 @@ class Deposit < ActiveRecord::Base
   belongs_to :member, required: true
 
   validates :amount, :tid, :aasm_state, :type, presence: true
-  validates :amount, numericality: { greater_than: 0.0 }
+  validates :amount, numericality: { greater_than: 0 }
   validates :completed_at, presence: { if: :completed? }
 
   scope :recent, -> { order(id: :desc) }
