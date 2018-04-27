@@ -17,6 +17,7 @@ class Currency < ActiveRecord::Base
   validates :deposit_confirmations, numericality: { greater_than_or_equal_to: 0, only_integer: true }, if: :coin?
   validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
   validate { errors.add(:options, :invalid) unless Hash === options }
+  before_validation { self.deposit_fee = 0 unless fiat? }
 
   scope :visible, -> { where(visible: true) }
   scope :all_with_invisible, -> { all }

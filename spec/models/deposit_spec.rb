@@ -1,8 +1,8 @@
 describe Deposit do
   let(:member) { create(:member) }
   let(:amount) { 100.to_d }
-  let(:deposit) { create(:deposit_btc, member: member, amount: amount, currency: currency) }
-  let(:currency) { Currency.find_by!(code: :btc) }
+  let(:deposit) { create(:deposit_usd, member: member, amount: amount, currency: currency) }
+  let(:currency) { Currency.find_by!(code: :usd) }
 
   it 'computes fee' do
     expect(deposit.fee).to eql 0.to_d
@@ -21,7 +21,7 @@ describe Deposit do
   context 'fee exceeds amount' do
     before { Currency.any_instance.expects(:deposit_fee).once.returns(1.1) }
     let(:amount) { 1 }
-    let(:deposit) { build(:deposit_btc, member: member, amount: amount, currency: currency) }
+    let(:deposit) { build(:deposit_usd, member: member, amount: amount, currency: currency) }
     it 'fails validation' do
       expect(deposit.save).to eq false
       expect(deposit.errors.full_messages).to eq ['Amount must be greater than 0']

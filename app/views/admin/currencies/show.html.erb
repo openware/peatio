@@ -25,7 +25,7 @@
             <dd><%= f.text_field :quick_withdraw_limit, class: 'form-control' %></dd>
             <dt>Withdraw fee</dt>
             <dd><%= f.text_field :withdraw_fee, class: 'form-control' %></dd>
-            <dt>Deposit fee</dt>
+            <dt>Deposit fee (fiat only)</dt>
             <dd><%= f.text_field :deposit_fee, class: 'form-control' %></dd>
             <% if @currency.new_record? || @currency.coin? %>
               <dt>Number of required confirmations for deposit</dt>
