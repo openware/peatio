@@ -28,7 +28,7 @@ class Member < ActiveRecord::Base
           info_hash       = auth_hash.fetch('info')
           member.email    = info_hash.fetch('email')
           member.level    = Member::Levels.get(info_hash['level']) if info_hash.key?('level')
-          member.disabled = info_hash.key?('state') && info_hash['state'] != 'active'
+          member.disabled = info_hash['state'] != 'active' if info_hash.key?('state')
           member.save!
           auth = Authentication.locate(auth_hash) || member.authentications.build_auth(auth_hash)
           auth.token = auth_hash.dig('credentials', 'token')
