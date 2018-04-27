@@ -144,7 +144,7 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180425094920
+# Schema version: 20180425224307
 #
 # Table name: currencies
 #
@@ -152,9 +152,9 @@ end
 #  code                 :string(30)       not null
 #  symbol               :string(1)        not null
 #  type                 :string(30)       default("coin"), not null
+#  deposit_fee          :decimal(32, 16)  default(0.0), not null
 #  quick_withdraw_limit :decimal(32, 16)  default(0.0), not null
 #  withdraw_fee         :decimal(32, 16)  default(0.0), not null
-#  deposit_fee          :decimal(32, 16)  default(0.0), not null
 #  options              :string(1000)     default({}), not null
 #  visible              :boolean          default(TRUE), not null
 #  base_factor          :integer          default(1), not null
