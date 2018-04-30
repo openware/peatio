@@ -104,9 +104,5 @@ module CoinAPI
           entries:       [{ amount: tx.fetch('amount').to_d, address: normalize_address(tx.fetch('address')) }] }
       end.compact.reverse
     end
-
-    def normalize_address(address)
-      address
-    end
   end
 end

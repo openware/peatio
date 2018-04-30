@@ -80,7 +80,7 @@ FactoryBot.define do
         wallet_url_template:      'https://etherscan.io/address/#{address}',
         transaction_url_template: 'https://etherscan.io/tx/#{txid}',
         deposit_confirmations:    1,
-        erc20_contract_address:   '0x87099adD3bCC0821B5b151307c147215F839a110',
+        erc20_contract_address:   '0x87099adD3bCC0821B5b151307c147215F839a110'
     end
   end
 end

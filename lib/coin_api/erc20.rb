@@ -2,19 +2,19 @@ module CoinAPI
   class ERC20 < ETH
 
     def contract_address
-      currency.erc20_contract_address
+      normalize_address(currency.erc20_contract_address)
     end
 
     def create_withdrawal!(issuer, recipient, amount, options = {})
       permit_transaction(issuer, recipient)
       data = abi_encode(
-        'transfer(address,uint256)', recipient.fetch(:address), '0x' + convert_to_base_unit!(amount).to_s(16)
+        'transfer(address,uint256)', normalize_address(recipient.fetch(:address)), '0x' + convert_to_base_unit!(amount).to_s(16)
       )
 
       json_rpc(
         :eth_sendTransaction,
         [{
-           from: issuer.fetch(:address),
+           from: normalize_address(issuer.fetch(:address)),
            to:   contract_address,
            data: "0x" + data,
            gas:  nil
@@ -33,9 +33,9 @@ module CoinAPI
         break unless receipt['status'] == '0x1'
 
         entries = receipt.fetch('logs').map do |log|
-          next unless log.fetch('address') == contract_address
+          next unless normalize_address(log.fetch('address')) == contract_address
           { amount:  convert_from_base_unit(log.fetch('data').hex),
-            address: '0x' + log.fetch('topics').last[-40..-1] }
+            address: '0x' + normalize_address(log.fetch('topics').last[-40..-1]) }
         end
 
         { id:            receipt.fetch('transactionHash'),
@@ -60,7 +60,7 @@ module CoinAPI
     end
 
     def load_balance_of_address(address)
-      data = abi_encode('balanceOf(address)', address)
+      data = abi_encode('balanceOf(address)', normalize_address(address))
       json_rpc(:eth_call, [{ to: contract_address, data: "0x" + data }, 'latest']).fetch('result').hex.to_d
     rescue => e
       report_exception_to_screen(e)

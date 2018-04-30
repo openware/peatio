@@ -41,7 +41,7 @@ describe CoinAPI::ERC20 do
         id:      1,
         method:  'eth_call',
         params:  [{
-                    to:   '0x87099adD3bCC0821B5b151307c147215F839a110',
+                    to:   '0x87099add3bcc0821b5b151307c147215f839a110',
                     data: '0x' + '70a0823100000000000000000000000042eb768f2244c8811c63729a21a3569731535f06'
                   }, 'latest']
       }.to_json
@@ -115,7 +115,7 @@ describe CoinAPI::ERC20 do
                                blockNumber:      '0x1',
                                transactionIndex: '0x1',
                                from:             '0x407d73d8a49eeb85d32cf465507dd71d507100c1',
-                               to:               '0x87099adD3bCC0821B5b151307c147215F839a110',
+                               to:               '0x87099add3bcc0821b5b151307c147215f839a110',
                                value:            '0x7f110',
                                gas:              '0x7f110',
                                gasPrice:         '0x09184e72a000',
@@ -204,7 +204,7 @@ describe CoinAPI::ERC20 do
   describe 'create_withdrawal!' do
     let(:issuer) { { address: '0x785529cc54014e00bb3bbfe4f18cec960e72a401', secret: 'guz@?I0cYav)9b0bk1#(%Tol#TtY5hOLYg7NWq+G#6X%1fTqXz!h4Egjl84HE3ws' } }
     let(:recipient) { { address: '0xDD61C7D5a1213AF4A7b589F6E557cCe3fCC0cfbB' } }
-    subject { client.create_withdrawal!(issuer, recipient, 10, erc20_contract_address: '0x87099adD3bCC0821B5b151307c147215F839a110') }
+    subject { client.create_withdrawal!(issuer, recipient, 10, erc20_contract_address: '0x87099add3bcc0821b5b151307c147215f839a110') }
 
     let :request_body do
       { jsonrpc: '2.0',
@@ -212,7 +212,7 @@ describe CoinAPI::ERC20 do
         method:  'eth_sendTransaction',
         params:  [{
                     from: issuer[:address],
-                    to:   '0x87099adD3bCC0821B5b151307c147215F839a110',
+                    to:   '0x87099add3bcc0821b5b151307c147215f839a110',
                     data: '0x' + 'a9059cbb000000000000000000000000DD61C7D5a1213AF4A7b589F6E557cCe3fCC0cfbB0000000000000000000000000000000000000000000000000000000000989680',
                     gas:  nil
                   }.compact]

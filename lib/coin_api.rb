@@ -109,6 +109,10 @@ module CoinAPI
       value.to_d / currency.base_factor
     end
 
+    def normalize_address(address)
+      address.downcase
+    end
+
     %i[ load_balance load_deposit create_address create_withdrawal inspect_address ].each do |method|
       class_eval <<-RUBY
         def #{method}(*args, &block)
