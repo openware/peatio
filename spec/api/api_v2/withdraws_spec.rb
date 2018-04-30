@@ -104,7 +104,7 @@ describe APIv2::Withdraws, type: :request do
     end
 
     it 'sets status to «submitted» after creation' do
-      api_post '/api/v2/withdraws', params: { currency: 'btc', rid: Faker::Bitcoin.address, amount: '1' }, token: token
+      api_post '/api/v2/withdraws', params: { currency: 'BTC', destination_id: btc_withdraw_destinations.first.id, amount: '0.1' }, token: token
       expect(response.code).to eq '201'
       withdraw = Withdraw.find_by_id(JSON.parse(response.body)['id'])
       expect(withdraw.aasm_state).to eq 'submitted'
