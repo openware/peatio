@@ -26,7 +26,7 @@ module CoinAPI
             :eth_sendTransaction,
             [{
                  from:  issuer.fetch(:address),
-                 to: options[:contract_address],
+                 to: currency.contract_address,
                  data: "0x" + data,
                  gas:   nil
              }.compact]
