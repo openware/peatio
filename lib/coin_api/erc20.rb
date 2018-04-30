@@ -9,7 +9,7 @@ module CoinAPI
             .reject(&:blank?)
             .map do |address|
           data = build_data('balanceOf(address)', address)
-          json_rpc(:eth_call, [{to: currency.contract_address, data: "0x" + data}, 'latest']).fetch('result').hex.to_d
+          json_rpc(:eth_call, [{to: currency.erc20_contract_address, data: "0x" + data}, 'latest']).fetch('result').hex.to_d
         rescue => e
           report_exception_to_screen(e)
           0.0
@@ -26,7 +26,7 @@ module CoinAPI
             :eth_sendTransaction,
             [{
                  from:  issuer.fetch(:address),
-                 to: currency.contract_address,
+                 to: currency.erc20_contract_address,
                  data: "0x" + data,
                  gas:   nil
              }.compact]
@@ -44,7 +44,7 @@ module CoinAPI
 
           return {} unless tx['status'] == '0x1'
           entries = tx['logs'].each_with_object([]) do |log, result|
-            next unless log['address'].try(:downcase) == currency.contract_address.try(:downcase)
+            next unless log['address'].try(:downcase) == currency.erc20_contract_address.try(:downcase)
             result << {
                 amount: log['data'].hex.to_f / 10**currency.precision,
                 address: "0x" + log['topics'].last[-40..-1]
@@ -71,7 +71,7 @@ module CoinAPI
 
       def build_deposit_collection(txs, current_block, latest_block)
         txs.map do |tx|
-         if tx.fetch('input').hex > 0 and tx.fetch('to').try(:downcase) == currency.contract_address.try(:downcase)
+         if tx.fetch('input').hex > 0 and tx.fetch('to').try(:downcase) == currency.erc20_contract_address.try(:downcase)
            input_data = tx.fetch('input').bytes.map(&:chr).drop(10).join
            { id:            tx.fetch('hash'),
              confirmations: latest_block.fetch('number').hex - current_block.fetch('number').hex,

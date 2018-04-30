@@ -123,7 +123,6 @@ class Currency < ActiveRecord::Base
 
   nested_attr \
     :api_client,
-    :contract_address,
     :json_rpc_endpoint,
     :rest_api_endpoint,
     :deposit_confirmations,
@@ -134,9 +133,10 @@ class Currency < ActiveRecord::Base
     :bitgo_rest_api_root,
     :bitgo_rest_api_access_token,
     :wallet_url_template,
-    :transaction_url_template
+    :transaction_url_template,
+    :erc20_contract_address,
 
-  def deposit_confirmations
+    def deposit_confirmations
     options['deposit_confirmations'].to_i
   end
 

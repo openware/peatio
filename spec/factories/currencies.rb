@@ -75,7 +75,7 @@ FactoryBot.define do
       quick_withdraw_limit 2
       withdraw_fee         0.025
       options \
-        contract_address:   '0x87099adD3bCC0821B5b151307c147215F839a110',
+        erc20_contract_address:   '0x87099adD3bCC0821B5b151307c147215F839a110',
         api_client:               'ERC20',
         json_rpc_endpoint:        'http://127.0.0.1:8545',
         wallet_url_template:      'https://etherscan.io/address/#{address}',

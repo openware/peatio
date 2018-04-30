@@ -204,7 +204,7 @@ describe CoinAPI::ERC20 do
   describe 'create_withdrawal!' do
     let(:issuer) {{address: '0x785529cc54014e00bb3bbfe4f18cec960e72a401', secret: 'guz@?I0cYav)9b0bk1#(%Tol#TtY5hOLYg7NWq+G#6X%1fTqXz!h4Egjl84HE3ws'}}
     let(:recipient) {{address: '0xDD61C7D5a1213AF4A7b589F6E557cCe3fCC0cfbB'}}
-    subject {client.create_withdrawal!(issuer, recipient, 10, contract_address: '0x87099adD3bCC0821B5b151307c147215F839a110')}
+    subject {client.create_withdrawal!(issuer, recipient, 10, erc20_contract_address: '0x87099adD3bCC0821B5b151307c147215F839a110')}
 
     let :request_body do
       {jsonrpc: '2.0',
