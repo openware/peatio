@@ -1,6 +1,10 @@
 module CoinAPI
   class ERC20 < ETH
 
+    def contract_address
+      currency.erc20_contract_address
+    end
+
     def create_withdrawal!(issuer, recipient, amount, options = {})
       permit_transaction(issuer, recipient)
       data = abi_encode(
@@ -11,12 +15,12 @@ module CoinAPI
         :eth_sendTransaction,
         [{
            from: issuer.fetch(:address),
-           to:   currency.erc20_contract_address,
+           to:   contract_address,
            data: "0x" + data,
            gas:  nil
          }.compact]
       ).fetch('result').yield_self do |txid|
-        if txid.to_s.match?(/\A0x[A-F0-9]{64}\z/i)
+        if valid_txid?(txid)
           txid
         else
           raise CoinAPI::Error, "ERC20 withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed."
@@ -29,7 +33,7 @@ module CoinAPI
         break unless receipt['status'] == '0x1'
 
         entries = receipt.fetch('logs').map do |log|
-          next unless log.fetch('address') == currency.erc20_contract_address
+          next unless log.fetch('address') == contract_address
           { amount:  convert_from_base_unit(log.fetch('data').hex),
             address: '0x' + log.fetch('topics').last[-40..-1] }
         end
@@ -44,7 +48,7 @@ module CoinAPI
 
     def build_deposit_collection(txs, current_block, latest_block)
       txs.map do |tx|
-        if tx.fetch('input').hex > 0 and tx.fetch('to').try(:downcase) == currency.erc20_contract_address.try(:downcase)
+        if tx.fetch('input').hex > 0 and tx.fetch('to').try(:downcase) == contract_address.try(:downcase)
           input_data = tx.fetch('input').bytes.map(&:chr).drop(10).join
           { id:            tx.fetch('hash'),
             confirmations: latest_block.fetch('number').hex - current_block.fetch('number').hex,
@@ -57,7 +61,7 @@ module CoinAPI
 
     def load_balance_of_address(address)
       data = abi_encode('balanceOf(address)', address)
-      json_rpc(:eth_call, [{ to: currency.erc20_contract_address, data: "0x" + data }, 'latest']).fetch('result').hex.to_d
+      json_rpc(:eth_call, [{ to: contract_address, data: "0x" + data }, 'latest']).fetch('result').hex.to_d
     rescue => e
       report_exception_to_screen(e)
       0.0

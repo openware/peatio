@@ -40,7 +40,7 @@ module CoinAPI
           gas:   options.key?(:gas_limit) ? '0x' + options[:gas_limit].to_s(16) : nil
         }.compact]
       ).fetch('result').yield_self do |txid|
-        if txid.to_s.match?(/\A0x[A-F0-9]{64}\z/i)
+        if valid_txid?(txid)
           txid
         else
           raise CoinAPI::Error, "ETH withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed."
@@ -162,6 +162,10 @@ module CoinAPI
       args.each_with_object Digest::SHA3.hexdigest(method, 256)[0..7] do |arg, data|
         data.concat(arg.gsub(/^0x/, '').rjust(64, '0'))
       end
+    end
+
+    def valid_txid?(txid)
+      txid.to_s.match?(/\A0x[A-F0-9]{64}\z/i)
     end
   end
 end
