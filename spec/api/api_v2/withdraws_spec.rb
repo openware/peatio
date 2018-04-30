@@ -97,7 +97,7 @@ describe APIv2::Withdraws, type: :request do
       expect(JSON.parse(response.body)['amount'].to_d).to eq '0.1'.to_d
     end
 
-    it 'should be processable by daemon after create' do
+    it 'sets status to «submitted» after creation' do
       api_post '/api/v2/withdraws', params: { currency: 'btc', rid: Faker::Bitcoin.address, amount: '1' }, token: token
       expect(response.code).to eq '201'
       withdraw = Withdraw.find_by_id(JSON.parse(response.body)['id'])
