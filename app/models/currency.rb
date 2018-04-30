@@ -136,7 +136,7 @@ class Currency < ActiveRecord::Base
     :transaction_url_template,
     :erc20_contract_address,
 
-    def deposit_confirmations
+  def deposit_confirmations
     options['deposit_confirmations'].to_i
   end
 
