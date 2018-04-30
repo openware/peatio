@@ -19,12 +19,8 @@ module CoinAPI
         .where(PaymentAddress.arel_table[:address].is_not_blank)
         .pluck(:address)
         .reject(&:blank?)
-        .map do |address|
-          json_rpc(:eth_getBalance, [address, 'latest']).fetch('result').hex.to_d
-        rescue => e
-          report_exception_to_screen(e)
-          0.0
-        end.reduce(&:+).yield_self { |total| total ? convert_from_base_unit(total) : 0.to_d }
+        .map(&method(:load_balance_of_address))
+        .reduce(&:+).yield_self { |total| total ? convert_from_base_unit(total) : 0.to_d }
     end
 
     def inspect_address!(address)
@@ -66,7 +62,7 @@ module CoinAPI
 
     def load_deposit!(txid)
       json_rpc(:eth_getTransactionByHash, [txid]).fetch('result').yield_self do |tx|
-        return if tx.blank?
+        break if tx.blank?
         block = block_information(tx.fetch('blockNumber'))
         { id:            tx.fetch('hash'),
           confirmations: latest_block_number - tx.fetch('blockNumber').hex,
@@ -152,6 +148,19 @@ module CoinAPI
         unless response.fetch('result')
           raise CoinAPI::Error, "ETH withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed."
         end
+      end
+    end
+
+    def load_balance_of_address(address)
+      json_rpc(:eth_getBalance, [address, 'latest']).fetch('result').hex.to_d
+    rescue => e
+      report_exception_to_screen(e)
+      0.0
+    end
+
+    def abi_encode(method, *args)
+      args.each_with_object Digest::SHA3.hexdigest(method, 256)[0..7] do |arg, data|
+        data.concat(arg.gsub(/^0x/, '').rjust(64, '0'))
       end
     end
   end
