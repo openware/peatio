@@ -7,6 +7,7 @@ module Deposits
 
     before_validation { self.txid    = txid.try(:downcase) if currency&.case_insensitive? }
     before_validation { self.address = address.try(:downcase) if currency&.case_insensitive? }
+    before_validation { self.address = CashAddr::Converter.to_legacy_address(address) if currency&.code&.bch? }
 
     def transaction_url
       if txid? && currency.transaction_url_template?

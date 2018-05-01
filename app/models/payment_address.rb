@@ -11,6 +11,7 @@ class PaymentAddress < ActiveRecord::Base
   serialize :details, JSON
 
   before_validation { self.address = address.try(:downcase) if currency&.case_insensitive? }
+  before_validation { self.address = CashAddr::Converter.to_legacy_address(address) if currency&.code&.bch? }
 
   def enqueue_address_generation
     if address.blank? && currency.coin?

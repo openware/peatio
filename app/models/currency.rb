@@ -23,6 +23,9 @@ class Currency < ActiveRecord::Base
     self.bitgo_wallet_address   = bitgo_wallet_address.try(:downcase)
     self.erc20_contract_address = erc20_contract_address.try(:downcase)
   end
+  before_validation do
+    self.bitgo_wallet_address = CashAddr::Converter.to_legacy_address(bitgo_wallet_address) if code&.bch?
+  end
 
   scope :visible, -> { where(visible: true) }
   scope :all_with_invisible, -> { all }
