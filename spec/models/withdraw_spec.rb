@@ -41,6 +41,35 @@ describe Withdraw do
         expect(subject).to be_rejected
       end
 
+      context 'internal recipient' do
+        let(:payment_address) { create(:btc_payment_address) }
+        subject { create(:btc_withdraw, rid: payment_address.address) }
+
+        around do |example|
+          WebMock.disable_net_connect!
+          example.run
+          WebMock.allow_net_connect!
+        end
+
+        let :request_body do
+          { jsonrpc: '1.0',
+            method:  'validateaddress',
+            params:  [payment_address.address]
+          }.to_json
+        end
+
+        let(:response_body) { '{"result":{"isvalid":true,"ismine":true}}' }
+
+        before do
+          stub_request(:post, 'http://127.0.0.1:18332').with(body: request_body).to_return(body: response_body)
+        end
+
+        it 'permits withdraw to address which belongs to Peatio' do
+          subject.audit!
+          expect(subject).to be_accepted
+        end
+      end
+
       it 'should accept withdraw with clean history' do
         CoinAPI.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
         subject.audit!
