@@ -60,7 +60,7 @@ module CoinAPI
           confirmations: latest_block.fetch('number').hex - current_block.fetch('number').hex,
           received_at:   Time.at(current_block.fetch('timestamp').hex),
           entries:       [{ amount:  convert_from_base_unit(arguments[1].hex),
-                            address: normalize_address(arguments[0][26..-1]) }] }
+                            address: normalize_address('0x' + arguments[0][26..-1]) }] }
       end.compact
     end
 

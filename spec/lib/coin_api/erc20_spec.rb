@@ -83,7 +83,7 @@ describe CoinAPI::ERC20 do
       { jsonrpc: '2.0',
         id:      1,
         method:  'eth_getBlockByNumber',
-        params:  ['0x21ac34', true]
+        params:  ['0x1', true]
       }.to_json
     end
 
@@ -92,7 +92,7 @@ describe CoinAPI::ERC20 do
     end
 
     before do
-      client.expects(:latest_block_number).returns(2206772)
+      client.expects(:latest_block_number).returns(1)
       stub_request(:post, 'http://127.0.0.1:8545/').with(body: request_body).to_return(body: response_body)
     end
 
