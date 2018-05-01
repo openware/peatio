@@ -113,6 +113,10 @@ module CoinAPI
       address.downcase
     end
 
+    def normalize_txid(txid)
+      txid.downcase
+    end
+
     %i[ load_balance load_deposit create_address create_withdrawal inspect_address ].each do |method|
       class_eval <<-RUBY
         def #{method}(*args, &block)

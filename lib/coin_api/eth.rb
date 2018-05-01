@@ -9,7 +9,8 @@ module CoinAPI
     def create_address!(options = {})
       secret = options.fetch(:secret) { Passgen.generate(length: 64, symbols: true) }
       secret.yield_self do |password|
-        { address: json_rpc(:personal_newAccount, [password]).fetch('result'), secret: password }
+        { address: normalize_address(json_rpc(:personal_newAccount, [password]).fetch('result')),
+          secret:  password }
       end
     end
 
@@ -24,27 +25,25 @@ module CoinAPI
     end
 
     def inspect_address!(address)
-      { address:  address,
-        is_valid: /\A0x[A-F0-9]{40}\z/i.match?(address) }
+      { address:  normalize_address(address),
+        is_valid: valid_address?(normalize_address(address)) }
     end
 
     def create_withdrawal!(issuer, recipient, amount, options = {})
       permit_transaction(issuer, recipient)
-
       json_rpc(
         :eth_sendTransaction,
         [{
-          from:  issuer.fetch(:address),
-          to:    recipient.fetch(:address),
+          from:  normalize_address(issuer.fetch(:address)),
+          to:    normalize_address(recipient.fetch(:address)),
           value: '0x' + convert_to_base_unit!(amount).to_s(16),
           gas:   options.key?(:gas_limit) ? '0x' + options[:gas_limit].to_s(16) : nil
         }.compact]
       ).fetch('result').yield_self do |txid|
-        if valid_txid?(txid)
-          txid
-        else
-          raise CoinAPI::Error, "ETH withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed."
-        end
+        raise CoinAPI::Error, \
+          "#{currency.code.upcase} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} failed." \
+            unless valid_txid?(normalize_txid(txid))
+        normalize_txid(txid)
       end
     end
 
@@ -61,14 +60,14 @@ module CoinAPI
     end
 
     def load_deposit!(txid)
-      json_rpc(:eth_getTransactionByHash, [txid]).fetch('result').yield_self do |tx|
+      json_rpc(:eth_getTransactionByHash, [normalize_txid(txid)]).fetch('result').yield_self do |tx|
         break if tx.blank?
         block = block_information(tx.fetch('blockNumber'))
-        { id:            tx.fetch('hash'),
+        { id:            normalize_txid(tx.fetch('hash')),
           confirmations: latest_block_number - tx.fetch('blockNumber').hex,
           received_at:   Time.at(block.fetch('timestamp').hex),
           entries:       [{ amount:  convert_from_base_unit(tx.fetch('value').hex),
-                            address: tx.fetch('to') }] }
+                            address: normalize_address(tx.fetch('to')) }] }
       end
     end
 
@@ -126,12 +125,17 @@ module CoinAPI
 
     def build_deposit_collection(txs, current_block, latest_block)
       txs.map do |tx|
-        next if tx.fetch('to').blank? || tx.fetch('value').hex.to_d <= 0
-        { id:            tx.fetch('hash'),
+        # Skip contract creation transactions.
+        next if tx['to'].blank?
+
+        # Skip outcomes (less than zero) and contract transactions (zero).
+        next if tx.fetch('value').hex.to_d <= 0
+
+        { id:            normalize_txid(tx.fetch('hash')),
           confirmations: latest_block.fetch('number').hex - current_block.fetch('number').hex,
           received_at:   Time.at(current_block.fetch('timestamp').hex),
           entries:       [{ amount:  convert_from_base_unit(tx.fetch('value').hex),
-                            address: tx.fetch('to') }] }
+                            address: normalize_address(tx['to']) }] }
       end.compact
     end
 
@@ -144,24 +148,29 @@ module CoinAPI
     end
 
     def permit_transaction(issuer, recipient)
-      json_rpc(:personal_unlockAccount, [issuer.fetch(:address), issuer.fetch(:secret), 5]).tap do |response|
-        unless response.fetch('result')
-          raise CoinAPI::Error, "ETH withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed."
+      json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
+        unless response['result']
+          raise CoinAPI::Error, \
+            "#{currency.code.upcase} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} is not permitted."
         end
       end
     end
 
     def load_balance_of_address(address)
-      json_rpc(:eth_getBalance, [address, 'latest']).fetch('result').hex.to_d
+      json_rpc(:eth_getBalance, [normalize_address(address), 'latest']).fetch('result').hex.to_d
     rescue => e
       report_exception_to_screen(e)
       0.0
     end
 
     def abi_encode(method, *args)
-      args.each_with_object Digest::SHA3.hexdigest(method, 256)[0..7] do |arg, data|
+      '0x' + args.each_with_object(Digest::SHA3.hexdigest(method, 256)[0..7]) do |arg, data|
         data.concat(arg.gsub(/^0x/, '').rjust(64, '0'))
       end
+    end
+
+    def valid_address?(address)
+      address.to_s.match?(/\A0x[A-F0-9]{40}\z/i)
     end
 
     def valid_txid?(txid)
