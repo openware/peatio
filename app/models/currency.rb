@@ -17,14 +17,18 @@ class Currency < ActiveRecord::Base
   validates :deposit_confirmations, numericality: { greater_than_or_equal_to: 0, only_integer: true }, if: :coin?
   validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
   validate { errors.add(:options, :invalid) unless Hash === options }
+
   before_validation { self.deposit_fee = 0 unless fiat? }
+
+  before_validation do
+    next unless code&.bch? && bitgo_wallet_address?
+    self.bitgo_wallet_address = CashAddr::Converter.to_legacy_address(bitgo_wallet_address)
+  end
+
   before_validation do
     next if case_sensitive?
     self.bitgo_wallet_address   = bitgo_wallet_address.try(:downcase)
     self.erc20_contract_address = erc20_contract_address.try(:downcase)
-  end
-  before_validation do
-    self.bitgo_wallet_address = CashAddr::Converter.to_legacy_address(bitgo_wallet_address) if code&.bch?
   end
 
   scope :visible, -> { where(visible: true) }

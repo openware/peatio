@@ -1,8 +1,15 @@
 module Withdraws
   class Coin < Withdraw
-    before_validation { self.rid  = rid.try(:downcase) if currency&.case_insensitive? }
-    before_validation { self.rid  = CashAddr::Converter.to_legacy_address(rid) if currency&.code&.bch? }
-    before_validation { self.txid = txid.try(:downcase) if currency&.case_insensitive? }
+    before_validation do
+      next unless currency&.code&.bch? && rid?
+      self.rid = CashAddr::Converter.to_legacy_address(rid)
+    end
+
+    before_validation do
+      next unless currency&.case_insensitive?
+      self.rid  = rid.try(:downcase)
+      self.txid = txid.try(:downcase)
+    end
 
     def wallet_url
       if currency.wallet_url_template?
@@ -36,7 +43,7 @@ module Withdraws
 end
 
 # == Schema Information
-# Schema version: 20180406185130
+# Schema version: 20180501141718
 #
 # Table name: withdraws
 #
@@ -49,7 +56,7 @@ end
 #  created_at  :datetime
 #  updated_at  :datetime
 #  done_at     :datetime
-#  txid        :string(255)
+#  txid        :string(128)
 #  aasm_state  :string
 #  sum         :decimal(32, 16)  default(0.0), not null
 #  type        :string(255)

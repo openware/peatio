@@ -5,9 +5,16 @@ module Deposits
     validates :txid, uniqueness: { scope: %i[currency_id txout] }
     validates :confirmations, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
-    before_validation { self.txid    = txid.try(:downcase) if currency&.case_insensitive? }
-    before_validation { self.address = address.try(:downcase) if currency&.case_insensitive? }
-    before_validation { self.address = CashAddr::Converter.to_legacy_address(address) if currency&.code&.bch? }
+    before_validation do
+      next unless currency&.code&.bch? && address?
+      self.address = CashAddr::Converter.to_legacy_address(address)
+    end
+
+    before_validation do
+      next unless currency&.case_insensitive?
+      self.txid = txid.try(:downcase)
+      self.address = address.try(:downcase)
+    end
 
     def transaction_url
       if txid? && currency.transaction_url_template?
@@ -22,7 +29,7 @@ module Deposits
 end
 
 # == Schema Information
-# Schema version: 20180409115902
+# Schema version: 20180501141718
 #
 # Table name: deposits
 #
