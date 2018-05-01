@@ -143,6 +143,14 @@ class Currency < ActiveRecord::Base
   def deposit_confirmations=(n)
     options['deposit_confirmations'] = n.to_i
   end
+
+  def bitgo_wallet_address(value)
+    super(value.try(:downcase))
+  end
+
+  def erc20_contract_address=(value)
+    super(value.try(:downcase))
+  end
 end
 
 # == Schema Information

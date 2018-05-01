@@ -1,5 +1,8 @@
 module Withdraws
   class Coin < Withdraw
+    before_validation { self.rid  = rid.try(:downcase) }
+    before_validation { self.txid = txid.try(:downcase) }
+
     def wallet_url
       if currency.wallet_url_template?
         currency.wallet_url_template.gsub('#{address}', rid)

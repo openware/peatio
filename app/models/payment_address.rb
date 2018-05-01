@@ -10,6 +10,8 @@ class PaymentAddress < ActiveRecord::Base
 
   serialize :details, JSON
 
+  before_validation { self.address = address.try(:downcase) }
+
   def enqueue_address_generation
     if address.blank? && currency.coin?
       AMQPQueue.enqueue(:deposit_coin_address, { account_id: account.id }, { persistent: true })

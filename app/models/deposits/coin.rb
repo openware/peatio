@@ -5,6 +5,9 @@ module Deposits
     validates :txid, uniqueness: { scope: %i[currency_id txout] }
     validates :confirmations, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
+    before_validation { self.txid    = txid.try(:downcase) }
+    before_validation { self.address = address.try(:downcase) }
+
     def transaction_url
       if txid? && currency.transaction_url_template?
         currency.transaction_url_template.gsub('#{txid}', txid)
