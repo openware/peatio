@@ -41,12 +41,6 @@ describe Withdraw do
         expect(subject).to be_rejected
       end
 
-      it 'should be rejected if address belongs to hot wallet' do
-        CoinAPI.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true, is_mine: true }))
-        subject.audit!
-        expect(subject).to be_rejected
-      end
-
       it 'should accept withdraw with clean history' do
         CoinAPI.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
         subject.audit!
