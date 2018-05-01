@@ -1,7 +1,7 @@
 module Withdraws
   class Coin < Withdraw
-    before_validation { self.rid  = rid.try(:downcase) }
-    before_validation { self.txid = txid.try(:downcase) }
+    before_validation { self.rid  = rid.try(:downcase) if currency&.case_insensitive? }
+    before_validation { self.txid = txid.try(:downcase) if currency&.case_insensitive? }
 
     def wallet_url
       if currency.wallet_url_template?

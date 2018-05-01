@@ -1,7 +1,7 @@
 class Currency < ActiveRecord::Base
   serialize :options, JSON
 
-  attr_readonly :code, :type
+  attr_readonly :code, :type, :case_sensitive, :erc20_contract_address
 
   # NOTE: type column reserved for STI
   self.inheritance_column = nil
@@ -18,6 +18,11 @@ class Currency < ActiveRecord::Base
   validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
   validate { errors.add(:options, :invalid) unless Hash === options }
   before_validation { self.deposit_fee = 0 unless fiat? }
+  before_validation do
+    next if case_sensitive?
+    self.bitgo_wallet_address   = bitgo_wallet_address.try(:downcase)
+    self.erc20_contract_address = erc20_contract_address.try(:downcase)
+  end
 
   scope :visible, -> { where(visible: true) }
   scope :all_with_invisible, -> { all }
@@ -135,6 +140,7 @@ class Currency < ActiveRecord::Base
     :wallet_url_template,
     :transaction_url_template,
     :erc20_contract_address,
+    :case_sensitive
 
   def deposit_confirmations
     options['deposit_confirmations'].to_i
@@ -144,12 +150,12 @@ class Currency < ActiveRecord::Base
     options['deposit_confirmations'] = n.to_i
   end
 
-  def bitgo_wallet_address(value)
-    super(value.try(:downcase))
+  def case_sensitive?
+    !!case_sensitive
   end
 
-  def erc20_contract_address=(value)
-    super(value.try(:downcase))
+  def case_insensitive?
+    !case_sensitive?
   end
 end
 

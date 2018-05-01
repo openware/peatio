@@ -110,11 +110,11 @@ module CoinAPI
     end
 
     def normalize_address(address)
-      address.downcase
+      currency.case_sensitive? ? address : address.downcase
     end
 
     def normalize_txid(txid)
-      txid.downcase
+      currency.case_sensitive? ? txid : txid.downcase
     end
 
     %i[ load_balance load_deposit create_address create_withdrawal inspect_address ].each do |method|
