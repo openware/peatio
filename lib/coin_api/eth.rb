@@ -164,9 +164,15 @@ module CoinAPI
     end
 
     def abi_encode(method, *args)
-      '0x' + args.each_with_object(Digest::SHA3.hexdigest(method, 256)[0..7]) do |arg, data|
-        data.concat(arg.gsub(/^0x/, '').rjust(64, '0'))
+      '0x' + args.each_with_object(Digest::SHA3.hexdigest(method, 256)[0...8]) do |arg, data|
+        data.concat(arg.gsub(/\A0x/, '').rjust(64, '0'))
       end
+    end
+
+    def abi_explode(data)
+      data = data.gsub(/\A0x/, '')
+      { method:    '0x' + data[0...8],
+        arguments: data[8..-1].chars.in_groups_of(64, false).map { |group| '0x' + group.join } }
     end
 
     def valid_address?(address)

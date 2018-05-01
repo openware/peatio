@@ -49,18 +49,18 @@ module CoinAPI
       txs.map do |tx|
         # Skip contract creation transactions.
         next if tx['to'].blank?
-        # TODO: What is this?
-        next unless tx.fetch('input').hex > 0
         next unless normalize_address(tx['to']) == contract_address
 
-        # TODO: Refactor.
-        input_data = tx.fetch('input').bytes.map(&:chr).drop(10).join
+        # Skip transactions without data.
+        next if tx['input'].blank? || tx['input'].hex < 0
+
+        arguments = abi_explode(tx['input'])[:arguments]
+
         { id:            normalize_txid(tx.fetch('hash')),
           confirmations: latest_block.fetch('number').hex - current_block.fetch('number').hex,
           received_at:   Time.at(current_block.fetch('timestamp').hex),
-          entries:       [{ amount:  convert_from_base_unit(input_data[(input_data.length / 2..input_data.length)].hex),
-                            address: normalize_address('0x' + input_data[0..input_data.length / 2 - 1][-40..-1]) }]
-        }
+          entries:       [{ amount:  convert_from_base_unit(arguments[1].hex),
+                            address: normalize_address(arguments[0][26..-1]) }] }
       end.compact
     end
 
