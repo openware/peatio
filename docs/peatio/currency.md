@@ -1,49 +1,26 @@
-## Deposit
+## Coin currency
+Add currency record to config/currencies.yml
 
-One coin currency may have one coin deposit
-
-* Currency record
-* DepositChannel record
-* Deposit inheritable model
-* Deposit inheritable controller and views
-
-e.g. add litecoin currency and deposit
+e.g. add litecoin currency 
 
 ### add currency config to `config/currencies.yml`
 
-    - id: [uniq number]
-      key: litecoin
-      code: ltc
-      coin: true
-      rpc: http://username:password@host:port
-
-### add deposit channel to `config/deposit_channels.yml`
-
-    - id: [uniq number]
-      key: litecoin
-      min_confirm: 1
-      max_confirm: 6
-
-### add deposit inheritable model in `app/models/deposits/litecoin.rb`
-
-    module Deposits
-      class Litecoin < ::Deposit
-        include ::AasmAbsolutely
-        include ::Deposits::Coinable
-      end
-    end
-
-### add deposit inheritable controller in `app/controllers/private/deposits/litecoins_controller.rb`
-
-    module Private
-      module Deposits
-        class LitecoinsController < BaseController
-          include ::Deposits::CtrlCoinable
-        end
-      end
-    end
-
-### check your routes result have below path helper
-
-    deposits_litecoins POST /deposits/litecoins(.:format) private/deposits/litecoins#create
-    new_deposits_litecoin GET /deposits/litecoins/new(.:format) private/deposits/litecoins#new
+    - id:                   [uniq number]      
+      code:                 ltc
+      symbol:               'Ł'
+      type:                 coin
+      precision:            8
+      base_factor:          100_000_000
+      visible:              true
+      quick_withdraw_limit: 5
+      options:
+        api_client:                  LTC 
+        json_rpc_endpoint:           http://username:password@host:port
+        bitgo_test_net:              on
+        bitgo_wallet_id:             ~
+        bitgo_wallet_address:        ~
+        bitgo_wallet_passphrase:     ~
+        bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+        bitgo_rest_api_access_token: ~
+        wallet_url_template:         https://www.blocktrail.com/LTC/address/#{address}
+        transaction_url_template:    https://www.blocktrail.com/LTC/tx/#{txid} 
