@@ -71,7 +71,8 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 * Built-in [Proof of Solvency](https://iwilcox.me.uk/2014/proving-bitcoin-reserves) Audit
 * Usability and scalability
 * Websocket API and high frequency trading support
-* Support multiple digital currencies (eg. Bitcoin, Litecoin, Dogecoin etc.)
+* Support multiple digital currencies (eg. Bitcoin, Litecoin, Ethereum, Ripple etc.)
+* Support ERC20 Tokens
 * API end point for FIAT deposits or payment gateways.
 * Powerful admin dashboard and management tools
 * Highly configurable and extendable

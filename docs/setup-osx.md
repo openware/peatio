@@ -171,7 +171,7 @@ bin/init_config
 Then install and run yarn:
 
     $ npm install -g yarn
-    $ bundle exec rake tmp:create yarn:install assets:precompile
+    $ bundle exec rake tmp:create yarn:install
 
 #### Setup Pusher
 
@@ -239,7 +239,7 @@ URL_HOST: ec2-34-xxx-xxx-xx.compute-1.amazonaws.com:3000
 Start the server:
 
 ```shell
-bundle exec rails server -p 3001
+bundle exec rails server -p 3000
 ```
 
 Validate the server is working:
@@ -294,11 +294,11 @@ Replace the content of the file by the following
 
 ```
     server {
-        listen      3000;
+        listen      80;
         server_name  http://peatio.local;
 
        location / {
-         proxy_pass http://127.0.0.1:3001;
+         proxy_pass http://127.0.0.1:3000;
        }
 
       location ~ ^/(?:trading|trading-ui-assets)\/ {
