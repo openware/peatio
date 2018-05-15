@@ -101,7 +101,6 @@ describe MigrateMarkets do
             )
             subject
           end
-
         end # context 'not already existing in database'
       end # context 'with yml data'
     end # context 'config/markets.yml exists'
