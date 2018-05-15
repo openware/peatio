@@ -97,9 +97,9 @@ FactoryBot.define do
       withdraw_fee         0
       options \
         api_client:               'BCH',
-        json_rpc_endpoint:        'http://127.0.0.1:18332',
-        wallet_url_template:      'https://www.blocktrail.com/BCC/address/#{address}',
-        transaction_url_template: 'https://www.blocktrail.com/BCC/tx/#{txid}',
+        json_rpc_endpoint:        'http://127.0.0.1:48977',
+        wallet_url_template:      'https://www.blocktrail.com/tBCC/address/#{address}',
+        transaction_url_template: 'https://www.blocktrail.com/tBCC/tx/#{txid}',
         deposit_confirmations:    1,
         case_sensitive:           true
     end
