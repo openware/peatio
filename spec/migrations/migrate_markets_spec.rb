@@ -11,6 +11,20 @@ describe MigrateMarkets do
       subject
     end
 
+    it 'should find trades' do
+      trades = []
+      trades.stubs(:update_all)
+      MigrateMarkets::Trade20180325001829.expects(:where).at_least_once.returns(trades)
+      subject
+    end
+
+    it 'should update trades' do
+      trades = []
+      MigrateMarkets::Trade20180325001829.stubs(:where).returns(trades)
+      trades.expects(:update_all).at_least_once
+      subject
+    end
+
     context 'config/markets.yml does not exist' do
 
       before { File.stubs(:file?).returns(false) }

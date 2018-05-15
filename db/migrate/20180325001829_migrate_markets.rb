@@ -38,6 +38,10 @@ class MigrateMarkets < ActiveRecord::Migration
     self.table_name = 'markets'
   end
 
+  class Trade20180325001829 < ActiveRecord::Base
+    self.table_name = 'trades'
+  end
+
   def up
     yml_file_location = Rails.root.join('config/markets.yml')
     if File.file?(yml_file_location)
@@ -54,6 +58,7 @@ class MigrateMarkets < ActiveRecord::Migration
           bid_precision:  yml_market['bid']['fixed']
         }
         Market20180325001829.create!(attrs)
+        Trade20180325001829.where(market_id: yml_market['code']).update_all(market_id: attrs[:id])
       end
     end
   end
