@@ -116,7 +116,7 @@ class Order < ActiveRecord::Base
       volume:    volume,
       price:     price,
       locked:    locked,
-      timestamp: created_at.to_i }
+     timestamp: created_at.to_i }
   end
 
   def fix_number_precision
