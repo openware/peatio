@@ -70,8 +70,8 @@ Peatio::Application.routes.draw do
     post '/pusher/auth', to: 'pusher#auth'
   end
 
-  get 'health/liveness_probe', to: 'public/health#liveness_probe'
-  get 'health/readiness_probe', to: 'public/health#readiness_probe'
+  get 'health/alive', to: 'public/health#alive'
+  get 'health/ready', to: 'public/health#ready'
 
   get 'trading/:market_id', to: BlackHoleRouter.new, as: :trading
 
