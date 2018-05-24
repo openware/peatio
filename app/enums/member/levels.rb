@@ -15,11 +15,7 @@ class Member
       end
 
       def from_numerical_barong_level(num)
-        case num
-          when 1 then :email_verified
-          when 2 then :phone_verified
-          else num >= 3 ? :identity_verified : :unverified
-        end
+        num >= ENV.fetch('MINIMUM_LEVEL', 3).to_i ? :kyc_verified : :unverified
       end
     end
   end

@@ -459,7 +459,7 @@ en:
       failure: Invalid passcode. Please try again.
       index:
         reauthenticate: Authentication
-        auth-verified: Please confirm your identity first.
+        auth-verified: Please pass the KYC process first.
   guides:
     private:
       settings:
