@@ -70,6 +70,9 @@ Peatio::Application.routes.draw do
     post '/pusher/auth', to: 'pusher#auth'
   end
 
+  get 'health/liveness_probe', to: 'public/health#liveness_probe'
+  get 'health/readiness_probe', to: 'public/health#readiness_probe'
+
   get 'trading/:market_id', to: BlackHoleRouter.new, as: :trading
 
   scope ['', 'webhooks', ENV['WEBHOOKS_SECURE_URL_COMPONENT'].presence, ':ccy'].compact.join('/'), as: 'webhooks' do
