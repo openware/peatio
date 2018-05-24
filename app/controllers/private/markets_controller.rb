@@ -50,7 +50,7 @@ module Private
     end
 
     def trading_ui_variables
-      accounts = @member&.accounts&.enabled&.includes(:currency).map do |x|
+      accounts = @member&.accounts&.enabled&.includes(:currency)&.map do |x|
         { id:         x.id,
           locked:     x.locked,
           amount:     x.amount,
