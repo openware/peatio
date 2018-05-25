@@ -1,4 +1,3 @@
-
 module Benchmark
   class SweatFactory
 
