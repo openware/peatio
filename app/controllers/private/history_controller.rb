@@ -18,7 +18,7 @@ module Private
 
     def trades
       @trades = current_user.trades
-        .includes(:ask_member).includes(:bid_member)
+        .includes(:market)
         .order('id desc').page(params[:page]).per(20)
     end
 
