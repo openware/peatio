@@ -12,7 +12,7 @@ module Admin
         @latest_withdraws  = ::Withdraws::Fiat.where(currency: currency)
                                               .where('created_at <= ?', 1.day.ago)
                                               .order(id: :desc)
-                                              .includes(:memeber)
+                                              .includes(:member)
                                               .includes(:currency)
         @all_withdraws     = ::Withdraws::Fiat.where(currency: currency)
                                               .where('created_at > ?', 1.day.ago)
