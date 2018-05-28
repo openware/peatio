@@ -34,5 +34,12 @@ class AMQPQueue
       attrs.merge!({routing_key: AMQPConfig.routing_key(id)})
       publish(eid, payload, attrs)
     end
+
+    def status
+      connection.status
+    rescue Bunny::Exception => e
+      e
+    end
+
   end
 end
