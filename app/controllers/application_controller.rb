@@ -135,7 +135,7 @@ private
     gon.fiat_currencies = Currency.enabled.order(id: :asc).fiats.pluck(:code)
 
     gon.tickers = {}
-    Market.all.each do |market|
+    Market.ordered.each do |market|
       gon.tickers[market.id] = market.unit_info.merge(Global[market.id].ticker)
     end
 
