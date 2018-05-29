@@ -21,7 +21,7 @@ class Market < ActiveRecord::Base
   attr_readonly :ask_unit, :bid_unit, :ask_precision, :bid_precision
 
   scope :ordered, -> { order(position: :asc) }
-  scope :enabled, -> { ordered.where(enabled: true) }
+  scope :enabled, -> { where(enabled: true) }
 
   validate { errors.add(:ask_unit, :invalid) if ask_unit == bid_unit }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
