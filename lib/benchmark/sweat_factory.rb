@@ -1,13 +1,11 @@
+
 module Benchmark
   class SweatFactory
 
-    @@seq = 0
-
     class <<self
       def make_member
-        @@seq += 1
         member = Member.create!(
-          email: "user#{@@seq}@example.com"
+          email: Faker::Internet.unique.email
         )
       end
 
