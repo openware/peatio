@@ -16,7 +16,7 @@ private
   def current_market
     unless params[:market].blank?
       Market.find_by_id(params[:market])
-    end || Market.first
+    end || Market.ordered.first
   end
   memoize :current_market
 
