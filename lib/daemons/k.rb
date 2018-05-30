@@ -113,7 +113,7 @@ def fill(market, period = 1)
 end
 
 while($running) do
-  Market.ordered.find_each do |market|
+  Market.find_each do |market|
     ts = next_ts(market.id, 1)
     next unless ts
 
