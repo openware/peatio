@@ -11,13 +11,23 @@ module Benchmark
 
       def make_order(klass, attrs={})
         klass.new({
-          bid: Currency.fiats.first.id,
-          ask: Currency.coins.first.id,
+          bid: fiat_currency.id,
+          ask: coin_currency.id,
           state: Order::WAIT,
-          market_id: "btc#{Currency.fiats.first.code}".to_sym,
+          market_id: "btc#{fiat_currency.code}".to_sym,
           origin_volume: attrs[:volume],
           ord_type: "limit"
         }.merge(attrs))
+      end
+
+      private
+
+      def fiat_currency
+        @fiat_currency ||= Currency.fiats.first
+      end
+
+      def coin_currency
+        @coin_currency ||= Currency.coins.first
       end
     end
 
