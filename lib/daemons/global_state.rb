@@ -7,7 +7,7 @@ $running = true
 Signal.trap(:TERM) { $running = false }
 
 while($running) do
-  all_tickers = {}
+  tickers = {}
   Market.enabled.ordered.find_each do |market|
     global = Global[market.id]
     Pusher.trigger("market-#{market.id}-global", :update, asks: global.asks, bids: global.bids)
