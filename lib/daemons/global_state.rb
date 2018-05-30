@@ -6,9 +6,9 @@ require File.join(ENV.fetch('RAILS_ROOT'), 'config', 'environment')
 $running = true
 Signal.trap(:TERM) { $running = false }
 
-while($running) do
+while $running do
   tickers = {}
-  Market.enabled.ordered.find_each do |market|
+  Market.all.each do |market|
     global = Global[market.id]
     Pusher.trigger("market-#{market.id}-global", :update, asks: global.asks, bids: global.bids)
     tickers[market.id] = market.unit_info.merge(global.ticker)
