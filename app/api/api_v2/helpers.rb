@@ -9,21 +9,21 @@ module APIv2
       current_user or raise AuthorizationError
     end
 
-    def email_must_be_verified!
-      if current_user.level? && !current_user.level.in?(%w[ email_verified phone_verified identity_verified ])
-        raise Grape::Exceptions::Base.new(text: 'Please, verify your E-Mail address.', status: 401)
+    def deposits_must_be_permitted!
+      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT']
+        raise Grape::Exceptions::Base.new(text: 'Please pass the corresponding verification step to deposit funds.', status: 401)
       end
     end
 
-    def phone_must_be_verified!
-      if current_user.level? && !current_user.level.in?(%w[ email_verified phone_verified ])
-        raise Grape::Exceptions::Base.new(text: 'Please, verify your phone.', status: 401)
+    def withdraws_must_be_permitted!
+      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW']
+        raise Grape::Exceptions::Base.new(text: 'Please pass the corresponding verification step to withdraw funds.', status: 401)
       end
     end
 
-    def identity_must_be_verified!
-      if current_user.level? && !current_user.level.identity_verified?
-        raise Grape::Exceptions::Base.new(text: 'Please, verify your identity.', status: 401)
+    def trading_must_be_permitted!
+      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_TRADING']
+        raise Grape::Exceptions::Base.new(text: 'Please pass the corresponding verification step to enable trading.', status: 401)
       end
     end
 

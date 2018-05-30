@@ -107,10 +107,6 @@ class Member < ActiveRecord::Base
     auth(name).destroy
   end
 
-  def level
-    self[:level].to_s.inquiry
-  end
-
   def uid
     self.class.uid(self)
   end
@@ -131,7 +127,7 @@ private
       self.sn = random_sn
     end while Member.where(sn: self.sn).any?
   end
-  
+
   def random_sn
     "SN#{SecureRandom.hex(5).upcase}"
   end
@@ -157,18 +153,18 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180516104042
+# Schema version: 20180530122201
 #
 # Table name: members
 #
 #  id           :integer          not null, primary key
-#  level        :string(20)       default("")
 #  sn           :string(12)       not null
 #  email        :string(255)      not null
 #  disabled     :boolean          default(FALSE), not null
 #  api_disabled :boolean          default(FALSE), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  level        :integer          default(0), not null
 #
 # Indexes
 #

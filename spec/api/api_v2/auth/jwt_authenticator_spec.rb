@@ -164,7 +164,7 @@ describe APIv2::Auth::JWTAuthenticator do
         record = Member.last
         expect(record.email).to eq payload[:email]
         expect(record.disabled?).to eq false
-        expect(record.level).to eq 'phone_verified'
+        expect(record.level).to eq 2
         expect(record.authentications.last.uid).to eq payload[:uid]
         expect(record.authentications.last.provider).to eq 'barong'
       end
@@ -178,7 +178,7 @@ describe APIv2::Auth::JWTAuthenticator do
         member.reload
         expect(member.email).to eq payload[:email]
         expect(member.disabled?).to eq true
-        expect(member.level).to eq 'identity_verified'
+        expect(member.level).to eq 3
         expect(member.authentications.last.uid).to eq payload[:uid]
         expect(member.authentications.last.provider).to eq 'barong'
         expect(member.authentications.count).to eq 1
@@ -187,7 +187,7 @@ describe APIv2::Auth::JWTAuthenticator do
       it 'should register new member and return instance' do
         payload.merge!(email: 'guyfrombarong@email.com', uid: 'BARONG1234', state: '', level: 100)
         expect(subject.authenticate!(return: :member)).to eq Member.last
-        expect(Member.last.level).to eq 'identity_verified'
+        expect(Member.last.level).to eq 100
       end
     end
   end

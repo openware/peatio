@@ -33,7 +33,7 @@ private
   end
 
   def auth_verified!
-    if current_user.level.present? && !current_user.level.identity_verified?
+    if current_user.level.present? && !current_user.level == 3
       redirect_to settings_path, alert: t('private.settings.index.auth-verified')
     end
   end

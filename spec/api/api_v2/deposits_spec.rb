@@ -2,10 +2,10 @@
 # frozen_string_literal: true
 
 describe APIv2::Deposits, type: :request do
-  let(:member) { create(:member, :verified_identity) }
-  let(:other_member) { create(:member, :verified_identity) }
+  let(:member) { create(:member, 3) }
+  let(:other_member) { create(:member, 3) }
   let(:token) { jwt_for(member) }
-  let(:unverified_member) { create(:member, :unverified) }
+  let(:unverified_member) { create(:member, 0) }
   let(:unverified_member_token) { jwt_for(unverified_member) }
 
   describe 'GET /api/v2/deposits' do

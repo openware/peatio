@@ -3,7 +3,7 @@
 
 describe APIv2::Orders, type: :request do
   let(:member) { create(:member, :verified_identity) }
-  let(:unverified_member) { create(:member, :unverified) }
+  let(:unverified_member) { create(:member, 0) }
   let(:token) { jwt_for(member) }
   let(:unverified_member_token) { jwt_for(unverified_member) }
 

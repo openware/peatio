@@ -4,22 +4,22 @@
 FactoryBot.define do
   factory :member do
     email { Faker::Internet.email }
-    level { :unverified }
+    level { 0 }
 
     trait :verified_identity do
-      after(:create) { |member| member.update_column(:level, :identity_verified) }
+      after(:create) { |member| member.update_column(:level, 3) }
     end
 
     trait :verified_phone do
-      after(:create) { |member| member.update_column(:level, :phone_verified) }
+      after(:create) { |member| member.update_column(:level, 2) }
     end
 
     trait :verified_email do
-      after(:create) { |member| member.update_column(:level, :email_verified) }
+      after(:create) { |member| member.update_column(:level, 1) }
     end
 
     trait :unverified do
-      after(:create) { |member| member.update_column(:level, :unverified) }
+      after(:create) { |member| member.update_column(:level, 0) }
     end
 
     trait :admin do
