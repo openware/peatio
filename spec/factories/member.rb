@@ -6,19 +6,19 @@ FactoryBot.define do
     email { Faker::Internet.email }
     level { 0 }
 
-    trait :verified_identity do
+    trait :level_3 do
       after(:create) { |member| member.update_column(:level, 3) }
     end
 
-    trait :verified_phone do
+    trait :level_2 do
       after(:create) { |member| member.update_column(:level, 2) }
     end
 
-    trait :verified_email do
+    trait :level_1 do
       after(:create) { |member| member.update_column(:level, 1) }
     end
 
-    trait :unverified do
+    trait :level_0 do
       after(:create) { |member| member.update_column(:level, 0) }
     end
 

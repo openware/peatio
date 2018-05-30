@@ -19,7 +19,7 @@ describe APIv2::Auth::JWTAuthenticator do
   end
 
   let :member do
-    create(:member, :verified_identity)
+    create(:member, :level_3)
   end
 
   let :payload do
@@ -170,7 +170,7 @@ describe APIv2::Auth::JWTAuthenticator do
       end
 
       it 'should update member if exists' do
-        member = create(:member, :verified_email)
+        member = create(:member, :level_1)
         uid    = Faker::Internet.password(14, 14)
         member.authentications.build(uid: uid, provider: 'barong').save!
         payload.merge!(email: member.email, uid: uid, state: 'blocked', level: 3)

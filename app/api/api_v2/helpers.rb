@@ -10,19 +10,19 @@ module APIv2
     end
 
     def deposits_must_be_permitted!
-      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT']
+      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT'].to_i
         raise Grape::Exceptions::Base.new(text: 'Please pass the corresponding verification step to deposit funds.', status: 401)
       end
     end
 
     def withdraws_must_be_permitted!
-      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW']
+      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW'].to_i
         raise Grape::Exceptions::Base.new(text: 'Please pass the corresponding verification step to withdraw funds.', status: 401)
       end
     end
 
     def trading_must_be_permitted!
-      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_TRADING']
+      if current_user.level != ENV['MINIMUM_MEMBER_LEVEL_FOR_TRADING'].to_i
         raise Grape::Exceptions::Base.new(text: 'Please pass the corresponding verification step to enable trading.', status: 401)
       end
     end
