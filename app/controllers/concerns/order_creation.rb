@@ -43,5 +43,11 @@ module Concerns
         json.errors args
       end
     end
+
+    def check_bunny_status
+      status = AMQPQueue.status
+      return if status == :open
+      render status: 500, json: error_result(status), nothing: true
+    end
   end
 end

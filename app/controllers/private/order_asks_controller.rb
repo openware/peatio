@@ -5,6 +5,8 @@ module Private
   class OrderAsksController < BaseController
     include Concerns::OrderCreation
 
+    before_action :check_bunny_status
+
     def create
       @order = OrderAsk.new(order_params(:order_ask))
       order_submit
