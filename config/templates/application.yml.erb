@@ -165,9 +165,10 @@ defaults: &defaults
   # The specified currency should exist in database.
   DISPLAY_CURRENCY: usd
 
-  MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT: 3
+  # Configuration variables for dynamic Barong levels (1.8+)
+  MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT:  3
   MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW: 3
-  MINIMUM_MEMBER_LEVEL_FOR_TRADING: 3
+  MINIMUM_MEMBER_LEVEL_FOR_TRADING:  3
 
 development:
   <<: *defaults
