@@ -3,7 +3,7 @@ module ManagementAPIv1
     class WithdrawDestination < Base
       expose :id, documentation: { type: Integer, desc: 'The withdraw destination ID.' }
       expose(:currency, documentation: { type: String, desc: 'The currency code.' }) { |w| w.currency.code }
-      expose(:uid, documentation: { type: String, desc: 'The shared user ID.' }) { |w| w.member.authentications.barong.first.uid }
+      expose(:uid, documentation: { type: String, desc: 'The shared user ID.' }) { |w| w.member.uid }
       expose :label, documentation: { type: String, desc: 'The associated label.' }
       expose(:type, documentation: { type: String, desc: 'The withdraw destination type (fiat or coin).' }) { |w| w.class.name.demodulize.underscore }
       %w[ fiat coin ].each do |type|

@@ -6,7 +6,7 @@ describe ManagementAPIv1::Entities::WithdrawDestination do
 
     it { expect(subject.id).to eq record.id }
     it { expect(subject.currency).to eq record.currency.code }
-    it { expect(subject.uid).to eq record.member.authentications.barong.first.uid }
+    it { expect(subject.uid).to eq record.member.uid }
     it { expect(subject.label).to eq record.label }
     it { expect(subject.type).to eq 'fiat' }
     it { expect(subject.bank_name).to eq record.bank_name }
@@ -25,7 +25,7 @@ describe ManagementAPIv1::Entities::WithdrawDestination do
 
     it { expect(subject.id).to eq record.id }
     it { expect(subject.currency).to eq record.currency.code }
-    it { expect(subject.uid).to eq record.member.authentications.barong.first.uid }
+    it { expect(subject.uid).to eq record.member.uid }
     it { expect(subject.label).to eq record.label }
     it { expect(subject.type).to eq 'coin' }
     it { expect(subject.respond_to?(:bank_name)).to be_falsey }
