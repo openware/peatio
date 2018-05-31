@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(version: 20180605104154) do
     t.boolean  "api_disabled",             default: false, null: false
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
-    t.integer  "level",        limit: 4,   default: 0,     null: false
+    t.string   "level",        limit: 255, default: "",    null: false
   end
 
   add_index "members", ["disabled"], name: "index_members_on_disabled", using: :btree

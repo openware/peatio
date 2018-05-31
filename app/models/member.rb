@@ -153,7 +153,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180530122201
+# Schema version: 20180525101406
 #
 # Table name: members
 #
@@ -164,7 +164,7 @@ end
 #  api_disabled :boolean          default(FALSE), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  level        :integer          default(0), not null
+#  level        :string(255)      default(""), not null
 #
 # Indexes
 #
