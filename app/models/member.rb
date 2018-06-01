@@ -158,13 +158,13 @@ end
 # Table name: members
 #
 #  id           :integer          not null, primary key
+#  level        :integer          default(0), not null
 #  sn           :string(12)       not null
 #  email        :string(255)      not null
 #  disabled     :boolean          default(FALSE), not null
 #  api_disabled :boolean          default(FALSE), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  level        :integer          default(0), not null
 #
 # Indexes
 #

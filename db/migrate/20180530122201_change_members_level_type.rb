@@ -6,13 +6,13 @@ class ChangeMembersLevelType < ActiveRecord::Migration
   def change
     reversible do |direction|
       direction.up do
-        add_column :members, :level_int, :integer, null: false, default: 0
+        add_column :members, :level_int, :integer, limit: 1, null: false, default: 0, after: :id
         update_to_integer_barong_level
         remove_column :members, :level
         rename_column :members, :level_int, :level
       end
       direction.down do
-        add_column :members, :level_str, :string, null: false, default: ''
+        add_column :members, :level_str, :string, null: false, default: '', after: :id
         update_to_string_barong_level
         remove_column :members, :level
         rename_column :members, :level_str, :level
