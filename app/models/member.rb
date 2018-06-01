@@ -28,7 +28,7 @@ class Member < ActiveRecord::Base
         member.transaction do
           info_hash       = auth_hash.fetch('info')
           member.email    = info_hash.fetch('email')
-          member.level    = Member::Levels.get(info_hash['level']) if info_hash.key?('level')
+          member.level    = info_hash.fetch('level', 0)
           member.disabled = info_hash.key?('state') && info_hash['state'] != 'active'
           member.save!
           auth = Authentication.locate(auth_hash) || member.authentications.from_omniauth_data(auth_hash)
@@ -153,7 +153,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180525101406
+# Schema version: 20180530122201
 #
 # Table name: members
 #
@@ -164,7 +164,7 @@ end
 #  api_disabled :boolean          default(FALSE), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  level        :string(255)      default(""), not null
+#  level        :integer          default(0), not null
 #
 # Indexes
 #
