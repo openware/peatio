@@ -28,7 +28,7 @@ class Member < ActiveRecord::Base
         member.transaction do
           info_hash       = auth_hash.fetch('info')
           member.email    = info_hash.fetch('email')
-          member.level    = info_hash.fetch('level', 0)
+          member.level    = info_hash['level'] if info_hash.key?('level')
           member.disabled = info_hash.key?('state') && info_hash['state'] != 'active'
           member.save!
           auth = Authentication.locate(auth_hash) || member.authentications.from_omniauth_data(auth_hash)
