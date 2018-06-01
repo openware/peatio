@@ -12,7 +12,7 @@ class ChangeMembersLevelType < ActiveRecord::Migration
         rename_column :members, :level_int, :level
       end
       direction.down do
-        add_column :members, :level_str, :string, null: false, default: '', after: :id
+        add_column :members, :level_str, :string, limit: 20, null: false, default: '', after: :id
         update_to_string_barong_level
         remove_column :members, :level
         rename_column :members, :level_str, :level
