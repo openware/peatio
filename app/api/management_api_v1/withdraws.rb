@@ -89,7 +89,7 @@ module ManagementAPIv1
       record = Withdraw.find_by!(params.slice(:tid))
       record.with_lock do
         { submitted: :submit,
-          cancelled: :cancel
+          canceled: :cancel
         }.each do |state, event|
           next unless params[:state] == state.to_s
           if record.aasm.may_fire_event?(event)
