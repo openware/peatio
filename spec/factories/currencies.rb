@@ -107,5 +107,15 @@ FactoryBot.define do
         case_sensitive:            true,
         supports_cash_addr_format: true
     end
+
+    trait :disabled do
+      code                 'eur'
+      symbol               '€'
+      type                 'fiat'
+      precision            2
+      quick_withdraw_limit 10
+      withdraw_fee         0.1
+      enabled              false
+    end
   end
 end
