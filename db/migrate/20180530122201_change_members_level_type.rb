@@ -6,49 +6,20 @@ class ChangeMembersLevelType < ActiveRecord::Migration
   def change
     reversible do |direction|
       direction.up do
-        add_column :members, :level_int, :integer, limit: 1, null: false, default: 0, after: :id
-        update_to_integer_barong_level
-        remove_column :members, :level
-        rename_column :members, :level_int, :level
+        execute "update members set level = '0' where level is null or level = '' or level = 'unverified';"
+        execute "update members set level = '1' where level = 'email_verified';"
+        execute "update members set level = '2' where level = 'phone_verified';"
+        execute "update members set level = '3' where level = 'identity_verified';"
+        change_column :members, :level, :integer, default: 0, null: false, limit: 1
       end
       direction.down do
-        add_column :members, :level_str, :string, limit: 20, null: false, default: '', after: :id
-        update_to_string_barong_level
-        remove_column :members, :level
-        rename_column :members, :level_str, :level
+        change_column :members, :level, :string, null: true, limit: 20
+        change_column_default :members, :level, ''
+        execute "update members set level = 'unverified' where level = '0';"
+        execute "update members set level = 'email_verified' where level = '1';"
+        execute "update members set level = 'phone_verified' where level = '2';"
+        execute "update members set level = 'identity_verified' where level = '3';"
       end
-    end
-  end
-
-  private
-
-  def update_to_integer_barong_level
-    Member.find_each do |m|
-      m.update_column(:level_int, to_integer_barong_level(m.level))
-    end
-  end
-
-  def to_integer_barong_level(level)
-    case level.to_sym
-    when :email_verified then 1
-    when :phone_verified then 2
-    when :identity_verified then 3
-    else 0
-    end
-  end
-
-  def update_to_string_barong_level
-    Member.find_each do |m|
-      m.update_column(:level_str, to_string_barong_level(m.level))
-    end
-  end
-
-  def to_string_barong_level(level)
-    case level
-    when 1 then :email_verified
-    when 2 then :phone_verified
-    when 3 then :identity_verified
-    else :unverified
     end
   end
 end
