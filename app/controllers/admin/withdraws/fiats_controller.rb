@@ -30,6 +30,7 @@ module Admin
           @withdraw.accept!
           @withdraw.process!
           @withdraw.success!
+          @withdraw.confirm!
         end
         redirect_to :back, notice: 'Withdraw successfully updated!'
       end

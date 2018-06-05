@@ -7,7 +7,7 @@ running = true
 Signal.trap(:TERM) { running = false }
 
 while running
-  Withdraw.where(aasm_state: succeed).order(creted_at: :asc).find_each do |withdraw|
+  Withdraw.where(aasm_state: :succeed).order(creted_at: :asc).find_each do |withdraw|
     next if withdraw.txid.blank?
     withdraw.currency.tap do |c|
       withdraw.with_lock do
