@@ -28,9 +28,8 @@ module Services
       end
 
       def check_db
-        ActiveRecord::Base.establish_connection
-        ActiveRecord::Base.connection
-        ActiveRecord::Base.connected?
+        Market.count
+        Market.connected?
       end
 
       def check_redis
