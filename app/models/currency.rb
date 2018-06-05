@@ -162,6 +162,14 @@ class Currency < ActiveRecord::Base
     options['deposit_confirmations'] = n.to_i
   end
 
+  def withdraw_confirmations
+    options['deposit_confirmations'].to_i
+  end
+
+  def withdraw_confirmations=(n)
+    options['deposit_confirmations'] = n.to_i
+  end
+
   def case_insensitive?
     !case_sensitive?
   end
