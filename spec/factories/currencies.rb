@@ -12,6 +12,16 @@ FactoryBot.define do
       withdraw_fee         0.1
     end
 
+    trait :eur do
+      code                 'eur'
+      symbol               '€'
+      type                 'fiat'
+      precision            2
+      quick_withdraw_limit 10
+      withdraw_fee         0.1
+      enabled              false
+    end
+
     trait :btc do
       code                 'btc'
       symbol               '฿'
@@ -106,16 +116,6 @@ FactoryBot.define do
         deposit_confirmations:     1,
         case_sensitive:            true,
         supports_cash_addr_format: true
-    end
-
-    trait :disabled do
-      code                 'eur'
-      symbol               '€'
-      type                 'fiat'
-      precision            2
-      quick_withdraw_limit 10
-      withdraw_fee         0.1
-      enabled              false
     end
   end
 end

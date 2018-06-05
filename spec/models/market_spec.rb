@@ -61,7 +61,7 @@ describe Market do
         position:      100 }
     end
 
-    let(:disabled_currency) { create(:currency, :disabled) }
+    let(:disabled_currency) { Currency.find_by_id(:eur) }
 
     it 'creates valid record' do
       record = Market.new(valid_attributes)
@@ -116,7 +116,7 @@ describe Market do
       %i[bid_unit ask_unit].each do |field|
         record = Market.new(valid_attributes.merge(field => disabled_currency.code))
         record.save
-        expect(record.errors.full_messages).to include(/#{to_readable(field)} is not included in the list/i)
+        expect(record.errors.full_messages).to include(/currencies must be enabled/i)
       end
     end
 

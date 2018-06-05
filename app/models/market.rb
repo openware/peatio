@@ -29,8 +29,9 @@ class Market < ActiveRecord::Base
   validates :ask_unit, :bid_unit, presence: true
   validates :ask_fee, :bid_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 0.5 }
   validates :ask_precision, :bid_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
-  validates :ask_unit, :bid_unit, inclusion: { in: -> (m) { m.enabled? ? Currency.enabled.codes : Currency.codes } }
+  validates :ask_unit, :bid_unit, inclusion: { in: -> (_) { Currency.codes } }
   validate  :precisions_must_be_same
+  validate  :units_must_be_enabled, if: -> (market){ market.enabled? }
 
   before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
 
@@ -95,6 +96,12 @@ private
     if ask_precision? && bid_precision? && ask_precision != bid_precision
       errors.add(:ask_precision, :invalid)
       errors.add(:bid_precision, :invalid)
+    end
+  end
+
+  def units_must_be_enabled
+    [bid_unit, ask_unit].each do |unit|
+      errors.add(:base, 'Currencies must be enabled.') if Currency.lock.find_by_id(unit)&.disabled?
     end
   end
 end
