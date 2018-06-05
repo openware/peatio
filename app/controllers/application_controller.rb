@@ -55,7 +55,7 @@ private
     gon.local = I18n.locale
     gon.market = current_market.attributes
     gon.ticker = current_market.ticker
-    gon.markets = Market.enabled.ordered.each_with_object({}) { |market, memo| memo[market.id] = market.as_json }
+    gon.markets = Market.enabled.each_with_object({}) { |market, memo| memo[market.id] = market.as_json }
     gon.host = request.base_url
     gon.pusher = {
       key:       ENV.fetch('PUSHER_CLIENT_KEY'),
@@ -123,7 +123,7 @@ private
       }
     }
 
-    gon.currencies = Currency.enabled.ordered.inject({}) do |memo, currency|
+    gon.currencies = Currency.enabled.inject({}) do |memo, currency|
       memo[currency.code] = {
         code: currency.code,
         symbol: currency.symbol,
@@ -135,7 +135,7 @@ private
     gon.fiat_currencies = Currency.enabled.ordered.fiats.codes
 
     gon.tickers = {}
-    Market.enabled.ordered do |market|
+    Market.enabled.each do |market|
       gon.tickers[market.id] = market.unit_info.merge(Global[market.id].ticker)
     end
 
