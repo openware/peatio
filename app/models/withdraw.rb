@@ -3,7 +3,7 @@
 
 class Withdraw < ActiveRecord::Base
   STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed confirmed].freeze
-  COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
+  COMPLETED_STATES = %i[rejected canceled failed confirmed].freeze
 
   include AASM
   include AASM::Locking

@@ -10,7 +10,7 @@ module Private
       @market = current_market
 
       @deposits = Deposit.where(member: current_user, aasm_state: :accepted).includes(:currency)
-      @withdraws = Withdraw.where(member: current_user, aasm_state: :succeed).includes(:currency)
+      @withdraws = Withdraw.where(member: current_user, aasm_state: :confirmed).includes(:currency)
 
       @transactions = (@deposits + @withdraws).sort_by {|t| -t.created_at.to_i }
       @transactions = Kaminari.paginate_array(@transactions).page(params[:page]).per(20)
