@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class Withdraw < ActiveRecord::Base
-  STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed].freeze
+  STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed confirmed].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
   include AASM
@@ -35,6 +35,7 @@ class Withdraw < ActiveRecord::Base
     state :processing
     state :succeed
     state :failed
+    state :confirmed
 
     event :submit do
       transitions from: :prepared, to: :submitted
@@ -67,7 +68,11 @@ class Withdraw < ActiveRecord::Base
 
     event :success do
       transitions from: :processing, to: :succeed
-      before %i[unlock_and_sub_funds]
+    end
+
+    event :confirm do
+      transitions from: :succeed, to: :confirmed
+      before :unlock_and_sub_funds
     end
 
     event :fail do

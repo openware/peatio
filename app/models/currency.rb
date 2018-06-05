@@ -139,6 +139,7 @@ class Currency < ActiveRecord::Base
     :json_rpc_endpoint,
     :rest_api_endpoint,
     :deposit_confirmations,
+    :withdraw_confirmations,
     :bitgo_test_net,
     :bitgo_wallet_id,
     :bitgo_wallet_address,
