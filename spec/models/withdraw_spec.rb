@@ -120,7 +120,7 @@ describe Withdraw do
     it 'transitions to :succeed after calling rpc' do
       CoinAPI.stubs(:[]).returns(@rpc)
 
-      expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to change { subject.account.reload.amount }.by(-subject.sum)
+      expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to_not change { subject.account.reload.amount }
 
       subject.reload
       expect(subject.succeed?).to be true
@@ -142,6 +142,30 @@ describe Withdraw do
       expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }
           .to change { subject.account.reload.locked }.by(-subject.sum)
           .and change { subject.account.reload.balance }.by(subject.sum)
+    end
+  end
+
+  context 'confirmation of succeeded withdraw' do
+    subject { create(:btc_withdraw) }
+    before do
+      @rpc = mock
+      @rpc.stubs(load_balance!: 50_000, create_withdrawal!: '12345')
+      @broken_rpc = CoinAPI
+      @broken_rpc.stubs(load_balance!: 5)
+
+      CoinAPI.stubs(:[]).returns(@rpc)
+      subject.submit
+      subject.accept
+      subject.process
+      subject.save!
+      Worker::WithdrawCoin.new.process({ id: subject.id })
+      subject.reload
+    end
+
+    it 'doesn\'t update withdrawal state after calling rpc and getting Exception' do
+      CoinAPI.stubs(:[]).raises(CoinAPI::Error)
+
+      subject.try_confirm!
     end
   end
 

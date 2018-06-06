@@ -43,6 +43,10 @@ module Withdraws
       end
     end
 
+    def confirm!
+
+    end
+
     def as_json(*)
       super.merge \
         wallet_url:      wallet_url,
