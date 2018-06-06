@@ -72,6 +72,7 @@ end
 
 group :development do
   gem 'annotate', '~> 2.7'
+  gem 'ruby-prof'
 end
 
 group :test do
