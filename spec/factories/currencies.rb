@@ -7,7 +7,7 @@ FactoryBot.define do
       code                 'usd'
       symbol               '$'
       type                 'fiat'
-      precision            8
+      precision            2
       quick_withdraw_limit 10
       withdraw_fee         0.1
     end
