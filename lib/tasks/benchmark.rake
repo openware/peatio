@@ -2,7 +2,7 @@ namespace :benchmark do
 
   desc "In memory matching engine benchmark"
   task :matching => %w(environment) do
-    max_round = round(4)
+    max_round = round(2)
     puts "\n>> Setup environment (num=#{num} round=#{max_round})"
     Dir[Rails.root.join('tmp', 'matching_result_*')].each {|f| FileUtils.rm(f) }
 
@@ -11,7 +11,7 @@ namespace :benchmark do
 
   desc "Trade execution benchmark"
   task :execution => %w(environment) do
-    max_round = round(4)
+    max_round = round(2)
     puts "\n>> Setup environment (executor=#{executor} num=#{num} round=#{max_round})"
     Dir[Rails.root.join('tmp', 'matching_result_*')].each {|f| FileUtils.rm(f) }
 
@@ -37,7 +37,7 @@ namespace :benchmark do
 
       File.open(file_path, 'w') { |file| file.puts "\n>> Setup environment (num=#{num} round=#{round})" }
 
-      Profiling::Matching.new(label, num, round, file_path).run
+      Benchmark::Profiling.matching(label, num, round, file_path)
 
     when 'execution'
       puts "\n>> Setup environment (executor=#{executor} num=#{num} round=#{round})"
@@ -46,7 +46,7 @@ namespace :benchmark do
       file_path = Rails.root.join('tmp', "profiling_execution_result_#{Time.now.to_i}")
       File.open(file_path, 'w') { |file| file.puts "\n>> Setup environment (executor=#{executor} num=#{num} round=#{round})" }
 
-      Profiling::Execution.new(label, num, round, executor, file_path).run
+      Benchmark::Profiling.execution(label, num, round, executor, file_path)
 
     else
       puts "\n>> Wrong parameter!"
@@ -66,7 +66,7 @@ namespace :benchmark do
   end
 
   def executor
-    ENV['EXECUTOR'] ? ENV['EXECUTOR'].to_i : 8
+    ENV['EXECUTOR'] ? ENV['EXECUTOR'].to_i : 6
   end
 end
 

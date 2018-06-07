@@ -474,7 +474,7 @@ DEPENDENCIES
   redis-rails (~> 5.0.2)
   rspec-rails (~> 3.7)
   rspec-retry (~> 0.5)
-  ruby-prof
+  ruby-prof (~> 0.17.0)
   sass-rails (~> 5.0.7)
   scout_apm (~> 2.4)
   selenium-webdriver (~> 3.8)
@@ -486,4 +486,4 @@ DEPENDENCIES
   webmock (~> 3.3)
 
 BUNDLED WITH
-   1.16.1
+   1.16.2
