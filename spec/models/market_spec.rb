@@ -116,7 +116,7 @@ describe Market do
       %i[bid_unit ask_unit].each do |field|
         record = Market.new(valid_attributes.merge(field => disabled_currency.code))
         record.save
-        expect(record.errors.full_messages).to include(/currencies must be enabled/i)
+        expect(record.errors.full_messages).to include(/#{to_readable(field)} is not enabled/i)
       end
     end
 
