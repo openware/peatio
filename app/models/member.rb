@@ -17,6 +17,7 @@ class Member < ActiveRecord::Base
 
   validates :sn,    presence: true, uniqueness: true
   validates :email, presence: true, uniqueness: true, email: true
+  validates :level, numericality: { greater_than_or_equal_to: 0 }
 
   after_create :touch_accounts
 
