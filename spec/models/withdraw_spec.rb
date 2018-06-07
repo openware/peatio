@@ -148,10 +148,9 @@ describe Withdraw do
   context 'confirmation of succeeded withdraw' do
     subject { create(:btc_withdraw) }
     before do
+      @confirmations = 2
       @rpc = mock
-      @rpc.stubs(load_balance!: 50_000, create_withdrawal!: '12345')
-      @broken_rpc = CoinAPI
-      @broken_rpc.stubs(load_balance!: 5)
+      @rpc.stubs(load_balance!: 50_000, create_withdrawal!: '12345', load_deposit!: { confirmations: @confirmations })
 
       CoinAPI.stubs(:[]).returns(@rpc)
       subject.submit
@@ -164,8 +163,24 @@ describe Withdraw do
 
     it 'doesn\'t update withdrawal state after calling rpc and getting Exception' do
       CoinAPI.stubs(:[]).raises(CoinAPI::Error)
+      begin subject.try_to_confirm!; rescue; end
 
-      subject.try_confirm!
+      expect(subject.reload.succeed?).to be true
+    end
+
+    it 'updates state to :confirmed after calling rpc and updates withdrawal confirmations' do
+      expect{ subject.try_to_confirm! }.to change{ subject.account.reload.amount }.by(-subject.sum)
+
+      expect(subject.reload.confirmed?).to be true
+      expect(subject.reload.confirmations).to eq @confirmations
+    end
+
+    it 'doesn\'t update state to :confirmed after calling rpc but getting not enough confirmations' do
+      @rpc.stubs(load_deposit!: { confirmations: 1 })
+      expect{ subject.try_to_confirm! }.to_not change{ subject.account.reload.amount }
+
+      expect(subject.reload.confirmed?).to be false
+      expect(subject.reload.confirmations).to eq 1
     end
   end
 

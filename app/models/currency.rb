@@ -163,11 +163,11 @@ class Currency < ActiveRecord::Base
   end
 
   def withdraw_confirmations
-    options['deposit_confirmations'].to_i
+    options['withdraw_confirmations'].to_i
   end
 
   def withdraw_confirmations=(n)
-    options['deposit_confirmations'] = n.to_i
+    options['withdraw_confirmations'] = n.to_i
   end
 
   def case_insensitive?
