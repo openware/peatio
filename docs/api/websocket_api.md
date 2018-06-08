@@ -4,7 +4,7 @@
 
 On websocket connection client get `challenge`.
 
- Then client should authenticate.
+At first websocket client have to authenticate.
 
 ### Authentication
 
@@ -12,35 +12,51 @@ Authentication happens on websocket message with following JSON structure.
 
 ```JSON
 {
-  "jwt": "TokenType Token"
+  "jwt": "Bearer <Token>"
 }
 ```
 
 If authenticaton was done, server will respond successfully
 
-```
-message: 'Authenticated.'
-```
-
-Otherwise server will throw an error
-
-```
-message: 'Authentication failed.'
+```JSON
+{
+  "success": {
+    "message": "Authenticated."
+  }
+}
 ```
 
-If authentication JWT token has invalid type, server throw an error
+Otherwise server will return an error
 
+```JSON
+{
+  "error": {
+    "message": "Authentication failed."
+  }
+}
 ```
-Token type is not provided or invalid.
+
+If authentication JWT token has invalid type, server return an error
+
+```JSON
+{
+  "error": {
+    "message": "Token type is not provided or invalid."
+  }
+}
 ```
 
 If other error occured during the message handling server throws an error
 
-```
-Error while handling message.
+```JSON
+{
+  "error": {
+    "message": "Error while handling message."
+  }
+}
 ```
 
-**Note:** Peatio websocket API supports authentication only with Bearer type of JWT token.
+**Note:** Peatio websocket API supports authentication only Bearer type of JWT token.
 
 **Example** of authentication message:
 
@@ -52,20 +68,20 @@ Error while handling message.
 
 ### After authentication
 
-Servers subsribes client to orders and trades of authenticated user.
+When user successfully authenticated servers subsribes client to orders and trades of authenticated user.
 
-When order or trade happend websocket server send message to client with object details.
+When order or trade done, websocket server send message to client with object details.
 
 Depending on what trade happend server will send the `ask` and `bid` details.
 
 List of subscription channels:
 
-- Inforamtion about **orders** send to `orderbook` AMQP channel.
-- Inforamtion about **trades** send to `trade` AMQP channel.
+- Order objects send to `orderbook` AMQP channel.
+- Trade objects send to `trade` AMQP channel.
 
 #### Order
 
-API overview:
+Here is structure of `Order` object:
 
 | Field           | Description                                |
 |-----------------|--------------------------------------------|
@@ -83,7 +99,7 @@ API overview:
 
 #### Trade
 
-Trade API overview:
+Here is structure of `Trade` object:
 
 | Field        | Description                              |
 |--------------|----------------------------------------- |
@@ -100,11 +116,6 @@ Trade API overview:
 
 ## Start websocket API
 
-How to running Web Socket API service?
-For running Web Socket API service, you need configure and start websocket_api daemon.
-
-Configurations are stored at application.yml under WebSocket Streaming API settings section.
-
 You can start websocket API locally using peatio git repository.
 
 You should have `redis` and `rabbitmq` servers up and running
@@ -117,8 +128,82 @@ WEBSOCKET_HOST: 0.0.0.0
 WEBSOCKET_PORT: 8080
 ```
 
-Start websocket daemon
+### Development
+
+Start websocket server using following command:
 
 ```sh
 $ bundle exec ruby lib/daemons/websocket_api.rb
+```
+
+### Client code sample
+
+Here is base example of **Websocket Client**
+
+- JWT authentication.
+- Listeting server messages.
+
+```ruby
+# frozen_string_literal: true
+
+require 'rubygems'
+require 'websocket-client-simple'
+require 'active_support/all'
+require 'jwt'
+
+# Create valid JWT
+def jwt(email, uid, level, state)
+  key     = OpenSSL::PKey.read(Base64.urlsafe_decode64(ENV.fetch('JWT_PRIVATE_KEY')))
+  payload = {
+    iat:   Time.now.to_i,
+    exp:   10.minutes.from_now.to_i,
+    jti:   SecureRandom.uuid,
+    sub:   'session',
+    iss:   'barong',
+    aud:   ['peatio'],
+    email: email,
+    uid:   uid,
+    level: level,
+    state: state
+  }
+  JWT.encode(payload, key, ENV.fetch('JWT_ALGORITHM'))
+end
+
+# Host and port of the websocket server.
+host = ENV.fetch('WS_HOST', 'localhost')
+port = ENV.fetch('WS_PORT', '8080')
+payload = {
+  x: 'x', y: 'y', z: 'z',
+  email: 'test@gmail.com'
+}
+
+# Create websocket connection.
+ws = WebSocket::Client::Simple.connect("ws://#{host}:#{port}")
+
+# Called on messaged from websocket server.
+ws.on(:message) do |msg|
+  puts msg.data
+end
+
+# Called if connection to server has been opened.
+ws.on(:open) do
+  # Authenticate.
+  auth = jwt('test@gmail.com', 'test@gmail.com', 3, 'active')
+  msg = "{ \"jwt\": \"Bearer #{auth}\"}"
+
+  ws.send msg
+end
+
+# Called if connection to server has been closed.
+ws.on(:close) do |err|
+  p err
+  exit 1
+end
+
+# Called if any server error occured.
+ws.on(:error) do |err|
+  p err
+end
+
+loop {}
 ```
