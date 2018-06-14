@@ -148,9 +148,9 @@ class Member < ActiveRecord::Base
   def random_sn
     "SN#{SecureRandom.hex(5).upcase}"
   end
-  
+
   def sync_update
-    ::Pusher["private-#{sn}"].trigger_async('members', { type: 'update', id: self.id, attributes: changed_attributes })
+    self.trigger('members', { type: 'update', id: self.id, attributes: changed_attributes } )
   end
 end
 
