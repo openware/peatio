@@ -64,17 +64,16 @@ module APIv2
       x = @channel.send *AMQPConfig.exchange(:trade)
       q = @channel.queue '', auto_delete: true
       q.bind(x, arguments: {'ask_member_id' => member.id, 'bid_member_id' => member.id, 'x-match' => 'any'})
-      q.subscribe(manual_ack: true) do |delivery_info, metadata, payload|
+      q.subscribe manual_ack: true do |delivery_info, metadata, payload|
         begin
           payload = JSON.parse payload
           trade   = Trade.find payload['id']
-
           send :trade, serialize_trade(trade, member, metadata)
-          @channel.ack(delivery_info.delivery_tag)
         rescue => e
           Rails.logger.error { 'Error on receiving trades.' }
           report_exception(e)
-          @channel.nack(delivery_info.delivery_tag, false, true)
+        ensure
+          @channel.ack(delivery_info.delivery_tag)
         end
       end
     end
