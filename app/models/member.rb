@@ -153,7 +153,7 @@ class Member < ActiveRecord::Base
   end
   
   def sync_update
-    ::Pusher["private-#{sn}"].trigger_async('members', { type: 'update', id: self.id, attributes: self.changes_attributes_as_json })
+    self.trigger('members', { type: 'update', id: self.id, attributes: self.changes_attributes_as_json })
   end
 end
 
