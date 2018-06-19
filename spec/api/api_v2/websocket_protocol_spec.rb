@@ -1,9 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-require 'api_v2/websocket_protocol'
-
-describe 'WebSocketAPI' do
+describe APIv2::WebSocketProtocol do
   include EM::SpecHelper
 
   let(:conn) { BunnyMock.new.start }
@@ -11,21 +9,21 @@ describe 'WebSocketAPI' do
   let(:logger) { Rails.logger }
   let(:member) { create(:member, :level_3) }
   let(:token) { jwt_for(member) }
-  let(:ws_client) { EventMachine::WebSocketClient.connect("ws://#{ENV['WEBSOCKET_HOST']}:#{ENV['WEBSOCKET_PORT']}/") }
+  let(:ws_client) { EventMachine::WebSocketClient.connect("ws://#{ENV.fetch('WEBSOCKET_HOST')}:#{ENV.fetch('WEBSOCKET_PORT')}/") }
 
   context 'valid token' do
     before do
       APIv2::WebSocketProtocol.any_instance.stubs(:subscribe_orders)
       APIv2::WebSocketProtocol.any_instance.stubs(:subscribe_trades)
     end
-    it "user successfully authenticated" do
+    it 'access granted' do
       em {
-        start_server do |ws|
+        ws_server do |ws|
           protocol = APIv2::WebSocketProtocol.new(ws, channel, logger)
           ws.onmessage { |msg| protocol.handle msg }
           ws.onclose{ |status|
-            status[:code].should == 1006 # Unclean
-            status[:was_clean].should be false
+            expect(status[:code]).to eq 1006 # Unclean
+            expect(status[:was_clean]).to be false
           }
         end
 
@@ -43,14 +41,14 @@ describe 'WebSocketAPI' do
   end
 
   context 'invalid token' do
-    it "user authentication failed" do
+    it 'denies access' do
       em {
-        start_server do |ws|
+        ws_server do |ws|
           protocol = APIv2::WebSocketProtocol.new(ws, channel, logger)
           ws.onmessage { |msg| protocol.handle msg }
           ws.onclose{ |status|
-            status[:code].should == 1006 # Unclean
-            status[:was_clean].should be false
+            expect(status[:code]).to eq 1006 # Unclean
+            expect(status[:was_clean]).to be false
           }
         end
 

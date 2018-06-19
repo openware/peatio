@@ -10,7 +10,6 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'rspec/retry'
 require 'webmock/rspec'
-require 'socket_helper'
 
 WebMock.allow_net_connect!
 
