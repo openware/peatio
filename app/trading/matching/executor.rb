@@ -16,8 +16,8 @@ module Matching
 
     def execute
       execute!
-    rescue StandardError => e
-      AMQPQueue.enqueue(:trade_error, error: e.message) #send to failure queue
+    rescue TradeExecutionError => e
+      AMQPQueue.enqueue(:trade_error, JSON.parse(e.options)) #send to failure queue
       [@ask, @bid].each do |order|
         order.with_lock do
           next unless order.state == Order::WAIT
@@ -36,7 +36,7 @@ module Matching
 
   private
 
-    def valid?
+    def validate
       raise_error(3001,"Ask price exceeds strike price") if @ask.ord_type == 'limit' && @ask.price > @price
       raise_error(3002, "Bid price less than strike price") if @bid.ord_type == 'limit' && @bid.price < @price
       raise_error(3003, "Ask state is not wait") unless @ask.state == Order::WAIT
@@ -53,7 +53,7 @@ module Matching
         @ask = OrderAsk.lock.find(@payload[:ask_id])
         @bid = OrderBid.lock.find(@payload[:bid_id])
 
-        valid?
+        validate
 
         @trade = Trade.create! \
           ask:        @ask,
@@ -83,7 +83,7 @@ module Matching
 
     def raise_error code, msg
       raise TradeExecutionError.new \
-      ask: @ask, bid: @bid, price: @price, volume: @volume, funds: @funds, error: {code: code , message: msg}
+        ask: @ask.attributes, bid: @bid.attributes, price: @price, volume: @volume, funds: @funds, error: {code: code , message: msg}
     end
   end
 end
