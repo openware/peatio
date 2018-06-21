@@ -184,7 +184,7 @@ module CoinAPI
     end
 
     def normalize_address(address)
-      super(address.gsub(/\?dt=\d*\Z/))
+      super(address.gsub(/\?dt=\d*\Z/, ''))
     end
 
     def destination_tag_from(address)
