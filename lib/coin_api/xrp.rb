@@ -99,7 +99,7 @@ module CoinAPI
           tx_json:      { Account:         normalize_address(issuer.fetch(:address)),
                           Amount:          convert_to_base_unit!(amount),
                           Destination:     normalize_address(recipient.fetch(:address)),
-                          DestinationTag:  destination_tag(recipient.fetch(:address)),
+                          DestinationTag:  destination_tag_from(recipient.fetch(:address)),
                           TransactionType: 'Payment' }
         }]
       ).fetch('result').yield_self do |result|
@@ -184,15 +184,12 @@ module CoinAPI
     end
 
     def normalize_address(address)
-      re = /\?dt=\d*/m
-      res = address.gsub(re, '')
-      currency.case_sensitive? ? res : res.downcase
+      super(address.gsub(/\?dt=\d*\Z/))
     end
 
-    def destination_tag(address)
-      re = /.*\?dt=/m
-      address.gsub(re, '').to_i
+    def destination_tag_from(address)
+      address =~ /\?dt=(\d*)\Z/
+      $1.to_i
     end
-
   end
 end
