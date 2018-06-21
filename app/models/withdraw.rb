@@ -102,6 +102,7 @@ class Withdraw < ActiveRecord::Base
   def as_json_for_event_api
     { tid:             tid,
       uid:             member.uid,
+      email:           member.email,
       rid:             rid,
       currency:        currency_id,
       amount:          amount.to_s('F'),
