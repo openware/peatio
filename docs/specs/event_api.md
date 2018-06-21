@@ -4,7 +4,7 @@
 
 Peatio submits all events into three exchanges depending on event category (read next).
 
-The exchange name consists of three parts: 
+The exchange name consists of three parts:
 
   1) application name, like `peatio`, `barong`.
 
@@ -77,6 +77,7 @@ event: {
   record: {
     tid:                      "TID9493F6CD41",
     uid:                      "ID092B2AF8E87",
+    email:                    "email@example.com",
     currency:                 "btc",
     amount:                   "0.0855",
     state:                    "submitted",
@@ -102,6 +103,7 @@ event: {
   record: {
     tid:                      "TID9493F6CD41",
     uid:                      "ID092B2AF8E87",
+    email:                    "email@example.com",
     currency:                 "btc",
     amount:                   "0.0855",
     state:                    "accepted",
@@ -134,6 +136,7 @@ event: {
   record: {
     tid:             "TID892F29F094",
     uid:             "ID092B2AF8E87",
+    email:           "email@example.com",
     rid:             "0xdA35deE8EDDeAA556e4c26268463e26FB91ff74f",
     currency:        "eth",
     amount:          "4.5485",
@@ -159,6 +162,7 @@ event: {
   record: {
     tid:             "TID892F29F094",
     uid:             "ID092B2AF8E87",
+    email:           "email@example.com",
     rid:             "0xdA35deE8EDDeAA556e4c26268463e26FB91ff74f",
     currency:        "eth",
     amount:          "4.5485",
@@ -222,7 +226,7 @@ event: {
   price:                  "0.03",
   state:                  "open",
   trades_count:           0,
-  created_at:             "2018-05-07T02:12:28Z"  
+  created_at:             "2018-05-07T02:12:28Z"
 }
 ```
 
@@ -282,7 +286,7 @@ event: {
   state:                   "canceled",
   trades_count:            0,
   created_at:              "2018-05-07T02:12:28Z",
-  canceled_at:             "2018-05-08T10:13:13Z"  
+  canceled_at:             "2018-05-08T10:13:13Z"
 }
 ```
 
@@ -313,7 +317,7 @@ event: {
   state:                   "completed",
   trades_count:            1,
   created_at:              "2018-05-07T02:12:28Z",
-  completed_at:            "2018-05-07T17:32:09Z"  
+  completed_at:            "2018-05-07T17:32:09Z"
 }
 ```
 
@@ -373,8 +377,8 @@ Bunny.run host: "localhost", port: 5672, username: "guest", password: "guest" do
         blockchain_address:       "n1Ytj6Hy57YpfueA2vtmnwJQs583bpYn7W",
         blockchain_txid:          "c37ae1677c4c989dbde9ac22be1f3ff3ac67ed24732a9fa8c9258fdff0232d72",
         blockchain_confirmations: 1
-      }      
-    }  
+      }
+    }
   }
   exchange.publish(generate_jwt(jwt_payload), routing_key: "deposit.created")
 end
