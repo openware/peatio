@@ -12,10 +12,10 @@ module Benchmark
 
     def lock_funds
       @members[:ask].each do |m|
-        m.get_account(:btc).update!(locked: 100)
+        m.get_account(SweatFactory.coin_currency.code).update!(locked: 100)
       end
       @members[:bid].each do |m|
-        m.get_account(Currency.fiats.first.code).update!(locked: 1000000)
+        m.get_account(SweatFactory.fiat_currency.code).update!(locked: 1000000)
       end
     end
 
