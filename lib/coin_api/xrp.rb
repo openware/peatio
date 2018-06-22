@@ -35,7 +35,7 @@ module CoinAPI
           #
           # (Yaroslav Konoplov)
 
-          json_rpc(:account_info, [account: address, ledger_index: 'validated', strict: true])
+          json_rpc(:account_info, [account: normalize_address(address), ledger_index: 'validated', strict: true])
             .fetch('result')
             .fetch('account_data')
             .fetch('Balance').to_d
@@ -48,14 +48,14 @@ module CoinAPI
     def create_address!(options = {})
       secret = options.fetch(:secret) { Passgen.generate(length: 64, symbols: true) }
       json_rpc(:wallet_propose, [{ passphrase: secret }]).fetch('result').yield_self do |result|
-        { address: result.fetch('account_id'), secret: secret }.merge! \
+        { address: normalize_address(result.fetch('account_id')), secret: secret }.merge! \
           result.slice('key_type', 'master_seed', 'master_seed_hex', 'master_key', 'public_key', 'public_key_hex')
       end.symbolize_keys!
     end
 
     def inspect_address!(address)
-      { address:  address,
-        is_valid: address?(address),
+      { address:  normalize_address(address),
+        is_valid: address?(normalize_address(address)),
         is_mine:  :unsupported }
     end
 
@@ -63,7 +63,7 @@ module CoinAPI
       json_rpc(:tx, [transaction: txid]).fetch('result').yield_self do |tx|
         next unless tx['status'].to_s == 'success'
         next unless tx['validated']
-        next unless address?(tx['Destination'].to_s)
+        next unless address?(normalize_address(tx['Destination'].to_s))
         next unless tx['TransactionType'].to_s == 'Payment'
         next unless tx.dig('meta', 'TransactionResult').to_s == 'tesSUCCESS'
         next if tx['DestinationTag'].present?
@@ -72,7 +72,7 @@ module CoinAPI
         { id:            tx.fetch('hash'),
           confirmations: calculate_confirmations(tx),
           entries:       [{ amount:  convert_from_base_unit(tx.fetch('Amount')),
-                            address: tx['Destination'] }] }
+                            address: normalize_address(tx['Destination']) }] }
       end
     end
 
@@ -94,16 +94,17 @@ module CoinAPI
         [{
           secret:       issuer.fetch(:secret),
           fee_mult_max: 1000,
-          tx_json:      { Account:         issuer.fetch(:address),
+          tx_json:      { Account:         normalize_address(issuer.fetch(:address)),
                           Amount:          convert_to_base_unit!(amount),
-                          Destination:     recipient.fetch(:address),
+                          Destination:     normalize_address(recipient.fetch(:address)),
+                          DestinationTag:  destination_tag_from(recipient.fetch(:address)),
                           TransactionType: 'Payment' }
         }]
       ).fetch('result').yield_self do |result|
         if result['engine_result'].to_s == 'tesSUCCESS' && result['status'].to_s == 'success'
           result.fetch('tx_json').fetch('hash')
         else
-          raise CoinAPI::Error, "XRP withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed: #{result.fetch('engine_result_message')}."
+          raise CoinAPI::Error, "XRP withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} failed: #{result.fetch('engine_result_message')}."
         end
       end
     end
@@ -161,14 +162,14 @@ module CoinAPI
     def build_deposit_collection(txs)
       txs.map do |tx|
         next unless tx['TransactionType'].to_s == 'Payment'
-        next unless address?(tx['Destination'].to_s)
+        next unless address?(normalize_address(tx['Destination'].to_s))
         next if tx['DestinationTag'].present?
         next unless String === tx['Amount']
 
         { id:            tx.fetch('hash'),
           confirmations: calculate_confirmations(tx),
           entries:       [{ amount:  convert_from_base_unit(tx.fetch('Amount')),
-                            address: tx['Destination'] }] }
+                            address: normalize_address(tx['Destination']) }] }
       end.compact
     end
 
@@ -178,6 +179,15 @@ module CoinAPI
 
     def calculate_confirmations(tx)
       tx.fetch('LastLedgerSequence') { tx.fetch('ledger_index') } - tx.fetch('inLedger')
+    end
+
+    def normalize_address(address)
+      address.gsub(/\?dt=\d*\Z/, '')
+    end
+
+    def destination_tag_from(address)
+      address =~ /\?dt=(\d*)\Z/
+      $1.to_i
     end
   end
 end
