@@ -106,7 +106,13 @@ module APIv2
         ts = JSON.parse(ts_json).first
         offset = (params[:timestamp] - ts) / 60 / params[:period]
         offset = 0 if offset < 0
-        JSON.parse('[%s]' % redis.lrange(key, offset, offset + params[:limit] - 1).join(','))
+        limit_offset = offset + params[:limit] - 1
+        if params[:timestamp2]
+          end_offset = (params[:timestamp2] - ts) / 60 / params[:period]
+          end_offset = 0 if end_offset < 0
+          limit_offset = end_offset if end_offset < limit_offset
+        end
+        JSON.parse('[%s]' % redis.lrange(key, offset, limit_offset).join(','))
       else
         length = redis.llen(key)
         offset = [length - params[:limit], 0].max

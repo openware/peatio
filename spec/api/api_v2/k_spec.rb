@@ -22,6 +22,11 @@ describe APIv2::K, type: :request do
         load(timestamp: 1529048300)
         expect(JSON.parse(response.body)).to eq [[1529048280, 8833.03885575, 8833.03885575, 8833.03885575, 8833.03885575, 0], [1529048340, 8826.99996825, 8826.99996825, 8826.99996825, 8826.99996825, 0.0165], [1529048400, 8826.99996825, 8826.99996825, 8826.99996825, 8826.99996825, 0]]
       end
+
+      it 'with timestamp and timestamp2' do
+        load(timestamp: 1529048220, timestamp2: 1529048340)
+        expect(JSON.parse(response.body)).to eq [[1529048220, 8833.03885575, 8833.03885575, 8833.03885575, 8833.03885575, 0], [1529048280, 8833.03885575, 8833.03885575, 8833.03885575, 8833.03885575, 0], [1529048340, 8826.99996825, 8826.99996825, 8826.99996825, 8826.99996825, 0.0165]]
+      end
     end
 
     context 'data is missing' do
@@ -34,6 +39,11 @@ describe APIv2::K, type: :request do
 
       it 'with timestamp' do
         load(timestamp: 1529048300)
+        expect(JSON.parse(response.body)).to eq []
+      end
+
+      it 'with timestamp and timestamp2' do
+        load(timestamp: 1529048220, timestamp2: 1529048340)
         expect(JSON.parse(response.body)).to eq []
       end
     end
