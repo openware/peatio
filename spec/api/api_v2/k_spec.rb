@@ -13,18 +13,18 @@ describe APIv2::K, type: :request do
     end
 
     context 'data exists' do
-      it 'without timestamp' do
+      it 'without from_time' do
         load
         expect(JSON.parse(response.body)).to eq points
       end
 
-      it 'with timestamp' do
-        load(timestamp: 1529048300)
+      it 'with from_time' do
+        load(from_time: 1529048300)
         expect(JSON.parse(response.body)).to eq [[1529048280, 8833.03885575, 8833.03885575, 8833.03885575, 8833.03885575, 0], [1529048340, 8826.99996825, 8826.99996825, 8826.99996825, 8826.99996825, 0.0165], [1529048400, 8826.99996825, 8826.99996825, 8826.99996825, 8826.99996825, 0]]
       end
 
-      it 'with timestamp and timestamp2' do
-        load(timestamp: 1529048220, timestamp2: 1529048340)
+      it 'with from_time and to_time' do
+        load(from_time: 1529048220, to_time: 1529048340)
         expect(JSON.parse(response.body)).to eq [[1529048220, 8833.03885575, 8833.03885575, 8833.03885575, 8833.03885575, 0], [1529048280, 8833.03885575, 8833.03885575, 8833.03885575, 8833.03885575, 0], [1529048340, 8826.99996825, 8826.99996825, 8826.99996825, 8826.99996825, 0.0165]]
       end
     end
@@ -32,17 +32,17 @@ describe APIv2::K, type: :request do
     context 'data is missing' do
       before { KlineDB.redis.flushall }
 
-      it 'without timestamp' do
+      it 'without from_time' do
         load
         expect(JSON.parse(response.body)).to eq []
       end
 
-      it 'with timestamp' do
-        load(timestamp: 1529048300)
+      it 'with from_time' do
+        load(from_time: 1529048300)
         expect(JSON.parse(response.body)).to eq []
       end
 
-      it 'with timestamp and timestamp2' do
+      it 'with from_time and to_time' do
         load(timestamp: 1529048220, timestamp2: 1529048340)
         expect(JSON.parse(response.body)).to eq []
       end
