@@ -33,12 +33,16 @@ module Benchmark
       @members[:ask].each_with_index do |m, i|
         price, volume = price_and_volume[i]
         o = SweatFactory.make_order(OrderAsk, volume: volume, price: price, member: m)
+        o.fix_number_precision # number must be fixed before computing locked
+        o.locked = o.origin_locked = o.compute_locked
         o.save!
         @orders << o
       end
       @members[:bid].each_with_index do |m, i|
         price, volume = price_and_volume[i]
         o = SweatFactory.make_order(OrderBid, volume: volume, price: price, member: m)
+        o.fix_number_precision # number must be fixed before computing locked
+        o.locked = o.origin_locked = o.compute_locked
         o.save!
         @orders << o
       end

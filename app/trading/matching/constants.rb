@@ -9,10 +9,11 @@ module Matching
   class NotEnoughVolume     < StandardError; end
   class ExceedSumLimit      < StandardError; end
   class TradeExecutionError < StandardError
-    attr_accessor :options
+    attr_reader :options
 
     def initialize(options = {})
-      self.options = options.to_json
+      super
+      @options = options.to_json
     end
   end
 end

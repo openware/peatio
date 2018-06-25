@@ -82,8 +82,14 @@ module Matching
     end
 
     def raise_error code, msg
-      raise TradeExecutionError.new \
-        ask: @ask.attributes, bid: @bid.attributes, price: @price, volume: @volume, funds: @funds, error: {code: code , message: msg}
+      raise TradeExecutionError.new(
+                                    ask: @ask.attributes,
+                                    bid: @bid.attributes,
+                                    price: @price,
+                                    volume: @volume,
+                                    funds: @funds,
+                                    error: {code: code , message: msg}
+                                    ), msg
     end
   end
 end
