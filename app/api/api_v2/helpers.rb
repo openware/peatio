@@ -6,19 +6,19 @@ module APIv2
 
     def email_must_be_verified!
       if current_user.level? && !current_user.level.in?(%w[ email_verified phone_verified identity_verified ])
-        raise Grape::Exceptions::Base.new(text: 'Please, verify your E-Mail address.', status: 401)
+        raise Error.new(text: 'Please, verify your E-Mail address.', status: 401)
       end
     end
 
     def phone_must_be_verified!
       if current_user.level? && !current_user.level.in?(%w[ email_verified phone_verified ])
-        raise Grape::Exceptions::Base.new(text: 'Please, verify your phone.', status: 401)
+        raise Error.new(text: 'Please, verify your phone.', status: 401)
       end
     end
 
     def identity_must_be_verified!
       if current_user.level? && !current_user.level.identity_verified?
-        raise Grape::Exceptions::Base.new(text: 'Please, verify your identity.', status: 401)
+        raise Error.new(text: 'Please, verify your identity.', status: 401)
       end
     end
 
