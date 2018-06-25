@@ -79,6 +79,7 @@ describe APIv2::Deposits, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/deposits', token: unverified_member_token
       expect(response.code).to eq '401'
+      expect(JSON.parse(response.body)['error']).to eq( {'code' => 2000, 'message' => 'Please, verify your identity.'} )
     end
   end
 
