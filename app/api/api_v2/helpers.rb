@@ -100,15 +100,15 @@ module APIv2
     def get_k_json
       key = "peatio:#{params[:market]}:k:#{params[:period]}"
 
-      if params[:from_time]
+      if params[:time_from]
         ts_json = redis.lindex(key, 0)
         return [] if ts_json.blank?
         ts = JSON.parse(ts_json).first
-        offset = (params[:from_time] - ts) / 60 / params[:period]
+        offset = (params[:time_from] - ts) / 60 / params[:period]
         offset = 0 if offset < 0
         limit_offset = offset + params[:limit] - 1
-        if params[:to_time]
-          end_offset = (params[:to_time] - ts) / 60 / params[:period]
+        if params[:time_to]
+          end_offset = (params[:time_to] - ts) / 60 / params[:period]
           end_offset = 0 if end_offset < 0
           limit_offset = end_offset if end_offset < limit_offset
         end
