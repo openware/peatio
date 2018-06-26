@@ -103,5 +103,11 @@ describe APIv2::Withdraws, type: :request do
       withdraw = Withdraw.find_by_id(JSON.parse(response.body)['id'])
       expect(withdraw.aasm_state).to eq 'submitted'
     end
+
+    it 'denies access to unverified member' do
+      api_get '/api/v2/withdraws', token: unverified_member_token
+      expect(response.code).to eq '401'
+      expect(JSON.parse(response.body)['error']).to eq( {'code' => 2000, 'message' => 'Please, verify your identity.'} )
+    end
   end
 end
