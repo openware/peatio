@@ -43,7 +43,7 @@ describe APIv2::K, type: :request do
       end
 
       it 'with from_time and to_time' do
-        load(timestamp: 1529048220, timestamp2: 1529048340)
+        load(from_time: 1529048220, to_time: 1529048340)
         expect(JSON.parse(response.body)).to eq []
       end
     end
