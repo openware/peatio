@@ -8,6 +8,9 @@ describe APIv2::Trades, type: :request do
 
   let(:token) { jwt_for(member) }
 
+  let(:unverified_member) { create(:member, :unverified) }
+  let(:unverified_member_token) { jwt_for(unverified_member) }
+
   let(:ask) do
     create(
       :order_ask,
@@ -124,6 +127,12 @@ describe APIv2::Trades, type: :request do
 
       expect(response.code).to eq '422'
       expect(response.body).to eq '{"error":{"code":1001,"message":"limit must be in range: 1..1000."}}'
+    end
+
+    it 'denies access to unverified member' do
+      api_get '/api/v2/trades/my', params: { market: 'btcusd' }, token: unverified_member_token
+      expect(response.code).to eq '401'
+      expect(JSON.parse(response.body)['error']).to eq({'code' => 2000, 'message' => 'Please, verify your identity.'})
     end
   end
 end
