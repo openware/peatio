@@ -14,6 +14,7 @@ module Worker
         Rails.logger.warn { "The withdraw with such ID doesn't exist in database." }
         return
       end
+
       withdraw.with_lock do
         unless withdraw.processing?
           Rails.logger.warn { "The withdraw is now being processed by different worker or has been already processed. Skipping..." }

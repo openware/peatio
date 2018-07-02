@@ -43,15 +43,6 @@ module Withdraws
       end
     end
 
-    # def confirm!
-    #   # return unless succeed?
-    #   # with_lock do
-    #   #   confirmations = currency.api.load_deposit!(w.txid).fetch(:confimations)
-    #   #   confirm if confirmations >= currency.withdraw_confirmations
-    #   #   save
-    #   # end
-    # end
-
     def try_to_confirm!
       return if !confirming? || txid.blank?
       with_lock do
