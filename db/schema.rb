@@ -196,20 +196,21 @@ ActiveRecord::Schema.define(version: 20180704103131) do
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
   create_table "withdraws", force: :cascade do |t|
-    t.integer  "account_id",   limit: 4,                             null: false
-    t.integer  "member_id",    limit: 4,                             null: false
-    t.string   "currency_id",  limit: 10,                            null: false
-    t.decimal  "amount",                   precision: 32, scale: 16, null: false
-    t.decimal  "fee",                      precision: 32, scale: 16, null: false
-    t.string   "txid",         limit: 128
-    t.string   "aasm_state",   limit: 30,                            null: false
-    t.decimal  "sum",                      precision: 32, scale: 16, null: false
-    t.string   "type",         limit: 30,                            null: false
-    t.string   "tid",          limit: 64,                            null: false
-    t.string   "rid",          limit: 64,                            null: false
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.integer  "account_id",    limit: 4,                                         null: false
+    t.integer  "member_id",     limit: 4,                                         null: false
+    t.string   "currency_id",   limit: 10,                                        null: false
+    t.decimal  "amount",                    precision: 32, scale: 16,             null: false
+    t.decimal  "fee",                       precision: 32, scale: 16,             null: false
+    t.string   "txid",          limit: 128
+    t.string   "aasm_state",    limit: 30,                                        null: false
+    t.decimal  "sum",                       precision: 32, scale: 16,             null: false
+    t.string   "type",          limit: 30,                                        null: false
+    t.string   "tid",           limit: 64,                                        null: false
+    t.string   "rid",           limit: 64,                                        null: false
+    t.datetime "created_at",                                                      null: false
+    t.datetime "updated_at",                                                      null: false
     t.datetime "completed_at"
+    t.integer  "confirmations", limit: 4,                             default: 0, null: false
   end
 
   add_index "withdraws", ["aasm_state"], name: "index_withdraws_on_aasm_state", using: :btree

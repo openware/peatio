@@ -43,8 +43,24 @@ module Withdraws
       end
     end
 
-    def confirm!
+    # def confirm!
+    #   # return unless succeed?
+    #   # with_lock do
+    #   #   confirmations = currency.api.load_deposit!(w.txid).fetch(:confimations)
+    #   #   confirm if confirmations >= currency.withdraw_confirmations
+    #   #   save
+    #   # end
+    # end
 
+    def try_to_confirm!
+      return if !confirming? || txid.blank?
+      with_lock do
+        self.confirmations = currency.api.load_deposit!(txid).fetch(:confirmations)
+        if confirmations >= currency.withdraw_confirmations
+          success
+        end
+        save!
+      end
     end
 
     def as_json(*)
@@ -56,25 +72,26 @@ module Withdraws
 end
 
 # == Schema Information
-# Schema version: 20180529125011
+# Schema version: 20180606174614
 #
 # Table name: withdraws
 #
-#  id           :integer          not null, primary key
-#  account_id   :integer          not null
-#  member_id    :integer          not null
-#  currency_id  :string(10)       not null
-#  amount       :decimal(32, 16)  not null
-#  fee          :decimal(32, 16)  not null
-#  txid         :string(128)
-#  aasm_state   :string(30)       not null
-#  sum          :decimal(32, 16)  not null
-#  type         :string(30)       not null
-#  tid          :string(64)       not null
-#  rid          :string(64)       not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  completed_at :datetime
+#  id            :integer          not null, primary key
+#  account_id    :integer          not null
+#  member_id     :integer          not null
+#  currency_id   :string(10)       not null
+#  amount        :decimal(32, 16)  not null
+#  fee           :decimal(32, 16)  not null
+#  txid          :string(128)
+#  aasm_state    :string(30)       not null
+#  sum           :decimal(32, 16)  not null
+#  type          :string(30)       not null
+#  tid           :string(64)       not null
+#  rid           :string(64)       not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  completed_at  :datetime
+#  confirmations :integer          default(0), not null
 #
 # Indexes
 #

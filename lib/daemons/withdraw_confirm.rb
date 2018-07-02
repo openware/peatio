@@ -7,10 +7,6 @@ running = true
 Signal.trap(:TERM) { running = false }
 
 while running
-  Withdraw.succeed.order(creted_at: :asc).each do |w|
-    next if w.txid.blank?
-
-  end
-
+  Withdraw.confirming.order(created_at: :asc).map(&:try_to_confirm!)
   sleep 5
 end

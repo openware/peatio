@@ -29,8 +29,8 @@ module Admin
         @withdraw.transaction do
           @withdraw.accept!
           @withdraw.process!
-          @withdraw.success!
           @withdraw.confirm!
+          @withdraw.success!
         end
         redirect_to :back, notice: 'Withdraw successfully updated!'
       end

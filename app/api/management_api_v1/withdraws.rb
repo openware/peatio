@@ -15,6 +15,7 @@ module ManagementAPIv1
                 withdraw.accept!
                 if withdraw.quick?
                   withdraw.process!
+                  withdraw.confirm!
                   withdraw.success!
                 end
               end
