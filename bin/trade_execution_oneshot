@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+# encoding: UTF-8
+# frozen_string_literal: true
+
+require File.join(ENV.fetch('RAILS_ROOT'), 'config', 'environment')
+
+def daemon(amqp_daemon)
+  command = "bundle exec ruby lib/daemons/amqp_daemon.rb #{amqp_daemon}"
+  spawn command
+end
+
+# def current_market
+#   Market.first
+# end
+
+# def current_user
+#   Member.first
+# end
+
+def build_order(attrs)
+  (attrs[:side] == 'sell' ? OrderAsk : OrderBid).new \
+        state:         ::Order::WAIT,
+        member:        @current_user,
+        ask:           @current_market&.base_unit,
+        bid:           @current_market&.quote_unit,
+        market:        @current_market,
+        ord_type:      attrs[:ord_type] || 'limit',
+        price:         attrs[:price],
+        volume:        attrs[:volume],
+        origin_volume: attrs[:volume]
+end
+
+def create_order(attrs)
+  build_order(attrs).tap { |o| Ordering.new(o).submit }
+end
+
+def order_attrs
+  {
+    ord_type: :limit,
+    price:     1,
+    volume:    1
+  }
+end
+
+def deposit_attrs
+  {
+    member:   current_user,
+    currency: Currency.find_by_id(:btc),
+    amount: 1,
+    txid: "test1",
+    address: '123',
+    txout: '333',
+    aasm_state: "accepted"
+  }
+end
+
+def create_deposit(attrs)
+  currency = Currency.find_by_id(attrs[:currency])
+  "Deposits/#{currency.type}".camelize.constantize.create!(
+    member: @current_user,
+    currency: currency,
+    amount: 2,
+    txid: SecureRandom.hex(4),
+    address: SecureRandom.hex(4),
+    txout: SecureRandom.hex(4))
+    .tap { |d| d.accept! }
+
+end
+
+bid_unit = 'usd'
+ask_unit = 'btc'
+@current_market = Market.find_by(bid_unit: bid_unit, ask_unit: ask_unit)
+@current_user = Member.last
+deposits = [bid_unit, ask_unit].map { |currency| create_deposit(currency: currency) }
+orders = %w[sell buy].map { |side| create_order(order_attrs.merge(side: side)) }
+#binding.pry
+pids = %w[matching trade_executor].map { |d| daemon(d) }
+
+sleep 5
+# # 10.times do
+# #   puts "sleep finished"
+# # end
+pids.each { |pid| Process.kill(:TERM, pid) }
