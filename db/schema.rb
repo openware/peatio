@@ -207,10 +207,10 @@ ActiveRecord::Schema.define(version: 20180704103131) do
     t.string   "type",          limit: 30,                                        null: false
     t.string   "tid",           limit: 64,                                        null: false
     t.string   "rid",           limit: 64,                                        null: false
+    t.integer  "confirmations", limit: 4,                             default: 0, null: false
     t.datetime "created_at",                                                      null: false
     t.datetime "updated_at",                                                      null: false
     t.datetime "completed_at"
-    t.integer  "confirmations", limit: 4,                             default: 0, null: false
   end
 
   add_index "withdraws", ["aasm_state"], name: "index_withdraws_on_aasm_state", using: :btree

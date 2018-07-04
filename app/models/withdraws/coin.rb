@@ -43,17 +43,6 @@ module Withdraws
       end
     end
 
-    def try_to_confirm!
-      return if !confirming? || txid.blank?
-      with_lock do
-        self.confirmations = currency.api.load_deposit!(txid).fetch(:confirmations)
-        if confirmations >= currency.withdraw_confirmations
-          success
-        end
-        save!
-      end
-    end
-
     def as_json(*)
       super.merge \
         wallet_url:      wallet_url,
