@@ -24,10 +24,10 @@ end
 #  type          :string(30)       not null
 #  tid           :string(64)       not null
 #  rid           :string(64)       not null
+#  confirmations :integer          default(0), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  completed_at  :datetime
-#  confirmations :integer          default(0), not null
 #
 # Indexes
 #
