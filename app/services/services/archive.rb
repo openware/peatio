@@ -11,14 +11,14 @@ module Services
       date = (Date.today - 1.day)
       date_start = date.beginning_of_month
       date_end = date.end_of_month
-      order_table = "orders_#{date.strftime('%B_%Y')}".downcase
+      orders_table = "orders_#{date.strftime('%B_%Y')}".downcase
       trades_table = "trades_#{date.strftime('%B_%Y')}".downcase
 
-      return false if (table_exists?(order_table) && table_exists?(trades_table))
+      return false if (table_exists?(orders_table) && table_exists?(trades_table))
 
-      unless table_exists?(order_table)
+      unless table_exists?(orders_table)
         puts "******* Creating Order Table Form #{date_start} To #{date_end} ******"
-        order_sql = "CREATE TABLE #{order_table} AS (SELECT * FROM orders WHERE DATE(created_at) BETWEEN '#{date_start}' AND '#{date_end}') ;"
+        order_sql = "CREATE TABLE #{orders_table} AS (SELECT * FROM orders WHERE DATE(created_at) BETWEEN '#{date_start}' AND '#{date_end}') ;"
         ActiveRecord::Base.connection.execute(order_sql)
         puts '******* Order Table Created ********'
       end
@@ -30,7 +30,7 @@ module Services
         puts '******* Trades Table Created ********'
       end
 
-      return true if (table_exists?(order_table) && table_exists?(trades_table))
+      return true if (table_exists?(orders_table) && table_exists?(trades_table))
     end
   end
 end
