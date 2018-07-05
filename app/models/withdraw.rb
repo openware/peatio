@@ -66,7 +66,7 @@ class Withdraw < ActiveRecord::Base
       after :send_coins!
     end
 
-    event :confirm do
+    event :dispatch do
       transitions from: :processing, to: :confirming
     end
 

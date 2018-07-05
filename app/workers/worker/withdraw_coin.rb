@@ -53,7 +53,7 @@ module Worker
 
         withdraw.whodunnit self.class.name do
           withdraw.txid = txid
-          withdraw.confirm
+          withdraw.dispatch
           withdraw.save!
         end
 

@@ -8,7 +8,6 @@ Signal.trap(:TERM) { running = false }
 
 while running
   Withdraw::Coin.confirming.includes(:currency).find_each(batch_size: 10) do |withdraw|
-    break if withdraw.txid.blank?
     confirmations = withdraw.currency.api.load_deposit!(withdraw.txid).fetch(:confirmations)
     next if confirmations.zero? || confirmations == withdraw.confirmations
     withdraw.with_lock do

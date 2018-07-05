@@ -146,7 +146,7 @@ describe Withdraw do
   end
 
   context 'confirmation of processed withdrawal' do
-    def withdraw_confirm(withdraw)
+    def withdraw_dispatch(withdraw)
       confirmations = withdraw.currency.api.load_deposit!(withdraw.txid).fetch(:confirmations)
       withdraw.with_lock do
         break unless withdraw.confirming?
@@ -175,25 +175,25 @@ describe Withdraw do
 
     it 'doesn\'t update withdrawal state after calling rpc and getting Exception' do
       CoinAPI.stubs(:[]).raises(CoinAPI::Error)
-      begin withdraw_confirm(subject); rescue; end
+      begin withdraw_dispatch(subject); rescue; end
       expect(subject.reload.confirming?).to be true
     end
 
     context 'after successful rpc request' do
       it 'updates confirmations' do
-        withdraw_confirm(subject)
+        withdraw_dispatch(subject)
         expect(subject.reload.confirmations).to eq confirmations
       end
 
       it 'updates state to :confirmed and subtract funds if we received enough confirmations' do
-        expect{ withdraw_confirm(subject) }.to change{ subject.account.reload.amount }.by(-subject.sum)
+        expect{ withdraw_dispatch(subject) }.to change{ subject.account.reload.amount }.by(-subject.sum)
         expect(subject.reload.succeed?).to be true
       end
     end
 
     it 'doesn\'t update state to :confirmed after calling rpc but getting not enough confirmations' do
       @rpc.stubs(load_deposit!: { confirmations: 1 })
-      expect{ withdraw_confirm(subject) }.to_not change{ subject.account.reload.amount }
+      expect{ withdraw_dispatch(subject) }.to_not change{ subject.account.reload.amount }
 
       expect(subject.reload.succeed?).to be false
       expect(subject.reload.confirmations).to eq 1
