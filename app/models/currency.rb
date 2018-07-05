@@ -15,7 +15,7 @@ class Currency < ActiveRecord::Base
   validates :wallet_url_template, :transaction_url_template, length: { maximum: 200 }, url: { allow_blank: true }
   validates :quick_withdraw_limit, numericality: { greater_than_or_equal_to: 0 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
-  validates :deposit_confirmations, numericality: { greater_than_or_equal_to: 0, only_integer: true }, if: :coin?
+  validates :deposit_confirmations, :withdraw_confirmations, numericality: { greater_than_or_equal_to: 0, only_integer: true }, if: :coin?
   validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
   validate { errors.add(:options, :invalid) unless Hash === options }
 
