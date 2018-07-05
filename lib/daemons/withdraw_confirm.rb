@@ -18,9 +18,8 @@ while running
       end
       withdraw.save!
     end
-  rescue => e
+  rescue StandardError
     Rails.logger.info { "Failed to process #{withdraw.currency.code.upcase} withdrawal with #{withdraw.txid} txid." }
-    report_exception(e)
   end
   Kernel.sleep 5
 end
