@@ -29,7 +29,7 @@ module Admin
         @withdraw.transaction do
           @withdraw.accept!
           @withdraw.process!
-          @withdraw.confirm!
+          @withdraw.dispatch!
           @withdraw.success!
         end
         redirect_to :back, notice: 'Withdraw successfully updated!'
