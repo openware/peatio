@@ -21,7 +21,7 @@ while($running) do
           withdraw.save!
         end
       elsif result[:state] == 'rejected'
-          withdraw.reject
+          withdraw.reject!
       end
     rescue
       puts "Error on withdraw approval: #{$!}"
