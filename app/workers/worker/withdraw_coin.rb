@@ -42,18 +42,20 @@ module Worker
 
         Rails.logger.warn { "Sending request to currency API." }
 
-        txid = api.create_withdrawal!(
-          { address: pa.address, secret: pa.secret },
-          { address: withdraw.rid },
-          withdraw.amount.to_d
+        result = api.create_withdrawal!(
+            { address: pa.address, secret: pa.secret },
+            { address: withdraw.rid },
+            withdraw.amount.to_d
         )
-        Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{txid}." }
-
-        Rails.logger.warn { "Updating withdraw state in database." }
-
-        withdraw.txid = txid
-        withdraw.success
-        withdraw.save!
+        if result.is_a?(Hash)
+          if result.fetch(:status) == 'pending'
+            pending_withdraw(withdraw, result.fetch(:approval_id))
+          else
+            success_withdraw(withdraw, result.fetch(:txid))
+          end
+        else
+          success_withdraw(withdraw, result)
+        end
 
         Rails.logger.warn { "OK." }
 
@@ -67,6 +69,29 @@ module Worker
           Rails.logger.warn { "OK." }
         end
       end
+    end
+
+    private
+
+    def success_withdraw withdraw, txid
+      Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{txid}." }
+
+      Rails.logger.warn { "Updating withdraw state in database." }
+
+      withdraw.txid = txid
+      withdraw.success
+      withdraw.save!
+    end
+
+    def pending_withdraw withdraw, approval_id
+      Rails.logger.warn { "The currency API withdraw is Pending." }
+
+      Rails.logger.warn { "Updating withdraw state in database." }
+
+      withdraw.approval_id = approval_id
+      withdraw.pending
+      withdraw.save!
+
     end
   end
 end

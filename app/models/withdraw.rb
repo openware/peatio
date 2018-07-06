@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class Withdraw < ActiveRecord::Base
-  STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed].freeze
+  STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed pending].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
   include AASM
@@ -33,6 +33,7 @@ class Withdraw < ActiveRecord::Base
     state :processing
     state :succeed
     state :failed
+    state :pending
 
     event :submit do
       transitions from: :prepared, to: :submitted
@@ -40,7 +41,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :cancel do
-      transitions from: %i[prepared submitted accepted], to: :canceled
+      transitions from: %i[prepared submitted accepted pending], to: :canceled
       after { unlock_funds unless aasm.from_state == :prepared }
     end
 
@@ -54,7 +55,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :reject do
-      transitions from: %i[submitted accepted], to: :rejected
+      transitions from: %i[submitted accepted pending], to: :rejected
       after :unlock_funds
     end
 
@@ -64,13 +65,17 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :success do
-      transitions from: :processing, to: :succeed
+      transitions from: %i[processing pending], to: :succeed
       before %i[unlock_and_sub_funds]
     end
 
     event :fail do
       transitions from: :processing, to: :failed
       after :unlock_funds
+    end
+
+    event :pending do
+      transitions from: :processing, to: :pending
     end
   end
 
@@ -131,7 +136,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180529125011
+# Schema version: 20180705113629
 #
 # Table name: withdraws
 #
@@ -147,6 +152,7 @@ end
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
 #  rid          :string(64)       not null
+#  approval_id  :string(64)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime

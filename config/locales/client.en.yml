@@ -81,6 +81,7 @@ en:
         submitted: Submitted
         rejected: Rejected
         accepted: Accepted
+        pending: Pending
         suspected: Suspected
         prepared: Prepared
         processing: Processing

@@ -518,6 +518,7 @@ en:
         prepared: Prepared
         rejected: Rejected
         accepted: Accepted
+        pending: Pending
         suspected: Suspected
         processing: Processing
         done: Done
@@ -714,6 +715,7 @@ en:
       prepared: Prepared
       rejected: Rejected
       accepted: Accepted
+      pending: Pending
       suspected: Suspected
       processing: Processing
       done: Done
@@ -725,6 +727,7 @@ en:
       prepared: Prepared
       rejected: Rejected
       accepted: Accepted
+      pending: Pending
       suspected: Suspected
       processing: processing
       done: Done
