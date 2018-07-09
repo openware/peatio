@@ -9,6 +9,11 @@ describe APIv2::Currencies, type: :request do
     end
   end
 
+  let(:key) do
+      seconds  = Time.now.to_i
+      seconds - (seconds % 5)
+  end
+
   let(:ask) do
     create(
       :order_ask,
@@ -55,7 +60,8 @@ describe APIv2::Currencies, type: :request do
     create(:trade, bid: bid, volume: bid.volume, price: bid.price, created_at: 1.hours.ago)
     create(:trade, ask: ask2, volume: ask2.volume, price: ask2.price, created_at: 1.hours.ago)
     create(:trade, bid: bid2, volume: bid2.volume, price: bid2.price, created_at: 1.hours.ago)
-    KlineDB.redis.rpush('h24_volume', Trade.where(market_id: "btcusd").h24.sum(:volume) || '0.0'.to_d)
+    Global.any_instance.stubs(:time_key).returns(key)
+    Rails.cache.write("peatio:btcusd:h24_volume:#{key}", Trade.where(market_id: "btcusd").h24.sum(:volume) || '0.0'.to_d )
   end
 
   after { KlineDB.redis.flushall }
