@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20180708171446) do
     t.integer  "precision",            limit: 1,                              default: 8,      null: false
     t.datetime "created_at",                                                                   null: false
     t.datetime "updated_at",                                                                   null: false
+    t.string   "blockchain_key",       limit: 32
   end
 
   add_index "currencies", ["enabled"], name: "index_currencies_on_enabled", using: :btree

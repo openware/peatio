@@ -204,6 +204,7 @@ end
 #  precision            :integer          default(8), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  blockchain_key       :string(32)
 #
 # Indexes
 #
