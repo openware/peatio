@@ -1,5 +1,6 @@
 <%= table_for withdraws, class: 'table table-bordered table-striped', model: Withdraws::Coin do |t| %>
   <% t.column :id %>
+  <% t.column :txid %>
   <% t.column :created_at %>
   <% t.column 'Currency' do |x| %>
     <%= x.currency.code.upcase %>

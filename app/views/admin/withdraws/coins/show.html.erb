@@ -8,6 +8,7 @@
       <div class="card-body">
         <%= description_for :withdraw do %>
           <%= item_for @withdraw, :id %>
+          <%= item_for @withdraw, :txid %>
           <%= item_for @withdraw, :created_at %>
           <%= item_for @withdraw, 'State' do %>
             <%= @withdraw.aasm_state.humanize %>
