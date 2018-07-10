@@ -8,7 +8,9 @@
       <div class="card-body">
         <%= description_for :withdraw do %>
           <%= item_for @withdraw, :id %>
-          <%= item_for @withdraw, :txid %>
+          <%= item_for @withdraw, 'Txid' do %>
+            <%= link_to @withdraw.txid, @withdraw.transaction_url %>
+          <% end %>
           <%= item_for @withdraw, :created_at %>
           <%= item_for @withdraw, 'State' do %>
             <%= @withdraw.aasm_state.humanize %>
