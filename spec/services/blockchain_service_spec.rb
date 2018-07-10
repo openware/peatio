@@ -151,6 +151,7 @@ describe BlockchainService do
           expect{ BlockchainService.new(blockchain).process_blockchain}.not_to change{subject}
         end
       end
+
     end
   end
 end

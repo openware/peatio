@@ -38,7 +38,7 @@ module BlockAPI
       { address:  normalize_address(address),
         is_valid: valid_address?(normalize_address(address)) }
     end
-
+    
     def get_block(height)
       current_block   = height || 0
       json_rpc(:eth_getBlockByNumber, ["0x#{current_block.to_s(16)}", true]).fetch('result')
@@ -48,6 +48,7 @@ module BlockAPI
       if is_eth_tx?(tx)
         normalize_address(tx['to'])
       else
+        #binding.pry
         normalize_address('0x' + abi_explode(tx['input'])[:arguments][0][26..-1])
       end
     end

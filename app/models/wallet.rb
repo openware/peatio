@@ -7,6 +7,12 @@ class Wallet < ActiveRecord::Base
 
   # TODO: Add validations.
   scope :active, -> { where(status: 'active') }
+
+  def wallet_url
+    if currency.wallet_url_template?
+      currency.wallet_url_template.gsub('#{address}', address)
+    end
+  end
 end
 
 # == Schema Information
