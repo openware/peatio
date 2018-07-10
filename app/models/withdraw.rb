@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class Withdraw < ActiveRecord::Base
-  STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed].freeze
+  STATES           = %i[prepared submitted rejected accepted suspected processing succeed canceled failed confirming].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
   include AASM
@@ -35,6 +35,7 @@ class Withdraw < ActiveRecord::Base
     state :processing
     state :succeed
     state :failed
+    state :confirming
 
     event :submit do
       transitions from: :prepared, to: :submitted
@@ -65,9 +66,13 @@ class Withdraw < ActiveRecord::Base
       after :send_coins!
     end
 
+    event :dispatch do
+      transitions from: :processing, to: :confirming
+    end
+
     event :success do
-      transitions from: :processing, to: :succeed
-      before %i[unlock_and_sub_funds]
+      transitions from: :confirming, to: :succeed
+      before :unlock_and_sub_funds
     end
 
     event :fail do
@@ -133,25 +138,26 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180529125011
+# Schema version: 20180606174614
 #
 # Table name: withdraws
 #
-#  id           :integer          not null, primary key
-#  account_id   :integer          not null
-#  member_id    :integer          not null
-#  currency_id  :string(10)       not null
-#  amount       :decimal(32, 16)  not null
-#  fee          :decimal(32, 16)  not null
-#  txid         :string(128)
-#  aasm_state   :string(30)       not null
-#  sum          :decimal(32, 16)  not null
-#  type         :string(30)       not null
-#  tid          :string(64)       not null
-#  rid          :string(64)       not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  completed_at :datetime
+#  id            :integer          not null, primary key
+#  account_id    :integer          not null
+#  member_id     :integer          not null
+#  currency_id   :string(10)       not null
+#  amount        :decimal(32, 16)  not null
+#  fee           :decimal(32, 16)  not null
+#  txid          :string(128)
+#  aasm_state    :string(30)       not null
+#  sum           :decimal(32, 16)  not null
+#  type          :string(30)       not null
+#  tid           :string(64)       not null
+#  rid           :string(64)       not null
+#  confirmations :integer          default(0), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  completed_at  :datetime
 #
 # Indexes
 #

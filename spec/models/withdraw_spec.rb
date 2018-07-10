@@ -117,13 +117,13 @@ describe Withdraw do
       expect(subject.reload.failed?).to be true
     end
 
-    it 'transitions to :succeed after calling rpc' do
+    it 'transitions to :confirming after calling rpc' do
       CoinAPI.stubs(:[]).returns(@rpc)
 
-      expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to change { subject.account.reload.amount }.by(-subject.sum)
+      expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to_not change { subject.account.reload.amount }
 
       subject.reload
-      expect(subject.succeed?).to be true
+      expect(subject.confirming?).to be true
       expect(subject.txid).to eq('12345')
     end
 
@@ -142,6 +142,61 @@ describe Withdraw do
       expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }
           .to change { subject.account.reload.locked }.by(-subject.sum)
           .and change { subject.account.reload.balance }.by(subject.sum)
+    end
+  end
+
+  context 'confirmation of processed withdrawal' do
+    def withdraw_dispatch(withdraw)
+      confirmations = withdraw.currency.api.load_deposit!(withdraw.txid).fetch(:confirmations)
+      withdraw.with_lock do
+        break unless withdraw.confirming?
+        withdraw.confirmations = confirmations
+        if withdraw.confirmations >= withdraw.currency.withdraw_confirmations
+          withdraw.success
+        end
+        withdraw.save!
+      end
+    end
+
+    subject { create(:btc_withdraw) }
+    let(:confirmations) { 2 }
+    before do
+      @rpc = mock
+      @rpc.stubs(load_balance!: 50_000, create_withdrawal!: '12345', load_deposit!: { confirmations: confirmations })
+
+      CoinAPI.stubs(:[]).returns(@rpc)
+      subject.submit
+      subject.accept
+      subject.process
+      subject.save!
+      Worker::WithdrawCoin.new.process({ id: subject.id })
+      subject.reload
+    end
+
+    it 'doesn\'t update withdrawal state after calling rpc and getting Exception' do
+      CoinAPI.stubs(:[]).raises(CoinAPI::Error)
+      begin withdraw_dispatch(subject); rescue; end
+      expect(subject.reload.confirming?).to be true
+    end
+
+    context 'after successful rpc request' do
+      it 'updates confirmations' do
+        withdraw_dispatch(subject)
+        expect(subject.reload.confirmations).to eq confirmations
+      end
+
+      it 'updates state to :confirmed and subtract funds if we received enough confirmations' do
+        expect{ withdraw_dispatch(subject) }.to change{ subject.account.reload.amount }.by(-subject.sum)
+        expect(subject.reload.succeed?).to be true
+      end
+    end
+
+    it 'doesn\'t update state to :confirmed after calling rpc but getting not enough confirmations' do
+      @rpc.stubs(load_deposit!: { confirmations: 1 })
+      expect{ withdraw_dispatch(subject) }.to_not change{ subject.account.reload.amount }
+
+      expect(subject.reload.succeed?).to be false
+      expect(subject.reload.confirmations).to eq 1
     end
   end
 

@@ -68,6 +68,7 @@ ru:
         accepted: Принято
         prepared: Подготовлено
         processing: Обрабатывается
+        confirming: Подтверждение
         succeed: Готово
         canceled: Отклонено
         failed: Не удалось
