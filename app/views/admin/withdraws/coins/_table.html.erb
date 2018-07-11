@@ -2,7 +2,7 @@
   <% t.column :id %>
   <% t.column :txid do |x| %>
     <a href="<%= x.transaction_url %>" target="_blank">
-      <code class="text-info"><%= x.txid.truncate(36) %></code>
+      <code class="text-info"><%= x.txid%></code>
     </a>
   <% end %>
   <% t.column :created_at %>
