@@ -1,5 +1,7 @@
 class Wallet < ActiveRecord::Base
   include BelongsToCurrency
+
+  scope :active, -> { where(status: 'active') }
 end
 
 # == Schema Information

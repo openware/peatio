@@ -9,6 +9,10 @@ class Blockchain < ActiveRecord::Base
   def status
     super&.inquiry
   end
+
+  def case_insensitive?
+    !case_sensitive?
+  end
 end
 
 # == Schema Information
@@ -25,6 +29,7 @@ end
 #  explorer_address     :string(255)
 #  explorer_transaction :string(255)
 #  status               :string(255)
+#  case_sensitive       :boolean          default(TRUE), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #

@@ -21,14 +21,14 @@ module BlockAPI
       end
     end
 
-    def load_balance!
+    def load_balance!(currency)
       PaymentAddress
         .where(currency: currency)
         .where(PaymentAddress.arel_table[:address].is_not_blank)
         .pluck(:address)
         .reject(&:blank?)
-        .map(&method(:load_balance_of_address))
-        .reduce(&:+).yield_self { |total| total ? convert_from_base_unit(total) : 0.to_d }
+        .map(&method(currency.code.eth? ? :load_balance_of_eth_address : :load_balance_of_erc20_address))
+        .reduce(&:+).yield_self { |total| total ? convert_from_base_unit(total, currency) : 0.to_d }
     end
 
     def inspect_address!(address)
@@ -36,27 +36,50 @@ module BlockAPI
         is_valid: valid_address?(normalize_address(address)) }
     end
 
-    def create_withdrawal!(issuer, recipient, amount, options = {})
-      permit_transaction(issuer, recipient)
-      json_rpc(
-        :eth_sendTransaction,
-        [{
-          from:  normalize_address(issuer.fetch(:address)),
-          to:    normalize_address(recipient.fetch(:address)),
-          value: '0x' + convert_to_base_unit!(amount).to_s(16),
-          gas:   options.key?(:gas_limit) ? '0x' + options[:gas_limit].to_s(16) : nil
-        }.compact]
-      ).fetch('result').yield_self do |txid|
-        raise CoinAPI::Error, \
-          "#{currency.code.upcase} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} failed." \
-            unless valid_txid?(normalize_txid(txid))
-        normalize_txid(txid)
-      end
-    end
+    # TODO: eth & erc20 #create_withdrawal support
+    # def create_withdrawal!(issuer, recipient, amount, options = {})
+    #   permit_transaction(issuer, recipient)
+    #   json_rpc(
+    #     :eth_sendTransaction,
+    #     [{
+    #       from:  normalize_address(issuer.fetch(:address)),
+    #       to:    normalize_address(recipient.fetch(:address)),
+    #       value: '0x' + convert_to_base_unit!(amount).to_s(16),
+    #       gas:   options.key?(:gas_limit) ? '0x' + options[:gas_limit].to_s(16) : nil
+    #     }.compact]
+    #   ).fetch('result').yield_self do |txid|
+    #     raise BlockAPI::Error, \
+    #       "#{blockchain.key} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} failed." \
+    #         unless valid_txid?(normalize_txid(txid))
+    #     normalize_txid(txid)
+    #   end
+    # end
 
     def get_block(height)
       current_block   = height || 0
       json_rpc(:eth_getBlockByNumber, ["0x#{current_block.to_s(16)}", true]).fetch('result')
+    end
+
+    def to_address(tx)
+      if is_eth_tx?(tx)
+        normalize_address(tx['to'])
+      else
+        normalize_address('0x' + abi_explode(tx['input'])[:arguments][0][26..-1])
+      end
+    end
+
+    def build_deposit(tx, current_block, latest_block, currency)
+      if is_eth_tx?(tx)
+        build_coin_deposit(tx, current_block, latest_block, currency)
+      else
+        build_erc20_deposit(tx, current_block, latest_block, currency)
+      end
+    end
+
+    def latest_block_number
+      Rails.cache.fetch :latest_ethereum_block_number, expires_in: 5.seconds do
+        json_rpc(:eth_blockNumber).fetch('result').hex
+      end
     end
 
   protected
@@ -82,11 +105,6 @@ module BlockAPI
       response
     end
 
-    def latest_block_number
-      Rails.cache.fetch :latest_ethereum_block_number, expires_in: 5.seconds do
-        json_rpc(:eth_blockNumber).fetch('result').hex
-      end
-    end
 
     def block_information(number)
       json_rpc(:eth_getBlockByNumber, [number, false]).fetch('result')
@@ -101,8 +119,16 @@ module BlockAPI
       end
     end
 
-    def load_balance_of_address(address)
+    def load_balance_of_eth_address(address)
       json_rpc(:eth_getBalance, [normalize_address(address), 'latest']).fetch('result').hex.to_d
+    rescue => e
+      report_exception_to_screen(e)
+      0.0
+    end
+
+    def load_balance_of_erc20_address(address)
+      data = abi_encode('balanceOf(address)', normalize_address(address))
+      json_rpc(:eth_call, [{ to: contract_address, data: data }, 'latest']).fetch('result').hex.to_d
     rescue => e
       report_exception_to_screen(e)
       0.0
@@ -126,6 +152,32 @@ module BlockAPI
 
     def valid_txid?(txid)
       txid.to_s.match?(/\A0x[A-F0-9]{64}\z/i)
+    end
+
+    def is_eth_tx?(tx)
+      tx['input'].blank? || tx['input'].hex <= 0
+    end
+
+    def build_coin_deposit(tx, current_block, latest_block, currency)
+      { id:            normalize_txid(tx.fetch('hash')),
+        confirmations: latest_block - current_block.fetch('number').hex,
+        received_at:   Time.at(current_block.fetch('timestamp').hex),
+        entries:       [{ amount:  convert_from_base_unit(tx.fetch('value').hex, currency),
+                          address: normalize_address(tx['to']) }] }
+    end
+
+    def build_erc20_deposit(tx, current_block, latest_block, currency)
+      arguments = abi_explode(tx['input'])[:arguments]
+
+      { id:            normalize_txid(tx.fetch('hash')),
+        confirmations: latest_block - current_block.fetch('number').hex,
+        received_at:   Time.at(current_block.fetch('timestamp').hex),
+        entries:       [{ amount:  convert_from_base_unit(arguments[1].hex, currency),
+                          address: normalize_address('0x' + arguments[0][26..-1]) }] }
+    end
+
+    def contract_address
+      normalize_address(currency.erc20_contract_address)
     end
   end
 end

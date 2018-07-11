@@ -149,16 +149,6 @@ module CoinAPI
       end.compact
     end
 
-    def latest_block_number
-      Rails.cache.fetch :latest_ethereum_block_number, expires_in: 5.seconds do
-        json_rpc(:eth_blockNumber).fetch('result').hex
-      end
-    end
-
-    def block_information(number)
-      json_rpc(:eth_getBlockByNumber, [number, false]).fetch('result')
-    end
-
     def permit_transaction(issuer, recipient)
       json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
         unless response['result']

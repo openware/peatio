@@ -7,6 +7,7 @@
     address:        https://etherscan.io/address/#{address}
     transaction:    https://etherscan.io/tx/#{txid}
   status:           active
+  case_sensitive:   false # IMPORTANT: Be sure to set the correct value!
 
 - key:              eth-mainet
   name:             Ethereum Mainet
@@ -17,6 +18,7 @@
     address:        https://etherscan.io/address/#{address}
     transaction:    https://etherscan.io/tx/#{txid}
   status:           disabled
+  case_sensitive:   false # IMPORTANT: Be sure to set the correct value!
 
 - key:              btc-testnet
   name:             Bitcoin Testnet
@@ -27,3 +29,4 @@
     address:        https://blockchain.info/address/#{address}
     transaction:    https://blockchain.info/tx/#{txid}
   status:           disabled
+  case_sensitive:   true # IMPORTANT: Be sure to set the correct value!
