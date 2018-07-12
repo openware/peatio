@@ -25,10 +25,8 @@ class BlockchainService
         transactions        = block_json.fetch('transactions')
         transactions.each do |tx|
 
-          # Skip contract creation transactions.
-          # next if tx['to'].blank?
-          # Skip outcomes (less than zero) and contract transactions (zero).
-          # next if tx.fetch('value').hex.to_d <= 0
+          # check if valid transaction
+          next if @client.invalid_transaction?(tx)
 
           # WARNING: shitty code
           ## {

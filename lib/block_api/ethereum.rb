@@ -3,6 +3,9 @@
 
 module BlockAPI
   class Ethereum < Base
+
+    TOKEN_METHOD_ID = '0xa9059cbb'
+
     def initialize(*)
       super
       @json_rpc_call_id  = 0
@@ -83,6 +86,15 @@ module BlockAPI
       end
     end
 
+    def invalid_transaction?(tx)
+      return true if tx['to'].blank?
+      # Skip outcomes (less than zero) and contract transactions (zero).
+      return true if tx.fetch('value').hex.to_d <= 0
+      #check if valid ERC20 transaction using transfer method id
+      return true if tx['input'].hex > 0 && abi_method(tx['input']) != TOKEN_METHOD_ID
+      false
+    end
+
   protected
 
     def connection
@@ -145,6 +157,10 @@ module BlockAPI
       data = data.gsub(/\A0x/, '')
       { method:    '0x' + data[0...8],
         arguments: data[8..-1].chars.in_groups_of(64, false).map { |group| '0x' + group.join } }
+    end
+
+    def abi_method(data)
+      '0x' + data.gsub(/\A0x/, '')[0...8]
     end
 
     def valid_address?(address)
