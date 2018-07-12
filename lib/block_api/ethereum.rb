@@ -89,10 +89,14 @@ module BlockAPI
     def invalid_transaction?(tx)
       return true if tx['to'].blank?
       # Skip outcomes (less than zero) and contract transactions (zero).
-      return true if tx.fetch('value').hex.to_d <= 0
+      return true if tx.fetch('value').hex.to_d <= 0 && tx['input'].hex <= 0
       #check if valid ERC20 transaction using transfer method id
       return true if tx['input'].hex > 0 && abi_method(tx['input']) != TOKEN_METHOD_ID
       false
+    end
+
+    def is_erc20_txn?(tx)
+      !is_eth_tx?(tx)
     end
 
   protected

@@ -34,6 +34,10 @@ class BlockchainService
           address = @client.to_address(tx)
           address_in_db = find_address_in_db(address)
           if address_in_db.present?
+
+            # skip transaction if eth is transferred to Token Address
+            next if address_in_db[:currency].code != "eth" && !@client.is_erc20_txn?(tx)
+
             trn = @client.build_deposit(tx, block_json, latest_block, address_in_db[:currency])
             trn.fetch(:entries).each_with_index do |entry, i|
 
