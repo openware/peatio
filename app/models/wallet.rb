@@ -1,5 +1,11 @@
 class Wallet < ActiveRecord::Base
   include BelongsToCurrency
+
+  def wallet_url
+    if currency.wallet_url_template?
+      currency.wallet_url_template.gsub('#{address}', address)
+    end
+  end
 end
 
 # == Schema Information
