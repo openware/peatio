@@ -10,11 +10,11 @@ while running
   Blockchain.where(key: 'eth-rinkeby', status: 'active').each do |bc|
     break unless running
     Rails.logger.info { "Processing #{bc.name} blocks." }
-    client    = BlockAPI[bc.key]
+
     processed = 0
 
-    # TODO: Call BlockchainService here passing blockchain bc
-    #
+    BlockchainService.new(bc).process_blockchain
+
     Rails.logger.info { "Processing #{bc.name} blocks." }
   rescue => e
     report_exception(e)

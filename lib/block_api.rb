@@ -37,26 +37,10 @@ module BlockAPI
     # Returns hot wallet balance.
     #
     # @abstract Derived API clients must implement it.
+    #
+    # @param currency [String, Symbol]
     # @return [BigDecimal]
-    def load_balance!
-      method_not_implemented
-    end
-
-    #
-    # TODO: Docs.
-    #
-    # @abstract Derived API clients must implement it.
-    # @return [Array<Hash>]
-    def each_deposit
-      method_not_implemented
-    end
-
-    #
-    # TODO: Docs.
-    #
-    # @abstract Derived API clients must implement it.
-    # @return [Array<Hash>]
-    def each_deposit!
+    def load_balance!(currency)
       method_not_implemented
     end
 
@@ -104,16 +88,16 @@ module BlockAPI
       x.to_i
     end
 
-    def convert_from_base_unit(value)
-      value.to_d / blockchain.base_factor
+    def convert_from_base_unit(value, currency)
+      value.to_d / currency.base_factor
     end
 
     def normalize_address(address)
-      blockchain.case_sensitive? ? address : address.downcase
+      address.downcase
     end
 
     def normalize_txid(txid)
-      blockchain.case_sensitive? ? txid : txid.downcase
+      txid.downcase
     end
 
     %i[ load_balance load_deposit create_address create_withdrawal inspect_address ].each do |method|

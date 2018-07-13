@@ -1,29 +1,32 @@
-- key:              eth-rinkeby
-  name:             Ethereum Rinkeby
-  client:           ethereum
-  server:           http://127.0.0.1:8545
-  height:           2500000
+- key:               eth-rinkeby
+  name:              Ethereum Rinkeby
+  client:            ethereum
+  server:            http://127.0.0.1:8545
+  height:            2500000
+  min_confirmations: 6
   explorer:
-    address:        https://etherscan.io/address/#{address}
-    transaction:    https://etherscan.io/tx/#{txid}
-  status:           active
+    address:         https://etherscan.io/address/#{address}
+    transaction:     https://etherscan.io/tx/#{txid}
+  status:            active
 
-- key:              eth-mainet
-  name:             Ethereum Mainet
-  client:           ethereum
-  server:           http://127.0.0.1:8545
-  height:           5000000
+- key:               eth-mainet
+  name:              Ethereum Mainet
+  client:            ethereum
+  server:            http://127.0.0.1:8545
+  height:            5000000
+  min_confirmations: 6
   explorer:
-    address:        https://etherscan.io/address/#{address}
-    transaction:    https://etherscan.io/tx/#{txid}
-  status:           disabled
+    address:         https://etherscan.io/address/#{address}
+    transaction:     https://etherscan.io/tx/#{txid}
+  status:            disabled
 
-- key:              btc-testnet
-  name:             Bitcoin Testnet
-  client:           bitcoin
-  server:           http://127.0.0.1:18332
-  height:           500000
+- key:               btc-testnet
+  name:              Bitcoin Testnet
+  client:            bitcoin
+  server:            http://127.0.0.1:18332
+  height:            500000
+  min_confirmations: 6
   explorer:
-    address:        https://blockchain.info/address/#{address}
-    transaction:    https://blockchain.info/tx/#{txid}
-  status:           disabled
+    address:         https://blockchain.info/address/#{address}
+    transaction:     https://blockchain.info/tx/#{txid}
+  status:            disabled

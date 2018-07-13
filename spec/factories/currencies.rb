@@ -57,6 +57,7 @@ FactoryBot.define do
     end
 
     trait :eth do
+      blockchain_key       'eth-rinkeby'
       code                 'eth'
       symbol               'Ξ'
       type                 'coin'
@@ -93,6 +94,7 @@ FactoryBot.define do
     end
 
     trait :trst do
+      blockchain_key       'eth-rinkeby'
       code                 'trst'
       symbol               'Ξ'
       type                 'coin'
