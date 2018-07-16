@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module BlockAPI
+module Client
   Error                  = Class.new(StandardError) # TODO: Rename to Exception.
   ConnectionRefusedError = Class.new(StandardError) # TODO: Remove this.
 
@@ -15,7 +15,7 @@ module BlockAPI
     def [](key)
       blockchain = Blockchain.find_by_key(key)
       if blockchain.try(:client).present?
-        "BlockAPI::#{blockchain.client.capitalize}"
+        "Client::#{blockchain.client.capitalize}"
       end.constantize.new(blockchain)
     end
   end

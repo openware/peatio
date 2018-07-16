@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module BlockAPI
+module Client
   class Ethereum < Base
 
     TOKEN_METHOD_ID = '0xa9059cbb'

@@ -13,7 +13,7 @@ while running
 
     processed = 0
 
-    BlockchainService.new(bc).process_blockchain
+    BlockchainService[bc.key].process_blockchain
 
     Rails.logger.info { "Processing #{bc.name} blocks." }
   rescue => e
