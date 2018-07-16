@@ -12,8 +12,8 @@ describe BlockchainService::Ethereum do
   describe 'Client::Ethereum' do
     let(:block_data) do
       Rails.root.join('spec', 'resources', block_file_name)
-          .yield_self { |file_path| File.open(file_path) }
-          .yield_self { |file| JSON.load(file) }
+        .yield_self { |file_path| File.open(file_path) }
+        .yield_self { |file| JSON.load(file) }
     end
 
     let(:start_block)   { block_data.first['result']['number'].hex }
@@ -21,7 +21,7 @@ describe BlockchainService::Ethereum do
 
     let(:blockchain) do
       Blockchain.find_by_key('eth-rinkeby')
-          .tap { |b| b.update(height: start_block)}
+        .tap { |b| b.update(height: start_block)}
     end
 
     let(:client) { Client[blockchain.key] }
@@ -41,11 +41,11 @@ describe BlockchainService::Ethereum do
       # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_deposits) do
         [
-            {
-                amount:   '0xde0b6b3a7640000'.hex.to_d / currency.base_factor,
-                address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
-                txid:     '0xb60e22c6eed3dc8cd7bc5c7e38c50aa355c55debddbff5c1c4837b995b8ee96d'
-            }
+          {
+            amount:   '0xde0b6b3a7640000'.hex.to_d / currency.base_factor,
+            address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
+            txid:     '0xb60e22c6eed3dc8cd7bc5c7e38c50aa355c55debddbff5c1c4837b995b8ee96d'
+          }
         ]
       end
 
@@ -60,8 +60,8 @@ describe BlockchainService::Ethereum do
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
         block_data.each_with_index do |blk, index|
           stub_request(:post, client.endpoint)
-              .with(body: request_body(blk['result']['number'],index))
-              .to_return(body: blk.to_json)
+            .with(body: request_body(blk['result']['number'],index))
+            .to_return(body: blk.to_json)
         end
         # Process blockchain data.
         BlockchainService[blockchain.key].process_blockchain
@@ -98,16 +98,16 @@ describe BlockchainService::Ethereum do
       # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_deposits) do
         [
-            {
-                amount:   '0x1e8480'.hex.to_d / currency.base_factor,
-                address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
-                txid:     '0xd5cc0d1d5dd35f4b57572b440fb4ef39a4ab8035657a21692d1871353bfbceea'
-            },
-            {
-                amount:   '0x1e8480'.hex.to_d / currency.base_factor,
-                address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
-                txid:     '0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d'
-            }
+          {
+            amount:   '0x1e8480'.hex.to_d / currency.base_factor,
+            address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
+            txid:     '0xd5cc0d1d5dd35f4b57572b440fb4ef39a4ab8035657a21692d1871353bfbceea'
+          },
+          {
+            amount:   '0x1e8480'.hex.to_d / currency.base_factor,
+            address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
+            txid:     '0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d'
+          }
         ]
       end
 
@@ -122,8 +122,8 @@ describe BlockchainService::Ethereum do
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
         block_data.each_with_index do |blk, index|
           stub_request(:post, client.endpoint)
-              .with(body: request_body(blk['result']['number'],index))
-              .to_return(body: blk.to_json)
+            .with(body: request_body(blk['result']['number'],index))
+            .to_return(body: blk.to_json)
         end
         # Process blockchain data.
         BlockchainService[blockchain.key].process_blockchain
