@@ -75,22 +75,22 @@ module BlockchainService
     def payment_addresses_where(options = {})
       options = { currency: currencies }.merge(options)
       PaymentAddress
-          .includes(:currency)
-          .where(options)
-          .each do |payment_address|
-        yield payment_address if block_given?
-      end
+        .includes(:currency)
+        .where(options)
+        .each do |payment_address|
+          yield payment_address if block_given?
+        end
     end
 
     def wallets_where(options = {})
       options = { currency: currencies,
                   kind: %i[cold warm hot] }.merge(options)
       Wallet
-          .includes(:currency)
-          .where(options)
-          .each do |wallet|
-        yield wallet if block_given?
-      end
+        .includes(:currency)
+        .where(options)
+        .each do |wallet|
+          yield wallet if block_given?
+        end
     end
   end
 end
