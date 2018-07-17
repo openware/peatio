@@ -23,15 +23,25 @@ module APIv2
       end
     end
 
+    desc 'Get currency by id'
+    params do
+      requires :id, type: String, values: -> { Currency.enabled.codes(bothcase: true) }, desc: -> { APIv2::Entities::Currency.documentation[:id] }
+    end
+    get '/currencies/:id' do
+      id = params[:id]
+      present Currency.find_by_id(id), with: APIv2::Entities::Currency
+    end
+
     desc 'Get list of currencies'
     params do
-      optional :type, type: String, values: %w[fiat coin], desc: 'Type of currency. Available values: coin, fiat'
+      optional :type, type: String, values: %w[fiat coin], desc: -> { APIv2::Entities::Currency.documentation[:type] }
     end
     get '/currencies' do
       if params[:type].blank?
         currencies = Currency.enabled
       else
-        currencies = Currency.enabled.where(type: params[:type])
+        type = params[:type]
+        currencies = Currency.enabled.where(type: type)
       end
 
       present currencies, with: APIv2::Entities::Currency

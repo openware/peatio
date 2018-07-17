@@ -10,8 +10,8 @@ describe APIv2::Currencies, type: :request do
   end
 
   let(:key) do
-      seconds  = Time.now.to_i
-      seconds - (seconds % 5)
+    seconds = Time.now.to_i
+    seconds - (seconds % 5)
   end
 
   let(:ask) do
@@ -26,21 +26,21 @@ describe APIv2::Currencies, type: :request do
 
   let(:ask2) do
     create(
-        :order_ask,
-        market_id: 'btcusd',
-        price: '35.0'.to_d,
-        volume: '100.000',
-        member: member
+      :order_ask,
+      market_id: 'btcusd',
+      price: '35.0'.to_d,
+      volume: '100.000',
+      member: member
     )
   end
 
   let(:bid) do
     create(
-        :order_bid,
-        market_id: 'btcusd',
-        price: '12.326'.to_d,
-        volume: '123.123456789',
-        member: member
+      :order_bid,
+      market_id: 'btcusd',
+      price: '12.326'.to_d,
+      volume: '123.123456789',
+      member: member
     )
   end
 
@@ -54,7 +54,6 @@ describe APIv2::Currencies, type: :request do
     )
   end
 
-
   describe 'GET /api/v2/currency/trades' do
     before do
       create(:trade, ask: ask, volume: ask.volume,  price: ask.price, created_at: 2.hours.ago)
@@ -67,14 +66,35 @@ describe APIv2::Currencies, type: :request do
 
     after { KlineDB.redis.flushall }
 
+    RSpec::Matchers.define :have_trade_structure do
+      match { |x| not (x.dig(:price).nil? || x.dig(:volume).nil? || x.dig(:change).nil?) }
+    end
+
     it 'should return all recent trades' do
       get '/api/v2/currency/trades', currency: 'btc'
       expect(response).to be_success
 
-      expected = [{ eth: { price:'0.0', volume: '0.0', change: '+0.0%' } },
-                  { usd: { price: '23.663', volume: '446.2468', change: '+0.0%' } }]
+      result = JSON.parse(response.body, symbolize_names: true)
 
-      expect(JSON.parse(response.body, symbolize_names: true)).to eq expected
+      expect(result.dig(0, :eth)).to have_trade_structure
+      expect(result.dig(1, :usd)).to have_trade_structure
+    end
+  end
+
+  describe 'GET /api/v2/currencies/:id' do
+    let(:currency) { Currency.find(:btc) }
+
+    it 'returns information about specified currency' do
+      get "/api/v2/currencies/#{currency.id}"
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+      expect(result.fetch('id')).to eq currency.id
+    end
+
+    it 'returns error in case of invalid id' do
+      get '/api/v2/currencies/invalid'
+      expect(response).to have_http_status 422
     end
   end
 
@@ -82,20 +102,26 @@ describe APIv2::Currencies, type: :request do
     it 'lists enabled currencies' do
       get '/api/v2/currencies'
       expect(response).to be_success
-      expect(JSON.parse(response.body).size).to eq Currency.enabled.size
+
+      result = JSON.parse(response.body)
+      expect(result.size).to eq Currency.enabled.size
     end
 
     it 'lists enabled coins' do
       get '/api/v2/currencies', type: 'coin'
       expect(response).to be_success
-      expect(JSON.parse(response.body).size).to eq Currency.coins.enabled.size
+
+      result = JSON.parse(response.body)
+      expect(result.size).to eq Currency.coins.enabled.size
     end
 
     it 'lists enabled fiats' do
       get '/api/v2/currencies', type: 'fiat'
       expect(response).to be_success
-      expect(JSON.parse(response.body).size).to eq Currency.fiats.enabled.size
-      expect(JSON.parse(response.body, symbolize_names: true)).to eq [{id: 'usd', symbol: '$', type: 'fiat', deposit_fee: '0.0', withdraw_fee: '0.1', quick_withdraw_limit: '10.0', base_factor: 1, precision: 2}]
+
+      result = JSON.parse(response.body, symbolize_names: true)
+      expect(result.size).to eq Currency.fiats.enabled.size
+      expect(result.dig(0, :id)).to eq 'usd'
     end
 
     it 'returns error in case of invalid type' do
