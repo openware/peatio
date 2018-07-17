@@ -70,7 +70,11 @@ describe APIv2::Currencies, type: :request do
     it 'should return all recent trades' do
       get '/api/v2/currency/trades', currency: 'btc'
       expect(response).to be_success
-      expect(JSON.parse(response.body, symbolize_names: true)).to eq [{ eth: {price:'0.0', volume: '0.0', change: '+0.0%'}}, { usd: { price: '23.663', volume: '446.2468', change: '+0.0%'}}]
+
+      expected = [{ eth: { price:'0.0', volume: '0.0', change: '+0.0%' } },
+                  { usd: { price: '23.663', volume: '446.2468', change: '+0.0%' } }]
+
+      expect(JSON.parse(response.body, symbolize_names: true)).to eq expected
     end
   end
 
