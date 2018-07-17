@@ -5,7 +5,15 @@
 class Wallet < ActiveRecord::Base
   include BelongsToCurrency
 
-  # TODO: Add validations.
+  validates :name, :address, presence: true
+  validates :status, inclusion: { in: %w[active disabled] }
+  validates :kind, inclusion: { in: %w[hot warm cold deposit] }
+  validates :nsig, numericality: { greater_than_or_equal_to: 1, only_integer: true }
+
+  before_validation do
+    self.address = address.try(:downcase)
+  end
+
   scope :active, -> { where(status: 'active') }
 
   def wallet_url

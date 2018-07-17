@@ -5,8 +5,10 @@
 class Blockchain < ActiveRecord::Base
   has_many :currencies, foreign_key: :blockchain_key, primary_key: :key
 
-  # TODO: Add more validations.
+  validates :key, :name, :client, presence: true
+  validates :status, inclusion: { in: %w[active disabled] }
   validates :height, numericality: { greater_than_or_equal_to: 1, only_integer: true }
+  validates :min_confirmations, numericality: { greater_than_or_equal_to: 1, only_integer: true }
 
   def explorer=(hash)
     write_attribute(:explorer_address, hash.fetch('address'))
