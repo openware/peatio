@@ -70,7 +70,33 @@ describe APIv2::Currencies, type: :request do
     it 'should return all recent trades' do
       get '/api/v2/currency/trades', currency: 'btc'
       expect(response).to be_success
-      expect(JSON.parse(response.body)).to eq [{'eth'=>{'price'=>'0.0', 'volume'=>'0.0', 'change'=>'+0.0%'}}, {'usd'=>{'price'=>'23.663', 'volume'=>'446.2468', 'change'=>'+0.0%'}}]
+      expect(JSON.parse(response.body, symbolize_names: true)).to eq [{ eth: {price:'0.0', volume: '0.0', change: '+0.0%'}}, { usd: { price: '23.663', volume: '446.2468', change: '+0.0%'}}]
+    end
+  end
+
+  describe 'GET /api/v2/currencies' do
+    it 'lists enabled currencies' do
+      get '/api/v2/currencies'
+      expect(response).to be_success
+      expect(JSON.parse(response.body).size).to eq Currency.enabled.size
+    end
+
+    it 'lists enabled coins' do
+      get '/api/v2/currencies', type: 'coin'
+      expect(response).to be_success
+      expect(JSON.parse(response.body).size).to eq Currency.coins.enabled.size
+    end
+
+    it 'lists enabled fiats' do
+      get '/api/v2/currencies', type: 'fiat'
+      expect(response).to be_success
+      expect(JSON.parse(response.body).size).to eq Currency.fiats.enabled.size
+      expect(JSON.parse(response.body, symbolize_names: true)).to eq [{id: 'usd', symbol: '$', type: 'fiat', deposit_fee: '0.0', withdraw_fee: '0.1', quick_withdraw_limit: '10.0', base_factor: 1, precision: 2}]
+    end
+
+    it 'returns error in case of invalid type' do
+      get '/api/v2/currencies', type: 'invalid'
+      expect(response).to have_http_status 422
     end
   end
 end

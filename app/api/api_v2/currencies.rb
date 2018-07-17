@@ -15,5 +15,18 @@ module APIv2
       end
     end
 
+    desc 'Get list of currencies'
+    params do
+      optional :type, type: String, values: %w[fiat coin], desc: 'Type of currency. Available values: coin, fiat'
+    end
+    get '/currencies' do
+      if params[:type].blank?
+        currencies = Currency.enabled
+      else
+        currencies = Currency.enabled.where(type: params[:type])
+      end
+
+      present currencies, with: APIv2::Entities::Currency
+    end
   end
 end
