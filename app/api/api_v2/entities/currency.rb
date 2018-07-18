@@ -6,7 +6,7 @@ module APIv2
     class Currency < Base
       expose :id, documentation: 'Currency code'
       expose :symbol, documentation: 'Currency symbol'
-      expose :type, documentation: 'Currency type. Available value: coin or fiat'
+      expose :type, documentation: 'Currency type. Available values: coin or fiat'
 
       expose :deposit_fee, documentation: 'Currency deposit fee'
       expose :withdraw_fee, documentation: 'Currency withdraw fee'
