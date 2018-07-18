@@ -3,9 +3,9 @@
 module BlockchainService
   class Ethereum < Base
 
-    def process_blockchain
+    def process_blockchain(blocks_limit: 10)
       current_block   = @blockchain.height || 0
-      latest_block    = @client.latest_block_number
+      latest_block    = [@client.latest_block_number, current_block + blocks_limit].min
 
       (current_block..latest_block).each do |block_id|
         block_json = @client.get_block(block_id)
