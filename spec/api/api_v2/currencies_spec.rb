@@ -82,14 +82,30 @@ describe APIv2::Currencies, type: :request do
   end
 
   describe 'GET /api/v2/currencies/:id' do
-    let(:currency) { Currency.find(:btc) }
+    let(:fiat) { Currency.find(:usd) }
+    let(:coin) { Currency.find(:btc) }
 
     it 'returns information about specified currency' do
-      get "/api/v2/currencies/#{currency.id}"
+      get "/api/v2/currencies/#{coin.id}"
       expect(response).to be_success
 
       result = JSON.parse(response.body)
-      expect(result.fetch('id')).to eq currency.id
+      expect(result.fetch('id')).to eq coin.id
+    end
+
+    it 'returns correct keys for fiat' do
+      get "/api/v2/currencies/#{fiat.id}"
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+
+      %w[id symbol type deposit_fee withdraw_fee quick_withdraw_limit base_factor precision].each do |key|
+        expect(result).to have_key key
+      end
+
+      %w[deposit_confirmations allow_multiple_deposit_addresses].each do |key|
+        expect(result).not_to have_key key
+      end
     end
 
     it 'returns error in case of invalid id' do
