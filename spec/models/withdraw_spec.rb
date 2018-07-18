@@ -123,7 +123,7 @@ describe Withdraw do
       expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to change { subject.account.reload.amount }
 
       subject.reload
-      expect(subject.succeed).to be true
+      expect(subject.succeed?).to be true
       expect(subject.txid).to eq('12345')
     end
 
