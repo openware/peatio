@@ -117,13 +117,13 @@ describe Withdraw do
       expect(subject.reload.failed?).to be true
     end
 
-    it 'transitions to :confirming after calling rpc' do
+    it 'transitions to :succeed after calling rpc' do
       CoinAPI.stubs(:[]).returns(@rpc)
 
-      expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to_not change { subject.account.reload.amount }
+      expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to change { subject.account.reload.amount }
 
       subject.reload
-      expect(subject.confirming?).to be true
+      expect(subject.succeed).to be true
       expect(subject.txid).to eq('12345')
     end
 

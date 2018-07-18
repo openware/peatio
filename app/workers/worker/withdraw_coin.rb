@@ -53,6 +53,7 @@ module Worker
 
         withdraw.txid = txid
         withdraw.dispatch
+        withdraw.success
         withdraw.save!
 
         Rails.logger.warn { "OK." }
