@@ -9,12 +9,12 @@ Signal.trap(:TERM) { running = false }
 while running do
   Deposits::Coin.recent.where(aasm_state: :submitted).find_each batch_size: 100 do |deposit|
     break unless running
-    next unless deposit.currency.deposit_confirmations > 0
+    next unless deposit.currency.min_confirmations > 0
     begin
       confirmations = deposit.currency.api.load_deposit!(deposit.txid).fetch(:confirmations)
       deposit.with_lock do
         deposit.update!(confirmations: confirmations)
-        deposit.accept! if confirmations >= deposit.currency.deposit_confirmations
+        deposit.accept! if confirmations >= deposit.currency.min_confirmations
       end
     rescue => e
       report_exception(e)

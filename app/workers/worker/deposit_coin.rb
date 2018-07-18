@@ -39,7 +39,7 @@ module Worker
         confirmations: tx[:confirmations]
 
       deposit.with_lock do
-        if currency.deposit_confirmations > 0 && deposit.confirmations >= currency.deposit_confirmations
+        if currency.min_confirmations > 0 && deposit.confirmations >= currency.min_confirmations
           deposit.accept!
         end
       end

@@ -41,11 +41,8 @@
                 <dd><%= @currency.case_sensitive?.to_s.titleize %></dd>
               <% end %>
 
-              <dt>Number of required confirmations for deposit</dt>
-              <dd><%= f.number_field :deposit_confirmations, class: 'form-control' %></dd>
-
-              <dt>Number of required confirmations for withdraw</dt>
-              <dd><%= f.number_field :withdraw_confirmations, class: 'form-control' %></dd>
+              <dt>Number of required confirmations for deposit and withdraw</dt>
+              <dd><%= f.number_field :min_confirmations, class: 'form-control' %></dd>
 
               <% if @currency.new_record? || @currency.erc20_contract_address? %>
                 <dt>ERC20 contract address</dt>
