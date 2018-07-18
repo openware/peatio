@@ -67,7 +67,7 @@ describe APIv2::Currencies, type: :request do
     after { KlineDB.redis.flushall }
 
     RSpec::Matchers.define :have_trade_structure do
-      match { |x| not (x.dig(:price).nil? || x.dig(:volume).nil? || x.dig(:change).nil?) }
+      match { |x| x[:price].present? && x[:volume].present? && x[:change].present? }
     end
 
     it 'should return all recent trades' do
