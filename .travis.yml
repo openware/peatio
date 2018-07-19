@@ -26,7 +26,7 @@ addons:
     packages:
       - nginx
   hosts:
-    - peatio.io
+    - peatio.tech
 
 # Execute all of the commands which need to be executed before installing dependencies.
 before_install:
@@ -41,7 +41,7 @@ install:
   - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
   - bundle exec rake yarn:install
   - docker pull rubykube/peatio-trading-ui:1.5.2
-  - docker run -d -p 4000:3000 -e "RAILS_ENV=production" -e "SECRET_KEY_BASE=secret" -e "PLATFORM_ROOT_URL=http://peatio.io" -e "RAILS_SERVE_STATIC_FILES=1" --add-host=peatio.io:$(ip addr show eth0 | grep -Po 'inet \K[\d.]+') --name=peatio-trading-ui rubykube/peatio-trading-ui:1.5.0
+  - docker run -d -p 4000:3000 -e "RAILS_ENV=production" -e "SECRET_KEY_BASE=secret" -e "PLATFORM_ROOT_URL=http://peatio.tech" -e "RAILS_SERVE_STATIC_FILES=1" --add-host=peatio.tech:$(ip addr show eth0 | grep -Po 'inet \K[\d.]+') --name=peatio-trading-ui rubykube/peatio-trading-ui:1.5.0
 
 # Execute all of the commands which need to be executed before running actual tests.
 before_script:
@@ -53,7 +53,7 @@ before_script:
 
 # Execute all of the commands which should make the build pass or fail.
 script:
-  URL_HOST=peatio.io LOG_LEVEL=warn xvfb-run --auto-servernum --server-args="-screen 0 1280x800x16" bundle exec rspec &&
+  URL_HOST=peatio.tech LOG_LEVEL=warn xvfb-run --auto-servernum --server-args="-screen 0 1280x800x16" bundle exec rspec &&
   docker build --tag peatio .
 
 # Execute all of the commands which need to be executed after the build passed.
