@@ -68,11 +68,13 @@ module Client
       tx.fetch("vout").map{|v| v["scriptPubKey"]["addresses"][0] if v["scriptPubKey"].has_key?("addresses")}.compact
     end
 
-    def build_deposit(tx, current_block, latest_block, payment_address)
+    def build_transaction(tx, current_block, latest_block, address)
       entries = tx.fetch('vout').map do |item|
+
         next if item.fetch('value').to_d <= 0
         next unless item["scriptPubKey"].has_key?("addresses")
-        next if payment_address != item['scriptPubKey']['addresses'][0]
+        next if address != item['scriptPubKey']['addresses'][0]
+
         { amount: item.fetch('value').to_d, address: normalize_address(item['scriptPubKey']['addresses'][0]) }
       end.compact
       { id:            normalize_txid(tx.fetch('txid')),
