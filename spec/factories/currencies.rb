@@ -23,6 +23,7 @@ FactoryBot.define do
     end
 
     trait :btc do
+      blockchain_key       'btc-testnet'
       code                 'btc'
       symbol               '฿'
       type                 'coin'
