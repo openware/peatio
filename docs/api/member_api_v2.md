@@ -567,3 +567,41 @@ Member API is API which can be used by client application like SPA.
 | Code | Description |
 | ---- | ----------- |
 | 200 | Get currency trades at last 24h |
+
+### /v2/currencies
+---
+##### ***GET***
+**Summary:** Get list of currencies
+
+**Description:** Get list of currencies
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| type | query | Currency type. Available values: coin or fiat | No | string |
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Get list of currencies |
+
+### /v2/currencies/{id}
+---
+##### ***GET***
+**Summary:** Get currency by id
+
+**Description:** Get currency by id
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path | Currency code | Yes | string |
+
+**Responses**
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Get currency by id |
