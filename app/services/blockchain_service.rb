@@ -21,6 +21,8 @@ module BlockchainService
 
   class Base
 
+    attr_reader :blockchain, :client
+
     def initialize(blockchain)
       @blockchain = blockchain
       @client     = Client[blockchain.key]
@@ -36,11 +38,12 @@ module BlockchainService
                     .where(currency: currencies)
                     .find_or_create_by!(deposit_hash.except(:confirmations))
 
-        # Otherwise update confirmations amount for existing deposit.
         next if deposit.confirmations == deposit_hash.fetch(:confirmations)
+
+        # Update confirmations amount for existing deposit.
         deposit.with_lock do
           deposit.update(confirmations: deposit_hash.fetch(:confirmations))
-          deposit.accept! if deposit.confirmations >= @blockchain.min_confirmations
+          deposit.accept! if deposit.confirmations >= blockchain.min_confirmations
         end
       end
     end
@@ -54,22 +57,26 @@ module BlockchainService
                        .find_by(withdrawal_hash.except(:confirmations))
 
         # Skip non-existing in database withdrawals.
-        next if withdrawal.blank?
+        if withdrawal.blank?
+          Rails.logger.info { "Skipped withdrawal: #{withdrawal_hash[:txid]}." }
+          next
+        end
 
+        # Don't update withdrawal if confirmations amount is up to date.
         next if withdrawal.confirmations == withdrawal_hash.fetch(:confirmations)
         withdrawal.with_lock do
           withdrawal.update(confirmations: withdrawal_hash.fetch(:confirmations))
-          withdrawal.success! if withdrawal.confirmations >= @blockchain.min_confirmations
+          withdrawal.success! if withdrawal.confirmations >= blockchain.min_confirmations
         end
       end
     end
 
     def current_height
-      @blockchain.height
+      blockchain.height
     end
 
     def currencies
-      @blockchain.currencies
+      blockchain.currencies
     end
 
     def payment_addresses_where(options = {})
