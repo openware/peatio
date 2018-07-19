@@ -3,9 +3,9 @@
 module BlockchainService
   class Bitcoin < Base
 
-    def process_blockchain
+    def process_blockchain(blocks_limit: 10)
       current_block   = @blockchain.height || 0
-      latest_block    = @client.latest_block_number
+      latest_block    = [@client.latest_block_number, current_block + blocks_limit].min
 
       (current_block..latest_block).each do |block_id|
 
@@ -15,10 +15,13 @@ module BlockchainService
         block_json = @client.get_block(block_hash)
         next if block_json.blank?
 
-        transactions = block_json.fetch('tx')
-        deposits = build_deposits(transactions, current_block, latest_block)
+        next if block_json.blank? || block_json['tx'].blank?
 
-        save_deposits!(deposits)
+        deposits    = build_deposits(block_json, current_block, latest_block)
+        # withdrawals = build_withdrawals(block_json, latest_block)
+
+        update_or_create_deposits!(deposits)
+        # update_withdrawals!(withdrawals)
 
         # Mark block as processed if both deposits and withdrawals were confirmed.
         @blockchain.update(height: block_id) if latest_block - block_id > @blockchain.min_confirmations
@@ -28,14 +31,16 @@ module BlockchainService
 
     private
 
-    def build_deposits(transactions, current_block, latest_block)
-      transactions.each_with_object([]) do |tx, deposits|
+    def build_deposits(block_json, current_block, latest_block)
+      block_json
+          .fetch('tx')
+          .each_with_object([]) do |tx, deposits|
 
         payment_addresses_where(address: @client.to_address(tx)) do |payment_address|
           # If payment address currency doesn't match with blockchain
           # transaction currency skip this payment address.
 
-          deposit_txs = @client.build_deposit(tx, current_block, latest_block, payment_address.address)
+          deposit_txs = @client.build_transaction(tx, current_block, latest_block, payment_address.address)
 
           deposit_txs.fetch(:entries).each_with_index do |entry, i|
             deposits << { txid:           deposit_txs[:id],
