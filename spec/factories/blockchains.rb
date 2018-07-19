@@ -26,5 +26,17 @@ FactoryBot.define do
       explorer_transaction    'https://etherscan.io/tx/#{txid}'
       status                  'disabled'
     end
+
+    trait 'btc-testnet' do
+      key                     'btc-testnet'
+      name                    'Bitcoin Testnet'
+      client                  'bitcoin'
+      server                  'http://user:user@127.0.0.1:8545'
+      height                  1350000
+      min_confirmations       1
+      explorer_address        ' https://blockchain.info/address/#{address}'
+      explorer_transaction    'https://blockchain.info/tx/#{txid}'
+      status                  'active'
+    end
   end
 end

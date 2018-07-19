@@ -75,7 +75,7 @@ module Client
         next unless item["scriptPubKey"].has_key?("addresses")
         next if address != item['scriptPubKey']['addresses'][0]
 
-        { amount: item.fetch('value').to_d, address: normalize_address(item['scriptPubKey']['addresses'][0]) }
+        { amount: item.fetch('value').to_d, address: item['scriptPubKey']['addresses'][0] }
       end.compact
       { id:            normalize_txid(tx.fetch('txid')),
         confirmations: latest_block - current_block,
