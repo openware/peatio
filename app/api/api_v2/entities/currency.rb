@@ -12,9 +12,10 @@ module APIv2
       expose :withdraw_fee, documentation: 'Currency withdraw fee'
 
       expose :quick_withdraw_limit, documentation: 'Currency quick withdraw limit'
-      expose :deposit_confirmations, if: { type: 'coin'}, documentation: 'Number of deposit confirmations for currency'
+      expose :deposit_confirmations, if: -> (currency){ currency.type == 'coin' },
+             documentation: 'Number of deposit confirmations for currency'
 
-      expose :allow_multiple_deposit_addresses, if: { type: 'coin'}
+      expose :allow_multiple_deposit_addresses, if: -> (currency){ currency.type == 'coin' }
 
       expose :base_factor, documentation: 'Currency base factor'
       expose :precision, documentation: 'Currency precision'

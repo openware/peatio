@@ -85,6 +85,13 @@ describe APIv2::Currencies, type: :request do
     let(:fiat) { Currency.find(:usd) }
     let(:coin) { Currency.find(:btc) }
 
+    let(:expected_for_fiat) do
+      %w[id symbol type deposit_fee withdraw_fee quick_withdraw_limit base_factor precision]
+    end
+    let(:expected_for_coin) do
+      expected_for_fiat + %w[deposit_confirmations allow_multiple_deposit_addresses]
+    end
+
     it 'returns information about specified currency' do
       get "/api/v2/currencies/#{coin.id}"
       expect(response).to be_success
@@ -99,13 +106,20 @@ describe APIv2::Currencies, type: :request do
 
       result = JSON.parse(response.body)
 
-      %w[id symbol type deposit_fee withdraw_fee quick_withdraw_limit base_factor precision].each do |key|
-        expect(result).to have_key key
-      end
+      expected_for_fiat.each { |key| expect(result).to have_key key }
 
-      %w[deposit_confirmations allow_multiple_deposit_addresses].each do |key|
+      (expected_for_coin - expected_for_fiat).each do |key|
         expect(result).not_to have_key key
       end
+    end
+
+    it 'returns correct keys for coin' do
+      get "/api/v2/currencies/#{coin.id}"
+      expect(response).to be_success
+
+      result = JSON.parse(response.body)
+
+      expected_for_coin.each { |key| expect(result).to have_key key }
     end
 
     it 'returns error in case of invalid id' do
