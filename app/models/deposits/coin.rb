@@ -6,7 +6,6 @@ module Deposits
     validate { errors.add(:currency, :invalid) if currency && !currency.coin? }
     validates :address, :txid, :txout, presence: true
     validates :txid, uniqueness: { scope: %i[currency_id txout] }
-    validates :confirmations, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
     before_validation do
       next unless currency&.supports_cash_addr_format? && address?
@@ -26,31 +25,32 @@ module Deposits
     end
 
     def as_json(*)
-      super.merge!(transaction_url: transaction_url)
+      super.merge!(transaction_url: transaction_url,
+                   confirmations:   confirmations)
     end
   end
 end
 
 # == Schema Information
-# Schema version: 20180529125011
+# Schema version: 20180719123616
 #
 # Table name: deposits
 #
-#  id            :integer          not null, primary key
-#  member_id     :integer          not null
-#  currency_id   :string(10)       not null
-#  amount        :decimal(32, 16)  not null
-#  fee           :decimal(32, 16)  not null
-#  address       :string(64)
-#  txid          :string(128)
-#  txout         :integer
-#  aasm_state    :string(30)       not null
-#  confirmations :integer          default(0), not null
-#  type          :string(30)       not null
-#  tid           :string(64)       not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  completed_at  :datetime
+#  id           :integer          not null, primary key
+#  member_id    :integer          not null
+#  currency_id  :string(10)       not null
+#  amount       :decimal(32, 16)  not null
+#  fee          :decimal(32, 16)  not null
+#  address      :string(64)
+#  txid         :string(128)
+#  txout        :integer
+#  aasm_state   :string(30)       not null
+#  type         :string(30)       not null
+#  tid          :string(64)       not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  completed_at :datetime
+#  block_number :integer
 #
 # Indexes
 #

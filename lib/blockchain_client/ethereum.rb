@@ -56,14 +56,14 @@ module BlockchainClient
       normalize_address(tx['from'])
     end
 
-    def build_transaction(tx, current_block_json, latest_block, currency)
+    def build_transaction(tx, current_block_json, currency)
       if is_eth_tx?(tx)
         build_eth_transaction(tx, currency)
       else
         build_erc20_transaction(tx, currency)
       end
         .merge id:            normalize_txid(tx.fetch('hash')),
-               confirmations: latest_block - current_block_json.fetch('number').hex,
+               block_number:  current_block_json.fetch('number').hex,
                received_at:   Time.at(current_block_json.fetch('timestamp').hex)
     end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180718113111) do
+ActiveRecord::Schema.define(version: 20180719123616) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -74,20 +74,20 @@ ActiveRecord::Schema.define(version: 20180718113111) do
   add_index "currencies", ["enabled"], name: "index_currencies_on_enabled", using: :btree
 
   create_table "deposits", force: :cascade do |t|
-    t.integer  "member_id",     limit: 4,                                         null: false
-    t.string   "currency_id",   limit: 10,                                        null: false
-    t.decimal  "amount",                    precision: 32, scale: 16,             null: false
-    t.decimal  "fee",                       precision: 32, scale: 16,             null: false
-    t.string   "address",       limit: 64
-    t.string   "txid",          limit: 128
-    t.integer  "txout",         limit: 4
-    t.string   "aasm_state",    limit: 30,                                        null: false
-    t.integer  "confirmations", limit: 4,                             default: 0, null: false
-    t.string   "type",          limit: 30,                                        null: false
-    t.string   "tid",           limit: 64,                                        null: false
-    t.datetime "created_at",                                                      null: false
-    t.datetime "updated_at",                                                      null: false
+    t.integer  "member_id",    limit: 4,                             null: false
+    t.string   "currency_id",  limit: 10,                            null: false
+    t.decimal  "amount",                   precision: 32, scale: 16, null: false
+    t.decimal  "fee",                      precision: 32, scale: 16, null: false
+    t.string   "address",      limit: 64
+    t.string   "txid",         limit: 128
+    t.integer  "txout",        limit: 4
+    t.string   "aasm_state",   limit: 30,                            null: false
+    t.string   "type",         limit: 30,                            null: false
+    t.string   "tid",          limit: 64,                            null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.datetime "completed_at"
+    t.integer  "block_number", limit: 4
   end
 
   add_index "deposits", ["aasm_state", "member_id", "currency_id"], name: "index_deposits_on_aasm_state_and_member_id_and_currency_id", using: :btree
@@ -201,21 +201,21 @@ ActiveRecord::Schema.define(version: 20180718113111) do
   end
 
   create_table "withdraws", force: :cascade do |t|
-    t.integer  "account_id",    limit: 4,                                         null: false
-    t.integer  "member_id",     limit: 4,                                         null: false
-    t.string   "currency_id",   limit: 10,                                        null: false
-    t.decimal  "amount",                    precision: 32, scale: 16,             null: false
-    t.decimal  "fee",                       precision: 32, scale: 16,             null: false
-    t.string   "txid",          limit: 128
-    t.string   "aasm_state",    limit: 30,                                        null: false
-    t.decimal  "sum",                       precision: 32, scale: 16,             null: false
-    t.string   "type",          limit: 30,                                        null: false
-    t.string   "tid",           limit: 64,                                        null: false
-    t.string   "rid",           limit: 64,                                        null: false
-    t.integer  "confirmations", limit: 4,                             default: 0, null: false
-    t.datetime "created_at",                                                      null: false
-    t.datetime "updated_at",                                                      null: false
+    t.integer  "account_id",   limit: 4,                             null: false
+    t.integer  "member_id",    limit: 4,                             null: false
+    t.string   "currency_id",  limit: 10,                            null: false
+    t.decimal  "amount",                   precision: 32, scale: 16, null: false
+    t.decimal  "fee",                      precision: 32, scale: 16, null: false
+    t.string   "txid",         limit: 128
+    t.string   "aasm_state",   limit: 30,                            null: false
+    t.decimal  "sum",                      precision: 32, scale: 16, null: false
+    t.string   "type",         limit: 30,                            null: false
+    t.string   "tid",          limit: 64,                            null: false
+    t.string   "rid",          limit: 64,                            null: false
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.datetime "completed_at"
+    t.integer  "block_number", limit: 4
   end
 
   add_index "withdraws", ["aasm_state"], name: "index_withdraws_on_aasm_state", using: :btree

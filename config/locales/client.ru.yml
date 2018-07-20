@@ -60,6 +60,7 @@ ru:
         actual_amount: Текущий остаток
         fee: Комиссия
         miner_fee: Комиссия
+        confirmations: Подтверждения
         cancel: Отмена
         no_data: Нет исторических данных
         submitted: Подготовлено

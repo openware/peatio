@@ -36,15 +36,16 @@ module BlockchainService
         # If deposit doesn't exist create it.
         deposit = Deposits::Coin
                     .where(currency: currencies)
-                    .find_or_create_by!(deposit_hash.except(:confirmations))
+                    .find_or_create_by!(deposit_hash)
 
-        next if deposit.confirmations == deposit_hash.fetch(:confirmations)
+        deposit.accept! if deposit.confirmations >= @blockchain.min_confirmations
 
-        # Update confirmations amount for existing deposit.
-        deposit.with_lock do
-          deposit.update(confirmations: deposit_hash.fetch(:confirmations))
-          deposit.accept! if deposit.confirmations >= blockchain.min_confirmations
-        end
+        # Otherwise update confirmations amount for existing deposit.
+        # next if deposit.confirmations == deposit_hash.fetch(:confirmations)
+        # deposit.with_lock do
+          # deposit.update(confirmations: deposit_hash.fetch(:confirmations))
+          # deposit.accept! if deposit.confirmations >= @blockchain.min_confirmations
+        # end
       end
     end
 
@@ -54,7 +55,7 @@ module BlockchainService
         withdrawal = Withdraws::Coin
                        .where(currency: currencies)
                        .confirming
-                       .find_by(withdrawal_hash.except(:confirmations))
+                       .find_by(withdrawal_hash.except(:block_number))
 
         # Skip non-existing in database withdrawals.
         if withdrawal.blank?
@@ -62,11 +63,9 @@ module BlockchainService
           next
         end
 
-        # Don't update withdrawal if confirmations amount is up to date.
-        next if withdrawal.confirmations == withdrawal_hash.fetch(:confirmations)
         withdrawal.with_lock do
-          withdrawal.update(confirmations: withdrawal_hash.fetch(:confirmations))
-          withdrawal.success! if withdrawal.confirmations >= blockchain.min_confirmations
+          withdrawal.update(block_number: withdrawal_hash.fetch(:block_number)) if withdrawal.block_number.blank?
+          withdrawal.success! if withdrawal.confirmations >= @blockchain.min_confirmations
         end
       end
     end
