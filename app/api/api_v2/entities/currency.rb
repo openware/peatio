@@ -15,8 +15,6 @@ module APIv2
       expose :deposit_confirmations, if: -> (currency){ currency.type == 'coin' },
              documentation: 'Number of deposit confirmations for currency'
 
-      expose :allow_multiple_deposit_addresses, if: -> (currency){ currency.type == 'coin' }
-
       expose :base_factor, documentation: 'Currency base factor'
       expose :precision, documentation: 'Currency precision'
     end
