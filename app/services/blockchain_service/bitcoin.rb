@@ -13,8 +13,6 @@ module BlockchainService
         next if block_hash.blank?
 
         block_json = @client.get_block(block_hash)
-        next if block_json.blank?
-
         next if block_json.blank? || block_json['tx'].blank?
 
         deposits    = build_deposits(block_json, block_id, latest_block)
@@ -33,8 +31,8 @@ module BlockchainService
 
     def build_deposits(block_json, block_id, latest_block)
       block_json
-          .fetch('tx')
-          .each_with_object([]) do |tx, deposits|
+        .fetch('tx')
+        .each_with_object([]) do |tx, deposits|
 
         payment_addresses_where(address: @client.to_address(tx)) do |payment_address|
           # If payment address currency doesn't match with blockchain
@@ -56,14 +54,14 @@ module BlockchainService
 
     def build_withdrawals(block_json, block_id, latest_block)
       block_json
-          .fetch('tx')
-          .each_with_object([]) do |tx, withdrawals|
+        .fetch('tx')
+        .each_with_object([]) do |tx, withdrawals|
 
-        Withdraws::Coin.where(currency: currencies, txid: @client.normalize_txid(tx.fetch("txid"))).each do |withdraw|
+        Withdraws::Coin.where(currency: currencies, txid: @client.normalize_txid(tx.fetch('txid'))).each do |withdraw|
           # If wallet currency doesn't match with blockchain transaction
 
           withdraw_txs = @client.build_transaction(tx, block_id, latest_block, withdraw.rid)
-          withdraw_txs.fetch(:entries).each_with_index do |entry, i|
+          withdraw_txs.fetch(:entries).each do |entry|
             withdrawals << {  txid:           withdraw_txs[:id],
                               rid:            entry[:address],
                               sum:            entry[:amount],
