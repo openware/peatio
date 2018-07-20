@@ -12,20 +12,9 @@ module Client
     def endpoint
       @json_rpc_endpoint
     end
+
     def load_balance!
       json_rpc(:getbalance).fetch('result').to_d
-    end
-
-    def each_deposit!(options = {})
-      each_batch_of_deposits do |deposits|
-        deposits.each { |deposit| yield deposit if block_given? }
-      end
-    end
-
-    def each_deposit(options = {})
-      each_batch_of_deposits false do |deposits|
-        deposits.each { |deposit| yield deposit if block_given? }
-      end
     end
 
     def load_deposit!(txid)
@@ -65,14 +54,14 @@ module Client
     end
 
     def to_address(tx)
-      tx.fetch("vout").map{|v| v["scriptPubKey"]["addresses"][0] if v["scriptPubKey"].has_key?("addresses")}.compact
+      tx.fetch('vout').map{|v| v['scriptPubKey']['addresses'][0] if v['scriptPubKey'].has_key?('addresses')}.compact
     end
 
     def build_transaction(tx, current_block, latest_block, address)
       entries = tx.fetch('vout').map do |item|
 
         next if item.fetch('value').to_d <= 0
-        next unless item["scriptPubKey"].has_key?("addresses")
+        next unless item['scriptPubKey'].has_key?('addresses')
         next if address != item['scriptPubKey']['addresses'][0]
 
         { amount: item.fetch('value').to_d, address: item['scriptPubKey']['addresses'][0] }
@@ -103,51 +92,6 @@ module Client
       response = JSON.parse(response.body)
       response['error'].tap { |error| raise Error, error.inspect if error }
       response
-    end
-
-    def each_batch_of_deposits(raise = true)
-      offset    = 0
-      collected = []
-      loop do
-        begin
-          batch_deposits = nil
-          response       = json_rpc(:listtransactions, ['*', 100, offset])
-          offset        += 100
-          batch_deposits = build_deposit_collection(response.fetch('result'))
-        rescue => e
-          report_exception(e)
-          raise e if raise
-        end
-        yield batch_deposits if batch_deposits
-        collected += batch_deposits
-        break unless more_deposits_available?(batch_deposits)
-      end
-      collected
-    end
-
-    def build_standalone_deposit(tx)
-      entries = tx.fetch('details').map do |item|
-        next unless item.fetch('category') == 'receive'
-        { amount: item.fetch('amount').to_d, address: normalize_address(item.fetch('address')) }
-      end.compact
-      { id:            normalize_txid(tx.fetch('txid')),
-        confirmations: tx.fetch('confirmations').to_i,
-        received_at:   Time.at(tx.fetch('timereceived')),
-        entries:       entries }
-    end
-
-    def build_deposit_collection(txs)
-      txs.map do |tx|
-        next unless tx.fetch('category') == 'receive'
-        { id:            normalize_txid(tx.fetch('txid')),
-          confirmations: tx.fetch('confirmations').to_i,
-          received_at:   Time.at(tx.fetch('timereceived')),
-          entries:       [{ amount: tx.fetch('amount').to_d, address: normalize_address(tx.fetch('address')) }] }
-      end.compact.reverse
-    end
-
-    def more_deposits_available?(batch_deposits)
-      batch_deposits.present?
     end
   end
 end
