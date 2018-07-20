@@ -91,5 +91,74 @@ describe BlockchainService::Bitcoin do
         end
       end
     end
+
+    context 'two BTC withdrawals were processed' do
+      # File with real json rpc data for bunch of blocks.
+      let(:block_file_name) { '1354649-1354651.json' }
+
+      # Use rinkeby.etherscan.io to fetch transactions data.
+      let(:expected_withdrawals) do
+        [
+            {
+                sum:  0.30000000,
+                rid:  '2N8ej8FhvQFT9Rw2Vfpiw5uv9CLuTh1BjFB',
+                txid: '4a60db9608a3a7681808efbac83330c8191adadb7d26c67adb5acdf956eede8b'
+            },
+            {
+                sum:  0.40000000,
+                rid:  '2N5G6fEG3N4uZcXnQsE42YDM5nXq35m99Vx',
+                txid: '8de7434cd62089b88d86f742fae32374a08f690cde2905e239c33e4e69ec5617'
+            }
+        ]
+      end
+
+      let(:member) { create(:member, :level_3, :barong) }
+      let!(:btc_account) { member.get_account(:btc).tap { |a| a.update!(locked: 10, balance: 50) } }
+
+      let!(:withdrawals) do
+        expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
+          withdrawal_hash.merge!\
+            member: member,
+            account: btc_account,
+            aasm_state: :confirming,
+            currency: currency
+          withdrawals << create(:btc_withdraw, withdrawal_hash)
+        end
+      end
+
+      let(:currency) { Currency.find_by_id(:btc) }
+
+      before do
+        # Mock requests and methods.
+        client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
+        client.class.any_instance.stubs(:get_block_hash).returns(block_data[0]["result"]["hash"], block_data[1]["result"]["hash"], block_data[2]["result"]["hash"])
+        client.class.any_instance.stubs(:get_block).returns(block_data[0]["result"], block_data[1]["result"], block_data[2]["result"])
+        BlockchainService[blockchain.key].process_blockchain
+      end
+
+      subject { Withdraws::Coin.where(currency: currency) }
+
+      it 'doesn\'t create new withdrawals' do
+        expect(subject.count).to eq expected_withdrawals.count
+      end
+
+      it 'changes withdraw confirmations amount' do
+        subject.each do |withdrawal|
+          expect(withdrawal.confirmations).to_not eq 0
+          if withdrawal.confirmations >= blockchain.min_confirmations
+            expect(withdrawal.aasm_state).to eq 'succeed'
+          end
+        end
+      end
+
+      it 'changes withdraw state if it has enough confirmations' do
+        subject.each do |withdrawal|
+          expect(withdrawal.confirmations).to_not eq 0
+          if withdrawal.confirmations >= blockchain.min_confirmations
+            expect(withdrawal.aasm_state).to eq 'succeed'
+          end
+        end
+      end
+    end
   end
 end
