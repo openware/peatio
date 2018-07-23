@@ -31,7 +31,7 @@ FactoryBot.define do
       key                     'btc-testnet'
       name                    'Bitcoin Testnet'
       client                  'bitcoin'
-      server                  'http://user:user@127.0.0.1:8545'
+      server                  'http://127.0.0.1:18332'
       height                  1350000
       min_confirmations       1
       explorer_address        ' https://blockchain.info/address/#{address}'
