@@ -7,9 +7,27 @@ module CurrencyHelper
   # compared to what ActionController does.
   def currency_icon_url(currency)
     if currency.coin?
-      ActionController::Base.helpers.image_url "yarn_components/cryptocurrency-icons/svg/color/#{currency.code}.svg"
+      ActionController::Base.helpers.image_url coin_icon_url(currency)
     else
-      ActionController::Base.helpers.image_url "yarn_components/currency-flags/src/flags/#{currency.code}.png"
+      ActionController::Base.helpers.image_url fiat_icon_url(currency)
+    end
+  end
+
+  private
+
+  def coin_icon_url(currency)
+    if currency.icon_url.blank?
+      "yarn_components/cryptocurrency-icons/svg/color/#{currency.code}.svg"
+    else
+      currency.icon_url
+    end
+  end
+
+  def fiat_icon_url(currency)
+    if currency.icon_url.blank?
+      "yarn_components/currency-flags/src/flags/#{currency.code}.png"
+    else
+      currency.icon_url
     end
   end
 end
