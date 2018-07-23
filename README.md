@@ -37,9 +37,59 @@ Find more details in the [docs directory](docs).
 
 Local development setup:
 
-* [Docker compose](https://github.com/rubykube/peatio-workbench)
-* [on Mac OS X](docs/setup-osx.md)
-* [on Ubuntu](docs/setup-ubuntu.md)
+* ### [Docker compose](https://github.com/rubykube/peatio-workbench)
+We suggest you to start using Peatio by installing Workbench. Workbench which is based on [Docker containers](https://www.docker.com/what-docker) is a conveniet and straightforward way to start Peatio development environtment.
+
+### To run Workbench you need:
+
+#### Install
+1.  (Optional) [VirtualBox](https://www.virtualbox.org/)(in case you are using Windows)
+2.  [Docker compose](https://docs.docker.com/compose/install/)
+3.  [Docker](https://docs.docker.com/install/)
+4.  [Vagrant](https://www.vagrantup.com/downloads.html)
+
+#### Prepare the workbench
+
+1. Recursive clone : `git clone --recursive https://github.com/rubykube/workbench.git`
+
+2. Move to workbench `cd workbench`
+
+2. Build the images: `make build`
+
+3. Run the application: `make run`
+
+
+To have barong login working with peatio you will need to add this to your `/etc/hosts`:
+
+```
+0.0.0.0 api.wb.local
+0.0.0.0 auth.wb.local
+
+0.0.0.0 api.slanger.wb.local
+0.0.0.0 ws.slanger.wb.local
+
+0.0.0.0 pma.wb.local
+0.0.0.0 monitor.wb.local
+```
+
+Now you have peatio up and running.
+
+##### [Barong](https://github.com/rubykube/barong)
+
+Start barong: `docker-compose run --rm barong bash -c "./bin/link_config && ./bin/setup"`
+
+This will output password for **admin@barong.io**. Default password is `Qwerty123`
+
+##### Peatio
+
+Start peatio server: `docker-compose up -d peatio`
+
+##### Frontend
+
+Simply start your local server. Now you're able to log in with your local Barong and Peatio.
+
+* ### [on Mac OS X](docs/setup-osx.md)
+* ### [on Ubuntu](docs/setup-ubuntu.md)
 
 Production setup:
 
@@ -78,7 +128,23 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 * Highly configurable and extendable
 * Industry standard security out of box
 * Maintained by [peatio.tech](https://www.peatio.tech)
-* [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer) provided by [Barong](https://www.github.com/rubykube/peatio)
+* [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer) provided by [Barong](https://www.github.com/rubykube/barong)
+
+## Barong
+
+Barong is an important part of [peatio.teck](https://peatio.tech/#/) stack. Barong provides an oAuth server specially written for our service. 
+
+### OAuth 2.0
+OAuth 2.0 is the industry-standard protocol for authorization. OAuth 2.0 supersedes the work done on the original OAuth protocol created in 2006. OAuth 2.0 focuses on client developer simplicity while providing specific authorization flows for web applications, desktop applications, mobile phones, and living room devices. This specification and its extensions are being developed within the IETF OAuth Working Group.
+
+### Barong Levels
+
+In the process of verification Barong assign different levels to accounts
+
+- Level 0 is default account level
+- Level 1 will apply after email verification
+- Level 2 will apply after phone verification
+- Level 3 will apply after identity & document verification
 
 ## API
 
