@@ -40,26 +40,19 @@ Local development setup:
 * ### [Docker compose](https://github.com/rubykube/peatio-workbench)
 We suggest you to start using Peatio by installing Workbench. Workbench which is based on [Docker containers](https://www.docker.com/what-docker) is a conveniet and straightforward way to start Peatio development environtment.
 
-### To run Workbench you need:
-
-#### Install
-1.  (Optional) [VirtualBox](https://www.virtualbox.org/)(in case you are using Windows)
-2.  [Docker compose](https://docs.docker.com/compose/install/)
-3.  [Docker](https://docs.docker.com/install/)
+### Quick Install
+1.  Install Docker on your computer: [Docker](https://docs.docker.com/install/)
+2.  Install Docker compose [Docker compose](https://docs.docker.com/compose/install/)
 4.  [Vagrant](https://www.vagrantup.com/downloads.html)
 
-#### Prepare the workbench
+#### Start peatio with workbench
 
 1. Recursive clone : `git clone --recursive https://github.com/rubykube/workbench.git`
-
 2. Move to workbench `cd workbench`
-
 2. Build the images: `make build`
-
 3. Run the application: `make run`
 
-
-To have barong login working with peatio you will need to add this to your `/etc/hosts`:
+This setup use a load balance configured with the following hosts to install in `/etc/hosts`:
 
 ```
 0.0.0.0 api.wb.local
