@@ -45,9 +45,9 @@ describe BlockchainService::Bitcoin do
             txid:     '68ecb040b8d9716c1c09d552e158f69ba9b4b2bbbfb8407bef348f78e1eabbe8'
           },
           {
-              amount:   0.65000000,
-              address:  '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt',
-              txid:     '76b0e88cdb624d3d10122c6dfcb75c379df0f4faf27cb4dbb848ea560dd611fa'
+            amount:   0.65000000,
+            address:  '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt',
+            txid:     '76b0e88cdb624d3d10122c6dfcb75c379df0f4faf27cb4dbb848ea560dd611fa'
           }
         ]
       end
@@ -99,16 +99,16 @@ describe BlockchainService::Bitcoin do
       # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_withdrawals) do
         [
-            {
-                sum:  0.30000000,
-                rid:  '2N8ej8FhvQFT9Rw2Vfpiw5uv9CLuTh1BjFB',
-                txid: '4a60db9608a3a7681808efbac83330c8191adadb7d26c67adb5acdf956eede8b'
-            },
-            {
-                sum:  0.40000000,
-                rid:  '2N5G6fEG3N4uZcXnQsE42YDM5nXq35m99Vx',
-                txid: '8de7434cd62089b88d86f742fae32374a08f690cde2905e239c33e4e69ec5617'
-            }
+          {
+            sum:  0.30000000,
+            rid:  '2N8ej8FhvQFT9Rw2Vfpiw5uv9CLuTh1BjFB',
+            txid: '4a60db9608a3a7681808efbac83330c8191adadb7d26c67adb5acdf956eede8b'
+          },
+          {
+            sum:  0.40000000,
+            rid:  '2N5G6fEG3N4uZcXnQsE42YDM5nXq35m99Vx',
+            txid: '8de7434cd62089b88d86f742fae32374a08f690cde2905e239c33e4e69ec5617'
+          }
         ]
       end
 
@@ -145,15 +145,11 @@ describe BlockchainService::Bitcoin do
       it 'changes withdraw confirmations amount' do
         subject.each do |withdrawal|
           expect(withdrawal.confirmations).to_not eq 0
-          if withdrawal.confirmations >= blockchain.min_confirmations
-            expect(withdrawal.aasm_state).to eq 'succeed'
-          end
         end
       end
 
       it 'changes withdraw state if it has enough confirmations' do
         subject.each do |withdrawal|
-          expect(withdrawal.confirmations).to_not eq 0
           if withdrawal.confirmations >= blockchain.min_confirmations
             expect(withdrawal.aasm_state).to eq 'succeed'
           end
