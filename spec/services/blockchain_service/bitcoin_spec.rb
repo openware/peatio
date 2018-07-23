@@ -26,7 +26,14 @@ describe BlockchainService::Bitcoin do
 
     let(:client) { Client[blockchain.key] }
 
-    def request_body(block_hash)
+    def request_block_hash_body(block_height)
+      { jsonrpc: '1.0',
+        method: :getblockhash,
+        params:  [block_height]
+      }.to_json
+    end
+
+    def request_block_body(block_hash)
       { jsonrpc: '1.0',
         method:  :getblock,
         params:  [block_hash, 2]
@@ -61,8 +68,18 @@ describe BlockchainService::Bitcoin do
       before do
         # Mock requests and methods.
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
-        client.class.any_instance.stubs(:get_block_hash).returns(block_data[0]["result"]["hash"], block_data[1]["result"]["hash"])
-        client.class.any_instance.stubs(:get_block).returns(block_data[0]["result"], block_data[1]["result"])
+
+        block_data.each_with_index do |blk, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+            .with(body: request_block_hash_body(blk['result']['height']))
+            .to_return(body: {result: blk['result']['hash']}.to_json)
+
+          # stub get_block
+          stub_request(:post, client.endpoint)
+            .with(body: request_block_body(blk['result']['hash']))
+            .to_return(body: blk.to_json)
+        end
 
         # Process blockchain data.
         BlockchainService[blockchain.key].process_blockchain
@@ -131,8 +148,19 @@ describe BlockchainService::Bitcoin do
       before do
         # Mock requests and methods.
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
-        client.class.any_instance.stubs(:get_block_hash).returns(block_data[0]["result"]["hash"], block_data[1]["result"]["hash"], block_data[2]["result"]["hash"])
-        client.class.any_instance.stubs(:get_block).returns(block_data[0]["result"], block_data[1]["result"], block_data[2]["result"])
+
+        block_data.each_with_index do |blk, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+            .with(body: request_block_hash_body(blk['result']['height']))
+            .to_return(body: {result: blk['result']['hash']}.to_json)
+
+          # stub get_block
+          stub_request(:post, client.endpoint)
+            .with(body: request_block_body(blk['result']['hash']))
+            .to_return(body: blk.to_json)
+        end
+
         BlockchainService[blockchain.key].process_blockchain
       end
 
