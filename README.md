@@ -38,7 +38,7 @@ Find more details in the [docs directory](docs).
 Local development setup:
 
 * ### [Docker compose](https://github.com/rubykube/peatio-workbench)
-We suggest you to start using Peatio by installing Workbench. Workbench which is based on [Docker containers](https://www.docker.com/what-docker) is a conveniet and straightforward way to start Peatio development environtment.
+We suggest you to start using Peatio by installing Workbench. Workbench which is based on [Docker containers](https://www.docker.com/what-docker) is a convenient and straightforward way to start Peatio development environment.
 
 ### Quick Install
 1.  Install Docker on your computer: [Docker](https://docs.docker.com/install/)
@@ -52,7 +52,7 @@ We suggest you to start using Peatio by installing Workbench. Workbench which is
 2. Build the images: `make build`
 3. Run the application: `make run`
 
-This setup use a load balance configured with the following hosts to install in `/etc/hosts`:
+This setup uses a load balance configured with the following hosts to install in `/etc/hosts`:
 
 ```
 0.0.0.0 api.wb.local
@@ -125,14 +125,14 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 
 ## Barong
 
-Barong is an important part of [peatio.teck](https://peatio.tech/#/) stack. Barong provides an oAuth server specially written for our service. 
+Barong is an important part of [peatio.teck](https://peatio.tech/#/) stack. Barong provides an OAuth server specially written for our service. 
 
 ### OAuth 2.0
 OAuth 2.0 is the industry-standard protocol for authorization. OAuth 2.0 supersedes the work done on the original OAuth protocol created in 2006. OAuth 2.0 focuses on client developer simplicity while providing specific authorization flows for web applications, desktop applications, mobile phones, and living room devices. This specification and its extensions are being developed within the IETF OAuth Working Group.
 
 ### Barong Levels
 
-In the process of verification Barong assign different levels to accounts
+In the process of verification, Barong assign different levels to accounts
 
 - Level 0 is default account level
 - Level 1 will apply after email verification
