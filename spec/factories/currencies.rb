@@ -23,6 +23,7 @@ FactoryBot.define do
     end
 
     trait :btc do
+      blockchain_key       'btc-testnet'
       code                 'btc'
       symbol               '฿'
       type                 'coin'
@@ -41,6 +42,7 @@ FactoryBot.define do
     end
 
     trait :dash do
+      blockchain_key       'dash-testnet'
       code                 'dash'
       symbol               'Đ'
       type                 'coin'
@@ -131,5 +133,23 @@ FactoryBot.define do
         supports_hd_protocol:             true,
         allow_multiple_deposit_addresses: true
     end
+
+    trait :ltc do
+      blockchain_key       'ltc-testnet'
+      code                 'ltc'
+      symbol               'Ł'
+      type                 'coin'
+      base_factor          100_000_000
+      quick_withdraw_limit 1000
+      withdraw_fee         0.02
+      options \
+        api_client:                       'LTC',
+        json_rpc_endpoint:                'http://127.0.0.1:17732',
+        min_confirmations:                1,
+        case_sensitive:                   true,
+        supports_hd_protocol:             true,
+        allow_multiple_deposit_addresses: true
+    end
+
   end
 end
