@@ -4,10 +4,11 @@ module BlockchainService
   class Ethereum < Base
 
     def process_blockchain(blocks_limit: 10)
-      current_block   = blockchain.height || 0
-      latest_block    = [client.latest_block_number, current_block + blocks_limit].min
+      latest_block = client.latest_block_number
+      from_block   = blockchain.height || 0
+      to_block     = [latest_block, from_block + blocks_limit].min
 
-      (current_block..latest_block).each do |block_id|
+      (from_block..to_block).each do |block_id|
         Rails.logger.info { "Started processing #{blockchain.key} block number #{block_id}." }
 
         block_json = client.get_block(block_id)
@@ -17,6 +18,13 @@ module BlockchainService
         deposits    = build_deposits(block_json, latest_block)
         withdrawals = build_withdrawals(block_json, latest_block)
 
+        deposits.map { |d| d[:txid] }.join(',').tap do |txids|
+          Rails.logger.info { "Deposit trancations in block #{block_id}: #{txids}" }
+        end
+
+        withdrawals.map { |w| w[:txid] }.join(',').tap do |txids|
+          Rails.logger.info { "Withdraw trancations in block #{block_id}: #{txids}" }
+        end
         update_or_create_deposits!(deposits)
         update_withdrawals!(withdrawals)
 

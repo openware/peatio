@@ -7,15 +7,12 @@ running = true
 Signal.trap(:TERM) { running = false }
 
 while running
-  Blockchain.where(status: 'active').each do |bc|
+  Blockchain.where(status: :active).each do |bc|
     break unless running
     Rails.logger.info { "Processing #{bc.name} blocks." }
 
-    processed = 0
-    loop do
-      BlockchainService[bc.key].process_blockchain
-      sleep 3
-    end
+    BlockchainService[bc.key].process_blockchain
+
     Rails.logger.info { "Processing #{bc.name} blocks." }
   rescue => e
     report_exception(e)
