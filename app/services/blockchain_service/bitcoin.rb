@@ -9,7 +9,7 @@ module BlockchainService
 
       (current_block..latest_block).each do |block_id|
 
-        Rails.logger.info { "Started processing #{blockchain.key} block number #{blockchain.height}." }
+        Rails.logger.info { "Started processing #{blockchain.key} block number #{block_id}." }
 
         block_hash = client.get_block_hash(block_id)
         next if block_hash.blank?
@@ -26,7 +26,7 @@ module BlockchainService
         # Mark block as processed if both deposits and withdrawals were confirmed.
         blockchain.update(height: block_id) if latest_block - block_id > blockchain.min_confirmations
 
-        Rails.logger.info { "Finished processing #{blockchain.key} block number #{blockchain.height}." }
+        Rails.logger.info { "Finished processing #{blockchain.key} block number #{block_id}." }
       rescue => e
         report_exception(e)
       end
