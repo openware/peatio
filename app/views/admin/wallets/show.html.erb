@@ -7,9 +7,6 @@
     <div class="card">
       <div class="card-body">
         <div class="form-group">
-          <label>Id</label>
-          <div class="mb-3"><%= @wallet.id %></div>
-
           <label>Currency Id</label>
           <%= f.select :currency_id, Currency.codes.map { |code| [code.upcase, code] }, {selected: @wallet.currency_id}, {class: "form-control mb-3"} %>
 
