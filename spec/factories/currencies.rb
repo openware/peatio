@@ -42,6 +42,7 @@ FactoryBot.define do
     end
 
     trait :dash do
+      blockchain_key       'dash-testnet'
       code                 'dash'
       symbol               'Đ'
       type                 'coin'

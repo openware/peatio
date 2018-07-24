@@ -34,8 +34,20 @@ FactoryBot.define do
       server                  'http://127.0.0.1:18332'
       height                  1350000
       min_confirmations       1
-      explorer_address        ' https://blockchain.info/address/#{address}'
+      explorer_address        'https://blockchain.info/address/#{address}'
       explorer_transaction    'https://blockchain.info/tx/#{txid}'
+      status                  'active'
+    end
+
+    trait 'dash-testnet' do
+      key                     'dash-testnet'
+      name                    'Dash Testnet'
+      client                  'dash'
+      server                  'http://127.0.0.1:19998'
+      height                  1350000
+      min_confirmations       1
+      explorer_address        'https://live.blockcypher.com/dash/address/#{address}'
+      explorer_transaction    'https://live.blockcypher.com/dash/tx/#{txid}'
       status                  'active'
     end
   end
