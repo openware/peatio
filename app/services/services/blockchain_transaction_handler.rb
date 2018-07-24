@@ -11,7 +11,7 @@ module Services
 
     def call(tx)
       # Skip if transaction is processed.
-      return if Deposits::Coin.where(currency: currency, txid: tx[:id]).exists?
+      # return if Deposits::Coin.where(currency: currency, txid: tx[:id]).exists?
 
       # Skip transactions for which addresses don't exist in database.
       # At least one address from transaction entries must exist in Peatio database.

@@ -48,7 +48,6 @@
     <th>{{ "funds.withdraw_history.withdraw_address" | t }}</th>
     <th>{{ "funds.withdraw_history.actual_amount" | t }}</th>
     <th>{{ "funds.withdraw_history.miner_fee" | t }}</th>
-    <th>{{ "funds.withdraw_history.confirmations" | t }}</th>
     <th>{{ "funds.withdraw_history.state_and_action" | t }}</th>
   </tr>
   <tr ng-repeat="withdraw in wdCtrl.withdraws | orderBy:predicate">
@@ -60,7 +59,6 @@
     </td>
     <td>{{withdraw.amount}}</td>
     <td>{{withdraw.fee}}</td>
-    <td>{{withdraw.confirmations}}</td>
     <td>{{"funds.withdraw_history." + withdraw.aasm_state | t}}
       <span ng-if="wdCtrl.canCancel(withdraw.aasm_state)">/
         <a ng-click="wdCtrl.cancelWithdraw(withdraw); $event.preventDefault()" href="#" class="cancel_link">{{ "funds.withdraw_history.cancel" | t }}</a>

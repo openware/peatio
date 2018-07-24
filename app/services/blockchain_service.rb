@@ -38,14 +38,9 @@ module BlockchainService
                     .where(currency: currencies)
                     .find_or_create_by!(deposit_hash)
 
-        deposit.accept! if deposit.confirmations >= @blockchain.min_confirmations
-
-        # Otherwise update confirmations amount for existing deposit.
-        # next if deposit.confirmations == deposit_hash.fetch(:confirmations)
-        # deposit.with_lock do
-          # deposit.update(confirmations: deposit_hash.fetch(:confirmations))
-          # deposit.accept! if deposit.confirmations >= @blockchain.min_confirmations
-        # end
+        deposit.with_lock do
+          deposit.accept! if deposit.confirmations >= @blockchain.min_confirmations
+        end
       end
     end
 
