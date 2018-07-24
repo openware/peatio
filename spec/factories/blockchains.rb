@@ -39,6 +39,18 @@ FactoryBot.define do
       status                  'active'
     end
 
+    trait 'ltc-testnet' do
+      key                     'ltc-testnet'
+      name                    'Litecoin Testnet'
+      client                  'litecoin'
+      server                  'http://127.0.0.1:17732'
+      height                  1350000
+      min_confirmations       1
+      explorer_address        'https://live.blockcypher.com/ltc/address/#{address}'
+      explorer_transaction    'https://live.blockcypher.com/ltc/tx/#{txid}'
+      status                  'active'
+    end
+
     trait 'dash-testnet' do
       key                     'dash-testnet'
       name                    'Dash Testnet'
