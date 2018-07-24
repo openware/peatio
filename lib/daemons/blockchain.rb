@@ -12,10 +12,7 @@ while running
     Rails.logger.info { "Processing #{bc.name} blocks." }
 
     processed = 0
-    loop do
-      BlockchainService[bc.key].process_blockchain
-      sleep 3
-    end
+    BlockchainService[bc.key].process_blockchain
     Rails.logger.info { "Processing #{bc.name} blocks." }
   rescue => e
     report_exception(e)
