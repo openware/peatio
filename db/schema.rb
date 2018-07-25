@@ -82,12 +82,12 @@ ActiveRecord::Schema.define(version: 20180719123616) do
     t.string   "txid",         limit: 128
     t.integer  "txout",        limit: 4
     t.string   "aasm_state",   limit: 30,                            null: false
+    t.integer  "block_number", limit: 4
     t.string   "type",         limit: 30,                            null: false
     t.string   "tid",          limit: 64,                            null: false
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.datetime "completed_at"
-    t.integer  "block_number", limit: 4
   end
 
   add_index "deposits", ["aasm_state", "member_id", "currency_id"], name: "index_deposits_on_aasm_state_and_member_id_and_currency_id", using: :btree
@@ -208,6 +208,7 @@ ActiveRecord::Schema.define(version: 20180719123616) do
     t.decimal  "fee",                      precision: 32, scale: 16, null: false
     t.string   "txid",         limit: 128
     t.string   "aasm_state",   limit: 30,                            null: false
+    t.integer  "block_number", limit: 4
     t.decimal  "sum",                      precision: 32, scale: 16, null: false
     t.string   "type",         limit: 30,                            null: false
     t.string   "tid",          limit: 64,                            null: false
@@ -215,7 +216,6 @@ ActiveRecord::Schema.define(version: 20180719123616) do
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.datetime "completed_at"
-    t.integer  "block_number", limit: 4
   end
 
   add_index "withdraws", ["aasm_state"], name: "index_withdraws_on_aasm_state", using: :btree
