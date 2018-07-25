@@ -155,7 +155,7 @@ class Currency < ActiveRecord::Base
   end
 
   def blockchain_api
-    Client[blockchain.key]
+    BlockchainClient[blockchain.key]
   end
 
   attr_readonly :id,

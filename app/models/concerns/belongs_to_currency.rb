@@ -29,12 +29,12 @@ module BelongsToCurrency
     def confirmations
       return 0 if block_number.blank?
       latest_block_number - block_number
+    rescue Faraday::ConnectionFailed => e
+      report_exception(e)
     end
 
     def latest_block_number
       currency.blockchain_api.latest_block_number
-    rescue NoMethodError
-      currency.api.latest_block_number # For Coin API
     end
 
   end
