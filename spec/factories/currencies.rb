@@ -116,6 +116,7 @@ FactoryBot.define do
     end
 
     trait :bch do
+      blockchain_key       'bch-testnet'
       code                 'bch'
       symbol               '฿'
       type                 'coin'

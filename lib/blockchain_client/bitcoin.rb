@@ -54,7 +54,7 @@ module BlockchainClient
     end
 
     def to_address(tx)
-      tx.fetch('vout').map{|v| v['scriptPubKey']['addresses'][0] if v['scriptPubKey'].has_key?('addresses')}.compact
+      tx.fetch('vout').map{|v| normalize_address(v['scriptPubKey']['addresses'][0]) if v['scriptPubKey'].has_key?('addresses')}.compact
     end
 
     def build_transaction(tx, current_block, address)

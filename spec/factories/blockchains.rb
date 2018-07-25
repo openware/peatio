@@ -62,5 +62,17 @@ FactoryBot.define do
       explorer_transaction    'https://live.blockcypher.com/dash/tx/#{txid}'
       status                  'active'
     end
+
+    trait 'bch-testnet' do
+      key                     'bch-testnet'
+      name                    'BitcoinCash Testnet'
+      client                  'bitcoincash'
+      server                  'http://127.0.0.1:18332'
+      height                  1350000
+      min_confirmations       1
+      explorer_address        'https://live.blockcypher.com/bch/address/#{address}'
+      explorer_transaction    'https://live.blockcypher.com/bch/tx/#{txid}'
+      status                  'active'
+    end
   end
 end
