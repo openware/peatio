@@ -20,6 +20,7 @@ class Withdraw < ActiveRecord::Base
 
   validates :rid, :aasm_state, presence: true
   validates :txid, uniqueness: { scope: :currency_id }, if: :txid?
+  validates :block_number, allow_blank: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
 
@@ -65,6 +66,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :dispatch do
+      # TODO: add validations that txid and block_number are not blank.
       transitions from: :processing, to: :confirming
     end
 

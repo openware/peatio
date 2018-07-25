@@ -32,6 +32,18 @@ module Withdraws
       end
     end
 
+    def latest_block_number
+      currency.blockchain_api.latest_block_number
+    end
+
+    def confirmations
+      return 0 if block_number.blank?
+      latest_block_number - block_number
+    rescue Faraday::ConnectionFailed => e
+      report_exception(e)
+      'N/A'
+    end
+
     # TODO: backport audit!
     def audit!
       # inspection = currency.api.inspect_address!(rid)
@@ -50,6 +62,10 @@ module Withdraws
         wallet_url:       wallet_url,
         transaction_url:  transaction_url,
         confirmations:    confirmations
+    end
+
+    def as_json_for_event_api
+      super.merge blockchain_confirmations: confirmations
     end
   end
 end

@@ -6,7 +6,6 @@ module Deposits
     validate { errors.add(:currency, :invalid) if currency && !currency.coin? }
     validates :address, :txid, :txout, presence: true
     validates :txid, uniqueness: { scope: %i[currency_id txout] }
-    validates :block_number, allow_blank: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
     before_validation do
       next unless currency&.supports_cash_addr_format? && address?
@@ -25,9 +24,25 @@ module Deposits
       end
     end
 
+    def latest_block_number
+      currency.blockchain_api.latest_block_number
+    end
+
+    def confirmations
+      return 0 if block_number.blank?
+      latest_block_number - block_number
+    rescue Faraday::ConnectionFailed => e
+      report_exception(e)
+      'N/A'
+    end
+
     def as_json(*)
       super.merge!(transaction_url: transaction_url,
                    confirmations:   confirmations)
+    end
+
+    def as_json_for_event_api
+      super.merge blockchain_confirmations: confirmations
     end
   end
 end

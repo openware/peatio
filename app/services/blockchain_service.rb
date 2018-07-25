@@ -38,9 +38,7 @@ module BlockchainService
                     .where(currency: currencies)
                     .find_or_create_by!(deposit_hash)
 
-        deposit.with_lock do
-          deposit.accept! if deposit.confirmations >= blockchain.min_confirmations
-        end
+        deposit.accept! if deposit.confirmations >= blockchain.min_confirmations
       end
     end
 
@@ -59,10 +57,7 @@ module BlockchainService
         end
 
         withdrawal.update(block_number: withdrawal_hash.fetch(:block_number)) if withdrawal.block_number.blank?
-
-        withdrawal.with_lock do
-          withdrawal.success! if withdrawal.confirmations >= blockchain.min_confirmations
-        end
+        withdrawal.success! if withdrawal.confirmations >= blockchain.min_confirmations
       end
     end
 

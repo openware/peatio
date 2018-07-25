@@ -15,6 +15,7 @@ class Deposit < ActiveRecord::Base
 
   validates :tid, :aasm_state, :type, presence: true
   validates :completed_at, presence: { if: :completed? }
+  validates :block_number, allow_blank: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   scope :recent, -> { order(id: :desc) }
 
@@ -55,8 +56,7 @@ class Deposit < ActiveRecord::Base
       updated_at:               updated_at.iso8601,
       completed_at:             completed_at&.iso8601,
       blockchain_address:       address,
-      blockchain_txid:          txid,
-      blockchain_confirmations: confirmations }
+      blockchain_txid:          txid }
   end
 
   def completed?
