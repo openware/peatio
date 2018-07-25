@@ -22,8 +22,20 @@ FactoryBot.define do
       account { create(:member, :level_3).get_account(:trst) }
     end
 
+    trait :ltc_address do
+      currency { Currency.find(:ltc) }
+      account { create(:member, :level_3).get_account(:ltc) }
+    end
+
+    trait :dash_address do
+      currency { Currency.find(:dash) }
+      account { create(:member, :level_3).get_account(:dash) }
+    end
+
     factory :btc_payment_address, traits: [:btc_address]
     factory :eth_payment_address, traits: [:eth_address]
     factory :trst_payment_address, traits: [:trst_address]
+    factory :dash_payment_address, traits: [:dash_address]
+    factory :ltc_payment_address, traits: [:ltc_address]
   end
 end
