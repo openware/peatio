@@ -4,6 +4,17 @@
   kind:         hot
   nsig:         1
   status:       active
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
 
 - name:         Ethereum Warm Wallet
   currency_id:  eth
@@ -11,6 +22,17 @@
   kind:         warm
   nsig:         2
   status:       disabled
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
 
 - name:         Ethereum Cold Wallet
   currency_id:  eth
@@ -18,6 +40,17 @@
   kind:         cold
   nsig:         3
   status:       disabled
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
 
 - name:         Ethereum Deposit Wallet
   currency_id:  eth
@@ -25,3 +58,86 @@
   kind:         deposit
   nsig:         1
   status:       active
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
+
+- name:         Bitcoin Hot Wallet
+  currency_id:  btc
+  address:      ~
+  kind:         hot
+  nsig:         1
+  status:       active
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
+
+- name:         Bitcoin Warm Wallet
+  currency_id:  btc
+  address:      ~
+  kind:         warm
+  nsig:         2
+  status:       disabled
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
+
+- name:         Bitcoin Cold Wallet
+  currency_id:  btc
+  address:      ~
+  kind:         cold
+  nsig:         3
+  status:       disabled
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
+
+- name:         Bitcoin Deposit Wallet
+  currency_id:  btc
+  address:      ~
+  kind:         deposit
+  nsig:         1
+  status:       active
+  max_deposit: ~
+  gateway:
+    host: coinhub
+    type: bitgo
+    options:
+      bitgo_test_net:              on
+      bitgo_wallet_id:             ~
+      bitgo_wallet_address:        ~
+      bitgo_wallet_passphrase:     ~
+      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+      bitgo_rest_api_access_token: ~
