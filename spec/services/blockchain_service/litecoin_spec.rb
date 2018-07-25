@@ -77,7 +77,7 @@ describe BlockchainService::Litecoin do
         end
 
         # Process blockchain data.
-        BlockchainService[blockchain.key].process_blockchain
+        BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
       subject { Deposits::Coin.where(currency: currency) }
@@ -99,7 +99,7 @@ describe BlockchainService::Litecoin do
 
         it 'doesn\'t change deposit' do
           expect(blockchain.height).to eq start_block
-          expect{ BlockchainService[blockchain.key].process_blockchain}.not_to change{subject}
+          expect{ BlockchainService[blockchain.key].process_blockchain(force: true)}.not_to change{subject}
         end
       end
     end
@@ -156,7 +156,7 @@ describe BlockchainService::Litecoin do
             .to_return(body: blk.to_json)
         end
 
-        BlockchainService[blockchain.key].process_blockchain
+        BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
       subject { Withdraws::Coin.where(currency: currency) }
