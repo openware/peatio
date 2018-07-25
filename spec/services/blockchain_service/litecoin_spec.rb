@@ -9,7 +9,7 @@ describe BlockchainService::Litecoin do
     WebMock.allow_net_connect!
   end
 
-  describe 'Client::Litecoin' do
+  describe 'BlockchainClient::Litecoin' do
     let(:block_data) do
       Rails.root.join('spec', 'resources', 'litecoin-data', block_file_name)
         .yield_self { |file_path| File.open(file_path) }
@@ -24,7 +24,7 @@ describe BlockchainService::Litecoin do
         .tap { |b| b.update(height: start_block) }
     end
 
-    let(:client) { Client[blockchain.key] }
+    let(:client) { BlockchainClient[blockchain.key] }
 
     def request_block_hash_body(block_height)
       { jsonrpc: '1.0',

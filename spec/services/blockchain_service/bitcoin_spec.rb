@@ -9,7 +9,7 @@ describe BlockchainService::Bitcoin do
     WebMock.allow_net_connect!
   end
 
-  describe 'Client::Bitcoin' do
+  describe 'BlockchainClient::Bitcoin' do
     let(:block_data) do
       Rails.root.join('spec', 'resources', 'bitcoin-data', block_file_name)
         .yield_self { |file_path| File.open(file_path) }

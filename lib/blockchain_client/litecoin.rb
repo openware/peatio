@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module Client
+module BlockchainClient
   class Litecoin < Bitcoin
 
     def latest_block_number
