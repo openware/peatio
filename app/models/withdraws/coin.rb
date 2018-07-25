@@ -67,6 +67,7 @@ end
 #  fee          :decimal(32, 16)  not null
 #  txid         :string(128)
 #  aasm_state   :string(30)       not null
+#  block_number :integer
 #  sum          :decimal(32, 16)  not null
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
@@ -74,7 +75,6 @@ end
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime
-#  block_number :integer
 #
 # Indexes
 #

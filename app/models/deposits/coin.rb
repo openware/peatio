@@ -46,12 +46,12 @@ end
 #  txid         :string(128)
 #  txout        :integer
 #  aasm_state   :string(30)       not null
+#  block_number :integer
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime
-#  block_number :integer
 #
 # Indexes
 #
