@@ -1,24 +1,17 @@
 module WalletClient
-  class Geth < Base
-
-    TOKEN_METHOD_ID = '0xa9059cbb'
+  class Bitcoind < Base
 
     def initialize(*)
       super
-      @json_rpc_call_id  = 0
       @json_rpc_endpoint = URI.parse(wallet.gateway.dig('options','uri'))
     end
 
     def create_address!(options = {})
-      secret = options.fetch(:secret) { Passgen.generate(length: 64, symbols: true) }
-      secret.yield_self do |password|
-        { address: normalize_address(json_rpc(:personal_newAccount, [password]).fetch('result')),
-          secret:  password }
-      end
+      { address: normalize_address(json_rpc(:getnewaddress).fetch('result')) }
     end
 
     def normalize_address(address)
-      address.downcase
+      address
     end
 
     protected
@@ -35,7 +28,7 @@ module WalletClient
     def json_rpc(method, params = [])
       response = connection.post \
         '/',
-        { jsonrpc: '2.0', id: @json_rpc_call_id += 1, method: method, params: params }.to_json,
+        { jsonrpc: '1.0', method: method, params: params }.to_json,
         { 'Accept'       => 'application/json',
           'Content-Type' => 'application/json' }
       response.assert_success!

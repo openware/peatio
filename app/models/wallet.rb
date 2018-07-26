@@ -16,6 +16,7 @@ class Wallet < ActiveRecord::Base
   validates :gateway, length: { maximum: 1000 }
 
   scope :active, -> { where(status: 'active') }
+  scope :deposit, -> { where(kind: 'deposit') }
 
   def wallet_url
     if currency.wallet_url_template?
