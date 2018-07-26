@@ -40,7 +40,7 @@ module BlockchainService
         update_withdrawals!(withdrawals)
 
         # Mark block as processed if both deposits and withdrawals were confirmed.
-        blockchain.update(height: block_id) if latest_block - block_id > blockchain.min_confirmations
+        blockchain.update(height: block_id) if latest_block - block_id >= blockchain.min_confirmations
 
         Rails.logger.info { "Finished processing #{blockchain.key} block number #{block_id}." }
       rescue => e
