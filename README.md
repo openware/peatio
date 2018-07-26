@@ -43,14 +43,14 @@ We suggest you to start using Peatio by installing Workbench. Workbench which is
 ### Quick Install
 1.  Install Docker on your computer: [Docker](https://docs.docker.com/install/)
 2.  Install Docker compose [Docker compose](https://docs.docker.com/compose/install/)
-4.  [Vagrant](https://www.vagrantup.com/downloads.html)
+3.  [Vagrant](https://www.vagrantup.com/downloads.html)
 
 #### Start peatio with workbench
 
 1. Recursive clone : `git clone --recursive https://github.com/rubykube/workbench.git`
 2. Move to workbench `cd workbench`
-2. Build the images: `make build`
-3. Run the application: `make run`
+3. Build the images: `make build`
+4. Run the application: `make run`
 
 This setup uses a load balance configured with the following hosts to install in `/etc/hosts`:
 
