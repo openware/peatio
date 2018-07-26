@@ -1,5 +1,6 @@
 # encoding: UTF-8
 # frozen_string_literal: true
+
 module BlockchainService
   class Ethereum < Base
     # Rough number of blocks per hour for Ethereum is 250.

@@ -1,5 +1,6 @@
 # encoding: UTF-8
 # frozen_string_literal: true
+
 module BlockchainService
   class Bitcoin < Base
     # Rough number of blocks per hour for Bitcoin is 6.
