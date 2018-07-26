@@ -66,7 +66,7 @@ module BlockchainService
                           member:         payment_address.account.member,
                           currency:       payment_address.currency,
                           txout:          i,
-                          block_number:  deposit_txs[:block_number] }
+                          block_number:   deposit_txs[:block_number] }
           end
         end
       end
