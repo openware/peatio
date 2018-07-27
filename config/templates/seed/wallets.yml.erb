@@ -1,60 +1,65 @@
-- name:         Ethereum Deposit Wallet
-  currency_id:  eth
-  address:      '0x2b9fBC10EbAeEc28a8Fc10069C0BC29E45eBEB9C'
-  kind:         deposit
-  nsig:         1
-  max_balance:  0.0
-  status:       active
+- name:             Ethereum Deposit Wallet
+  blockchain_key:   eth-rinkeby
+  currency_id:      eth
+  address:          '0x2b9fBC10EbAeEc28a8Fc10069C0BC29E45eBEB9C'
+  kind:             deposit
+  nsig:             1
+  max_balance:      0.0
+  status:           active
   gateway:
-    client: geth
+    client:         geth
     options:
-      uri: http://user:password@127.0.0.1:8545
+      uri:          http://user:password@127.0.0.1:8545
 
-- name:         Ethereum Hot Wallet
-  currency_id:  eth
-  address:      '0x2b9fBC10EbAeEc28a8Fc10069C0BC29E45eBEB9C'
-  kind:         hot
-  nsig:         1
-  max_balance:  100.0
-  status:       active
+- name:             Ethereum Hot Wallet
+  blockchain_key:   eth-rinkeby
+  currency_id:      eth
+  address:          '0x2b9fBC10EbAeEc28a8Fc10069C0BC29E45eBEB9C'
+  kind:             hot
+  nsig:             1
+  max_balance:      100.0
+  status:           active
   gateway:
-    client: geth
+    client:         geth
     options:
-      uri: http://user:password@127.0.0.1:8545
+      uri:          http://user:password@127.0.0.1:8545
 
-- name:         Ethereum Warm Wallet
-  currency_id:  eth
-  address:      '0x2b9fBC10EbAeEc28a8Fc10069C0BC29E45eBEB9C'
-  kind:         warm
-  nsig:         1
-  max_balance:  1000.0
-  status:       active
+- name:             Ethereum Warm Wallet
+  blockchain_key:   eth-rinkeby
+  currency_id:      eth
+  address:          '0x2b9fBC10EbAeEc28a8Fc10069C0BC29E45eBEB9C'
+  kind:             warm
+  nsig:             1
+  max_balance:      1000.0
+  status:           active
   gateway:
-    client: geth
+    client:         geth
     options:
-      uri: http://user:password@127.0.0.1:8545
+      uri:          http://user:password@127.0.0.1:8545
 
-- name:         Bitcoin Deposit Wallet
-  currency_id:  btc
-  address:      '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf'
-  kind:         deposit
-  nsig:         1
-  max_balance:  0.0
-  status:       active
+- name:             Bitcoin Deposit Wallet
+  blockchain_key:   btc-testnet
+  currency_id:      btc
+  address:          '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf'
+  kind:             deposit
+  nsig:             1
+  max_balance:      0.0
+  status:           active
   gateway:
-    client: bitcoind
+    client:         bitcoind
     options:
-      uri: http://user:password@127.0.0.1:18332
+      uri:          http://user:password@127.0.0.1:18332
 
-- name:         Bitcoin Hot Wallet
-  currency_id:  btc
-  address:      '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf'
-  kind:         hot
-  nsig:         1
-  max_balance:  5.0
-  status:       active
+- name:             Bitcoin Hot Wallet
+  blockchain_key:   btc-testnet
+  currency_id:        btc
+  address:          '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf'
+  kind:             hot
+  nsig:             1
+  max_balance:      5.0
+  status:           active
   gateway:
-    client: bitgo
+    client:         bitgo
     options:
       bitgo_test_net:              on
       bitgo_wallet_id:             ~
@@ -63,15 +68,16 @@
       bitgo_rest_api_root:         https://test.bitgo.com/api/v2
       bitgo_rest_api_access_token: ~
 
-- name:         Bitcoin Warm Wallet
-  currency_id:  btc
-  address:      '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf'
-  kind:         warm
-  nsig:         1
-  max_balance:  50.0
-  status:       active
+- name:             Bitcoin Warm Wallet
+  blockchain_key:   btc-testnet
+  currency_id:      btc
+  address:          '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf'
+  kind:             warm
+  nsig:             1
+  max_balance:      50.0
+  status:           active
   gateway:
-    client: bitgo
+    client:         bitgo
     options:
       bitgo_test_net:              on
       bitgo_wallet_id:             ~

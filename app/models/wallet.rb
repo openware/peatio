@@ -6,6 +6,7 @@ class Wallet < ActiveRecord::Base
   serialize :gateway, JSON
 
   include BelongsToCurrency
+  belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
 
   validates :name, :address, presence: true
   validates :status, inclusion: { in: %w[active disabled] }
@@ -26,20 +27,21 @@ class Wallet < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180726110440
+# Schema version: 20180727054453
 #
 # Table name: wallets
 #
-#  id          :integer          not null, primary key
-#  currency_id :string(5)
-#  name        :string(64)
-#  address     :string(255)      not null
-#  kind        :string(32)       not null
-#  nsig        :integer
-#  gateway     :string(1000)     default({}), not null
-#  max_balance :decimal(32, 16)  default(0.0), not null
-#  parent      :integer
-#  status      :string(32)
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id             :integer          not null, primary key
+#  blockchain_key :string(32)
+#  currency_id    :string(5)
+#  name           :string(64)
+#  address        :string(255)      not null
+#  kind           :string(32)       not null
+#  nsig           :integer
+#  gateway        :string(1000)     default({}), not null
+#  max_balance    :decimal(32, 16)  default(0.0), not null
+#  parent         :integer
+#  status         :string(32)
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
 #

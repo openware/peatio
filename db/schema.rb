@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180726110440) do
+ActiveRecord::Schema.define(version: 20180727054453) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -189,17 +189,18 @@ ActiveRecord::Schema.define(version: 20180726110440) do
   add_index "trades", ["market_id", "created_at"], name: "index_trades_on_market_id_and_created_at", using: :btree
 
   create_table "wallets", force: :cascade do |t|
-    t.string   "currency_id", limit: 5
-    t.string   "name",        limit: 64
-    t.string   "address",     limit: 255,                                           null: false
-    t.string   "kind",        limit: 32,                                            null: false
-    t.integer  "nsig",        limit: 4
-    t.string   "gateway",     limit: 1000,                           default: "{}", null: false
-    t.decimal  "max_balance",              precision: 32, scale: 16, default: 0.0,  null: false
-    t.integer  "parent",      limit: 4
-    t.string   "status",      limit: 32
-    t.datetime "created_at",                                                        null: false
-    t.datetime "updated_at",                                                        null: false
+    t.string   "blockchain_key", limit: 32
+    t.string   "currency_id",    limit: 5
+    t.string   "name",           limit: 64
+    t.string   "address",        limit: 255,                                           null: false
+    t.string   "kind",           limit: 32,                                            null: false
+    t.integer  "nsig",           limit: 4
+    t.string   "gateway",        limit: 1000,                           default: "{}", null: false
+    t.decimal  "max_balance",                 precision: 32, scale: 16, default: 0.0,  null: false
+    t.integer  "parent",         limit: 4
+    t.string   "status",         limit: 32
+    t.datetime "created_at",                                                           null: false
+    t.datetime "updated_at",                                                           null: false
   end
 
   create_table "withdraws", force: :cascade do |t|

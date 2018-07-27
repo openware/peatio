@@ -4,6 +4,7 @@
 # TODO: Add specs.
 class Blockchain < ActiveRecord::Base
   has_many :currencies, foreign_key: :blockchain_key, primary_key: :key
+  has_many :wallets, foreign_key: :blockchain_key, primary_key: :key
 
   validates :key, :name, :client, presence: true
   validates :status, inclusion: { in: %w[active disabled] }
