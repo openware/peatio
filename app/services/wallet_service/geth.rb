@@ -8,5 +8,28 @@ module WalletService
       @client.create_address!(options)
     end
 
+    def load_balance(currency)
+     @client.load_balance!(currency)
+    end
+
+    def create_withdrawal(pa, withdraw)
+      if withdraw.currency.code.eth?
+        @client.create_eth_withdrawal!(
+          { address: pa.address, secret: pa.secret },
+          { address: withdraw.rid },
+          withdraw.amount.to_d,
+          withdraw.currency
+        )
+      else
+        @client.create_erc20_withdrawal!(
+          { address: pa.address, secret: pa.secret },
+          { address: withdraw.rid },
+          withdraw.amount.to_d,
+          withdraw.currency
+        )
+      end
+
+    end
+
   end
 end
