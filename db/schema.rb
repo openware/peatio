@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180727054453) do
+ActiveRecord::Schema.define(version: 20180727121700) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -40,17 +40,18 @@ ActiveRecord::Schema.define(version: 20180727054453) do
   add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", unique: true, using: :btree
 
   create_table "blockchains", force: :cascade do |t|
-    t.string   "key",                  limit: 255,             null: false
+    t.string   "key",                  limit: 255,                null: false
     t.string   "name",                 limit: 255
-    t.string   "client",               limit: 255,             null: false
+    t.string   "client",               limit: 255,                null: false
     t.string   "server",               limit: 255
-    t.integer  "height",               limit: 4,               null: false
+    t.integer  "height",               limit: 4,                  null: false
+    t.boolean  "case_sensitive",                   default: true
     t.string   "explorer_address",     limit: 255
     t.string   "explorer_transaction", limit: 255
-    t.integer  "min_confirmations",    limit: 4,   default: 6, null: false
-    t.string   "status",               limit: 255,             null: false
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.integer  "min_confirmations",    limit: 4,   default: 6,    null: false
+    t.string   "status",               limit: 255,                null: false
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
   end
 
   add_index "blockchains", ["key"], name: "index_blockchains_on_key", unique: true, using: :btree

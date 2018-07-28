@@ -19,7 +19,7 @@ module Deposits
     end
 
     def transaction_url
-      if txid? && currency.transaction_url_template?
+      if txid? && currency.transaction_url_template.present?
         currency.transaction_url_template.gsub('#{txid}', txid)
       end
     end

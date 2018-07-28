@@ -9,6 +9,7 @@ FactoryBot.define do
       client                  'ethereum'
       server                  'http://127.0.0.1:8545'
       height                  2500000
+      case_sensitive          false
       min_confirmations       6
       explorer_address        'https://etherscan.io/address/#{address}'
       explorer_transaction    'https://etherscan.io/tx/#{txid}'
@@ -21,6 +22,7 @@ FactoryBot.define do
       client                  'ethereum'
       server                  'http://127.0.0.1:8545'
       height                  2500000
+      case_sensitive          false
       min_confirmations       4
       explorer_address        'https://etherscan.io/address/#{address}'
       explorer_transaction    'https://etherscan.io/tx/#{txid}'
@@ -33,6 +35,7 @@ FactoryBot.define do
       client                  'bitcoin'
       server                  'http://127.0.0.1:18332'
       height                  1350000
+      case_sensitive          true
       min_confirmations       1
       explorer_address        ' https://blockchain.info/address/#{address}'
       explorer_transaction    'https://blockchain.info/tx/#{txid}'
