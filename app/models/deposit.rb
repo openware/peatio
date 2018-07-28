@@ -70,15 +70,6 @@ class Deposit < ActiveRecord::Base
   def collect!
     AMQPQueue.enqueue(:deposit_collection, id: id) if coin?
   end
-
-  def amount_to_base_unit!
-    x = amount.to_d * currency.base_factor
-    unless (x % 1).zero?
-      raise StandardError, "Failed to convert value to base (smallest) unit because it exceeds the maximum precision: " +
-          "#{amount.to_d} - #{x.to_d} must be equal to zero."
-    end
-    x.to_i
-  end
 end
 
 # == Schema Information
