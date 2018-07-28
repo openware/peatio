@@ -4,7 +4,8 @@
 module BlockchainClient
   class Ethereum < Base
 
-    TOKEN_METHOD_ID = '0xa9059cbb'
+    TOKEN_METHOD_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    SUCCESS = '0x1'
 
     def initialize(*)
       super
@@ -45,10 +46,17 @@ module BlockchainClient
     end
 
     def to_address(tx)
-      if is_eth_tx?(tx)
-        normalize_address(tx['to'])
+      if tx.fetch("logs").blank?
+        [normalize_address(tx.fetch('to'))]
       else
-        normalize_address('0x' + abi_explode(tx['input'])[:arguments][0][26..-1])
+        get_erc20_addresses(tx)
+      end
+    end
+
+    def get_erc20_addresses(tx)
+      entries = tx.fetch('logs').map do |log|
+        next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_METHOD_IDENTIFIER
+        normalize_address('0x' + log.fetch('topics').last[-40..-1])
       end
     end
 
@@ -56,15 +64,12 @@ module BlockchainClient
       normalize_address(tx['from'])
     end
 
-    def build_transaction(tx, current_block_json, currency)
-      if is_eth_tx?(tx)
-        build_eth_transaction(tx, currency)
+    def build_transaction(txn_receipt, current_block_json, currency, block_txn)
+      if txn_receipt.fetch("logs").blank?
+        build_eth_transaction(block_txn, current_block_json, currency)
       else
-        build_erc20_transaction(tx, currency)
+        build_erc20_transaction(txn_receipt, current_block_json, currency)
       end
-        .merge id:            normalize_txid(tx.fetch('hash')),
-               block_number:  current_block_json.fetch('number').hex,
-               received_at:   Time.at(current_block_json.fetch('timestamp').hex)
     end
 
     def latest_block_number
@@ -73,22 +78,14 @@ module BlockchainClient
       end
     end
 
-    def invalid_transaction?(tx)
-      tx['to'].blank? \
-      || tx.fetch('value').hex.to_d <= 0 && tx['input'].hex <= 0 \
-      || tx['input'].hex > 0 && abi_method(tx['input']) != TOKEN_METHOD_ID
+    def invalid_transaction?(txn_receipt, block_txn)
+      txn_receipt.fetch("status") != SUCCESS \
+      || block_txn.fetch('to').blank? \
+      || block_txn.fetch('value').hex.to_d <= 0 && block_txn.fetch('input').hex <= 0 \
     end
 
-    def valid_transaction?(tx)
-      !invalid_transaction?(tx)
-    end
-
-    def is_eth_tx?(tx)
-      tx['input'].blank? || tx['input'].hex <= 0
-    end
-
-    def is_erc20_tx?(tx)
-      !is_eth_tx?(tx)
+    def get_txn_receipt(txid)
+      json_rpc(:eth_getTransactionReceipt, [normalize_txid(txid)]).fetch('result')
     end
 
   protected
@@ -167,18 +164,32 @@ module BlockchainClient
       txid.to_s.match?(/\A0x[A-F0-9]{64}\z/i)
     end
 
-    def build_eth_transaction(tx, currency)
-      { amount: convert_from_base_unit(tx.fetch('value').hex, currency),
-        to:     normalize_address(tx['to']),
-        from:   normalize_address(tx['from']) }
+    def build_eth_transaction(tx, current_block_json, currency)
+      { id:            normalize_txid(tx.fetch('hash')),
+        block_number:  current_block_json.fetch('number').hex,
+        entries:       currency.code.eth? ? build_entries(tx, currency) : [] }
     end
 
-    def build_erc20_transaction(tx, currency)
-      arguments = abi_explode(tx['input'])[:arguments]
+    def build_entries(tx, currency)
+      [
+          { amount:  convert_from_base_unit(tx.fetch('value').hex, currency),
+            address: normalize_address(tx['to'])}
+      ]
+    end
 
-      { amount: convert_from_base_unit(arguments[1].hex, currency),
-        to:     normalize_address('0x' + arguments[0][26..-1]),
-        from:   normalize_address(tx['from']) }
+    def build_erc20_transaction(tx, current_block_json, currency)
+      entries = tx.fetch('logs').map do |log|
+
+        next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_METHOD_IDENTIFIER
+        next if tx.fetch('to') != currency.erc20_contract_address  #skip if not valid erc20 contract address
+
+        { amount:  convert_from_base_unit(log.fetch('data').hex, currency),
+          address: normalize_address('0x' + log.fetch('topics').last[-40..-1]) }
+      end
+
+      { id:            normalize_txid(tx.fetch('transactionHash')),
+        block_number: current_block_json.fetch('number').hex,
+        entries:       entries.compact }
     end
 
     def contract_address
