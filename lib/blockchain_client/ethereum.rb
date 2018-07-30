@@ -102,13 +102,17 @@ module BlockchainClient
     def json_rpc(method, params = [])
       response = connection.post \
         '/',
-        { jsonrpc: '2.0', id: @json_rpc_call_id += 1, method: method, params: params }.to_json,
+        { jsonrpc: '2.0', id: rpc_call_id, method: method, params: params }.to_json,
         { 'Accept'       => 'application/json',
           'Content-Type' => 'application/json' }
       response.assert_success!
       response = JSON.parse(response.body)
       response['error'].tap { |error| raise Error, error.inspect if error }
       response
+    end
+
+    def rpc_call_id
+      @json_rpc_call_id += 1
     end
 
 
