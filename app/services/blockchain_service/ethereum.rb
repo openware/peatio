@@ -52,13 +52,17 @@ module BlockchainService
         .fetch('transactions')
         .each_with_object([]) do |block_txn, deposits|
 
-          txn_receipt = client.get_txn_receipt(block_txn.fetch("hash"))
-          next if client.invalid_transaction?(txn_receipt, block_txn)
+           if block_txn.fetch('input').hex <= 0
+             txn = block_txn
+             next if client.invalid_eth_transaction?(txn)
+           else
+             txn = client.get_txn_receipt(block_txn.fetch("hash"))
+             next if client.invalid_erc20_transaction?(txn)
+           end
 
-          payment_addresses_where(address: client.to_address(txn_receipt)) do |payment_address|
+          payment_addresses_where(address: client.to_address(txn)) do |payment_address|
 
-            deposit_txs = client.build_transaction(txn_receipt, block_json, payment_address.currency, block_txn) # block_txn required for ETH transaction
-
+            deposit_txs = client.build_transaction(txn, block_json, payment_address.currency) # block_txn required for ETH transaction
             deposit_txs.fetch(:entries).each_with_index do |entry, i|
               deposits << { txid:           deposit_txs[:id],
                             address:        entry[:address],
@@ -77,16 +81,21 @@ module BlockchainService
         .fetch('transactions')
         .each_with_object([]) do |block_txn, withdrawals|
 
-          txn_receipt = client.get_txn_receipt(block_txn.fetch("hash"))
-          next if client.invalid_transaction?(txn_receipt, block_txn)
-
           Withdraws::Coin
               .where(currency: currencies)
               .where(txid: client.normalize_txid(block_txn.fetch('hash')))
               .each do |withdraw|
             # If wallet currency doesn't match with blockchain transaction
 
-            withdraw_txs = client.build_transaction(txn_receipt, block_json, withdraw.currency, block_txn)  # block_txn required for ETH transaction
+            if block_txn.fetch('input').hex <= 0
+              txn = block_txn
+              next if client.invalid_eth_transaction?(txn)
+            else
+              txn = client.get_txn_receipt(block_txn.fetch("hash"))
+              next if client.invalid_erc20_transaction?(txn)
+            end
+
+            withdraw_txs = client.build_transaction(txn, block_json, withdraw.currency)  # block_txn required for ETH transaction
             withdraw_txs.fetch(:entries).each do |entry|
             withdrawals << { txid:           withdraw_txs[:id],
                              rid:            entry[:address],

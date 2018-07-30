@@ -4,7 +4,7 @@
 module BlockchainClient
   class Ethereum < Base
 
-    TOKEN_METHOD_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
 
     def initialize(*)
@@ -46,16 +46,16 @@ module BlockchainClient
     end
 
     def to_address(tx)
-      if tx.fetch("logs").blank?
-        [normalize_address(tx.fetch('to'))]
-      else
+      if tx.has_key?("logs")
         get_erc20_addresses(tx)
-      end
+      else
+        [normalize_address(tx.fetch('to'))]
+      end.compact
     end
 
     def get_erc20_addresses(tx)
       entries = tx.fetch('logs').map do |log|
-        next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_METHOD_IDENTIFIER
+        next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_EVENT_IDENTIFIER
         normalize_address('0x' + log.fetch('topics').last[-40..-1])
       end
     end
@@ -64,11 +64,11 @@ module BlockchainClient
       normalize_address(tx['from'])
     end
 
-    def build_transaction(txn_receipt, current_block_json, currency, block_txn)
-      if txn_receipt.fetch("logs").blank?
-        build_eth_transaction(block_txn, current_block_json, currency)
+    def build_transaction(txn, current_block_json, currency)
+      if txn.has_key?("logs")
+        build_erc20_transaction(txn, current_block_json, currency)
       else
-        build_erc20_transaction(txn_receipt, current_block_json, currency)
+        build_eth_transaction(txn, current_block_json, currency)
       end
     end
 
@@ -78,10 +78,15 @@ module BlockchainClient
       end
     end
 
-    def invalid_transaction?(txn_receipt, block_txn)
-      txn_receipt.fetch("status") != SUCCESS \
-      || block_txn.fetch('to').blank? \
+    def invalid_eth_transaction?(block_txn)
+      block_txn.fetch('to').blank? \
       || block_txn.fetch('value').hex.to_d <= 0 && block_txn.fetch('input').hex <= 0 \
+    end
+
+    def invalid_erc20_transaction?(txn_receipt)
+      txn_receipt.fetch("status") != SUCCESS \
+      || txn_receipt.fetch('to').blank? \
+      || txn_receipt.fetch("logs").blank?
     end
 
     def get_txn_receipt(txid)
@@ -184,7 +189,7 @@ module BlockchainClient
     def build_erc20_transaction(tx, current_block_json, currency)
       entries = tx.fetch('logs').map do |log|
 
-        next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_METHOD_IDENTIFIER
+        next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_EVENT_IDENTIFIER
         next if tx.fetch('to') != currency.erc20_contract_address  #skip if not valid erc20 contract address
 
         { amount:  convert_from_base_unit(log.fetch('data').hex, currency),
