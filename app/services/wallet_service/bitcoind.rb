@@ -29,5 +29,18 @@ module WalletService
           .find_by(blockchain_key: deposit.currency.blockchain_key, kind: :hot)
     end
 
+    def build_withdrawal!(withdraw, options = {})
+      client.create_withdrawal!(
+          { address: wallet.address },
+          { address: withdraw.rid },
+          withdraw.amount,
+          options
+      )
+    end
+
+    def load_balance(currency = nil)
+      client.load_balance!
+    end
+
   end
 end

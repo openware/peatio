@@ -39,5 +39,9 @@ module WalletClient
     def normalize_txid(txid)
       txid
     end
+
+    def convert_from_base_unit(value, currency)
+      value.to_d / currency.base_factor
+    end
   end
 end

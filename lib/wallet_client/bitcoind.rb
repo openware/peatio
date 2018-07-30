@@ -21,6 +21,10 @@ module WalletClient
           .yield_self(&method(:normalize_txid))
     end
 
+    def load_balance!
+      json_rpc(:getbalance).fetch('result').to_d
+    end
+
     protected
 
     def connection

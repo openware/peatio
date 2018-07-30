@@ -20,6 +20,25 @@ module WalletService
       end
     end
 
+
+    def load_balance(currency)
+      PaymentAddress
+        .where(currency: currency)
+        .where(PaymentAddress.arel_table[:address].is_not_blank)
+        .pluck(:address)
+        .reject(&:blank?)
+        .map{|address| currency_balance(address, currency) }
+        .reduce(&:+).yield_self { |total| total ? client.convert_from_base_unit(total, currency) : 0.to_d }
+    end
+
+    def build_withdrawal!(withdraw)
+      if withdraw.currency.code.eth?
+        build_eth_withdrawal!(withdraw)
+      else
+        build_erc20_withdrawal!(withdraw)
+      end
+    end
+
     private
 
     def collect_eth_deposit!(deposit, destination_address, options={})
@@ -54,6 +73,23 @@ module WalletService
       raise e
     end
 
+    def build_eth_withdrawal!(withdraw)
+      client.create_eth_withdrawal!(
+        { address: wallet.address, secret: wallet.secret },
+        { address: withdraw.rid },
+        withdraw.amount_base_unit!
+      )
+    end
+
+    def build_erc20_withdrawal!(withdraw)
+      client.create_erc20_withdrawal!(
+          { address: wallet.address, secret: wallet.secret },
+          { address: withdraw.rid },
+          withdraw.amount_base_unit!,
+          {contract_address: withdraw.currency.erc20_contract_address}
+      )
+    end
+
     def destination_wallet(deposit)
       # TODO: Dynamicly check wallet balance and select where to send funds.
       # For keeping it simple we will collect all funds to hot wallet.
@@ -80,6 +116,14 @@ module WalletService
           { address: destination_address},
           amount
       )
+    end
+
+    def currency_balance(address, currency)
+      if currency.code.eth?
+        client.load_balance_of_eth_address(address)
+      else
+        client.load_balance_of_erc20_address(address, currency.erc20_contract_address)
+      end
     end
   end
 end
