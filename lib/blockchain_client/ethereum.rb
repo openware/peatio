@@ -46,7 +46,7 @@ module BlockchainClient
     end
 
     def to_address(tx)
-      if tx.has_key?("logs")
+      if tx.has_key?('logs')
         get_erc20_addresses(tx)
       else
         [normalize_address(tx.fetch('to'))]
@@ -65,7 +65,7 @@ module BlockchainClient
     end
 
     def build_transaction(txn, current_block_json, currency)
-      if txn.has_key?("logs")
+      if txn.has_key?('logs')
         build_erc20_transaction(txn, current_block_json, currency)
       else
         build_eth_transaction(txn, current_block_json, currency)
@@ -86,7 +86,7 @@ module BlockchainClient
     def invalid_erc20_transaction?(txn_receipt)
       txn_receipt.fetch("status") != SUCCESS \
       || txn_receipt.fetch('to').blank? \
-      || txn_receipt.fetch("logs").blank?
+      || txn_receipt.fetch('logs').blank?
     end
 
     def get_txn_receipt(txid)
@@ -181,8 +181,8 @@ module BlockchainClient
 
     def build_entries(tx, currency)
       [
-          { amount:  convert_from_base_unit(tx.fetch('value').hex, currency),
-            address: normalize_address(tx['to'])}
+        { amount:  convert_from_base_unit(tx.fetch('value').hex, currency),
+          address: normalize_address(tx['to'])}
       ]
     end
 
@@ -190,7 +190,8 @@ module BlockchainClient
       entries = tx.fetch('logs').map do |log|
 
         next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_EVENT_IDENTIFIER
-        next if tx.fetch('to') != currency.erc20_contract_address  #skip if not valid erc20 contract address
+        # Skip if ERC20 contract address doesn't match.
+        next if tx.fetch('to') != currency.erc20_contract_address
 
         { amount:  convert_from_base_unit(log.fetch('data').hex, currency),
           address: normalize_address('0x' + log.fetch('topics').last[-40..-1]) }

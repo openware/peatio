@@ -52,13 +52,13 @@ module BlockchainService
         .fetch('transactions')
         .each_with_object([]) do |block_txn, deposits|
 
-           if block_txn.fetch('input').hex <= 0
-             txn = block_txn
-             next if client.invalid_eth_transaction?(txn)
-           else
-             txn = client.get_txn_receipt(block_txn.fetch("hash"))
-             next if client.invalid_erc20_transaction?(txn)
-           end
+          if block_txn.fetch('input').hex <= 0
+            txn = block_txn
+            next if client.invalid_eth_transaction?(txn)
+          else
+            txn = client.get_txn_receipt(block_txn.fetch('hash'))
+            next if client.invalid_erc20_transaction?(txn)
+          end
 
           payment_addresses_where(address: client.to_address(txn)) do |payment_address|
 
@@ -82,16 +82,15 @@ module BlockchainService
         .each_with_object([]) do |block_txn, withdrawals|
 
           Withdraws::Coin
-              .where(currency: currencies)
-              .where(txid: client.normalize_txid(block_txn.fetch('hash')))
-              .each do |withdraw|
-            # If wallet currency doesn't match with blockchain transaction
+            .where(currency: currencies)
+            .where(txid: client.normalize_txid(block_txn.fetch('hash')))
+            .each do |withdraw|
 
             if block_txn.fetch('input').hex <= 0
               txn = block_txn
               next if client.invalid_eth_transaction?(txn)
             else
-              txn = client.get_txn_receipt(block_txn.fetch("hash"))
+              txn = client.get_txn_receipt(block_txn.fetch('hash'))
               next if client.invalid_erc20_transaction?(txn)
             end
 
@@ -99,7 +98,7 @@ module BlockchainService
             withdraw_txs.fetch(:entries).each do |entry|
             withdrawals << { txid:           withdraw_txs[:id],
                              rid:            entry[:address],
-                             sum:            entry[:amount],
+                             amount:         entry[:amount],
                              block_number:   withdraw_txs[:block_number] }
             end
           end
