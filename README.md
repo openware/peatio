@@ -122,8 +122,9 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 * [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer) provided by [Barong](https://www.github.com/rubykube/barong)
 
 ## Barong
+Barong is a KYC OAuth 2.0 provider. Barong replace the KYC, 2FA, Phone verification from legacy Peatio.
 
-Barong is an important part of [peatio.teck](https://peatio.tech) stack. Barong provides an OAuth server specially written for our service. 
+Barong manage roles and kyc level across all applications from the RKCP. It's easy to extend by using the EventAPI or Rest API.
 
 ### OAuth 2.0
 OAuth 2.0 is the industry-standard protocol for authorization. OAuth 2.0 supersedes the work done on the original OAuth protocol created in 2006. OAuth 2.0 focuses on client developer simplicity while providing specific authorization flows for web applications, desktop applications, mobile phones, and living room devices. This specification and its extensions are being developed within the IETF OAuth Working Group.
