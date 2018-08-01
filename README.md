@@ -137,14 +137,13 @@ In the process of verification, Barong assign different levels to accounts
 - Level 2 will apply after phone verification
 - Level 3 will apply after identity & document verification
 
-### Barong features
+### Barong key features
 
-* KYC Verification
-* 4 Levels of security
-* 2FA support
-* OAuth 2.0 Support
-* Provide storage of all financial information about your clients
-* Risk management
+* KYC Verification for individuals
+* SMS and Google two-factor authentication
+* OAuth 2.0 provider
+* Transaction Signature support
+* Supply JWT tokens to frontend and mobile app
 
 ## API
 
