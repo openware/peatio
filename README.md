@@ -65,8 +65,6 @@ This setup uses a load balance configured with the following hosts to install in
 0.0.0.0 monitor.wb.local
 ```
 
-Now you have peatio up and running.
-
 ##### [Barong](https://github.com/rubykube/barong)
 
 Start barong: `docker-compose run --rm barong bash -c "./bin/link_config && ./bin/setup"`
@@ -125,7 +123,7 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 
 ## Barong
 
-Barong is an important part of [peatio.teck](https://peatio.tech/#/) stack. Barong provides an OAuth server specially written for our service. 
+Barong is an important part of [peatio.teck](https://peatio.tech) stack. Barong provides an OAuth server specially written for our service. 
 
 ### OAuth 2.0
 OAuth 2.0 is the industry-standard protocol for authorization. OAuth 2.0 supersedes the work done on the original OAuth protocol created in 2006. OAuth 2.0 focuses on client developer simplicity while providing specific authorization flows for web applications, desktop applications, mobile phones, and living room devices. This specification and its extensions are being developed within the IETF OAuth Working Group.
@@ -138,6 +136,15 @@ In the process of verification, Barong assign different levels to accounts
 - Level 1 will apply after email verification
 - Level 2 will apply after phone verification
 - Level 3 will apply after identity & document verification
+
+### Barong features
+
+* KYC Verification
+* 4 Levels of security
+* 2FA support
+* OAuth 2.0 Support
+* Provide storage of all financial information about your clients
+* Risk management
 
 ## API
 
