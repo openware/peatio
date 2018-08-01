@@ -69,6 +69,9 @@ module APIv2
                                 licence:       'MIT',
                                 license_url:   'https://github.com/rubykube/peatio/blob/master/LICENSE.md'
                               },
+                              models: [
+                                Entities::Currency,
+                              ],
                               security_definitions: {
                                 Bearer: {
                                   type: "apiKey",
