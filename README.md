@@ -35,12 +35,12 @@ Find more details in the [docs directory](docs).
 
 ## Getting Started
 
-Local development setup:
+### Local development setup:
 
 * ### [Docker compose](https://github.com/rubykube/peatio-workbench)
 We suggest you to start using Peatio by installing Workbench. Workbench which is based on [Docker containers](https://www.docker.com/what-docker) is a convenient and straightforward way to start Peatio development environment.
 
-### Quick Install
+#### Quick Install
 1.  Install Docker on your computer: [Docker](https://docs.docker.com/install/)
 2.  Install Docker compose [Docker compose](https://docs.docker.com/compose/install/)
 3.  [Vagrant](https://www.vagrantup.com/downloads.html)
@@ -80,9 +80,10 @@ Start peatio server: `docker-compose up -d peatio`
 Simply start your local server. Now you're able to log in with your local Barong and Peatio.
 
 * ### [on Mac OS X](docs/setup-osx.md)
+
 * ### [on Ubuntu](docs/setup-ubuntu.md)
 
-Production setup:
+### Production setup:
 
 * [Deploy production cluster with kite](https://github.com/rubykube/kite/blob/master/README.md)
 * [Kubernetes deployment architecture](docs/architecture.md)
