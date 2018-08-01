@@ -22,7 +22,7 @@ class Blockchain < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180727121700
+# Schema version: 20180727054453
 #
 # Table name: blockchains
 #
@@ -32,7 +32,6 @@ end
 #  client               :string(255)      not null
 #  server               :string(255)
 #  height               :integer          not null
-#  case_sensitive       :boolean          default(TRUE)
 #  explorer_address     :string(255)
 #  explorer_transaction :string(255)
 #  min_confirmations    :integer          default(6), not null

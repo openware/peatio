@@ -12,12 +12,6 @@ module Deposits
       self.address = CashAddr::Converter.to_legacy_address(address)
     end
 
-    before_validation do
-      next unless currency&.case_insensitive?
-      self.txid = txid.try(:downcase)
-      self.address = address.try(:downcase)
-    end
-
     def transaction_url
       if txid? && currency.transaction_url_template.present?
         currency.transaction_url_template.gsub('#{txid}', txid)

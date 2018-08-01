@@ -40,8 +40,6 @@
           <label>Status</label>
           <%= f.select :status, options_for_select([['Active', 'active'], ['Disabled', 'disabled']], selected: @blockchain.status), {}, {class: "form-control mb-3"} %>
 
-          <label>Case sensitive?</label>
-          <%= f.check_box :case_sensitive %>
         </div>
       </div>
     </div>

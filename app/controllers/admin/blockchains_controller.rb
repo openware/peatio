@@ -39,12 +39,7 @@ module Admin
     private
 
     def blockchain_params
-      params.require(:blockchain).permit(permitted_blockchain_attributes).tap do |params|
-        boolean_attributes.each do |param|
-          next unless params.key?(param)
-          params[param] = params[param].in?(['1', 'true', true])
-        end
-      end
+      params.require(:blockchain).permit(permitted_blockchain_attributes)
     end
 
     def permitted_blockchain_attributes
@@ -54,16 +49,11 @@ module Admin
           client
           server
           height
-          case_sensitive
           min_confirmations
           explorer_address
           explorer_transaction
           status
       ]
-    end
-
-    def boolean_attributes
-      %i[case_sensitive]
     end
 
   end

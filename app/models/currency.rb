@@ -19,11 +19,6 @@ class Currency < ActiveRecord::Base
 
   before_validation { self.deposit_fee = 0 unless fiat? }
 
-  before_validation do
-    next if case_sensitive?
-    self.erc20_contract_address = erc20_contract_address.try(:downcase)
-  end
-
   after_create { Member.find_each(&:touch_accounts) }
   after_update :disable_markets
 
@@ -115,14 +110,6 @@ class Currency < ActiveRecord::Base
     :supports_cash_addr_format,
     :supports_hd_protocol,
     :allow_multiple_deposit_addresses
-
-  def case_sensitive?
-    blockchain&.case_sensitive || true
-  end
-
-  def case_insensitive?
-    !case_sensitive?
-  end
 
   def disabled?
     !enabled
