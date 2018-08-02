@@ -112,12 +112,12 @@ describe BlockchainService::Litecoin do
       let(:expected_withdrawals) do
         [
           {
-            sum:  3.00000000,
+            sum:  3.00000000 + currency.withdraw_fee,
             rid:  'QUwDTFe1H7EAChVqm6FXexC8YpLPxc2U6n',
             txid: 'bd75341b46132bba6805f6494871db4b42db972ac4643c1c2cf249797a114035'
           },
           {
-            sum:  5.00000000,
+            sum:  5.00000000 + currency.withdraw_fee,
             rid:  'QUwDTFe1H7EAChVqm6FXexC8YpLPxc2U6n',
             txid: '77aea3faa3c5d97fe75736a4171e88bd1519893b45f39490d25d7b0c932c356c'
           }

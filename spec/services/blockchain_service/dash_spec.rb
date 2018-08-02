@@ -134,7 +134,7 @@ describe BlockchainService::Dash do
       let(:expected_withdrawals) do
         [
           {
-            sum:  20.00000000,
+            sum:  20.00000000 + currency.withdraw_fee,
             rid:  'yQu2mY8WuXFQmjPBuzkEQ9z1DrhGBSrLL4',
             txid: 'f974214f2bfc6e601dc070970ec4bdbf2ed552bd5ec7fa9f5f8a56d3efbd0ec0'
           }

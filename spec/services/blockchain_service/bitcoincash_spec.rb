@@ -139,7 +139,7 @@ describe BlockchainService::Bitcoincash do
       let(:expected_withdrawals) do
         [
           {
-            sum:  2.50000000,
+            sum:  2.50000000 + currency.withdraw_fee,
             rid:  '2MxjMod4B6KwrySJ6XzxCveEzUreQTJ4M1d',
             txid: '45adbf46ce2aaf9ab92509c02909a0ce20b5b6b48c470756c3a50a164754147e'
           }
