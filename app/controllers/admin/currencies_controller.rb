@@ -56,8 +56,6 @@ module Admin
         deposit_fee
         min_confirmations
         enabled
-        wallet_url_template
-        transaction_url_template
         allow_multiple_deposit_addresses
         blockchain_key
       ]
