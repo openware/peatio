@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe BlockchainService::Bitcoin do
+describe BlockchainService::Litecoin do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,9 +9,9 @@ describe BlockchainService::Bitcoin do
     WebMock.allow_net_connect!
   end
 
-  describe 'BlockchainClient::Bitcoin' do
+  describe 'BlockchainClient::Litecoin' do
     let(:block_data) do
-      Rails.root.join('spec', 'resources', 'bitcoin-data', block_file_name)
+      Rails.root.join('spec', 'resources', 'litecoin-data', block_file_name)
         .yield_self { |file_path| File.open(file_path) }
         .yield_self { |file| JSON.load(file) }
     end
@@ -20,7 +20,7 @@ describe BlockchainService::Bitcoin do
     let(:latest_block)  { block_data.last['result']['height'] }
 
     let(:blockchain) do
-      Blockchain.find_by_key('btc-testnet')
+      Blockchain.find_by_key('ltc-testnet')
         .tap { |b| b.update(height: start_block) }
     end
 
@@ -40,29 +40,24 @@ describe BlockchainService::Bitcoin do
       }.to_json
     end
 
-    context 'two BTC deposit was created during blockchain proccessing' do
+    context 'One LTC deposit was created during blockchain proccessing' do
       # File with real json rpc data for two blocks.
-      let(:block_file_name) { '1354419-1354420.json' }
+      let(:block_file_name) { '678768-678769.json' }
 
       let(:expected_deposits) do
         [
           {
-            amount:   1.30000000,
-            address:  '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt',
-            txid:     '68ecb040b8d9716c1c09d552e158f69ba9b4b2bbbfb8407bef348f78e1eabbe8'
-          },
-          {
-            amount:   0.65000000,
-            address:  '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt',
-            txid:     '76b0e88cdb624d3d10122c6dfcb75c379df0f4faf27cb4dbb848ea560dd611fa'
+            amount:   10.00000000,
+            address:  'QaXKfMcHj86a9AQh2YTAkkhMEJuN6dfuyu',
+            txid:     '72bdd063443f991cf949cb7a8061791ebde7d707b76ee8f28a4eab2158d88166'
           }
         ]
       end
 
-      let(:currency) { Currency.find_by_id(:btc) }
+      let(:currency) { Currency.find_by_id(:ltc) }
 
       let!(:payment_address) do
-        create(:btc_payment_address, address: '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt')
+        create(:ltc_payment_address, address: 'QaXKfMcHj86a9AQh2YTAkkhMEJuN6dfuyu')
       end
 
       before do
@@ -87,7 +82,7 @@ describe BlockchainService::Bitcoin do
 
       subject { Deposits::Coin.where(currency: currency) }
 
-      it 'creates two deposit' do
+      it 'creates one deposit' do
         expect(Deposits::Coin.where(currency: currency).count).to eq expected_deposits.count
       end
 
@@ -109,41 +104,41 @@ describe BlockchainService::Bitcoin do
       end
     end
 
-    context 'two BTC withdrawals were processed' do
+    context 'two LTC withdrawals were processed' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '1354649-1354651.json' }
+      let(:block_file_name) { '678947-678948.json' }
 
       # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_withdrawals) do
         [
           {
-            sum:  0.30000000 + currency.withdraw_fee,
-            rid:  '2N8ej8FhvQFT9Rw2Vfpiw5uv9CLuTh1BjFB',
-            txid: '4a60db9608a3a7681808efbac83330c8191adadb7d26c67adb5acdf956eede8b'
+            sum:  3.00000000 + currency.withdraw_fee,
+            rid:  'QUwDTFe1H7EAChVqm6FXexC8YpLPxc2U6n',
+            txid: 'bd75341b46132bba6805f6494871db4b42db972ac4643c1c2cf249797a114035'
           },
           {
-            sum:  0.40000000 + currency.withdraw_fee,
-            rid:  '2N5G6fEG3N4uZcXnQsE42YDM5nXq35m99Vx',
-            txid: '8de7434cd62089b88d86f742fae32374a08f690cde2905e239c33e4e69ec5617'
+            sum:  5.00000000 + currency.withdraw_fee,
+            rid:  'QUwDTFe1H7EAChVqm6FXexC8YpLPxc2U6n',
+            txid: '77aea3faa3c5d97fe75736a4171e88bd1519893b45f39490d25d7b0c932c356c'
           }
         ]
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:btc_account) { member.get_account(:btc).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:ltc_account) { member.get_account(:ltc).tap { |a| a.update!(locked: 10, balance: 50) } }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: btc_account,
+            account: ltc_account,
             aasm_state: :confirming,
             currency: currency
-          withdrawals << create(:btc_withdraw, withdrawal_hash)
+          withdrawals << create(:ltc_withdraw, withdrawal_hash)
         end
       end
 
-      let(:currency) { Currency.find_by_id(:btc) }
+      let(:currency) { Currency.find_by_id(:ltc) }
 
       before do
         # Mock requests and methods.

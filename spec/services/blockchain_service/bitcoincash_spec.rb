@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe BlockchainService::Bitcoin do
+describe BlockchainService::Bitcoincash do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,9 +9,15 @@ describe BlockchainService::Bitcoin do
     WebMock.allow_net_connect!
   end
 
-  describe 'BlockchainClient::Bitcoin' do
+  describe 'BlockchainClient::Bitocoincash' do
     let(:block_data) do
-      Rails.root.join('spec', 'resources', 'bitcoin-data', block_file_name)
+      Rails.root.join('spec', 'resources', 'bitcoincash-data', block_file_name)
+        .yield_self { |file_path| File.open(file_path) }
+        .yield_self { |file| JSON.load(file) }
+    end
+
+    let(:transaction_data) do
+      Rails.root.join('spec', 'resources', 'bitcoincash-data', transaction_file_name)
         .yield_self { |file_path| File.open(file_path) }
         .yield_self { |file| JSON.load(file) }
     end
@@ -20,7 +26,7 @@ describe BlockchainService::Bitcoin do
     let(:latest_block)  { block_data.last['result']['height'] }
 
     let(:blockchain) do
-      Blockchain.find_by_key('btc-testnet')
+      Blockchain.find_by_key('bch-testnet')
         .tap { |b| b.update(height: start_block) }
     end
 
@@ -36,33 +42,41 @@ describe BlockchainService::Bitcoin do
     def request_block_body(block_hash)
       { jsonrpc: '1.0',
         method:  :getblock,
-        params:  [block_hash, 2]
+        params:  [block_hash, true]
       }.to_json
     end
 
-    context 'two BTC deposit was created during blockchain proccessing' do
+    def request_raw_transaction_body(txid)
+      { jsonrpc: '1.0',
+        method:  :getrawtransaction,
+        params:  [txid, true]
+      }.to_json
+    end
+
+    context 'two BCH deposit was created during blockchain proccessing' do
       # File with real json rpc data for two blocks.
-      let(:block_file_name) { '1354419-1354420.json' }
+      let(:block_file_name) { '1248466-1248467.json' }
+      let(:transaction_file_name) { 'raw_transactions/1248466-1248467.json' }
 
       let(:expected_deposits) do
         [
           {
-            amount:   1.30000000,
-            address:  '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt',
-            txid:     '68ecb040b8d9716c1c09d552e158f69ba9b4b2bbbfb8407bef348f78e1eabbe8'
+            amount:   2.00000000,
+            address:  'mjo3Kw4kFYx9gQ5wWXcRdK9773brderLJv',
+            txid:     '5d1037991225ab4c9759dbde71c2450f5c19b18c1715b895197475ba9a986e1e'
           },
           {
-            amount:   0.65000000,
-            address:  '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt',
-            txid:     '76b0e88cdb624d3d10122c6dfcb75c379df0f4faf27cb4dbb848ea560dd611fa'
+            amount:   3.00000000,
+            address:  'mjo3Kw4kFYx9gQ5wWXcRdK9773brderLJv',
+            txid:     'd64e5e50bcb6d9ec7ecb709ed65819b1768a9029cd0e2b57ff37dd2f81d27855'
           }
         ]
       end
 
-      let(:currency) { Currency.find_by_id(:btc) }
+      let(:currency) { Currency.find_by_id(:bch) }
 
       let!(:payment_address) do
-        create(:btc_payment_address, address: '2MvCSzoFbQsVCTjN2rKWPuHa3THXSp1mHWt')
+        create(:bch_payment_address, address: 'bchtest:qqhwkkl7c9lsenyp3wz82mh3cnsvx4xppy08e2m9ta')
       end
 
       before do
@@ -81,13 +95,20 @@ describe BlockchainService::Bitcoin do
             .to_return(body: blk.to_json)
         end
 
+        transaction_data.each_with_index do |tx, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+            .with(body: request_raw_transaction_body(tx['result']['txid']))
+            .to_return(body: tx.to_json)
+        end
+
         # Process blockchain data.
         BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
       subject { Deposits::Coin.where(currency: currency) }
 
-      it 'creates two deposit' do
+      it 'creates one deposit' do
         expect(Deposits::Coin.where(currency: currency).count).to eq expected_deposits.count
       end
 
@@ -109,41 +130,37 @@ describe BlockchainService::Bitcoin do
       end
     end
 
-    context 'two BTC withdrawals were processed' do
+    context 'one BCH withdrawal is processed' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '1354649-1354651.json' }
+      let(:block_file_name) { '1248467-1248468.json' }
+      let(:transaction_file_name) { 'raw_transactions/1248467-1248468.json' }
 
       # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_withdrawals) do
         [
           {
-            sum:  0.30000000 + currency.withdraw_fee,
-            rid:  '2N8ej8FhvQFT9Rw2Vfpiw5uv9CLuTh1BjFB',
-            txid: '4a60db9608a3a7681808efbac83330c8191adadb7d26c67adb5acdf956eede8b'
-          },
-          {
-            sum:  0.40000000 + currency.withdraw_fee,
-            rid:  '2N5G6fEG3N4uZcXnQsE42YDM5nXq35m99Vx',
-            txid: '8de7434cd62089b88d86f742fae32374a08f690cde2905e239c33e4e69ec5617'
+            sum:  2.50000000 + currency.withdraw_fee,
+            rid:  '2MxjMod4B6KwrySJ6XzxCveEzUreQTJ4M1d',
+            txid: '45adbf46ce2aaf9ab92509c02909a0ce20b5b6b48c470756c3a50a164754147e'
           }
         ]
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:btc_account) { member.get_account(:btc).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:bch_account) { member.get_account(:bch).tap { |a| a.update!(locked: 30, balance: 70) } }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: btc_account,
+            account: bch_account,
             aasm_state: :confirming,
             currency: currency
-          withdrawals << create(:btc_withdraw, withdrawal_hash)
+          withdrawals << create(:bch_withdraw, withdrawal_hash)
         end
       end
 
-      let(:currency) { Currency.find_by_id(:btc) }
+      let(:currency) { Currency.find_by_id(:bch) }
 
       before do
         # Mock requests and methods.
@@ -159,6 +176,13 @@ describe BlockchainService::Bitcoin do
           stub_request(:post, client.endpoint)
             .with(body: request_block_body(blk['result']['hash']))
             .to_return(body: blk.to_json)
+        end
+
+        transaction_data.each_with_index do |tx, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+            .with(body: request_raw_transaction_body(tx['result']['txid']))
+            .to_return(body: tx.to_json)
         end
 
         BlockchainService[blockchain.key].process_blockchain(force: true)

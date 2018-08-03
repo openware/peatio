@@ -30,3 +30,36 @@
     address:         https://blockchain.info/address/#{address}
     transaction:     https://blockchain.info/tx/#{txid}
   status:            active
+
+- key:               bch-testnet
+  name:              BitcoinCash Testnet
+  client:            bitcoincash
+  server:            http://user:password@127.0.0.1:18332
+  height:            1249826
+  min_confirmations: 6
+  explorer:
+    address:         https://www.blocktrail.com/BCC/address/#{address}
+    transaction:     https://www.blocktrail.com/BCC/tx/#{txid}
+  status:            active
+
+- key:               ltc-testnet
+  name:              Litecoin Testnet
+  client:            litecoin
+  server:            http://user:password@127.0.0.1:18332
+  height:            678183
+  min_confirmations: 6
+  explorer:
+    address:         https://www.blocktrail.com/LTC/address/#{address}
+    transaction:     https://www.blocktrail.com/LTC/tx/#{txid}
+  status:            active
+
+- key:               dash-testnet
+  name:              Dash Testnet
+  client:            dash
+  server:            http://user:password@127.0.0.1:19998
+  height:            199136
+  min_confirmations: 6
+  explorer:
+    address:         https://live.blockcypher.com/dash/address/#{address}
+    transaction:     https://live.blockcypher.com/dash/tx/#{txid}
+  status:            active

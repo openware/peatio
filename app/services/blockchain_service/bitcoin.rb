@@ -78,7 +78,10 @@ module BlockchainService
         .fetch('tx')
         .each_with_object([]) do |tx, withdrawals|
 
-        Withdraws::Coin.where(currency: currencies, txid: client.normalize_txid(tx.fetch('txid'))).each do |withdraw|
+        Withdraws::Coin
+          .where(currency: currencies)
+          .where(txid: client.normalize_txid(tx.fetch('txid')))
+          .each do |withdraw|
           # If wallet currency doesn't match with blockchain transaction
 
           withdraw_txs = client.build_transaction(tx, block_id, withdraw.rid)
