@@ -5,6 +5,7 @@ class Currency < ActiveRecord::Base
   serialize :options, JSON
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
+
   # NOTE: type column reserved for STI
   self.inheritance_column = nil
 
@@ -13,7 +14,6 @@ class Currency < ActiveRecord::Base
   validates :symbol, presence: true, length: { maximum: 1 }
   validates :json_rpc_endpoint, :rest_api_endpoint, length: { maximum: 200 }, url: { allow_blank: true }
   validates :options, length: { maximum: 1000 }
-  validates :wallet_url_template, :transaction_url_template, length: { maximum: 200 }, url: { allow_blank: true }
   validates :quick_withdraw_limit, numericality: { greater_than_or_equal_to: 0 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :min_confirmations, numericality: { greater_than_or_equal_to: 0, only_integer: true }, if: :coin?
@@ -40,6 +40,8 @@ class Currency < ActiveRecord::Base
   scope :ordered, -> { order(id: :asc) }
   scope :coins,   -> { where(type: :coin) }
   scope :fiats,   -> { where(type: :fiat) }
+
+  delegate :explorer_transaction, :explorer_address, to: :blockchain
 
   class << self
     def codes(options = {})
@@ -86,8 +88,7 @@ class Currency < ActiveRecord::Base
   def as_json(*)
     { code:                     code,
       coin:                     coin?,
-      fiat:                     fiat?,
-      transaction_url_template: transaction_url_template }
+      fiat:                     fiat? }
   end
 
   def summary
@@ -130,8 +131,6 @@ class Currency < ActiveRecord::Base
     :bitgo_wallet_passphrase,
     :bitgo_rest_api_root,
     :bitgo_rest_api_access_token,
-    :wallet_url_template,
-    :transaction_url_template,
     :erc20_contract_address,
     :case_sensitive,
     :supports_cash_addr_format,

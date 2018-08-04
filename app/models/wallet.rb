@@ -21,9 +21,7 @@ class Wallet < ActiveRecord::Base
   scope :withdraw, -> { where.not(kind: :deposit) }
 
   def wallet_url
-    if currency.wallet_url_template?
-      currency.wallet_url_template.gsub('#{address}', address)
-    end
+    blockchain.explorer_address.gsub('#{address}', address)
   end
 
   def secret

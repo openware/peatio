@@ -47,6 +47,7 @@ module Admin
           currency_id
           name
           address
+          max_balance
           kind
           nsig
           status
