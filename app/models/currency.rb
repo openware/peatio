@@ -5,6 +5,7 @@ class Currency < ActiveRecord::Base
   serialize :options, JSON
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
+
   # NOTE: type column reserved for STI
   self.inheritance_column = nil
 
@@ -39,6 +40,8 @@ class Currency < ActiveRecord::Base
   scope :ordered, -> { order(id: :asc) }
   scope :coins,   -> { where(type: :coin) }
   scope :fiats,   -> { where(type: :fiat) }
+
+  delegate :explorer_transaction, :explorer_address, to: :blockchain
 
   class << self
     def codes(options = {})
