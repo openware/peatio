@@ -57,7 +57,7 @@ module BlockchainService
             next if client.invalid_eth_transaction?(txn)
           else
             txn = client.get_txn_receipt(block_txn.fetch('hash'))
-            next if client.invalid_erc20_transaction?(txn)
+	    next if txn.nil? || client.invalid_erc20_transaction?(txn)
           end
 
           payment_addresses_where(address: client.to_address(txn)) do |payment_address|
@@ -91,7 +91,7 @@ module BlockchainService
               next if client.invalid_eth_transaction?(txn)
             else
               txn = client.get_txn_receipt(block_txn.fetch('hash'))
-              next if client.invalid_erc20_transaction?(txn)
+	      next if txn.nil? || client.invalid_erc20_transaction?(txn)
             end
 
             withdraw_txs = client.build_transaction(txn, block_json, withdraw.currency)  # block_txn required for ETH transaction
