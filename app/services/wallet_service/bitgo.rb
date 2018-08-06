@@ -4,8 +4,6 @@
 module WalletService
   class Bitgo < Base
 
-    DEFAULT_BTC_FEE = { fee: 0.00001327 }.freeze
-
     def create_address(options = {})
       @client.create_address!(options)
     end
@@ -14,7 +12,7 @@ module WalletService
       destination_address = destination_wallet(deposit).address
       pa = deposit.account.payment_address
 
-      options = DEFAULT_BTC_FEE.merge options
+      options = options.merge client.estimate_txn_fee
 
       # We can't collect all funds we need to subtract gas fees.
       amount = deposit.amount - options[:fee]

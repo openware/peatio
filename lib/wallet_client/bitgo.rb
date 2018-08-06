@@ -36,6 +36,10 @@ module WalletClient
       }.compact).fetch('txid').yield_self(&method(:normalize_txid))
     end
 
+    def estimate_txn_fee
+      {fee: convert_from_base_unit(rest_api(:get, '/tx/fee').fetch('feePerKb'))}
+    end
+
     protected
 
     def rest_api(verb, path, data = nil)
