@@ -1,3 +1,5 @@
 resources:
   database:
     type: mysql
+  database:
+    type: s3
