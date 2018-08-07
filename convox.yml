@@ -5,7 +5,7 @@ services:
   db:
     image: mysql:5.7
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     port: 3306
   rabbitmq:
     image: rabbitmq:3.7.6-management
