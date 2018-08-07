@@ -40,8 +40,17 @@ module WalletClient
       txid
     end
 
-    def convert_from_base_unit(value, currency)
-      value.to_d / currency.base_factor
+    def convert_from_base_unit(value)
+      value.to_d / wallet.currency.base_factor
+    end
+
+    def convert_to_base_unit!(value)
+      x = value.to_d * wallet.currency.base_factor
+      unless (x % 1).zero?
+        raise WalletClient::Error, "Failed to convert value to base (smallest) unit because it exceeds the maximum precision: " +
+            "#{value.to_d} - #{x.to_d} must be equal to zero."
+      end
+      x.to_i
     end
   end
 end

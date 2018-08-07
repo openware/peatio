@@ -25,6 +25,10 @@ module WalletClient
       json_rpc(:getbalance).fetch('result').to_d
     end
 
+    def estimate_txn_fee
+     {fee: json_rpc(:estimatesmartfee, [1]).fetch('feerate')}
+    end
+
     protected
 
     def connection
