@@ -10,7 +10,11 @@ describe Admin::WalletsController, type: :controller do
       address:            '249048804499541338815845805798634312140346616732',
       kind:               'hot',
       nsig:               2,
-      status:             'active' }
+      status:             'active',
+      client:             'geth',
+      uri:                'http://127.0.0.1:8545',
+      secret:             'changeme'
+    }
   end
 
   let(:existing_wallet) { Wallet.first }
@@ -35,7 +39,11 @@ describe Admin::WalletsController, type: :controller do
         address:            '249048804499541338815845805798634312140346616732',
         kind:               'warm',
         nsig:               5,
-        status:             'disabled' }
+        status:             'disabled',
+        client:             'geth',
+        uri:                'http://127.0.0.1:8545',
+        secret:             'changeme'
+      }
     end
 
     before { request.env['HTTP_REFERER'] = '/admin/wallets' }
