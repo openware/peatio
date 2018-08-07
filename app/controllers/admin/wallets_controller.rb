@@ -36,6 +36,11 @@ module Admin
       end
     end
 
+    def show_client_info
+      @client = params[:client]
+      @wallet = Wallet.find_by_id(params[:id]) || Wallet.new
+    end
+
     private
 
     def wallet_params
