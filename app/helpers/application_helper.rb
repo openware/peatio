@@ -4,7 +4,7 @@
 module ApplicationHelper
   def check_active(klass)
     if klass.is_a? String
-      return 'active' unless (controller.controller_path.exclude?(klass.singularize))
+      return 'active' unless (controller.controller_path.exclude?(klass))
     else
       return 'active' if (klass.model_name.singular == controller.controller_name.singularize)
     end

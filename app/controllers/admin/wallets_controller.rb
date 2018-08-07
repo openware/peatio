@@ -12,7 +12,7 @@ module Admin
     end
 
     def new
-      @wallet = Wallet.new
+      @wallet = Wallet.new(default_params)
       render :show
     end
 
@@ -42,15 +42,29 @@ module Admin
       params.require(:wallet).permit(permitted_wallet_attributes)
     end
 
+    def default_params
+      { gateway: { options: {} } }
+    end
+
     def permitted_wallet_attributes
       %i[
-          currency_id
-          name
-          address
-          max_balance
-          kind
-          nsig
-          status
+        currency_id
+        blockchain_key
+        name
+        address
+        max_balance
+        kind
+        nsig
+        parent
+        status
+        client
+        uri
+        secret
+        bitgo_test_net
+        bitgo_wallet_address
+        bitgo_wallet_passphrase
+        bitgo_rest_api_root
+        bitgo_rest_api_access_token
       ]
     end
 
