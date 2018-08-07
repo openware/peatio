@@ -2,3 +2,9 @@ services:
   web:
     build: .
     port: 3000
+  db:
+    image: mysql:5.7
+    port: 3306
+  rabbitmq:
+    image: rabbitmq:3.7.6-management
+    port: 5672
