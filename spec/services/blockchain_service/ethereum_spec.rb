@@ -272,5 +272,91 @@ describe BlockchainService::Ethereum do
       end
     end
 
+    context 'two TRST withdrawal is processed' do
+      # File with real json rpc data for bunch of blocks.
+      let(:block_file_name) { '2621895-2621903.json' }
+
+      let(:expected_withdrawals) do
+        [
+            {
+                sum:  0.0005 + currency.withdraw_fee,
+                rid:  '0xb3ebc7b5b631e8d145f383c8cd07f0f00dd56a30',
+                txid: '0xf3605c58b3a43bc048d58dcc2e49548930f6d2a2927fb098f1d17a03ee599d95'
+            },
+            {
+                sum:  0.0005 + currency.withdraw_fee,
+                rid:  '0xfb410459854d10622c45cf242247f368ce49b90c',
+                txid: '0xa44a641b57f8d50c89e5ab8e9ce4bac97f42ff2ce7f79e8f5451b379c8a65f93'
+            }
+        ]
+      end
+
+      let(:member) { create(:member, :level_3, :barong) }
+      let!(:trst_account) { member.get_account(:trst).tap { |a| a.update!(locked: 10, balance: 50) } }
+
+      let(:currency) { Currency.find_by_id(:trst) }
+
+      let!(:failed_withdraw) do
+        withdraw_hash = expected_withdrawals[0].merge!\
+            member: member,
+            account: trst_account,
+            aasm_state: :confirming,
+            currency: currency
+
+        create(:trst_withdraw, withdraw_hash)
+      end
+
+      let!(:success_withdraw) do
+        withdraw_hash = expected_withdrawals[1].merge!\
+            member: member,
+            account: trst_account,
+            aasm_state: :confirming,
+            currency: currency
+
+        create(:trst_withdraw, withdraw_hash)
+      end
+
+      let!(:wallet) do
+        create(:wallet, :eth_hot, address: '0x52cdba517843388838b9ba1b57fde23f493a17a1')
+      end
+
+      before do
+        # Mock requests and methods.
+        client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
+        client.class.any_instance.stubs(:rpc_call_id).returns(1)
+
+        block_data.each_with_index do |blk, index|
+          stub_request(:post, client.endpoint)
+              .with(body: request_body(blk['result']['number'], index))
+              .to_return(body: blk.to_json)
+        end
+
+        transaction_receipt_data.each_with_index do |rcpt, index|
+          stub_request(:post, client.endpoint)
+              .with(body: request_receipt_body(rcpt['result']['transactionHash'],index))
+              .to_return(body: rcpt.to_json)
+        end
+        BlockchainService[blockchain.key].process_blockchain(force: true)
+      end
+
+      subject { Withdraws::Coin.where(currency: currency) }
+
+      it 'doesn\'t create new withdrawals' do
+        expect(subject.count).to eq expected_withdrawals.count
+      end
+
+      it 'changes withdraw state to failed' do
+        failed_withdraw.reload
+        expect(failed_withdraw.aasm_state).to eq 'failed'
+      end
+
+      it 'changes withdraw state to success' do
+        success_withdraw.reload
+        expect(success_withdraw.confirmations).to_not eq 0
+        if success_withdraw.confirmations >= blockchain.min_confirmations
+          expect(success_withdraw.aasm_state).to eq 'succeed'
+        end
+      end
+    end
   end
 end

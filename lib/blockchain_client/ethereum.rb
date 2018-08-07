@@ -84,7 +84,7 @@ module BlockchainClient
     end
 
     def invalid_erc20_transaction?(txn_receipt)
-      txn_receipt.fetch("status") != SUCCESS \
+      txn_receipt.fetch('status') != SUCCESS \
       || txn_receipt.fetch('to').blank? \
       || txn_receipt.fetch('logs').blank?
     end
