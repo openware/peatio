@@ -76,7 +76,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :fail do
-      transitions from: :processing, to: :failed
+      transitions from: %i[processing confirming], to: :failed
       after :unlock_funds
     end
   end
