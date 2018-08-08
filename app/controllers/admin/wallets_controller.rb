@@ -9,6 +9,7 @@ module Admin
 
     def show
       @wallet = Wallet.find(params[:id])
+      Rails.logger.info { @wallet }
     end
 
     def new
@@ -44,11 +45,15 @@ module Admin
     private
 
     def wallet_params
-      params.require(:wallet).permit(permitted_wallet_attributes)
+      params.require(:wallet).permit(permitted_wallet_attributes).merge(settings: wallet_settings_params)
+    end
+
+    def wallet_settings_params
+      params.require(:wallet).require(:settings)
     end
 
     def default_params
-      { gateway: { options: {} } }
+      { settings: {} }
     end
 
     def permitted_wallet_attributes
@@ -62,7 +67,12 @@ module Admin
         nsig
         parent
         status
-        client
+        gateway
+      ]
+    end
+
+    def permitted_settings_attributes
+      %i[
         uri
         secret
         bitgo_test_net
@@ -72,6 +82,5 @@ module Admin
         bitgo_rest_api_access_token
       ]
     end
-
   end
 end
