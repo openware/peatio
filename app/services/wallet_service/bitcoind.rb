@@ -12,15 +12,13 @@ module WalletService
       destination_address = destination_wallet(deposit).address
       pa = deposit.account.payment_address
 
-      options = options.merge client.estimate_txn_fee
-
-      # We can't collect all funds we need to subtract gas fees.
-      amount = deposit.amount - options[:fee]
+      # this will automatically deduct fee from amount
+      options = options.merge( subtract_fee: true )
 
       client.create_withdrawal!(
           { address: pa.address },
           { address: destination_address },
-          amount,
+          deposit.amount,
           options
       )
     end

@@ -12,10 +12,14 @@ module WalletService
       destination_address = destination_wallet(deposit).address
       pa = deposit.account.payment_address
 
-      options = options.merge client.estimate_txn_fee
+      # This builds a transaction object, but does not sign or send it.
+      fee = client.build_raw_transaction(
+          { address: destination_address },
+          deposit.amount
+      )
 
-      # We can't collect all funds we need to subtract gas fees.
-      amount = deposit.amount - options[:fee]
+      # We can't collect all funds we need to subtract txn fee.
+      amount = deposit.amount - fee
 
       client.create_withdrawal!(
           { address: pa.address },
