@@ -26,11 +26,19 @@
     <% end %>
 
     <% t.column 'Enabled' do |x| %>
-      <%= x.enabled? ? 'Yes' : 'No' %>
+      <% if x.enabled? %>
+        <span class="text-success">Yes</span>
+      <% else %>
+        <span class="text-danger">No</span>
+      <% end %>
     <% end %>
 
     <% t.column 'Actions' do |x| %>
       <%= link_to 'View', admin_currency_path(x), target: '_blank' %>
+      <% if x.enabled? %>
+        <%= link_to 'Disable', admin_currency_path(x),
+              data: {:confirm => 'Are you sure?'}, method: :delete, class: 'text-danger' %>
+      <% end %>
     <% end %>
   <% end %>
 
