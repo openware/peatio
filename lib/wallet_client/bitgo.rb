@@ -36,13 +36,15 @@ module WalletClient
       }.compact).fetch('txid').yield_self(&method(:normalize_txid))
     end
 
-    def estimate_txn_fee
-      {fee: convert_from_base_unit(rest_api(:get, '/tx/fee').fetch('feePerKb'))}
+    def build_raw_transaction(recipient, amount)
+      rest_api(:post, '/wallet/' + urlsafe_wallet_id + '/tx/build', {
+          recipients: [{address: normalize_address(recipient.fetch(:address)), amount: convert_to_base_unit!(amount).to_s }]
+      }.compact, false).fetch('feeInfo').fetch('fee').yield_self(&method(:convert_from_base_unit))
     end
 
     protected
 
-    def rest_api(verb, path, data = nil)
+    def rest_api(verb, path, data = nil, raise_error = true)
       args = [@endpoint + path]
 
       if data
@@ -63,7 +65,7 @@ module WalletClient
 
       response = Faraday.send(verb, *args)
       Rails.logger.debug { response.describe }
-      response.assert_success!
+      response.assert_success! if raise_error
       JSON.parse(response.body)
     end
 
