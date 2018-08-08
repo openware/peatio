@@ -38,6 +38,15 @@
         <% end %>
       </li>
 
+      <% if can? :manage, Blockchain %>
+        <li class="list-icon-item <%= check_active('blockchains') %>">
+          <%= link_to admin_blockchains_path do %>
+            <i class="icon fa fa-link"></i>
+            <span class="menu-text">Blockchains</span>
+          <% end %>
+        </li>
+      <% end %>
+
       <li class="list-icon-item <%= check_active('currencies') %>">
         <%= link_to admin_currencies_path do %>
           <i class="icon fa fa-usd"></i>
@@ -50,6 +59,15 @@
           <%= link_to admin_markets_path do %>
             <i class="icon fa fa-line-chart"></i>
             <span class="menu-text">Markets</span>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% if can? :manage, Wallet %>
+        <li class="list-icon-item <%= check_active('wallets') %>">
+          <%= link_to admin_wallets_path do %>
+            <i class="icon fa fa-money"></i>
+            <span class="menu-text">Wallets</span>
           <% end %>
         </li>
       <% end %>
@@ -87,28 +105,10 @@
       <% end %>
 
       <% if can? :manage, Member %>
-        <li class="list-icon-item <% check_active('members') %>">
+        <li class="list-icon-item <%= check_active('members') %>">
           <%= link_to admin_members_path do %>
             <i class="icon fa fa-users"></i>
             <span class="menu-text"><%= t('.menus.sections.members') %></span>
-          <% end %>
-        </li>
-      <% end %>
-
-      <% if can? :manage, Blockchain %>
-        <li class="list-icon-item <%= check_active('blockchains') %>">
-          <%= link_to admin_blockchains_path do %>
-            <i class="icon fa fa-link"></i>
-            <span class="menu-text">Blockchains</span>
-          <% end %>
-        </li>
-      <% end %>
-
-      <% if can? :manage, Wallet %>
-        <li class="list-icon-item <%= check_active('wallets') %>">
-          <%= link_to admin_wallets_path do %>
-            <i class="icon fa fa-money"></i>
-            <span class="menu-text">Wallets</span>
           <% end %>
         </li>
       <% end %>
