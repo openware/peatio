@@ -1,7 +1,7 @@
 $ ->
   $('input[name*=created_at]').datetimepicker()
 
-  $('#wallet_client').change ->
+  $('#wallet_gateway').change ->
     $.ajax
       type: 'post'
       url: '/admin/wallets/show_client_info'

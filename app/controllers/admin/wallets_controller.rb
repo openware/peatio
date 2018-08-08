@@ -51,7 +51,7 @@ module Admin
     end
 
     def show_client_info
-      @client = params[:client]
+      @gateway = params[:gateway]
       @wallet = Wallet.find_by_id(params[:id]) || Wallet.new
     end
 
