@@ -37,6 +37,19 @@ module Admin
       end
     end
 
+    # just disabling for now, without destroying 
+    def destroy
+      return redirect_to :back unless can? :destroy, Market
+      
+      @market = Market.find(params[:id])
+      if @market.update(enabled: false)
+        redirect_to admin_markets_path
+      else
+        flash[:alert] = @market.errors.full_messages
+        redirect_to :back
+      end
+    end
+
   private
 
     def market_params
