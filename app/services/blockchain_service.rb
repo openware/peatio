@@ -93,5 +93,9 @@ module BlockchainService
           yield wallet if block_given?
         end
     end
+
+    def update_height(latest_block, block_id, blockchain)
+      Blockchain.increment_counter(:height, blockchain.id) if latest_block - block_id >= blockchain.min_confirmations
+    end
   end
 end
