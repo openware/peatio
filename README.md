@@ -21,73 +21,6 @@ Feel free to contact us for joining the next training session: [Peatio.tech](htt
 
 Help is greatly appreciated, feel free to submit pull-requests or open issues.
 
-## Requirements
-
-* Linux / Mac OSX
-* Docker / Kubernetes
-* Ruby 2.5.0
-* Rails 4.2+
-* Redis 2.0+
-* MySQL 5.7
-* RabbitMQ
-
-Find more details in the [docs directory](docs).
-
-## Getting Started
-
-### Local development setup:
-
-* ### [Docker compose](https://github.com/rubykube/peatio-workbench)
-We suggest you to start using Peatio by installing Workbench. Workbench which is based on [Docker containers](https://www.docker.com/what-docker) is a convenient and straightforward way to start Peatio development environment.
-
-#### Quick Install
-1.  Install Docker on your computer: [Docker](https://docs.docker.com/install/)
-2.  Install Docker compose [Docker compose](https://docs.docker.com/compose/install/)
-3.  [Vagrant](https://www.vagrantup.com/downloads.html)
-
-#### Start peatio with workbench
-
-1. Recursive clone : `git clone --recursive https://github.com/rubykube/workbench.git`
-2. Move to workbench `cd workbench`
-3. Build the images: `make build`
-4. Run the application: `make run`
-
-This setup uses a load balance configured with the following hosts to install in `/etc/hosts`:
-
-```
-0.0.0.0 api.wb.local
-0.0.0.0 auth.wb.local
-
-0.0.0.0 api.slanger.wb.local
-0.0.0.0 ws.slanger.wb.local
-
-0.0.0.0 pma.wb.local
-0.0.0.0 monitor.wb.local
-```
-
-##### [Barong](https://github.com/rubykube/barong)
-
-Start barong: `docker-compose run --rm barong bash -c "./bin/link_config && ./bin/setup"`
-
-This will output password for **admin@barong.io**. Default password is `Qwerty123`
-
-##### Peatio
-
-Start peatio server: `docker-compose up -d peatio`
-
-##### Frontend
-
-Simply start your local server. Now you're able to log in with your local Barong and Peatio.
-
-* ### [on Mac OS X](docs/setup-osx.md)
-
-* ### [on Ubuntu](docs/setup-ubuntu.md)
-
-### Production setup:
-
-* [Deploy production cluster with kite](https://github.com/rubykube/kite/blob/master/README.md)
-* [Kubernetes deployment architecture](docs/architecture.md)
-
 ## Things You Should Know
 
 **RUNNING AN EXCHANGE IS HARD.**
@@ -122,30 +55,99 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 * Maintained by [peatio.tech](https://www.peatio.tech)
 * [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer) provided by [Barong](https://www.github.com/rubykube/barong)
 
-## Barong
-Barong is a KYC OAuth 2.0 provider. Barong replace the KYC, 2FA, Phone verification from legacy Peatio.
+## Requirements
 
+* Linux / Mac OSX
+* Docker / Kubernetes
+* Ruby 2.5.0
+* Rails 4.2+
+* Redis 2.0+
+* MySQL 5.7
+* RabbitMQ
+
+Find more details in the [docs directory](docs).
+
+## Getting Started
+
+### Local development setup:
+
+* ### [Docker compose](https://github.com/rubykube/peatio-workbench)
+We suggest you to start using Peatio by installing [Workbench](https://github.com/rubykube/workbench). [Workbench](https://github.com/rubykube/workbench) which is based on [Docker containers](https://www.docker.com/what-docker) is a convenient and straightforward way to start Peatio development environment.
+
+#### Prerequisites
+1. [Docker](https://docs.docker.com/install/) installed
+2. [Docker compose](https://docs.docker.com/compose/install/) installed
+
+#### Prepare the workbench
+
+1. Recursive clone : `git clone --recursive https://github.com/rubykube/workbench.git`
+2. Move to workbench `cd workbench`
+3. Build the images: `make build`
+4. Run the application: `make run`
+
+You should add those hosts to your `/etc/hosts` file:
+
+```
+0.0.0.0 api.wb.local
+0.0.0.0 auth.wb.local
+
+0.0.0.0 api.slanger.wb.local
+0.0.0.0 ws.slanger.wb.local
+
+0.0.0.0 pma.wb.local
+0.0.0.0 monitor.wb.local
+
+0.0.0.0 btc.wb.local
+0.0.0.0 eth.wb.local
+```
+Now you have peatio up and running.
+
+##### [Barong](https://github.com/rubykube/barong)
+
+Barong is an essential part of Rubykube Peatio. It is a KYC OAuth 2.0 provider. Barong replace the KYC, 2FA, Phone verification from legacy Peatio.
 Barong manage roles and kyc level across all applications from the RKCP. It's easy to extend by using the EventAPI or Rest API.
 
-### OAuth 2.0
-OAuth 2.0 is the industry-standard protocol for authorization. OAuth 2.0 supersedes the work done on the original OAuth protocol created in 2006. OAuth 2.0 focuses on client developer simplicity while providing specific authorization flows for web applications, desktop applications, mobile phones, and living room devices. This specification and its extensions are being developed within the IETF OAuth Working Group.
-
-### Barong Levels
-
-In the process of verification, Barong assign different levels to accounts
-
-- Level 0 is default account level
-- Level 1 will apply after email verification
-- Level 2 will apply after phone verification
-- Level 3 will apply after identity & document verification
-
-### Barong key features
+##### Barong key features
 
 * KYC Verification for individuals
 * SMS and Google two-factor authentication
 * OAuth 2.0 provider
 * Transaction Signature support
 * Supply JWT tokens to frontend and mobile app
+
+
+Start barong:
+
+```sh
+$> docker-compose run --rm barong bash -c "./bin/link_config && ./bin/setup"
+$> docker-compose up -d barong
+```
+
+This will output password for **admin@barong.io**. Default password is **`Qwerty123`**
+
+##### Peatio
+
+Start peatio server
+
+```sh
+$> docker-compose run --rm peatio bash -c "./bin/link_config && rake db:create db:migrate db:seed"
+$> docker-compose up -d peatio
+```
+
+After all of that you can start using Peatio in your brouser just by following one of the hosts which you added earlier.
+
+##### Frontend
+
+Simply start your local server. Now you're able to log in with your local Barong and Peatio.
+
+* ### [on Mac OS X](docs/setup-osx.md)
+
+* ### [on Ubuntu](docs/setup-ubuntu.md)
+
+### Production setup:
+
+* [Deploy production cluster with kite](https://github.com/rubykube/kite/blob/master/README.md)
+* [Kubernetes deployment architecture](docs/architecture.md)
 
 ## API
 
@@ -163,15 +165,31 @@ Here are some API clients/wrappers:
 * [yunbi-client-php](https://github.com/panlilu/yunbi-client-php) is a php client written by panlilu.
 
 ## Getting Involved
+We want to make it super-easy for Peatio users and contributors to talk to us and connect with each other, to share ideas, solve problems and help make Peatio awesome. Here are the main channels we're running currently, we'd love to hear from you on one of them:
 
-Want to report a bug, request a feature, contribute or translate Peatio?
+### Discourse
 
-* Browse our [issues](https://github.com/rubykube/peatio/issues),
-  comment on proposals, report bugs.
-* Clone the peatio repo, make some changes according to our development
-  guidelines and issue a pull-request with your changes.
-* If you need technical support or customization service,
-  contact us: [hello@peatio.tech](mailto:hello@peatio.tech)
+[Rubykube Discourse Forum](https://discuss.rubykube.io)
+
+This is for all Peatio users. You can find guides, recipes, questions, and answers from Snowplow users including the Peatio.tech team.
+We welcome questions and contributions!
+
+### Telegram
+
+[@peatio](https://t.me/peatio)
+
+Chat with us and other community members on Telegram.
+
+### GitHub
+Peatio issues
+
+If you spot a bug, then please raise an issue in our main GitHub project (rubykube/peatio); likewise, if you have developed a cool new feature or improvement in your Rubykube Peatio fork, then send us a pull request!
+If you want to brainstorm a potential new feature, then the Rubykube Discourse Forum (see above) is probably a better place to start.
+
+### Email
+hello@peatio.tech
+
+If you want to talk directly to us (e.g. about a commercially sensitive issue), email is the easiest way.
 
 ## Getting Support and Customization
 
