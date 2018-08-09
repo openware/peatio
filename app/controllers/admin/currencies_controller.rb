@@ -37,20 +37,6 @@ module Admin
       end
     end
 
-    def disable
-      return redirect_to :back unless can? :destroy, Currency
-
-      @currency = Currency.find(params[:id])
-      if @currency.update(enabled: false)
-        disable_markets
-        disable_wallets
-        redirect_to admin_currencies_path
-      else
-        flash[:alert] = @currency.errors.full_messages
-        redirect_to :back
-      end
-    end
-
   private
 
     def currency_params
@@ -106,16 +92,6 @@ module Admin
           bitgo_test_net
           supports_hd_protocol
           allow_multiple_deposit_addresses ]
-    end
-
-    def disable_markets
-      markets_list = Market.where(bid_unit: @currency.id) + Market.where(ask_unit: @currency.id)
-      markets_list.each { |m| m.update(enabled: false) }
-    end
-
-    def disable_wallets
-      wallets_list = Wallet.where(currency_id: @currency.id)
-      wallets_list.each { |w| w.update(status: 'disabled') }
     end
   end
 end
