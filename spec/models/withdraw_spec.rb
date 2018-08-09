@@ -198,6 +198,15 @@ describe Withdraw do
 
         expect(subject.processing?).to be true
       end
+
+      it 'transitions to :pending after calling #pending!' do
+        subject.expects(:send_coins!)
+
+        subject.process!
+        subject.pending!
+
+        expect(subject.pending?).to be true
+      end
     end
 
     context :cancel do
