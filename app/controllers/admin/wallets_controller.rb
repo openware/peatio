@@ -9,11 +9,10 @@ module Admin
 
     def show
       @wallet = Wallet.find(params[:id])
-      Rails.logger.info { @wallet }
     end
 
     def new
-      @wallet = Wallet.new(default_params)
+      @wallet = Wallet.new
       render :show
     end
 
@@ -37,10 +36,9 @@ module Admin
       end
     end
 
-    # just disabling for now, without destroying 
-    def destroy
+    def disable
       return redirect_to :back unless can? :destroy, Wallet
-      
+
       @wallet = Wallet.find(params[:id])
       if @wallet.update(status: 'disabled')
         redirect_to admin_wallets_path
@@ -58,15 +56,16 @@ module Admin
     private
 
     def wallet_params
-      params.require(:wallet).permit(permitted_wallet_attributes).merge(settings: wallet_settings_params)
+      params.require(:wallet).permit(permitted_wallet_attributes).tap do |params|
+        boolean_attributes.each do |param|
+          next unless params.key?(param)
+          params[param] = params[param].in?(['1', 'true', true])
+        end
+      end
     end
 
     def wallet_settings_params
       params.require(:wallet).require(:settings)
-    end
-
-    def default_params
-      { settings: {} }
     end
 
     def permitted_wallet_attributes
@@ -81,11 +80,6 @@ module Admin
         parent
         status
         gateway
-      ]
-    end
-
-    def permitted_settings_attributes
-      %i[
         uri
         secret
         bitgo_test_net
@@ -94,6 +88,10 @@ module Admin
         bitgo_rest_api_root
         bitgo_rest_api_access_token
       ]
+    end
+
+    def boolean_attributes
+      %i[bitgo_test_net]
     end
   end
 end

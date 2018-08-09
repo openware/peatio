@@ -37,10 +37,9 @@ module Admin
       end
     end
 
-    # just disabling for now, without destroying 
-    def destroy
+    def disable
       return redirect_to :back unless can? :destroy, Market
-      
+
       @market = Market.find(params[:id])
       if @market.update(enabled: false)
         redirect_to admin_markets_path
@@ -84,7 +83,7 @@ module Admin
     end
 
     def boolean_market_attributes
-      %i[ enabled ]
+      %i[enabled]
     end
   end
 end

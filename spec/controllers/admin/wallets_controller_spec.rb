@@ -11,7 +11,7 @@ describe Admin::WalletsController, type: :controller do
       kind:               'hot',
       nsig:               2,
       status:             'active',
-      client:             'geth',
+      gateway:            'geth',
       uri:                'http://127.0.0.1:8545',
       secret:             'changeme'
     }
@@ -40,7 +40,7 @@ describe Admin::WalletsController, type: :controller do
         kind:               'warm',
         nsig:               5,
         status:             'disabled',
-        client:             'geth',
+        gateway:            'geth',
         uri:                'http://127.0.0.1:8545',
         secret:             'changeme'
       }

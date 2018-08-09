@@ -6,7 +6,7 @@ $ ->
       type: 'post'
       url: '/admin/wallets/show_client_info'
       data: {
-        client: $(this).val(),
+        gateway: $(this).val(),
         id: $('#wallet_id').val()
       }
     return

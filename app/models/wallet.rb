@@ -4,13 +4,13 @@
 class Wallet < ActiveRecord::Base
   serialize :settings, JSON
   store :settings, accessors: %i[
-                     uri,
-                     secret,
-                     bitgo_test_net,
-                     bitgo_wallet_id,
-                     bitgo_wallet_address,
-                     bitgo_wallet_passphrase,
-                     bitgo_rest_api_root,
+                     uri
+                     secret
+                     bitgo_test_net
+                     bitgo_wallet_id
+                     bitgo_wallet_address
+                     bitgo_wallet_passphrase
+                     bitgo_rest_api_root
                      bitgo_rest_api_access_token
                    ], coder: JSON
 
@@ -63,11 +63,11 @@ end
 #  address        :string(255)      not null
 #  kind           :string(32)       not null
 #  nsig           :integer
-#  gateway        :string(1000)     default("{}"), not null
+#  gateway        :string(20)       default(""), not null
+#  settings       :string(1000)     default({}), not null
 #  max_balance    :decimal(32, 16)  default(0.0), not null
 #  parent         :integer
 #  status         :string(32)
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  settings       :json
 #

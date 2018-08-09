@@ -45,7 +45,7 @@
     <% t.column 'Actions' do |x| %>
       <%= link_to 'View', admin_wallet_path(x), target: '_blank' %>
       <% if  x.status.titleize != 'Disabled' %>
-      <%= link_to 'Disable', admin_wallet_path(x),
+      <%= link_to 'Disable', disable_admin_wallet_path(x),
             data: {:confirm => 'Are you sure?'}, method: :delete, class: 'text-danger' %>
       <% end %>
     <% end %>

@@ -37,10 +37,9 @@ module Admin
       end
     end
 
-    # just disabling for now, without destroying 
-    def destroy
+    def disable
       return redirect_to :back unless can? :destroy, Currency
-      
+
       @currency = Currency.find(params[:id])
       if @currency.update(enabled: false)
         disable_markets

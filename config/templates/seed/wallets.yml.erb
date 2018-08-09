@@ -6,11 +6,10 @@
   nsig:             1
   max_balance:      0.0
   status:           active
-  gateway:
-    client:         geth
-    options:
-      uri:          http://127.0.0.1:8545
-      secret:       'changeme'
+  gateway:          geth
+  settings:
+    uri:          http://127.0.0.1:8545
+    secret:       'changeme'
 
 - name:             Ethereum Hot Wallet
   blockchain_key:   eth-rinkeby
@@ -20,11 +19,10 @@
   nsig:             1
   max_balance:      100.0
   status:           active
-  gateway:
-    client:         geth
-    options:
-      uri:          http://127.0.0.1:8545
-      secret:       'test'
+  gateway:          geth
+  settings:
+    uri:          http://127.0.0.1:8545
+    secret:       'test'
 
 
 - name:             Ethereum Warm Wallet
@@ -35,11 +33,10 @@
   nsig:             1
   max_balance:      1000.0
   status:           active
-  gateway:
-    client:         geth
-    options:
-      uri:          http://user:password@127.0.0.1:8545
-      secret:       'changeme'
+  gateway:          geth
+  settings:
+    uri:          http://user:password@127.0.0.1:8545
+    secret:       'changeme'
 
 - name:             Bitcoin Deposit Wallet
   blockchain_key:   btc-testnet
@@ -49,10 +46,9 @@
   nsig:             1
   max_balance:      0.0
   status:           active
-  gateway:
-    client:         bitcoind
-    options:
-      uri:          http://user:password@127.0.0.1:18332
+  gateway:          bitcoind
+  settings:
+    uri:          http://user:password@127.0.0.1:18332
 
 - name:             Bitcoin Hot Wallet
   blockchain_key:   btc-testnet
@@ -62,15 +58,14 @@
   nsig:             1
   max_balance:      5.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 - name:             Bitcoin Warm Wallet
   blockchain_key:   btc-testnet
@@ -80,15 +75,14 @@
   nsig:             1
   max_balance:      50.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 - name:             Bitcoincash Deposit Wallet
   blockchain_key:   bch-testnet
@@ -98,10 +92,9 @@
   nsig:             1
   max_balance:      0.0
   status:           active
-  gateway:
-    client:         bitcoincashd
-    options:
-      uri:          http://user:password@127.0.0.1:18332
+  gateway:          bitcoincashd
+  settings:
+    uri:          http://user:password@127.0.0.1:18332
 
 - name:             Bitcoincash Hot Wallet
   blockchain_key:   bch-testnet
@@ -111,15 +104,14 @@
   nsig:             1
   max_balance:      5.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 - name:             Bitcoincash Warm Wallet
   blockchain_key:   bch-testnet
@@ -129,15 +121,14 @@
   nsig:             1
   max_balance:      50.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 
 - name:             Litecoin Deposit Wallet
@@ -148,10 +139,9 @@
   nsig:             1
   max_balance:      0.0
   status:           active
-  gateway:
-    client:         litecoind
-    options:
-      uri:          http://user:password@127.0.0.1:18332
+  gateway:          litecoind
+  settings:
+    uri:          http://user:password@127.0.0.1:18332
 
 - name:             Litecoin Hot Wallet
   blockchain_key:   ltc-testnet
@@ -161,15 +151,14 @@
   nsig:             1
   max_balance:      5.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 - name:             Litecoin Warm Wallet
   blockchain_key:   ltc-testnet
@@ -179,15 +168,14 @@
   nsig:             1
   max_balance:      50.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 
 - name:             Dash Deposit Wallet
@@ -198,10 +186,9 @@
   nsig:             1
   max_balance:      0.0
   status:           active
-  gateway:
-    client:         dashd
-    options:
-      uri:          http://user:password@127.0.0.1:19998
+  gateway:          dashd
+  settings:
+    uri:          http://user:password@127.0.0.1:19998
 
 - name:             Dash Hot Wallet
   blockchain_key:   dash-testnet
@@ -211,15 +198,14 @@
   nsig:             1
   max_balance:      5.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
 
 - name:             Dash Warm Wallet
   blockchain_key:   dash-testnet
@@ -229,12 +215,11 @@
   nsig:             1
   max_balance:      50.0
   status:           active
-  gateway:
-    client:         bitgo
-    options:
-      bitgo_test_net:              on
-      bitgo_wallet_id:             ~
-      bitgo_wallet_address:        ~
-      bitgo_wallet_passphrase:     ~
-      bitgo_rest_api_root:         https://test.bitgo.com/api/v2
-      bitgo_rest_api_access_token: ~
+  gateway:          bitgo
+  settings:
+    bitgo_test_net:              on
+    bitgo_wallet_id:             ~
+    bitgo_wallet_address:        ~
+    bitgo_wallet_passphrase:     ~
+    bitgo_rest_api_root:         https://test.bitgo.com/api/v2
+    bitgo_rest_api_access_token: ~
