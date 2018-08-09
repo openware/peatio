@@ -13,7 +13,7 @@ module WalletClient
     #   The wallet object.
     # @return [BaseAPI]
     def [](wallet)
-      "WalletClient::#{wallet.gateway.fetch('client').capitalize}"
+      "WalletClient::#{wallet.gateway.capitalize}"
         .constantize
         .new(wallet)
     end

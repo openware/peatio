@@ -6,9 +6,9 @@ module WalletClient
 
     def initialize(*)
       super
-      currency_code_prefix = wallet.gateway.dig('options','bitgo_test_net') ? 't' : ''
-      @endpoint            = wallet.gateway.dig('options','bitgo_rest_api_root').gsub(/\/+\z/, '') + '/' + currency_code_prefix + wallet.currency.code
-      @access_token        = wallet.gateway.dig('options','bitgo_rest_api_access_token')
+      currency_code_prefix = wallet.bitgo_test_net ? 't' : ''
+      @endpoint            = wallet.bitgo_rest_api_root.gsub(/\/+\z/, '') + '/' + currency_code_prefix + wallet.currency.code
+      @access_token        = wallet.bitgo_rest_api_access_token
     end
 
     def load_balance!
@@ -74,15 +74,15 @@ module WalletClient
     end
 
     def urlsafe_wallet_address
-      CGI.escape(normalize_address(wallet.gateway.dig('options','bitgo_wallet_address')))
+      CGI.escape(normalize_address(wallet.bitgo_wallet_address))
     end
 
     def wallet_id
-      wallet.gateway.dig('options','bitgo_wallet_id')
+      wallet.bitgo_wallet_id
     end
 
     def bitgo_wallet_passphrase
-      wallet.gateway.dig('options','bitgo_wallet_passphrase')
+      wallet.bitgo_wallet_passphrase
     end
 
     def urlsafe_wallet_id

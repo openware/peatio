@@ -12,7 +12,7 @@ module WalletService
     # @param wallet [String, Symbol]
     #   The wallet record in database.
     def [](wallet)
-      wallet_service = wallet.gateway.fetch('client').capitalize
+      wallet_service = wallet.gateway.capitalize
       "WalletService::#{wallet_service}"
         .constantize
         .new(wallet)
