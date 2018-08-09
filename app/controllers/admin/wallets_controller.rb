@@ -36,18 +36,6 @@ module Admin
       end
     end
 
-    def disable
-      return redirect_to :back unless can? :destroy, Wallet
-
-      @wallet = Wallet.find(params[:id])
-      if @wallet.update(status: 'disabled')
-        redirect_to admin_wallets_path
-      else
-        flash[:alert] = @wallet.errors.full_messages
-        redirect_to :back
-      end
-    end
-
     def show_client_info
       @gateway = params[:gateway]
       @wallet = Wallet.find_by_id(params[:id]) || Wallet.new
