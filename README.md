@@ -43,7 +43,7 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 
 * Designed as high performance crypto currency exchange
 * Built-in high performance matching-engine
-* Built-in [Proof of Solvency](https://iwilcox.me.uk/2014/proving-bitcoin-reserves) Audit
+* Built-in Proof of Solvency Audit
 * Usability and scalability
 * Websocket API and high frequency trading support
 * Support multiple digital currencies (eg. Bitcoin, Litecoin, Ethereum, Ripple etc.)
@@ -153,12 +153,11 @@ Simply start your local server. Now you're able to log in with your local Barong
 
 You can interact with Peatio through API:
 
-* [API v2 docs](https://demo.peatio.tech/documents/api_v2?lang=en)
-* [Websocket API docs](https://demo.peatio.tech/documents/websocket_api)
+* API v2
+* Websocket API
 
 Here are some API clients/wrappers:
 
-* [peatio-client-ruby](https://github.com/peatio/peatio-client-ruby) is the official ruby client of both HTTP/Websocket API.
 * [peatio-client-python by JohnnyZhao](https://github.com/JohnnyZhao/peatio-client-python) is a python client written by JohnnyZhao.
 * [peatio-client-python by czheo](https://github.com/JohnnyZhao/peatio-client-python) is a python wrapper similar to peatio-client-ruby written by czheo.
 * [peatioJavaClient](https://github.com/classic1999/peatioJavaClient.git) is a java client written by classic1999.
