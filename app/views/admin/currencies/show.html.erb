@@ -34,13 +34,6 @@
             <dd><%= f.text_field :deposit_fee, class: 'form-control' %></dd>
 
             <% if @currency.coin? || @currency.new_record? %>
-              <dt>Case sensitive?</dt>
-              <% if @currency.new_record? %>
-                <dd><%= f.check_box :case_sensitive %></dd>
-              <% else %>
-                <dd><%= @currency.case_sensitive?.to_s.titleize %></dd>
-              <% end %>
-
               <% if @currency.new_record? || @currency.erc20_contract_address? %>
                 <dt>ERC20 contract address</dt>
                 <% if @currency.new_record? %>

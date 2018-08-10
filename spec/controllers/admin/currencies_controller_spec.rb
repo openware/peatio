@@ -13,8 +13,7 @@ describe Admin::CurrenciesController, type: :controller do
       enabled:                          true,
       base_factor:                      1000000,
       precision:                        8,
-      case_sensitive:                   true,
-      erc20_contract_address:           '1FmiowizbQNrkHZRN4VVSmqAcC5gVk9sF3',
+      erc20_contract_address:           '1fmiowizbqnrkhzrn4vvsmqacc5gvk9sf3',
       supports_cash_addr_format:        true,
       supports_hd_protocol:             true,
       allow_multiple_deposit_addresses: true }
@@ -46,7 +45,6 @@ describe Admin::CurrenciesController, type: :controller do
         enabled:                          false,
         base_factor:                      100000,
         precision:                        9,
-        case_sensitive:                   false,
         erc20_contract_address:           '12kAmv8QXvQyosGzitFYm6YzxK2SgovhQ9',
         supports_cash_addr_format:        false,
         supports_hd_protocol:             false,
@@ -60,7 +58,6 @@ describe Admin::CurrenciesController, type: :controller do
           :type,
           :base_factor,
           :precision,
-          :case_sensitive,
           :erc20_contract_address,
           :supports_cash_addr_format,
           :supports_hd_protocol

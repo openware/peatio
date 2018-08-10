@@ -21,7 +21,6 @@ class Currency < ActiveRecord::Base
   before_validation { self.deposit_fee = 0 unless fiat? }
 
   before_validation do
-    next if case_sensitive?
     self.erc20_contract_address = erc20_contract_address.try(:downcase)
   end
 
@@ -114,14 +113,9 @@ class Currency < ActiveRecord::Base
 
   nested_attr \
     :erc20_contract_address,
-    :case_sensitive,
     :supports_cash_addr_format,
     :supports_hd_protocol,
     :allow_multiple_deposit_addresses
-
-  def case_insensitive?
-    !case_sensitive?
-  end
 
   def disabled?
     !enabled
@@ -138,7 +132,6 @@ class Currency < ActiveRecord::Base
   attr_readonly :id,
                 :code,
                 :type,
-                :case_sensitive,
                 :erc20_contract_address,
                 :supports_cash_addr_format,
                 :supports_hd_protocol

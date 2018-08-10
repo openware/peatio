@@ -93,11 +93,11 @@ module BlockchainClient
     end
 
     def normalize_address(address)
-      address.downcase
+      address
     end
 
     def normalize_txid(txid)
-      txid.downcase
+      txid
     end
 
     %i[ load_balance load_deposit create_address create_withdrawal inspect_address ].each do |method|

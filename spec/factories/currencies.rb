@@ -31,7 +31,6 @@ FactoryBot.define do
       quick_withdraw_limit 0.1
       withdraw_fee         0.01
       options \
-        case_sensitive:                   true,
         supports_hd_protocol:             true,
         allow_multiple_deposit_addresses: true
     end
@@ -45,7 +44,6 @@ FactoryBot.define do
       quick_withdraw_limit 1000
       withdraw_fee         0.02
       options \
-        case_sensitive:                   true,
         supports_hd_protocol:             true,
         allow_multiple_deposit_addresses: true
     end
@@ -59,7 +57,6 @@ FactoryBot.define do
       quick_withdraw_limit 1
       withdraw_fee         0.025
       options \
-        case_sensitive:                   false,
         supports_hd_protocol:             false,
         allow_multiple_deposit_addresses: false
     end
@@ -72,7 +69,6 @@ FactoryBot.define do
       quick_withdraw_limit 1000
       withdraw_fee         0.015
       options \
-        case_sensitive:                   true,
         supports_hd_protocol:             false,
         allow_multiple_deposit_addresses: false
     end
@@ -87,7 +83,6 @@ FactoryBot.define do
       withdraw_fee         0.025
       options \
         erc20_contract_address:           '0x87099adD3bCC0821B5b151307c147215F839a110',
-        case_sensitive:                   false,
         supports_hd_protocol:             false,
         allow_multiple_deposit_addresses: false
     end
@@ -101,7 +96,6 @@ FactoryBot.define do
       quick_withdraw_limit 1
       withdraw_fee         0
       options \
-        case_sensitive:                   true,
         supports_cash_addr_format:        true,
         supports_hd_protocol:             true,
         allow_multiple_deposit_addresses: true
@@ -116,7 +110,6 @@ FactoryBot.define do
       quick_withdraw_limit 1000
       withdraw_fee         0.02
       options \
-        case_sensitive:                   true,
         supports_hd_protocol:             true,
         allow_multiple_deposit_addresses: true
     end

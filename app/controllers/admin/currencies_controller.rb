@@ -66,7 +66,6 @@ module Admin
           type
           base_factor
           precision
-          case_sensitive
           erc20_contract_address
           supports_cash_addr_format
           supports_hd_protocol ]
@@ -77,7 +76,6 @@ module Admin
 
     def boolean_currency_attributes
       %i[ enabled
-          case_sensitive
           supports_cash_addr_format
           supports_hd_protocol
           allow_multiple_deposit_addresses ]
