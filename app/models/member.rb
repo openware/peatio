@@ -142,9 +142,9 @@ private
   class << self
     def uid(member_or_id)
       id  = self === member_or_id ? member_or_id.id : member_or_id
-      uid = Authentication.barong.where(member_id: id).limit(1).pluck(:uid).first
+      uid = Authentication.barong.where(member_id: id).first.try(:uid)
       if uid.blank?
-        self === member_or_id ? member_or_id.email : Member.where(id: id).limit(1).pluck(:email).first
+        self === member_or_id ? member_or_id.email : Member.find_by_id(id).try(:email)
       else
         uid
       end
