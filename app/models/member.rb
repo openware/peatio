@@ -144,7 +144,7 @@ private
       id  = self === member_or_id ? member_or_id.id : member_or_id
       uid = Authentication.barong.where(member_id: id).first.try(:uid)
       if uid.blank?
-        self === member_or_id ? member_or_id.email : Member.find_by_id(id).first.try(:email)
+        self === member_or_id ? member_or_id.email : Member.find_by_id(id).try(:email)
       else
         uid
       end
