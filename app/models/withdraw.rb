@@ -11,7 +11,8 @@ class Withdraw < ActiveRecord::Base
                succeed
                canceled
                failed
-               confirming].freeze
+               confirming
+               pending].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
   include AASM
@@ -44,6 +45,7 @@ class Withdraw < ActiveRecord::Base
     state :succeed
     state :failed
     state :confirming
+    state :pending
 
     event :submit do
       transitions from: :prepared, to: :submitted
@@ -65,7 +67,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :reject do
-      transitions from: %i[submitted accepted], to: :rejected
+      transitions from: %i[submitted accepted pending], to: :rejected
       after :unlock_funds
     end
 
@@ -76,7 +78,7 @@ class Withdraw < ActiveRecord::Base
 
     event :dispatch do
       # TODO: add validations that txid and block_number are not blank.
-      transitions from: :processing, to: :confirming
+      transitions from: %i[processing pending], to: :confirming
     end
 
     event :success do
@@ -87,6 +89,10 @@ class Withdraw < ActiveRecord::Base
     event :fail do
       transitions from: %i[processing confirming], to: :failed
       after :unlock_funds
+    end
+
+    event :pending do
+      transitions from: :processing, to: :pending
     end
   end
 
@@ -147,7 +153,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180719172203
+# Schema version: 20180813103417
 #
 # Table name: withdraws
 #
@@ -164,6 +170,7 @@ end
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
 #  rid          :string(64)       not null
+#  approval_id  :string(64)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime

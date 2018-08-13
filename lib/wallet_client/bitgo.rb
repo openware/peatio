@@ -24,12 +24,17 @@ module WalletClient
 
     def create_withdrawal!(issuer, recipient, amount, options = {})
       fee = options.key?(:fee) ? convert_to_base_unit!(options[:fee]) : nil
-      rest_api(:post, '/wallet/' + urlsafe_wallet_id + '/sendcoins', {
+      result = rest_api(:post, '/wallet/' + urlsafe_wallet_id + '/sendcoins', {
           address:          normalize_address(recipient.fetch(:address)),
           amount:           convert_to_base_unit!(amount).to_s,
           feeRate:          fee,
           walletPassphrase: bitgo_wallet_passphrase
-      }.compact).fetch('txid').yield_self(&method(:normalize_txid))
+      }.compact)
+      if result.key?('error') && result.key?('pendingApproval')
+        {txid: nil, status: result['pendingApproval']['state'], approval_id: result['pendingApproval']['id']}
+      else
+        {txid: normalize_txid(result.fetch('txid', nil)), status: result.fetch('status','')}
+      end
     end
 
     def build_raw_transaction(recipient, amount)
@@ -40,6 +45,15 @@ module WalletClient
 
     def inspect_address!(address)
       { address: normalize_address(address), is_valid: :unsupported }
+    end
+    
+    def pending_approval!(approval_id)
+      rest_api(:get, '/pendingapprovals/' + approval_id).yield_self do |x|
+        {
+            status: x['state'],
+            txid: normalize_txid(x['info']['transactionRequest'].fetch('validTransactionHash', nil))
+        }
+      end
     end
 
     protected

@@ -51,15 +51,17 @@ module Worker
 
         Rails.logger.warn { "Sending request to Wallet Service." }
 
-        txid = wallet_service.build_withdrawal!(withdraw)
+        result = wallet_service.build_withdrawal!(withdraw)
 
-        Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{txid}." }
-
-        Rails.logger.warn { "Updating withdraw state in database." }
-
-        withdraw.txid = txid
-        withdraw.dispatch
-        withdraw.save!
+        if wallet.is_bitgo?
+          if result.fetch(:status) == 'pending'
+            pending_withdraw(withdraw, result.fetch(:approval_id))
+          else
+            dispatch_withdraw(withdraw, result.fetch(:txid))
+          end
+        else
+          dispatch_withdraw(withdraw, result)
+        end
 
         Rails.logger.warn { "OK." }
 
@@ -74,5 +76,29 @@ module Worker
         end
       end
     end
+
+    private
+
+    def dispatch_withdraw(withdraw, txid)
+      Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{txid}." }
+
+      Rails.logger.warn { "Updating withdraw state in database." }
+
+      withdraw.txid = txid
+      withdraw.dispatch
+      withdraw.save!
+    end
+
+    def pending_withdraw(withdraw, approval_id)
+      Rails.logger.warn { "The currency API withdraw is Pending." }
+
+      Rails.logger.warn { "Updating withdraw state in database." }
+
+      withdraw.approval_id = approval_id
+      withdraw.pending
+      withdraw.save!
+
+    end
+
   end
 end

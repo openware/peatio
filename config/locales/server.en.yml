@@ -521,6 +521,7 @@ en:
         suspected: Suspected
         processing: Processing
         confirming: Confirming
+        pending: Pending
         done: Done
         canceled: Canceled
   views:
@@ -718,6 +719,7 @@ en:
       suspected: Suspected
       processing: Processing
       confirming: Confirming
+      pending: Pending
       done: Done
       canceled: Canceled
       failed: Failed
@@ -730,6 +732,7 @@ en:
       suspected: Suspected
       processing: Processing
       confirming: Confirming
+      pending: Pending
       done: Done
       canceled: canceled
       failed: Failed

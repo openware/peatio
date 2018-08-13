@@ -89,6 +89,7 @@ en:
         coin_ready: Coin Ready
         coin_done: Coin Done
         confirming: Confirming
+        pending: Pending
         succeed: Done
         canceled: Canceled
         failed: Failed

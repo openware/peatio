@@ -46,5 +46,9 @@ module WalletService
           options
       )
     end
+
+    def pending_approval(approval_id)
+      client.pending_approval!(approval_id)
+    end
   end
 end

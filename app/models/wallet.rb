@@ -40,6 +40,10 @@ class Wallet < ActiveRecord::Base
   def wallet_url
     blockchain.explorer_address.gsub('#{address}', address) if blockchain
   end
+
+  def is_bitgo?
+    gateway == 'bitgo'
+  end
 end
 
 # == Schema Information
