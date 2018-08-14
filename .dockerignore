@@ -6,7 +6,7 @@
 .idea
 
 # Ignore docker
-Dockerfile
+# Dockerfile
 .dockerignore
 
 # Ignore CI related files
@@ -24,3 +24,4 @@ tmp
 log
 .god
 
+.convox/
