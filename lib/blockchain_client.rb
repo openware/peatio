@@ -93,11 +93,16 @@ module BlockchainClient
     end
 
     def normalize_address(address)
-      address
+      case_sensitive? ? address : address.try(:downcase)
     end
 
     def normalize_txid(txid)
-      txid
+      case_sensitive? ? txid : txid.try(:downcase)
+    end
+
+    # IMPORTANT: Be sure to set the correct value!
+    def case_sensitive?
+      true
     end
 
     %i[ load_balance load_deposit create_address create_withdrawal inspect_address ].each do |method|

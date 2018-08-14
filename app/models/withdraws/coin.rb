@@ -9,8 +9,9 @@ module Withdraws
     end
 
     before_validation do
-      self.rid = currency.blockchain_api.normalize_address(rid)
-      self.txid = currency.blockchain_api.normalize_txid(txid)
+      next if currency.blockchain_api&.case_sensitive?
+      self.rid  = rid.try(:downcase)
+      self.txid = txid.try(:downcase)
     end
 
     validate do
