@@ -8,6 +8,11 @@ module Withdraws
       self.rid = CashAddr::Converter.to_legacy_address(rid) if CashAddr::Converter.is_valid?(rid)
     end
 
+    before_validation do
+      self.rid = currency.blockchain_api.normalize_address(rid)
+      self.txid = currency.blockchain_api.normalize_txid(txid)
+    end
+
     validate do
       if currency&.supports_cash_addr_format? && rid?
         errors.add(:rid, :invalid) unless CashAddr::Converter.is_valid?(rid)

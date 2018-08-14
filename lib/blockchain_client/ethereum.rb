@@ -75,6 +75,14 @@ module BlockchainClient
       json_rpc(:eth_getTransactionReceipt, [normalize_txid(txid)]).fetch('result')
     end
 
+    def normalize_address(address)
+      address.try(:downcase)
+    end
+
+    def normalize_txid(txid)
+      txid.try(:downcase)
+    end
+
   protected
 
     def connection
