@@ -12,6 +12,12 @@ module Deposits
       self.address = CashAddr::Converter.to_legacy_address(address)
     end
 
+    before_validation do
+      next if blockchain_api&.case_sensitive?
+      self.txid = txid.try(:downcase)
+      self.address = address.try(:downcase)
+    end
+
     def transaction_url
       if txid? && currency.blockchain.explorer_transaction?
         currency.blockchain.explorer_transaction.gsub('#{txid}', txid)
