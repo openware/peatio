@@ -92,7 +92,7 @@ RSpec.configure do |config|
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
     I18n.locale = :en
-    %w[ eth-rinkeby btc-testnet dash-testnet ltc-testnet bch-testnet xrp-testnet].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
+    %w[ eth-rinkeby btc-testnet dash-testnet ltc-testnet bch-testnet xrp-testnet ].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
     %i[ usd btc dash eth xrp trst bch eur ltc ].each { |ccy| FactoryBot.create(:currency, ccy) }
     %i[ eth_hot ].each { |ccy| FactoryBot.create(:wallet, ccy) }
     %i[ btcusd dashbtc btceth ].each { |market| FactoryBot.create(:market, market) }

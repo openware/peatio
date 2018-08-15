@@ -63,6 +63,7 @@ FactoryBot.define do
 
     trait :xrp do
       code                 'xrp'
+      blockchain_key       'xrp-testnet'
       symbol               'ꭆ'
       type                 'coin'
       base_factor          1_000_000
