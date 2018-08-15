@@ -5,6 +5,7 @@ describe Admin::CurrenciesController, type: :controller do
   let(:member) { create(:admin_member) }
   let :attributes do
     { code:                             'nbn',
+      blockchain_key:                   Blockchain.first.key,
       type:                             'coin',
       symbol:                           'N',
       quick_withdraw_limit:             '1.5'.to_d,
