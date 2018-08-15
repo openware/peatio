@@ -10,12 +10,21 @@ class Currency < ActiveRecord::Base
   self.inheritance_column = nil
 
   validates :id, presence: true, uniqueness: true
+  # TODO: Add specs to this validation.
+  validates :blockchain_key,
+            inclusion: { in: -> (_) { Blockchain.pluck(:key).map(&:to_s) } },
+            if: :coin?
+
   validates :type, inclusion: { in: -> (_) { Currency.types.map(&:to_s) } }
   validates :symbol, presence: true, length: { maximum: 1 }
   validates :options, length: { maximum: 1000 }
-  validates :quick_withdraw_limit, numericality: { greater_than_or_equal_to: 0 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
-  validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
+
+  validates :quick_withdraw_limit,
+            :withdraw_fee,
+            :deposit_fee,
+            numericality: { greater_than_or_equal_to: 0 }
+
   validate { errors.add(:options, :invalid) unless Hash === options }
 
   before_validation { self.deposit_fee = 0 unless fiat? }
