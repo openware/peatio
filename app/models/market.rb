@@ -38,11 +38,7 @@ class Market < ActiveRecord::Base
 
   before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
 
-  before_validation on: :update do
-    if !enabled? && Market.enabled.where.not(id: id).count == 0
-      errors.add(:market, 'Can Not Disable Last Enabled Market')
-    end
-  end
+  validate :must_not_disable_all_markets, on: :update
 
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
 
@@ -122,6 +118,12 @@ private
   def units_must_be_enabled
     %i[bid_unit ask_unit].each do |unit|
       errors.add(unit, 'is not enabled.') if Currency.lock.find_by_id(public_send(unit))&.disabled?
+    end
+  end
+
+  def must_not_disable_all_markets
+    if enabled_was && !enabled? && Market.enabled.count == 1
+      errors.add(:market, 'is last enabled.')
     end
   end
 end

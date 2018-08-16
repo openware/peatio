@@ -27,6 +27,9 @@ class Currency < ActiveRecord::Base
 
   validate { errors.add(:options, :invalid) unless Hash === options }
 
+  # TODO: Add specs to this validation.
+  validate :must_not_disable_all_markets, on: :update
+
   before_validation { self.deposit_fee = 0 unless fiat? }
 
   before_validation do
@@ -34,12 +37,6 @@ class Currency < ActiveRecord::Base
   end
 
   after_create { Member.find_each(&:touch_accounts) }
-
-  before_validation on: :update do
-    if !enabled? && Currency.enabled.where.not(id: id).count == 0
-      errors.add(:currency, 'Can Not Disable Last Enabled Currency')
-    end
-  end
 
   after_update :disable_markets
 
@@ -62,14 +59,6 @@ class Currency < ActiveRecord::Base
             downcase_codes
         end
       end
-    end
-
-    def coin_codes(options = {})
-      coins.codes(options)
-    end
-
-    def fiat_codes(options = {})
-      fiats.codes(options)
     end
 
     def types
@@ -109,12 +98,6 @@ class Currency < ActiveRecord::Base
       hot:      coin? ? balance : nil }
   end
 
-  def disable_markets
-    unless enabled?
-      Market.where('ask_unit = ? OR bid_unit = ?', id, id).update_all(enabled: false)
-    end
-  end
-
   class << self
     def nested_attr(*names)
       names.each do |name|
@@ -143,6 +126,22 @@ class Currency < ActiveRecord::Base
 
   def blockchain_api
     BlockchainClient[blockchain.key]
+  end
+
+  def dependent_markets
+    Market.where('ask_unit = ? OR bid_unit = ?', id, id)
+  end
+
+  def disable_markets
+    unless enabled?
+      dependent_markets.update_all(enabled: false)
+    end
+  end
+
+  def must_not_disable_all_markets
+    if enabled_was && !enabled? && (Market.enabled.count - dependent_markets.count).zero?
+      errors.add(:currency, 'disables all enabled markets.')
+    end
   end
 
   attr_readonly :id,
