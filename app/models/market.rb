@@ -38,6 +38,12 @@ class Market < ActiveRecord::Base
 
   before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
 
+  before_validation on: :update do
+    if !enabled? && Market.enabled.where.not(id: id).count == 0
+      errors.add(:market, 'Can Not Disable Last Enabled Market')
+    end
+  end
+
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
 
   # @deprecated

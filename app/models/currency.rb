@@ -34,6 +34,13 @@ class Currency < ActiveRecord::Base
   end
 
   after_create { Member.find_each(&:touch_accounts) }
+
+  before_validation on: :update do
+    if !enabled? && Currency.enabled.where.not(id: id).count == 0
+      errors.add(:currency, 'Can Not Disable Last Enabled Currency')
+    end
+  end
+
   after_update :disable_markets
 
   scope :enabled, -> { where(enabled: true) }
