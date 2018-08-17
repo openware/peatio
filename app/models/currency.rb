@@ -19,6 +19,9 @@ class Currency < ActiveRecord::Base
   validates :withdraw_fee, :deposit_fee, numericality: { greater_than_or_equal_to: 0 }
   validate { errors.add(:options, :invalid) unless Hash === options }
 
+  # TODO: Add specs to this validation.
+  validate :must_not_disable_all_markets, on: :update
+
   before_validation { self.deposit_fee = 0 unless fiat? }
 
   before_validation do
@@ -116,12 +119,6 @@ class Currency < ActiveRecord::Base
       hot:      coin? ? balance : nil }
   end
 
-  def disable_markets
-    unless enabled?
-      Market.where('ask_unit = ? OR bid_unit = ?', id, id).update_all(enabled: false)
-    end
-  end
-
   class << self
     def nested_attr(*names)
       names.each do |name|
@@ -166,6 +163,23 @@ class Currency < ActiveRecord::Base
   def disabled?
     !enabled
   end
+
+  def dependent_markets
+    Market.where('ask_unit = ? OR bid_unit = ?', id, id)
+  end
+
+  def disable_markets
+    unless enabled?
+      dependent_markets.update_all(enabled: false)
+    end
+  end
+
+  def must_not_disable_all_markets
+    if enabled_was && !enabled? && (Market.enabled.count - dependent_markets.enabled.count).zero?
+      errors.add(:currency, 'disables all enabled markets.')
+    end
+  end
+
 
   attr_readonly :id,
                 :code,
