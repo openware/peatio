@@ -43,40 +43,50 @@ You must know what you're doing, there's no shortcut. Please get prepared before
 
 * Designed as high performance crypto currency exchange
 * Built-in high performance matching-engine
-* Built-in Proof of Solvency Audit
+* Built-in multiple wallet support (e.g. deposit, hot, warm and cold)
+* Build-in Management API - server-to-server API with high privileges
+* Build-in RabbitMQ Event API
 * Usability and scalability
 * Websocket API and high frequency trading support
-* Support multiple digital currencies (eg. Bitcoin, Litecoin, Ethereum, Ripple etc.)
+* Support multiple digital currencies (e.g. Bitcoin, Litecoin, Ethereum, Ripple etc.)
 * Support ERC20 Tokens
-* API end point for FIAT deposits or payment gateways.
+* API endpoint for FIAT deposits or payment gateways.
 * Powerful admin dashboard and management tools
 * Highly configurable and extendable
 * Industry standard security out of box
 * Maintained by [peatio.tech](https://www.peatio.tech)
 * [KYC Verification](http://en.wikipedia.org/wiki/Know_your_customer) provided by [Barong](https://www.github.com/rubykube/barong)
 
-## Requirements
-
-* Linux / Mac OSX
-* Docker / Kubernetes
-* Ruby 2.5.0
-* Rails 4.2+
-* Redis 2.0+
-* MySQL 5.7
-* RabbitMQ
-
-Find more details in the [docs directory](docs).
-
 ## Getting Started
 
-### Local development setup:
+We advice to use [minimalistic environment](#minimalistic-local-development-environment-with-docker-compose) if you want to develop only Peatio and don't touch processes which interact with other components.
 
-* ### [Docker compose](https://github.com/rubykube/peatio-workbench)
+Otherwise we advice to use [workbench based environment](#local-development-environment-with-workbench)
+
+### Minimalistic local development environment with docker-compose:
+
+#### Prerequisites
+* [Docker](https://docs.docker.com/install/) installed
+* [Docker compose](https://docs.docker.com/compose/install/) installed
+* Ruby 2.5.1
+* Rails 4.2+
+
+#### Installation
+
+1. Copy initial configurations `./bin/init_config`
+2. Install yarn dependencies `rake yarn:install`
+3. Setup database `rake db:create db:migrate db:seed`
+4. Start backend services `docker-compose -f config/backend.yml up -d`
+5. Start peatio daemons `god -c lib/daemons/daemons.god`
+6. Start rails server `rails server`
+
+### Local development environment with workbench:
+
 We suggest you to start using Peatio by installing [Workbench](https://github.com/rubykube/workbench). [Workbench](https://github.com/rubykube/workbench) which is based on [Docker containers](https://www.docker.com/what-docker) is a convenient and straightforward way to start Peatio development environment.
 
 #### Prerequisites
-1. [Docker](https://docs.docker.com/install/) installed
-2. [Docker compose](https://docs.docker.com/compose/install/) installed
+* [Docker](https://docs.docker.com/install/) installed
+* [Docker compose](https://docs.docker.com/compose/install/) installed
 
 #### Prepare the workbench
 
@@ -134,15 +144,8 @@ $> docker-compose run --rm peatio bash -c "./bin/link_config && rake db:create d
 $> docker-compose up -d peatio
 ```
 
-After all of that you can start using Peatio in your brouser just by following one of the hosts which you added earlier.
+After all of that you can start using Peatio in your browser just by following one of the hosts which you added earlier.
 
-##### Frontend
-
-Simply start your local server. Now you're able to log in with your local Barong and Peatio.
-
-* ### [on Mac OS X](docs/setup-osx.md)
-
-* ### [on Ubuntu](docs/setup-ubuntu.md)
 
 ### Production setup:
 
@@ -154,14 +157,8 @@ Simply start your local server. Now you're able to log in with your local Barong
 You can interact with Peatio through API:
 
 * API v2
+* Management API v1
 * Websocket API
-
-Here are some API clients/wrappers:
-
-* [peatio-client-python by JohnnyZhao](https://github.com/JohnnyZhao/peatio-client-python) is a python client written by JohnnyZhao.
-* [peatio-client-python by czheo](https://github.com/JohnnyZhao/peatio-client-python) is a python wrapper similar to peatio-client-ruby written by czheo.
-* [peatioJavaClient](https://github.com/classic1999/peatioJavaClient.git) is a java client written by classic1999.
-* [yunbi-client-php](https://github.com/panlilu/yunbi-client-php) is a php client written by panlilu.
 
 ## Getting Involved
 We want to make it super-easy for Peatio users and contributors to talk to us and connect with each other, to share ideas, solve problems and help make Peatio awesome. Here are the main channels we're running currently, we'd love to hear from you on one of them:
