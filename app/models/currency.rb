@@ -139,7 +139,7 @@ class Currency < ActiveRecord::Base
   end
 
   def must_not_disable_all_markets
-    if enabled_was && !enabled? && (Market.enabled.count - dependent_markets.count) <= 0
+    if enabled_was && !enabled? && (Market.enabled.count - dependent_markets.enabled.count).zero?
       errors.add(:currency, 'disables all enabled markets.')
     end
   end
