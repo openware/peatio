@@ -54,6 +54,7 @@
     <td>{{withdraw.id}}</td>
     <td>{{withdraw.created_at | date:'yyyy-MM-dd HH:mm'}}</td>
     <td>
+      <span ng-if="!withdraw.txid">pending</span>
       <a ng-if="withdraw.transaction_url && withdraw.txid" href="{{withdraw.transaction_url}}" target='_blank'>{{withdraw.txid | truncate: 20}}</a>
       <span ng-if="!withdraw.transaction_url && withdraw.txid">{{withdraw.txid | truncate: 20}}</span>
     </td>
