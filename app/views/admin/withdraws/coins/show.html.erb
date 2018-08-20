@@ -6,42 +6,48 @@
         <span>Withdraw</span>
       </div>
       <div class="card-body">
-        <%= description_for :withdraw do %>
-          <%= item_for @withdraw, :id %>
-          <%= item_for @withdraw, 'Txid' do %>
-            <a href="<%= @withdraw.transaction_url %>" target="_blank">
-              <code class="text-info"><%= @withdraw.txid %></code>
-            </a>
-          <% end %>
-          <%= item_for @withdraw, :created_at %>
-          <%= item_for @withdraw, 'State' do %>
-            <%= @withdraw.aasm_state.humanize %>
-          <% end %>
-          <hr class="split">
-          <%= item_for @withdraw.member, :email %>
-          <%= item_for @withdraw, 'Recipient ID' do %>
-            <span><%= @withdraw.rid %></span>
-          <% end %>
-          <%= item_for @withdraw, :amount %>
-          <hr>
-          <ul class="list-inline w-100 px-3 mt-3 pt-3 border-top">
-            <% if @withdraw.may_reject? %>
-              <li>
-                <%= link_to 'Reject',
-                            admin_withdraw_path(@withdraw.currency.code, @withdraw),
-                            class:   'btn btn-danger float-right',
-                            method:  'DELETE' %>
-              </li>
+        <%= form_for @withdraw, as: :withdraw, url: admin_withdraw_path(@withdraw.currency.code, @withdraw), method: :patch do |f| %>
+          <%= description_for :withdraw do %>
+            <%= item_for @withdraw, :id %>
+
+            <% if @withdraw.txid.blank? %>
+              <dt>Txid</dt>
+              <dd><%= f.text_field :txid, class: 'form-control' %></dd>
+            <% else %>
+              <%= item_for @withdraw, 'Txid' do %>
+                <a href="<%= @withdraw.transaction_url %>" target="_blank">
+                  <code class="text-info"><%= @withdraw.txid %></code>
+                </a>
+              <% end %>
             <% end %>
-            <% if @withdraw.may_accept? || @withdraw.may_process? %>
-              <li>
-                <%= link_to 'Process',
-                            admin_withdraw_path(@withdraw.currency.code, @withdraw),
-                            class: 'btn btn-primary float-left',
-                            method: 'PATCH' %>
-              </li>
+
+            <%= item_for @withdraw, :created_at %>
+            <%= item_for @withdraw, 'State' do %>
+              <%= @withdraw.aasm_state.humanize %>
             <% end %>
-          </ul>
+            <hr class="split">
+            <%= item_for @withdraw.member, :email %>
+            <%= item_for @withdraw, 'Recipient ID' do %>
+              <span><%= @withdraw.rid %></span>
+            <% end %>
+            <%= item_for @withdraw, :amount %>
+            <hr>
+            <ul class="list-inline w-100 px-3 mt-3 pt-3 border-top">
+              <% if @withdraw.may_reject? %>
+                <li>
+                  <%= link_to 'Reject',
+                              admin_withdraw_path(@withdraw.currency.code, @withdraw),
+                              class:   'btn btn-danger float-right',
+                              method:  'DELETE' %>
+                </li>
+              <% end %>
+              <% if @withdraw.may_accept? || @withdraw.may_process? %>
+                <li>
+                  <%= f.submit 'Process', class: 'btn btn-primary float-left'%>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
         <% end %>
       </div>
     </div>

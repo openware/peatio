@@ -27,10 +27,16 @@ module Admin
 
       def update
         @withdraw.transaction do
+          @withdraw.update!(txid: params[:withdraw][:txid]) unless params[:withdraw][:txid].blank?
           @withdraw.accept!
           @withdraw.process!
+          @withdraw.dispatch! unless @withdraw.txid.blank?
         end
         redirect_to :back, notice: t('admin.withdraws.coins.update.notice')
+
+      rescue ActiveRecord::RecordInvalid
+        flash.now[:alert] = @withdraw.errors.full_messages
+        render :show
       end
 
       def destroy

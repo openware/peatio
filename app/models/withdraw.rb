@@ -142,7 +142,7 @@ private
   end
 
   def send_coins!
-    AMQPQueue.enqueue(:withdraw_coin, id: id) if coin?
+    AMQPQueue.enqueue(:withdraw_coin, id: id) if coin? and txid.blank?
   end
 end
 
