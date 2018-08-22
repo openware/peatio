@@ -146,7 +146,7 @@ module CoinAPI
       loop do
         begin
           batch_deposits = nil
-          query          = { limit: 100, nextBatchPrevId: next_batch_ref }
+          query          = { limit: 100, prevId: next_batch_ref }
           response       = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/tx', query)
           next_batch_ref = response['nextBatchPrevId']
           batch_deposits = response.fetch('transactions')
