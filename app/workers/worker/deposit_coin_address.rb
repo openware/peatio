@@ -30,8 +30,6 @@ module Worker
 
         # Enqueue address generation again if address is not provided.
         pa.enqueue_address_generation if pa.address.blank?
-
-        trigger_pusher_event(acc, pa) unless pa.address.blank?
       end
 
     # Don't re-enqueue this job in case of error.
@@ -39,15 +37,6 @@ module Worker
     # request list of accounts system will ask to generate address again (if it is not generated of course).
     rescue => e
       report_exception(e)
-    end
-
-  private
-
-    def trigger_pusher_event(acc, pa)
-      Member.trigger_pusher_event acc.member_id, :deposit_address, type: :create, attributes: {
-        currency: pa.currency.code,
-        address:  pa.address
-      }
     end
   end
 end

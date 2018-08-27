@@ -76,14 +76,6 @@ daemon 'amqp:order_processor',
        script:   'amqp_daemon.rb',
        arguments: %w[ order_processor ]
 
-daemon 'amqp:pusher_market',
-       script:   'amqp_daemon.rb',
-       arguments: %w[ pusher_market ]
-
-daemon 'amqp:pusher_member',
-       script:   'amqp_daemon.rb',
-       arguments: %w[ pusher_member ]
-
 daemon 'amqp:trade_executor',
        script:   'amqp_daemon.rb',
        arguments: %w[ trade_executor ]

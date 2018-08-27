@@ -118,10 +118,6 @@ class Member < ActiveRecord::Base
     self.class.uid(self)
   end
 
-  def trigger_pusher_event(event, data)
-    self.class.trigger_pusher_event(self, event, data)
-  end
-
 private
 
   def downcase_email
@@ -148,13 +144,6 @@ private
       else
         uid
       end
-    end
-
-    def trigger_pusher_event(member_or_id, event, data)
-      AMQPQueue.enqueue :pusher_member, \
-        member_id: self === member_or_id ? member_or_id.id : member_or_id,
-        event:     event,
-        data:      data
     end
   end
 end

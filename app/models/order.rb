@@ -11,7 +11,6 @@ class Order < ActiveRecord::Base
   TYPES = %w[ market limit ]
   enumerize :ord_type, in: TYPES, scope: true
 
-  after_commit(on: :create) { trigger_pusher_event }
   before_validation :fix_number_precision, on: :create
 
   validates :ord_type, :volume, :origin_volume, :locked, :origin_locked, presence: true
@@ -51,18 +50,6 @@ class Order < ActiveRecord::Base
 
   def config
     market
-  end
-
-  def trigger_pusher_event
-    Member.trigger_pusher_event member_id, :order, \
-      id:            id,
-      at:            at,
-      market:        market_id,
-      kind:          kind,
-      price:         price&.to_s('F'),
-      state:         state,
-      volume:        volume.to_s('F'),
-      origin_volume: origin_volume.to_s('F')
   end
 
   def kind

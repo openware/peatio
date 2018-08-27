@@ -30,10 +30,6 @@ queue:
     durable: true
   market_ticker:
     name: peatio.trade.market_ticker
-  pusher_market:
-    name: peatio.pusher.market
-  pusher_member:
-    name: peatio.pusher.member
   withdraw_coin:
     name: peatio.withdraw.coin
   deposit_collection_fees:
@@ -60,11 +56,6 @@ binding:
   market_ticker:
     queue: market_ticker
     exchange: trade
-  pusher_market:
-    queue: pusher_market
-    exchange: trade
-  pusher_member:
-    queue: pusher_member
   withdraw_coin:
     queue: withdraw_coin
   deposit_collection_fees:

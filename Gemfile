@@ -23,7 +23,6 @@ gem 'cancancan', '~> 2.2.0'
 gem 'enumerize', '~> 2.2.2'
 gem 'kaminari', '~> 1.1.1'
 gem 'gon', '~> 5.2.3'
-gem 'pusher', '~> 1.3.1'
 gem 'eventmachine', '~> 1.2.7', require: false
 gem 'em-websocket', '~> 0.5.1', require: false
 gem 'sassc-rails', '~> 1.3.0'
