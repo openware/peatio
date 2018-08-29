@@ -142,6 +142,26 @@ Here is structure of `Trade` object:
 
 Start websocket server using following command in peatio-core git repository:
 
-```
+```bash
 $ ./bin/peatio service start ranger
+```
+
+In peatio git repository call `./bin/rails c` and get a jwt token:
+```ruby
+irb(main):001:0> Member.first.authentications.first.token
+```
+
+Or you can obtain a JWT token after authentication in Baron.
+
+Now we can test authentication with [wscat](https://github.com/websockets/wscat):
+
+Connect to public usdeth channel:
+
+```bash
+$ wscat -n -c 'ws://ws.ranger.wb.local?stream=usdeth'
+```
+
+Send a JWT authentication payload:
+```
+{ "jwt": "Bearer <token>" }
 ```
