@@ -165,3 +165,8 @@ Send a JWT authentication payload:
 ```
 { "jwt": "Bearer <token>" }
 ```
+
+### Examples
+
+There is also [example of working with Ranger service using
+NodeJS.](https://github.com/rubykube/ranger-example-nodejs)
