@@ -6,7 +6,7 @@ describe Admin::BlockchainsController, type: :controller do
   let :attributes do
     { key:                              'eth-rinkeby-new',
       name:                             'Ethereum Rinkeby',
-      client:                           'eth',
+      client:                           'ethereum',
       server:                           'http://127.0.0.1:8545',
       height:                           250_000_0,
       min_confirmations:                3,
@@ -35,7 +35,7 @@ describe Admin::BlockchainsController, type: :controller do
     let :new_attributes do
       { key:                              'btc-test',
         name:                             'Bitcoin Testnet',
-        client:                           'btc',
+        client:                           'bitcoin',
         server:                           'http://127.0.0.1:18332',
         height:                           300_000_0,
         min_confirmations:                3,
@@ -45,14 +45,23 @@ describe Admin::BlockchainsController, type: :controller do
       }
     end
 
+    let :final_attributes do
+      new_attributes.merge \
+        attributes.slice \
+          :client,
+          :key
+    end
+
     before { request.env['HTTP_REFERER'] = '/admin/blockchains' }
 
     it 'updates blockchain attributes' do
+      post :create, blockchain: attributes
       blockchain = Blockchain.last
+      attributes.each { |k, v| expect(blockchain.method(k).call).to eq v }
       post :update, blockchain: new_attributes, id: blockchain.id
       expect(response).to redirect_to admin_blockchains_path
       blockchain.reload
-      expect(blockchain.attributes.symbolize_keys.except(:id, :created_at, :updated_at)).to eq new_attributes
+      final_attributes.each { |k, v| expect(blockchain.method(k).call).to eq v }
     end
   end
 

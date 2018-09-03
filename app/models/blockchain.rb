@@ -2,10 +2,16 @@
 # frozen_string_literal: true
 
 class Blockchain < ActiveRecord::Base
+  CLIENTS = %w[bitcoin bitcoincash dash ethereum litecoin ripple].freeze
+
+  attr_readonly :client, :key
+
   has_many :currencies, foreign_key: :blockchain_key, primary_key: :key
   has_many :wallets, foreign_key: :blockchain_key, primary_key: :key
 
+
   validates :key, :name, :client, presence: true
+  validates :client, inclusion: { in: CLIENTS }
   validates :status, inclusion: { in: %w[active disabled] }
   validates :height, numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :min_confirmations, numericality: { greater_than_or_equal_to: 1, only_integer: true }

@@ -25,7 +25,7 @@ describe Blockchain do
     it 'validates presence of client' do
       subject.client = nil
       expect(subject).to_not be_valid
-      expect(subject.errors.full_messages).to eq ["Client can't be blank"]
+      expect(subject.errors.full_messages).to eq ["Client can't be blank", "Client is not included in the list"]
     end
 
     it 'validates inclusion of status' do
