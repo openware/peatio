@@ -4,7 +4,7 @@ require 'yaml'
 
 namespace :seed do
   desc 'Adds missing currencies to database defined at config/seed/currencies.yml.'
-  task currencies: :environment do  
+  task currencies: :environment do
     Currency.transaction do
       YAML.load_file(Rails.root.join('config/seed/currencies.yml')).each do |hash|
         next if Currency.exists?(id: hash.fetch('id'))
@@ -14,7 +14,7 @@ namespace :seed do
   end
 
   desc 'Adds missing blockchains to database defined at config/seed/blockchains.yml.'
-  task blockchains: :environment do  
+  task blockchains: :environment do
     Blockchain.transaction do
       YAML.load_file(Rails.root.join('config/seed/blockchains.yml')).each do |hash|
         next if Blockchain.exists?(key: hash.fetch('key'))
@@ -39,6 +39,16 @@ namespace :seed do
       YAML.load_file(Rails.root.join('config/seed/wallets.yml')).each do |hash|
         next if Wallet.exists?(name: hash.fetch('name'))
         Wallet.create!(hash)
+      end
+    end
+  end
+
+  desc 'Adds missing upstreams to database defined at config/seed/upstreams.yml.'
+  task upstreams: :environment do
+    Upstream.transaction do
+      YAML.load_file(Rails.root.join('config/seed/upstreams.yml')).each do |hash|
+        next if Upstream.exists?(provider: hash.fetch('provider'))
+        Upstream.create!(hash)
       end
     end
   end

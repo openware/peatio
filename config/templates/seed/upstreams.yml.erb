@@ -1,0 +1,6 @@
+<% if ENV['UPSTREAMS_CONFIG'] %>
+<%= File.read(ENV['UPSTREAMS_CONFIG']) %>
+<% else %>
+- id:            1
+  provider: binance
+<% end %>
