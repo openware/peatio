@@ -128,7 +128,7 @@ private
     if current_user
       gon.user = {
         sn: current_user.sn,
-        token: current_user.authentications.first.token
+        token: current_user.authentications.first&.token
       }
       gon.accounts = current_user.accounts.enabled.includes(:currency).inject({}) do |memo, account|
         memo[account.currency.code] = {
