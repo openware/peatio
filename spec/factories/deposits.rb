@@ -6,15 +6,52 @@ FactoryBot.define do
     member { create(:member, :level_3) }
     amount { Kernel.rand(100..10_000).to_d }
 
-    factory :deposit_btc, class: 'Deposits::Coin' do
+    factory :deposit_btc, class: Deposits::Coin do
       currency { Currency.find(:btc) }
       address { Faker::Bitcoin.address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
 
-    factory :deposit_usd, class: 'Deposits::Fiat' do
+    factory :deposit_bch, class: Deposits::Coin do
+      currency { Currency.find(:bch) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_dash, class: Deposits::Coin do
+      currency { Currency.find(:dash) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_ltc, class: Deposits::Coin do
+      currency { Currency.find(:ltc) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_usd, class: Deposits::Fiat do
       currency { Currency.find(:usd) }
+    end
+
+    factory :deposit_eth, class: Deposits::Coin do
+      currency { Currency.find(:eth) }
+      member { create(:member, :level_3, :barong) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_trst, class: Deposits::Coin do
+      currency { Currency.find(:trst) }
+      member { create(:member, :level_3, :barong) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
     end
   end
 end
