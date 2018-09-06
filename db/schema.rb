@@ -98,18 +98,6 @@ ActiveRecord::Schema.define(version: 20180905093248) do
   add_index "deposits", ["tid"], name: "index_deposits_on_tid", using: :btree
   add_index "deposits", ["type"], name: "index_deposits_on_type", using: :btree
 
-  create_table "identities", force: :cascade do |t|
-    t.string   "email",           limit: 255
-    t.string   "password_digest", limit: 255
-    t.boolean  "is_active"
-    t.integer  "retry_count",     limit: 4
-    t.boolean  "is_locked"
-    t.datetime "locked_at"
-    t.datetime "last_verify_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "markets", force: :cascade do |t|
     t.integer  "upstream_id",   limit: 4
     t.string   "ask_unit",      limit: 10,                                          null: false
@@ -185,18 +173,6 @@ ActiveRecord::Schema.define(version: 20180905093248) do
 
   add_index "payment_addresses", ["currency_id", "address"], name: "index_payment_addresses_on_currency_id_and_address", unique: true, using: :btree
 
-  create_table "tokens", force: :cascade do |t|
-    t.string   "token",      limit: 255
-    t.datetime "expires_at"
-    t.integer  "member_id",  limit: 4
-    t.boolean  "is_used",                default: false
-    t.string   "type",       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "tokens", ["type", "token", "expires_at", "is_used"], name: "index_tokens_on_type_and_token_and_expires_at_and_is_used", using: :btree
-
   create_table "trades", force: :cascade do |t|
     t.decimal  "price",                    precision: 32, scale: 16, null: false
     t.decimal  "volume",                   precision: 32, scale: 16, null: false
@@ -217,13 +193,13 @@ ActiveRecord::Schema.define(version: 20180905093248) do
   add_index "trades", ["market_id", "created_at"], name: "index_trades_on_market_id_and_created_at", using: :btree
 
   create_table "upstreams", force: :cascade do |t|
-    t.string   "provider",   limit: 32,              null: false
-    t.integer  "enabled",    limit: 1,   default: 0, null: false
+    t.string   "provider",   limit: 32,                  null: false
+    t.boolean  "enabled",                default: false, null: false
     t.string   "api_secret", limit: 255
     t.string   "api_key",    limit: 255
     t.integer  "timeout",    limit: 8,   default: 0
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   add_index "upstreams", ["provider"], name: "index_upstreams_on_provider", unique: true, using: :btree

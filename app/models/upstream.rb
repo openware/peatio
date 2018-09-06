@@ -11,7 +11,7 @@ end
 #
 #  id         :integer          not null, primary key
 #  provider   :string(32)       not null
-#  enabled    :integer          default(0), not null
+#  enabled    :boolean          default(FALSE), not null
 #  api_secret :string(255)
 #  api_key    :string(255)
 #  timeout    :integer          default(0)
