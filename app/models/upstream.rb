@@ -2,6 +2,12 @@
 # frozen_string_literal: true
 
 class Upstream < ActiveRecord::Base
+
+  has_many :markets
+
+  scope :enabled, -> { where(enabled: true) }
+
+  validates :timeout, presence: true, numericality: { greater_than_or_equal_to: 0 }
 end
 
 # == Schema Information

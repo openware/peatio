@@ -63,6 +63,15 @@
         </li>
       <% end %>
 
+      <% if can? :manage, Upstream %>
+        <li class="list-icon-item <%= check_active('upstream') %>">
+          <%= link_to admin_upstreams_path do %>
+            <i class="icon fa fa-stream"></i>
+            <span class="menu-text">Upstreams</span>
+          <% end %>
+        </li>
+      <% end %>
+
       <% if can? :manage, Wallet %>
         <li class="list-icon-item <%= check_active('wallets') %>">
           <%= link_to admin_wallets_path do %>

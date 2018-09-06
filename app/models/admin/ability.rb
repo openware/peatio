@@ -22,6 +22,7 @@ module Admin
       can :manage, Currency
       can :manage, Blockchain
       can :manage, Wallet
+      can :manage, Upstream
     end
   end
 end

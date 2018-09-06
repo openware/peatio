@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="col-6">
+    <h3>Upstreams</h3>
+  </div>
+  <% if can? :create, Upstream %>
+    <div class="col-6">
+      <%= link_to raw("<i class='fa fa-plus mr-2'></i> New Upstream"), new_admin_upstream_path, class: 'btn btn-primary float-right mb-3' %>
+    </div>
+  <% end  %>
+</div>
+
+<div class="card">
+  <%= table_for @upstreams, class: 'table table-condensed table-striped' do |t| %>
+    <% t.column :id, 'ID' %>
+    <% t.column 'Provider' do |x| %>
+      <%= x.provider.upcase %>
+    <% end %>
+    <% t.column :api_key, 'Api Key' %>
+    <% t.column :timeout, 'Timeout' %>
+    <% t.column 'Created At' do |x| %>
+      <%= l(x.created_at, format: :long) %>
+    <% end %>
+    <% t.column 'Enabled' do |x| %>
+      <% if x.enabled? %>
+        <span class="text-success">Yes</span>
+      <% else %>
+        <span class="text-danger">No</span>
+      <% end %>
+    <% end %>
+
+    <% t.column 'Actions' do |x| %>
+      <%= link_to 'View', admin_upstream_path(x) %>
+    <% end %>
+  <% end %>
+</div>
+
+<%= paginate @upstreams %>

@@ -7,6 +7,7 @@ namespace :admin do
   resources :markets, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
   resources :blockchains, except: %i[edit destroy]
+  resources :upstreams, except: %i[edit destroy]
   resources :wallets, except: %i[edit destroy] do
     post :show_client_info, on: :collection
   end

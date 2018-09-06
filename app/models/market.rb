@@ -18,6 +18,8 @@
 
 class Market < ActiveRecord::Base
 
+  belongs_to :upstream
+
   attr_readonly :ask_unit, :bid_unit, :ask_precision, :bid_precision
 
   scope :ordered, -> { order(position: :asc) }
@@ -129,12 +131,11 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180905093248
+# Schema version: 20180813105100
 #
 # Table name: markets
 #
 #  id            :string(20)       not null, primary key
-#  upstream_id   :integer
 #  ask_unit      :string(10)       not null
 #  bid_unit      :string(10)       not null
 #  ask_fee       :decimal(17, 16)  default(0.0), not null

@@ -49,21 +49,22 @@ module Admin
     end
 
     def permitted_market_attributes
-      attributes = [
-        :bid_unit,
-        :bid_fee,
-        :ask_unit,
-        :ask_fee,
-        :enabled,
-        :max_bid,
-        :min_ask,
-        :position
+      attributes = %i[
+        bid_unit
+        bid_fee
+        ask_unit
+        ask_fee
+        enabled
+        max_bid
+        min_ask
+        position
+        upstream_id
       ]
 
       if @market.new_record?
-        attributes += [
-          :bid_precision,
-          :ask_precision
+        attributes += %i[
+          bid_precision
+          ask_precision
         ]
       end
 
