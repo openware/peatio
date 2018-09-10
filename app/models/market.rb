@@ -41,6 +41,7 @@ class Market < ActiveRecord::Base
   before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
 
   validate :must_not_disable_all_markets, on: :update
+  validate :must_not_enable_upstream_for_fiat
 
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
 
@@ -127,6 +128,12 @@ private
     if enabled_was && !enabled? && Market.enabled.count == 1
       errors.add(:market, 'is last enabled.')
     end
+  end
+
+  def must_not_enable_upstream_for_fiat
+      if Currency.find_by_id(ask_unit).fiat? || Currency.find_by_id(bid_unit).fiat?
+        errors.add(:upstream, 'cannot be enable for fiat markets.')
+      end
   end
 end
 

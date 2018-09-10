@@ -6,12 +6,12 @@
       <div class="card-body">
         <div class="form-group">
           <label>Provider</label>
-          <%= f.text_field :provider, class: 'form-control mb-3' %>
+          <%= f.select :provider, options_for_select([['Binance', 'binance']], selected: @upstream.provider), {}, {class: "form-control mb-3"} %>
 
-          <label>Api Key</label>
+          <label>API Key</label>
           <%= f.text_field :api_key, class: 'form-control mb-3' %>
 
-          <label>Api Secret</label>
+          <label>API Secret</label>
           <%= f.password_field :api_secret, value: @upstream.api_secret, class: 'form-control mb-3' %>
 
           <label>Timeout</label>
