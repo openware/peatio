@@ -8,6 +8,11 @@ module APIv2
       expose :symbol, documentation: 'Currency symbol'
       expose :type, documentation: 'Currency type. Available values: coin or fiat'
 
+      expose :wallet_url_template, if: -> (currency){ currency.coin? },
+              documentation: 'Currency address exporer url template'
+      expose :transaction_url_template, if: -> (currency){ currency.coin? },
+              documentation: 'Currency transactions exporer url template'
+
       expose :deposit_fee, documentation: 'Currency deposit fee'
       expose :withdraw_fee, documentation: 'Currency withdraw fee'
 
