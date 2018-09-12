@@ -38,6 +38,7 @@ module APIv2
 
     use APIv2::CORS::Middleware
 
+    mount APIv2::Accounts
     mount APIv2::Markets
     mount APIv2::Tickers
     mount APIv2::Members
