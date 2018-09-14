@@ -16,6 +16,8 @@ namespace :admin do
     post :show_client_info, on: :collection
   end
 
+  get 'accountments/deposits', to: 'accountments#deposits', as: :accountments_deposits
+
   resources :members, only: %i[index show] do
     member do
       post :active

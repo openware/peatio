@@ -22,10 +22,15 @@ module Admin
       @orders = Order.all.order('id desc').page(params[:page]).per(20)
     end
 
+    def deposits
+      @deposits = Deposit.all.page(params[:page]).per(20)
+    end
+
     private
 
     def tabs
-      { withdraw: ['admin.accountments.tabs.withdraw', admin_accountments_withdraws_path],
+      { deposit:  ['admin.accountments.tabs.deposit', admin_accountments_deposits_path],
+        withdraw: ['admin.accountments.tabs.withdraw', admin_accountments_withdraws_path],
         member:   ['admin.accountments.tabs.member', admin_accountments_members_path],
         trade:    ['admin.accountments.tabs.trade', admin_accountments_trades_path],
         order:    ['admin.accountments.tabs.order', admin_accountments_orders_path]

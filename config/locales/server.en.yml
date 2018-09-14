@@ -419,6 +419,22 @@ en:
         actions_title: Action
         accounts_title: Account Information
     accountments:
+      tabs:
+        withdraw: Withdraws
+        deposit: Deposits
+      deposit:
+        member_id: Member ID
+        user: Member
+        currency: Currency
+        amount: Amount
+        fee: Fee
+        address: Address
+        txid: Transaction ID
+        state: State
+        block_number: Block Number
+        created_at: Created At
+        completed_at: Completed At
+        action: Action
       withdraws:
         member_email: Member email
         currency: Currency

@@ -134,10 +134,14 @@ table.table {
   width: 109em;
 }
 
-.table td{
+.table td {
   border-color: #ededed;
   max-width: 160px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.address:hover{
+  overflow: visible;
 }

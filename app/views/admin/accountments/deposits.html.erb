@@ -1,0 +1,32 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :deposit %>
+
+  <div class="card card-accountments" id="deposit">
+    <div class="card-body">
+      <div class="col-24">
+        <table class="table table-condensed table-striped">
+          <thead>
+          <tr>
+            <th><%= t('.member_id') %></th>
+            <th><%= t('.currency') %></th>
+            <th><%= t('.amount') %></th>
+            <th><%= t('.fee') %></th>
+            <th><%= t('.address') %></th>
+            <th><%= t('.txid') %></th>
+            <th><%= t('.state') %></th>
+            <th><%= t('.block_number') %></th>
+            <th><%= t('.created_at') %></th>
+            <th><%= t('.completed_at') %></th>
+          </tr>
+          </thead>
+          <tbody class="list">
+          <%= render partial: 'deposit', collection: @deposits %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @deposits %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
