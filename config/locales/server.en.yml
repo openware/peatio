@@ -418,6 +418,20 @@ en:
         member_title: User Information
         actions_title: Action
         accounts_title: Account Information
+    accountments:
+      withdraws:
+        member_email: Member email
+        member_id: Member ID
+        currency: Currency
+        amount: Amount
+        fee: Fee
+        transaction_id: Txid
+        state: State
+        sum: Sum
+        recipient_id: Recipient id
+        created_at: Created At
+      tabs:
+        withdraw: Withdraws          
     dashboard:
       index:
         accounts_title: Account Summary

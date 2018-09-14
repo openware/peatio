@@ -125,3 +125,19 @@ table.table {
     }
   }
 }
+
+.container.accountments-pages {
+  margin-left: 1.2em;
+}
+
+.card.card-accountments{
+  width: 109em;
+}
+
+.table td.primary {
+  border-color: #ededed;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

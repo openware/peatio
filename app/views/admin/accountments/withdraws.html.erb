@@ -1,0 +1,31 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :withdraw %>
+  <div class="card card-accountments" id="withdraws">
+    <div class="card-body">
+      <div class="col-24">
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th><%= t('.id') %></th>
+              <th><%= t('.member_email') %></th>
+              <th><%= t('.currency') %></th>
+              <th><%= t('.amount') %></th>
+              <th><%= t('.fee') %></th>
+              <th><%= t('.transaction_id') %></th>
+              <th><%= t('.state') %></th>
+              <th><%= t('.sum') %></th>
+              <th><%= t('.recipient_id') %></th>
+              <th><%= t('.created_at') %></th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <%= render partial: 'withdraw', collection: @withdraws %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @withdraws %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
