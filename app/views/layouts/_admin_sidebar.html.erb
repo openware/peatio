@@ -113,11 +113,11 @@
         </li>
       <% end %>
 
-      <% if can? :manage, Test %>
-        <li class="list-icon-item <%= check_active('tests') %>">
-          <%= link_to admin_tests_path do %>
+      <% if can? :manage, Accountment %>
+        <li class="list-icon-item <%= check_active('accountments') %>">
+          <%= link_to admin_accountments_path do %>
             <i class="icon fa fa-list-alt"></i>
-            <span class="menu-text">Test</span>
+            <span class="menu-text">Accountment</span>
           <% end %>
         </li>
       <% end %>

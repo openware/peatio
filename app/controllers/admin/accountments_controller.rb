@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module Admin
-  class TestsController < BaseController
+  class AccountmentsController < BaseController
     load_and_authorize_resource
 
     def index
