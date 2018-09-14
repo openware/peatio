@@ -10,14 +10,15 @@ module Admin
       @withdraws = Withdraw.all.order('id desc').page(params[:page]).per(20)
     end
 
-    def users
+    def members
       @members = Member.all.order('id desc').page(params[:page]).per(20)
     end
 
     private
 
     def tabs
-      { withdraw: ['admin.accountments.tabs.withdraw', admin_accountments_withdraws_path]
+      { withdraw: ['admin.accountments.tabs.withdraw', admin_accountments_withdraws_path],
+        member: ['admin.accountments.tabs.member', admin_accountments_members_path]
       }
     end
   end

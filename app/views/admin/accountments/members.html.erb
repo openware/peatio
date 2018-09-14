@@ -1,0 +1,26 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :member %>
+  <div class="card card-accountments" id="members">
+    <div class="card-body">
+      <div class="col-24">
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th><%= t('.member_id') %></th>
+              <th><%= t('.level') %></th>
+              <th><%= t('.sn') %></th>
+              <th><%= t('.email') %></th>
+              <th><%= t('.created_at') %></th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <%= render partial: 'member', collection: @members %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @members %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

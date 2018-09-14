@@ -1,0 +1,7 @@
+<tr class="table td primary">
+  <td><%= member.id %></td>
+  <td><%= member.level %></td>
+  <td><%= member.sn %></td>
+  <td><%= link_to member.email, url_for([:admin, member]), target: '_blank' %></td>
+  <td><%= member.created_at %></td>
+</tr>

@@ -4,6 +4,7 @@
 namespace :admin do
   get '/', to: 'dashboard#index', as: :dashboard
   get 'accountments/withdraws', to: 'accountments#withdraws', as: :accountments_withdraws
+  get 'accountments/members', to: 'accountments#members', as: :accountments_members
 
   resources :markets, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
