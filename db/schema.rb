@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180905112301) do
+ActiveRecord::Schema.define(version: 20180913170149) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -133,6 +133,11 @@ ActiveRecord::Schema.define(version: 20180905112301) do
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
   add_index "members", ["sn"], name: "index_members_on_sn", unique: true, using: :btree
 
+  create_table "news", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "orders", force: :cascade do |t|
     t.string   "bid",            limit: 10,                                         null: false
     t.string   "ask",            limit: 10,                                         null: false
@@ -171,6 +176,11 @@ ActiveRecord::Schema.define(version: 20180905112301) do
   end
 
   add_index "payment_addresses", ["currency_id", "address"], name: "index_payment_addresses_on_currency_id_and_address", unique: true, using: :btree
+
+  create_table "tests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "trades", force: :cascade do |t|
     t.decimal  "price",                    precision: 32, scale: 16, null: false
