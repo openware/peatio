@@ -1,0 +1,13 @@
+<tr class="table td primary">
+  <td><%= trade.id %></td>
+  <td><%= link_to Member.find_by_id(trade.bid_member_id).email, admin_member_path(trade.bid_member_id), target: '_blank' %></td>
+  <td><%= link_to Member.find_by_id(trade.ask_member_id).email, admin_member_path(trade.ask_member_id), target: '_blank' %></td>
+  <td><%= trade.price %></td>
+  <td><%= trade.volume %></td>
+  <td><%= trade.ask_id %></td>
+  <td><%= trade.bid_id %></td>
+  <td><%= trade.trend %></td>
+  <td><%= trade.market_id %></td>
+  <td><%= trade.funds %></td>
+  <td><%= trade.created_at.strftime('%c') %></td>
+</tr>

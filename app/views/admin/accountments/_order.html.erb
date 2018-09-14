@@ -1,0 +1,18 @@
+<tr class="table td primary">
+  <td><%= order.id %></td>
+  <td><%= link_to Member.find_by_id(order.member_id).email, admin_member_path(order.member_id), target: '_blank' %></td>
+  <td><%= order.bid %></td>
+  <td><%= order.ask %></td>
+  <td><%= order.price %></td>
+  <td><%= order.volume %></td>
+  <td><%= order.origin_volume %></td>
+  <td><%= order.fee %></td>
+  <td><%= order.state %></td>
+  <td><%= order.type %></td>
+  <td><%= order.ord_type %></td>
+  <td><%= order.locked %></td>
+  <td><%= order.origin_locked %></td>
+  <td><%= order.funds_received %></td>
+  <td><%= order.trades_count %></td>
+  <td><%= order.created_at.strftime('%c') %></td>
+</tr>

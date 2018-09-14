@@ -1,0 +1,32 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :trade %>
+  <div class="card card-accountments" id="trades">
+    <div class="card-body">
+      <div class="col-24">
+        <table class="table table-condensed table-striped">
+          <thead>
+          <tr>
+            <th><%= t('.id') %></th>
+            <th><%= t('.bid_member_email') %></th>
+            <th><%= t('.ask_member_email') %></th>
+            <th><%= t('.price') %></th>
+            <th><%= t('.volume') %></th>
+            <th><%= t('.ask_id') %></th>
+            <th><%= t('.bid_id') %></th>
+            <th><%= t('.trend') %></th>
+            <th><%= t('.market_id') %></th>
+            <th><%= t('.funds') %></th>
+            <th><%= t('.created_at') %></th>
+          </tr>
+          </thead>
+          <tbody class="list">
+            <%= render partial: 'trade', collection: @trades %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @trades %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
