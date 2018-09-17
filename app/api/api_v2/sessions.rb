@@ -17,7 +17,8 @@ module APIv2
       end
     end
 
-    desc 'Create new user session.'
+    desc 'Create new user session.',
+         security: [{ "BearerToken": [] }]
     post '/sessions' do
       session.destroy # This is used here to initialize SID.
       destroy_member_sessions(current_user.id)
@@ -36,7 +37,8 @@ module APIv2
       end
     end
 
-    desc 'Delete all user sessions.'
+    desc 'Delete all user sessions.',
+         security: [{ "BearerToken": [] }]
     delete '/sessions' do
       session.destroy
       destroy_member_sessions(current_user.id)

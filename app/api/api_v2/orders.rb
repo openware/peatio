@@ -8,7 +8,9 @@ module APIv2
     before { authenticate! }
     before { trading_must_be_permitted! }
 
-    desc 'Get your orders, results is paginated.', scopes: %w(history trade)
+    desc 'Get your orders, results is paginated.',
+         scopes: %w(history trade),
+         security: [{ "BearerToken": [] }]
     params do
       use :market
       optional :state, type: String,  default: 'wait', values: -> { Order.state.values }, desc: "Filter order by state, default to 'wait' (active orders)."
@@ -27,7 +29,9 @@ module APIv2
       present orders, with: APIv2::Entities::Order
     end
 
-    desc 'Get information of specified order.', scopes: %w(history trade)
+    desc 'Get information of specified order.',
+         scopes: %w(history trade),
+         security: [{ "BearerToken": [] }]
     params do
       use :order_id
     end
@@ -37,7 +41,9 @@ module APIv2
       present order, with: APIv2::Entities::Order, type: :full
     end
 
-    desc 'Create multiple sell/buy orders.', scopes: %w(trade)
+    desc 'Create multiple sell/buy orders.',
+         scopes: %w(trade),
+         security: [{ "BearerToken": [] }]
     params do
       use :market
       requires :orders, type: Array do
@@ -49,7 +55,9 @@ module APIv2
       present orders, with: APIv2::Entities::Order
     end
 
-    desc 'Create a Sell/Buy order.', scopes: %w(trade)
+    desc 'Create a Sell/Buy order.',
+         scopes: %w(trade),
+         security: [{ "BearerToken": [] }]
     params do
       use :market, :order
     end
@@ -58,7 +66,9 @@ module APIv2
       present order, with: APIv2::Entities::Order
     end
 
-    desc 'Cancel an order.', scopes: %w(trade)
+    desc 'Cancel an order.',
+         scopes: %w(trade),
+         security: [{ "BearerToken": [] }]
     params do
       use :order_id
     end
@@ -72,7 +82,9 @@ module APIv2
       end
     end
 
-    desc 'Cancel all my orders.', scopes: %w(trade)
+    desc 'Cancel all my orders.',
+         scopes: %w(trade),
+         security: [{ "BearerToken": [] }]
     params do
       optional :side, type: String, values: %w(sell buy), desc: "If present, only sell orders (asks) or buy orders (bids) will be canncelled."
     end

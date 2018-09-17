@@ -5,7 +5,8 @@ module APIv2
   class K < Grape::API
     helpers ::APIv2::NamedParams
 
-    desc 'Get OHLC(k line) of specific market.'
+    desc 'Get OHLC(k line) of specific market.',
+         security: [{ "BearerToken": [] }]
     params do
       use :market
       optional :limit,     type: Integer, default: 30, values: 1..10000, desc: "Limit the number of returned data points, default to 30."
@@ -17,7 +18,8 @@ module APIv2
       get_k_json
     end
 
-    desc "Get K data with pending trades, which are the trades not included in K data yet, because there's delay between trade generated and processed by K data generator."
+    desc "Get K data with pending trades, which are the trades not included in K data yet, because there's delay between trade generated and processed by K data generator.",
+         security: [{ "BearerToken": [] }]
     params do
       use :market
       requires :trade_id,  type: Integer, desc: "The trade id of the first trade you received."

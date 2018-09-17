@@ -7,7 +7,8 @@ module APIv2
 
     desc 'Returns the credentials used to subscribe to private Pusher channel. ' \
          'IMPORTANT: Pusher events are not part of Peatio public interface. ' \
-         'The events may be changed or removed in further releases. Use this on your own risk.'
+         'The events may be changed or removed in further releases. Use this on your own risk.',
+         security: [{ "BearerToken": [] }]
     params do
       requires :channel_name, type: String, desc: 'The name of the channel being subscribed to. Example: private-SN362ECB6F7D.'
       requires :socket_id, type: String, desc: 'An unique identifier for the connected client.'

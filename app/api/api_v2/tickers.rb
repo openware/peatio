@@ -5,7 +5,8 @@ module APIv2
   class Tickers < Grape::API
     helpers ::APIv2::NamedParams
 
-    desc 'Get ticker of all markets.'
+    desc 'Get ticker of all markets.',
+         security: [{ "BearerToken": [] }]
     get "/tickers" do
       Market.enabled.ordered.inject({}) do |h, m|
         h[m.id] = format_ticker Global[m.id].ticker
@@ -13,7 +14,8 @@ module APIv2
       end
     end
 
-    desc 'Get ticker of specific market.'
+    desc 'Get ticker of specific market.',
+         security: [{ "BearerToken": [] }]
     params do
       use :market
     end

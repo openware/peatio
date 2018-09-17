@@ -8,7 +8,8 @@ module APIv2
     DepositFee  = Struct.new(:currency, :type, :fee)
     TradingFee  = Struct.new(:market, :ask_fee, :bid_fee)
 
-    desc 'Returns withdraw fees for currencies.'
+    desc 'Returns withdraw fees for currencies.',
+         security: [{ "BearerToken": [] }]
     get '/fees/withdraw' do
       withdraw_fees = Currency.enabled.map do |c|
         fee = Fee.new(:fixed, c.withdraw_fee)
@@ -17,7 +18,8 @@ module APIv2
       present withdraw_fees
     end
 
-    desc 'Returns deposit fees for currencies.'
+    desc 'Returns deposit fees for currencies.',
+         security: [{ "BearerToken": [] }]
     get '/fees/deposit' do
       deposit_fees = Currency.enabled.map do |c|
         fee = Fee.new(:fixed, c.deposit_fee)
@@ -26,7 +28,8 @@ module APIv2
       present deposit_fees
     end
 
-    desc 'Returns trading fees for markets.'
+    desc 'Returns trading fees for markets.',
+         security: [{ "BearerToken": [] }]
     get '/fees/trading' do
       trading_fees = Market.enabled.ordered.map do |m|
         ask_fee = Fee.new(:relative, m.ask_fee)

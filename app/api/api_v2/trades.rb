@@ -5,7 +5,8 @@ module APIv2
   class Trades < Grape::API
     helpers ::APIv2::NamedParams
 
-    desc 'Get recent trades on market, each trade is included only once. Trades are sorted in reverse creation order.'
+    desc 'Get recent trades on market, each trade is included only once. Trades are sorted in reverse creation order.',
+         security: [{ "BearerToken": [] }]
     params do
       use :market, :trade_filters
     end
@@ -14,7 +15,9 @@ module APIv2
       present trades, with: APIv2::Entities::Trade
     end
 
-    desc 'Get your executed trades. Trades are sorted in reverse creation order.', scopes: %w(history)
+    desc 'Get your executed trades. Trades are sorted in reverse creation order.',
+         scopes: %w(history),
+         security: [{ "BearerToken": [] }]
     params do
       use :market, :trade_filters
     end

@@ -10,7 +10,8 @@ module APIv2
     before { authenticate! }
     before { deposits_must_be_permitted! }
 
-    desc 'Get your deposits history.'
+    desc 'Get your deposits history.',
+         security: [{ "BearerToken": [] }]
     params do
       optional :currency, type: String, values: -> { Currency.enabled.codes(bothcase: true) }, desc: -> { "Currency value contains #{Currency.enabled.codes(bothcase: true).join(',')}" }
       optional :limit, type: Integer, range: 1..100, default: 3, desc: "Set result limit."
@@ -23,7 +24,8 @@ module APIv2
       present deposits, with: APIv2::Entities::Deposit
     end
 
-    desc 'Get details of specific deposit.'
+    desc 'Get details of specific deposit.',
+         security: [{ "BearerToken": [] }]
     params do
       requires :txid
     end
@@ -36,7 +38,8 @@ module APIv2
 
     desc 'Returns deposit address for account you want to deposit to. ' \
          'The address may be blank because address generation process is still in progress. ' \
-         'If this case you should try again later.'
+         'If this case you should try again later.',
+         security: [{ "BearerToken": [] }]
     params do
       requires :currency, type: String, values: -> { Currency.coins.enabled.codes }, desc: 'The account you want to deposit to.'
       given :currency do
@@ -53,7 +56,8 @@ module APIv2
          'The address may be blank because address generation process is still in progress. ' \
          'If this case you should try again later. ' \
          'IMPORTANT: The system may return the same response as GET /api/v2/deposit_address returns in case ' \
-         'the currency doesn\'t support HD protocol or administrator doesn\'t allow users to have multiple deposit addresses.'
+         'the currency doesn\'t support HD protocol or administrator doesn\'t allow users to have multiple deposit addresses.',
+         security: [{ "BearerToken": [] }]
     params do
       requires :currency, type: String, values: -> { Currency.coins.enabled.codes }, desc: 'The account you want to deposit to.'
     end

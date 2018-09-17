@@ -7,7 +7,8 @@ module APIv2
   class OrderBooks < Grape::API
     helpers ::APIv2::NamedParams
 
-    desc 'Get the order book of specified market.'
+    desc 'Get the order book of specified market.',
+         security: [{ "BearerToken": [] }]
     params do
       use :market
       optional :asks_limit, type: Integer, default: 20, range: 1..200, desc: 'Limit the number of returned sell orders. Default to 20.'
@@ -20,7 +21,8 @@ module APIv2
       present book, with: APIv2::Entities::OrderBook
     end
 
-    desc 'Get depth or specified market. Both asks and bids are sorted from highest price to lowest.'
+    desc 'Get depth or specified market. Both asks and bids are sorted from highest price to lowest.',
+         security: [{ "BearerToken": [] }]
     params do
       use :market
       optional :limit, type: Integer, default: 300, range: 1..1000, desc: 'Limit the number of returned price levels. Default to 300.'
