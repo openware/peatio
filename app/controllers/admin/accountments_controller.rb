@@ -29,11 +29,11 @@ module Admin
     private
 
     def tabs
-      { deposit:  ['admin.accountments.tabs.deposit', admin_accountments_deposits_path],
-        withdraw: ['admin.accountments.tabs.withdraw', admin_accountments_withdraws_path],
-        member:   ['admin.accountments.tabs.member', admin_accountments_members_path],
-        trade:    ['admin.accountments.tabs.trade', admin_accountments_trades_path],
-        order:    ['admin.accountments.tabs.order', admin_accountments_orders_path]
+      { deposit:  ['admin.accountments.tabs.deposit', deposits_admin_accountments_path],
+        withdraw: ['admin.accountments.tabs.withdraw', withdraws_admin_accountments_path],
+        member:   ['admin.accountments.tabs.member', members_admin_accountments_path],
+        trade:    ['admin.accountments.tabs.trade', trades_admin_accountments_path],
+        order:    ['admin.accountments.tabs.order', orders_admin_accountments_path]
       }
     end
   end

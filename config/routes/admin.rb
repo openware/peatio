@@ -4,11 +4,6 @@
 namespace :admin do
   get '/', to: 'dashboard#index', as: :dashboard
 
-  get '/accountments/withdraws',  to: 'accountments#withdraws'
-  get '/accountments/trades',     to: 'accountments#trades'
-  get '/accountments/orders',     to: 'accountments#orders'
-  get '/accountments/members',    to: 'accountments#members'
-
   resources :markets, except: %i[edit destroy]
   resources :currencies, except: %i[edit destroy]
   resources :blockchains, except: %i[edit destroy]
@@ -16,12 +11,20 @@ namespace :admin do
     post :show_client_info, on: :collection
   end
 
-  get 'accountments/deposits', to: 'accountments#deposits', as: :accountments_deposits
-
   resources :members, only: %i[index show] do
     member do
       post :active
       post :toggle
+    end
+  end
+
+  resources :accountments do
+    collection do
+      get 'deposits'
+      get 'withdraws'
+      get 'trades'
+      get 'orders'
+      get 'members'
     end
   end
 
