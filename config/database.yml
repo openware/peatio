@@ -10,7 +10,7 @@ default: &default
 
 development:
   <<: *default
-  database: peatio_production
+  database: peatio_development
 
 test:
   <<: *default
