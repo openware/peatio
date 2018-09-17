@@ -4,7 +4,8 @@
 module APIv2
   class Markets < Grape::API
 
-    desc 'Get all available markets.'
+    desc 'Get all available markets.',
+         security: [{ "BearerToken": [] }]
     get "/markets" do
       present Market.enabled.ordered, with: APIv2::Entities::Market
     end

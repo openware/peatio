@@ -3,7 +3,8 @@
 
 module APIv2
   class MemberLevels < Grape::API
-    desc 'Returns list of member levels and the privileges they provide.'
+    desc 'Returns list of member levels and the privileges they provide.',
+    security: [{ "BearerToken": [] }]
     get '/member_levels' do
       { deposit: { minimum_level: ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i },
         withdraw: { minimum_level: ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW').to_i },

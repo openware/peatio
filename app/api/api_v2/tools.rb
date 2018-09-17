@@ -3,7 +3,8 @@
 
 module APIv2
   class Tools < Grape::API
-    desc 'Get server current time, in seconds since Unix epoch.'
+    desc 'Get server current time, in seconds since Unix epoch.',
+         security: [{ "BearerToken": [] }]
     get "/timestamp" do
       ::Time.now.iso8601
     end

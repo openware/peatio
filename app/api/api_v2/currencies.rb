@@ -7,7 +7,8 @@ module APIv2
 
     TradeStruct = Struct.new(:price, :volume, :change)
 
-    desc 'Get currency trades at last 24h', tags: %w[currencies]
+    desc 'Get currency trades at last 24h', tags: %w[currencies],
+                                            security: [{ "BearerToken": [] }]
     params do
       requires :currency, type: String,
                           values: -> { Currency.enabled.codes(bothcase: true) },
@@ -25,7 +26,9 @@ module APIv2
       end
     end
 
-    desc 'Get a currency', tags: %w[currencies], success: Entities::Currency
+    desc 'Get a currency', tags: %w[currencies],
+                           success: Entities::Currency,
+                           security: [{ "BearerToken": [] }]
     params do
       requires :id, type: String,
                     values: -> { Currency.enabled.codes(bothcase: true) },
@@ -38,7 +41,7 @@ module APIv2
     desc 'Get list of currencies', is_array: true,
                                    success: Entities::Currency,
                                    tags: %w[currencies],
-                                   security: []
+                                   security: [{ "BearerToken": [] }]
     params do
       optional :type, type: String,
                       values: %w[fiat coin],
