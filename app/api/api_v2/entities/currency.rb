@@ -24,10 +24,28 @@ module APIv2
       )
 
       expose(
+        :explorer_transaction,
+        documentation: {
+          desc: 'Currency transaction exprorer url template',
+          example: 'https://testnet.blockchain.info/tx/'
+        },
+        if: -> (currency){ currency.coin? }
+      )
+
+      expose(
+        :explorer_address,
+        documentation: {
+          desc: 'Currency address exprorer url template',
+          example: 'https://testnet.blockchain.info/address/'
+        },
+        if: -> (currency){ currency.coin? }
+      )
+
+      expose(
         :type,
         documentation: {
           type: String,
-          values: %w[coin fiat],
+          values: -> { ::Currency.types },
           desc: 'Currency type',
           example: -> { ::Currency.enabled.first.type }
         }
@@ -55,14 +73,6 @@ module APIv2
           desc: 'Currency quick withdraw limit',
           example: -> { ::Currency.enabled.first.quick_withdraw_limit }
         }
-      )
-
-      expose(
-        :allow_multiple_deposit_addresses,
-        documentation: {
-          example: -> { ::Currency.enabled.first.allow_multiple_deposit_addresses }
-        },
-        if: ->(currency) { currency.type == 'coin' }
       )
 
       expose(

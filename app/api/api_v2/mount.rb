@@ -39,6 +39,7 @@ module APIv2
 
     use APIv2::CORS::Middleware
 
+    mount APIv2::Accounts
     mount APIv2::Markets
     mount APIv2::Tickers
     mount APIv2::Members
@@ -59,7 +60,7 @@ module APIv2
     add_swagger_documentation base_path:   PREFIX,
                               mount_path:  '/swagger',
                               api_version: API_VERSION,
-                              doc_version: Peatio::VERSION,
+                              doc_version: Peatio::Application::VERSION,
                               info: {
                                 title:         "Member API #{API_VERSION}",
                                 description:   'Member API is API which can be used by client application like SPA.',
@@ -70,7 +71,7 @@ module APIv2
                                 license_url:   'https://github.com/rubykube/peatio/blob/master/LICENSE.md'
                               },
                               models: [
-                                Entities::Currency,
+                                Entities::Currency, Entities::Account
                               ],
                               security_definitions: {
                                 Bearer: {

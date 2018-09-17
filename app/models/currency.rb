@@ -47,7 +47,7 @@ class Currency < ActiveRecord::Base
   scope :coins,   -> { where(type: :coin) }
   scope :fiats,   -> { where(type: :fiat) }
 
-  delegate :explorer_transaction, :explorer_address, to: :blockchain
+  delegate :explorer_transaction, :blockchain_api, :explorer_address, to: :blockchain
 
   class << self
     def codes(options = {})
@@ -113,9 +113,7 @@ class Currency < ActiveRecord::Base
   end
 
   nested_attr \
-    :erc20_contract_address,
-    :supports_hd_protocol,
-    :allow_multiple_deposit_addresses
+    :erc20_contract_address
 
   def disabled?
     !enabled
@@ -123,10 +121,6 @@ class Currency < ActiveRecord::Base
 
   def is_erc20?
     erc20_contract_address.present?
-  end
-
-  def blockchain_api
-    BlockchainClient[blockchain.key]
   end
 
   def dependent_markets
@@ -148,8 +142,7 @@ class Currency < ActiveRecord::Base
   attr_readonly :id,
                 :code,
                 :type,
-                :erc20_contract_address,
-                :supports_hd_protocol
+                :erc20_contract_address
 end
 
 # == Schema Information

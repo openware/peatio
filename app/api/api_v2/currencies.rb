@@ -11,7 +11,7 @@ module APIv2
                                             security: [{ "BearerToken": [] }]
     params do
       requires :currency, type: String,
-                          values: -> { Currency.enabled.codes },
+                          values: -> { Currency.enabled.codes(bothcase: true) },
                           desc: -> { APIv2::Entities::Currency.documentation[:id] }
     end
     get '/currency/trades' do
@@ -31,7 +31,7 @@ module APIv2
                            security: [{ "BearerToken": [] }]
     params do
       requires :id, type: String,
-                    values: -> { Currency.enabled.codes },
+                    values: -> { Currency.enabled.codes(bothcase: true) },
                     desc: -> { APIv2::Entities::Currency.documentation[:id][:desc] }
     end
     get '/currencies/:id' do
