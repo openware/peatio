@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20181126101312) do
+=======
+ActiveRecord::Schema.define(version: 20181028000150) do
+>>>>>>> Add gateway auth for development environment
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -25,6 +29,7 @@ ActiveRecord::Schema.define(version: 20181126101312) do
   add_index "accounts", ["currency_id", "member_id"], name: "index_accounts_on_currency_id_and_member_id", unique: true, using: :btree
   add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
 
+<<<<<<< HEAD
   create_table "assets", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
@@ -53,6 +58,8 @@ ActiveRecord::Schema.define(version: 20181126101312) do
   add_index "authentications", ["provider", "member_id"], name: "index_authentications_on_provider_and_member_id", unique: true, using: :btree
   add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", unique: true, using: :btree
 
+=======
+>>>>>>> Add gateway auth for development environment
   create_table "blockchains", force: :cascade do |t|
     t.string   "key",                  limit: 255,             null: false
     t.string   "name",                 limit: 255
@@ -167,18 +174,16 @@ ActiveRecord::Schema.define(version: 20181126101312) do
   add_index "markets", ["position"], name: "index_markets_on_position", using: :btree
 
   create_table "members", force: :cascade do |t|
-    t.integer  "level",        limit: 1,   default: 0,     null: false
-    t.string   "sn",           limit: 12,                  null: false
-    t.string   "email",        limit: 255,                 null: false
-    t.boolean  "disabled",                 default: false, null: false
-    t.boolean  "api_disabled",             default: false, null: false
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.string   "uid",        limit: 12,  null: false
+    t.string   "email",      limit: 255, null: false
+    t.integer  "level",      limit: 4,   null: false
+    t.string   "role",       limit: 16,  null: false
+    t.string   "state",      limit: 16,  null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
-  add_index "members", ["disabled"], name: "index_members_on_disabled", using: :btree
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
-  add_index "members", ["sn"], name: "index_members_on_sn", unique: true, using: :btree
 
   create_table "orders", force: :cascade do |t|
     t.string   "bid",            limit: 10,                                         null: false

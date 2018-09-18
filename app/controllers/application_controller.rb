@@ -11,7 +11,22 @@ class ApplicationController < ActionController::Base
   before_action :set_language, :set_gon
   around_action :share_user
 
-private
+  private
+
+  # TODO: Share the function in a Service
+  def authenticate!(token)
+    jwt_public_key = Rails.configuration.x.jwt_public_key
+    payload, header = Peatio::Auth::JWTAuthenticator.new(jwt_public_key).authenticate!(token)
+    return payload
+
+  rescue => e
+    report_exception(e)
+    if Peatio::Auth::Error === e
+      raise e
+    else
+      raise Peatio::Auth::Error, e.inspect
+    end
+  end
 
   def current_market
     unless params[:market].blank?
@@ -21,8 +36,10 @@ private
   memoize :current_market
 
   def current_user
-    return if session[:member_id].blank?
-    Member.enabled.find_by_id(session[:member_id])
+    token = request.headers['Authorization']
+    payload = authenticate!(token)
+    p payload
+    Member.enabled.find_by_email(payload[:email])
   end
   memoize :current_user
 

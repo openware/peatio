@@ -45,6 +45,10 @@ module Peatio
     # Don't suppress exceptions in before_commit & after_commit callbacks.
     config.active_record.raise_in_transactional_callbacks = true
 
+    # Configure relative url root by setting URL_ROOT_PATH environment variable.
+    # Used by workbench with API Gateway.
+    config.relative_url_root = ENV.fetch('URL_ROOT_PATH', '/')
+
     config.assets.initialize_on_precompile = true
 
     # Automatically load and reload constants from "lib/*":

@@ -71,7 +71,9 @@ Otherwise we advice to use [workbench based environment](#local-development-envi
 * Ruby 2.5.1
 * Rails 4.2+
 
-#### Installation
+## Installation
+
+### Local development without workbench
 
 1. Copy initial configurations `./bin/init_config`
 2. Install yarn dependencies `bundle exec rake yarn:install`
@@ -79,6 +81,12 @@ Otherwise we advice to use [workbench based environment](#local-development-envi
 4. Setup database `bundle exec rake db:create db:migrate db:seed`
 5. Start peatio daemons `god -c lib/daemons/daemons.god`
 6. Start rails server `bundle exec rails server`
+7. Add this to your `/etc/hosts`:
+    ```
+    127.0.0.1 www.app.local
+    127.0.0.1 peatio.app.local
+    127.0.0.1 barong.app.local
+    ```
 
 ### Local development environment with workbench:
 
