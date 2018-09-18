@@ -3,6 +3,7 @@
   <td><%= link_to Member.find_by_id(order.member_id).email, admin_member_path(order.member_id), target: '_blank' %></td>
   <td><%= order.bid %></td>
   <td><%= order.ask %></td>
+  <td><%= order.market_id %></td>
   <td><%= order.price %></td>
   <td><%= order.volume %></td>
   <td><%= order.origin_volume %></td>

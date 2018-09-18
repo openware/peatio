@@ -17,14 +17,17 @@ class Order < ActiveRecord::Base
   validates :ord_type, :volume, :origin_volume, :locked, :origin_locked, presence: true
   validates :origin_volume, numericality: { greater_than: 0.to_d }
   validate  :market_order_validations, if: -> (order) { order.ord_type == 'market' }
-
+  
   WAIT   = 'wait'
   DONE   = 'done'
   CANCEL = 'cancel'
 
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
-
+  scope :by_state, -> (state) { where state: state }
+  scope :by_market_id, -> (market_id) { where market_id: market_id }
+  scope :by_bid, -> (bid) { where bid: bid }
+  scope :by_ask, -> (ask) { where ask: ask }
   before_validation(on: :create) { self.fee = config.public_send("#{kind}_fee") }
 
   after_commit on: :create do

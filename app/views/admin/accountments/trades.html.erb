@@ -3,6 +3,21 @@
   <div class="card card-accountments" id="trades">
     <div class="card-body">
       <div class="col-24">
+        <div class="card">
+          <div class="m-4">
+           <div class="container">
+            <div class="row">
+              <div class="col-sm-8">
+                <h5>Market</h5>
+                <% Market.all.each do |market| %>
+                  <%= link_to market.id, trades_admin_accountments_path(params.merge(market_id: market.id).except(:action,:controller)), :class => 'btn btn-primary'%>
+                <% end %>
+                <%= link_to 'All', trades_admin_accountments_path(params.merge(market_id: nil).except(:action,:controller)), :class => 'btn btn-primary'%>
+              </div>
+             </div>
+            </div>  
+          </div>
+        </div>
         <table class="table table-condensed table-striped">
           <thead>
           <tr>

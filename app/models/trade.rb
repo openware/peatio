@@ -16,7 +16,7 @@ class Trade < ActiveRecord::Base
   validates :price, :volume, :funds, numericality: { greater_than_or_equal_to: 0.to_d }
 
   scope :h24, -> { where('created_at > ?', 24.hours.ago) }
-
+  scope :by_market_id, -> (market_id) { where market_id: market_id }
   attr_accessor :side
 
   after_commit on: :create do

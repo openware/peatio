@@ -3,13 +3,54 @@
   <div class="card card-accountments" id="orders">
     <div class="card-body">
       <div class="col-24">
+         <div class="card">
+          <div class="m-4">
+             <div class="row">
+              <div class="col-sm-2">
+                <h5>State</h5>
+                <%= link_to 'Cancel', orders_admin_accountments_path(params.merge(state: 'cancel').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Done', orders_admin_accountments_path(params.merge(state: 'done').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Wait', orders_admin_accountments_path(params.merge(state: 'wait').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'All', orders_admin_accountments_path(params.merge(state: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-3">
+                <h5>Market</h5>
+                <% Market.all.each do |market| %>
+                  <%= link_to market.id, orders_admin_accountments_path(params.merge(market_id: market.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <% end %>
+                <%= link_to 'All', orders_admin_accountments_path(params.merge(market_id: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-6">
+               <div class="col-sm-12">
+                <h5>Currency</h5>
+                <div class="col-sm-6">
+                  <h6>Ask Currency</h6>
+                  <% Currency.all.each do |currency| %>
+                    <%= link_to currency.id.upcase, orders_admin_accountments_path(params.merge(ask: currency.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                  <% end %>
+                  <%= link_to 'All', orders_admin_accountments_path(params.merge(ask: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                </div>
+                <div class="col-sm-6">
+                  <h6>Bid Currency</h6>
+                  <% Currency.all.each do |currency| %>
+                    <%= link_to currency.id.upcase, orders_admin_accountments_path(params.merge(bid: currency.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                  <% end %>
+                  <%= link_to 'All', orders_admin_accountments_path(params.merge(bid: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                </div> 
+                </div>             
+              </div>
+              </div>
+              </div>
+          </div>
+        </div>
         <table class="table table-condensed table-striped">
           <thead>
           <tr>
             <th><%= t('.id') %></th>
             <th><%= t('.member_email') %></th>
-            <th><%= t('.ask') %></th>
             <th><%= t('.bid') %></th>
+            <th><%= t('.ask') %></th>
+            <th><%= t('.market') %></th>
             <th><%= t('.price') %></th>
             <th><%= t('.volume') %></th>
             <th><%= t('.origin_volume') %></th>

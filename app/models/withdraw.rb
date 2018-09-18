@@ -14,6 +14,7 @@ class Withdraw < ActiveRecord::Base
                confirming].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
 
+  
   include AASM
   include AASM::Locking
   include BelongsToCurrency
@@ -32,6 +33,8 @@ class Withdraw < ActiveRecord::Base
   validates :block_number, allow_blank: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
+  scope :by_currency_id, -> (currency_id) { where currency_id: currency_id }
+  scope :by_aasm_state, -> (aasm_state) { where aasm_state: aasm_state }
 
   aasm whiny_transitions: false do
     state :prepared, initial: true

@@ -3,15 +3,14 @@
   <td><%= withdraw.currency_id %></td>
   <td><%= withdraw.amount %></td>
   <td><%= withdraw.fee %></td>
+  <td><%= withdraw.rid %></td>
   <td>
     <% if Currency.find_by_id(withdraw.currency_id).type =='coin' %>
       <a href="<%= withdraw.transaction_url %>" target="_blank"><%= withdraw.txid %></a>
     <% end %>
   </td>
   <td><%= withdraw.aasm_state %></td>
-  <td><%= withdraw.block_number %></td>
   <th><%= withdraw.sum %></th>
-  <td><%= withdraw.rid %></td>
   <td><%= withdraw.created_at %></td>
   <th><%= withdraw.completed_at %></th>
   <td><%= link_to t('actions.view'), admin_withdraw_path(currency: withdraw.currency_id, id: withdraw.id), target: '_blank' %></td>

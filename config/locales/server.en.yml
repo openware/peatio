@@ -422,7 +422,7 @@ en:
       tabs:
         withdraw: Withdraws
         deposit: Deposits
-      deposit:
+      deposits:
         member_id: Member ID
         user: Member
         currency: Currency
@@ -431,7 +431,6 @@ en:
         address: Address
         txid: Transaction ID
         state: State
-        block_number: Block Number
         created_at: Created At
         completed_at: Completed At
         action: Action
@@ -442,7 +441,6 @@ en:
         fee: Fee
         transaction_id: Txid
         state: State
-        block_number: Block Number
         sum: Sum
         recipient_id: Recipient id
         created_at: Created At
@@ -454,6 +452,7 @@ en:
         email: Email
         created_at: Created At
       tabs:
+        deposit: Deposit
         withdraw: Withdraws
         member: Members        
     dashboard:

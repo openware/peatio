@@ -3,6 +3,29 @@
   <div class="card card-accountments" id="withdraws">
     <div class="card-body">
       <div class="col-24">
+      <div class="card">
+        <div class="m-4">
+          <div class="container">
+            <div class="row">
+             <div class="col-sm-6">
+                <h5>Currency</h5>
+                <% Currency.all.each do |currency| %>
+                  <%= link_to currency.id.upcase, withdraws_admin_accountments_path(params.merge(currency_id: currency.id).except(:action,:controller)), :class => 'btn btn-primary'%>
+                <% end %>
+                <%= link_to 'All', withdraws_admin_accountments_path(params.merge(currency_id: nil).except(:action,:controller)), :class => 'btn btn-primary'%>
+              </div>
+              <div class="col-sm-6">
+              <h5>State</h5>
+              <%= link_to 'Accepted', withdraws_admin_accountments_path(params.merge(aasm_state: 'accepted').except(:action,:controller)), :class => 'btn btn-primary'%>
+              <%= link_to 'Submited', withdraws_admin_accountments_path(params.merge(aasm_state: 'submitted').except(:action,:controller)), :class => 'btn btn-primary'%>
+              <%= link_to 'Waited', withdraws_admin_accountments_path(params.merge(aasm_state: 'waited').except(:action,:controller)), :class => 'btn btn-primary'%>
+              <%= link_to 'All', withdraws_admin_accountments_path(params.merge(aasm_state: nil).except(:action,:controller)), :class => 'btn btn-primary'%>
+              </div>
+             </div>
+            </div>
+           </div>
+          </div>
+        </div>
         <table class="table table-condensed table-striped">
           <thead>
             <tr>
@@ -10,11 +33,10 @@
               <th><%= t('.currency') %></th>
               <th><%= t('.amount') %></th>
               <th><%= t('.fee') %></th>
+              <th><%= t('.recipient_id') %></th>
               <th><%= t('.transaction_id') %></th>
               <th><%= t('.state') %></th>
-              <th><%= t('.block_number') %></th>
               <th><%= t('.sum') %></th>
-              <th><%= t('.recipient_id') %></th>
               <th><%= t('.created_at') %></th>
               <th><%= t('.completed_at') %></th>
               <th>Actions</th>
