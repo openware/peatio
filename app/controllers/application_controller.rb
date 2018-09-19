@@ -128,7 +128,7 @@ private
     if current_user
       gon.user = {
         sn: current_user.sn,
-        token: current_user.authentications.first&.token
+        token: ''
       }
       gon.accounts = current_user.accounts.enabled.includes(:currency).inject({}) do |memo, account|
         memo[account.currency.code] = {
@@ -141,6 +141,8 @@ private
     end
 
     gon.bank_details_html = ENV['BANK_DETAILS_HTML']
+
+    gon.barong_domain = ENV["BARONG_DOMAIN"]
 
     gon.ranger_host = ENV["RANGER_HOST"] || '0.0.0.0'
     gon.ranger_port = ENV["RANGER_PORT"] || '8081'
