@@ -488,12 +488,15 @@ en:
       amount: Amount
       txid: TxId
       created_at: Created At
+      completed_at: Completed At
       confirmations: Confirmations
       state_and_actions: State/Actions
     fiat:
       sn: SN
       amount: Amount
-      created_at: At
+      id: Deposit ID
+      created_at: Created At
+      completed_at: Completed At
       memo: Memo
       state_and_actions: State/Action
   enumerize:

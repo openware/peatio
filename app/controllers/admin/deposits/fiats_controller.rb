@@ -8,8 +8,8 @@ module Admin
     class FiatsController < BaseController
       def index
         q = ::Deposits::Fiat.where(currency: currency).includes(:member).includes(:currency)
-        @latest_deposits = q.where('created_at <= ?', 1.day.ago).order('id DESC')
-        @all_deposits    = q.where('created_at > ?', 1.day.ago).order('id DESC')
+        @latest_deposits = q.where('created_at > ?', 1.day.ago).order('id DESC')
+        @all_deposits    = q.where('created_at <= ?', 1.day.ago).order('id DESC')
       end
 
       def new
@@ -46,4 +46,3 @@ module Admin
     end
   end
 end
-

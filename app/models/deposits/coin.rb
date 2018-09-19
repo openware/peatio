@@ -25,6 +25,10 @@ module Deposits
                    confirmations:   confirmations)
     end
 
+    def wallet_url
+      blockchain.explorer_address.gsub('#{address}', address) if blockchain
+    end
+
     def as_json_for_event_api
       super.merge blockchain_confirmations: confirmations
     end
