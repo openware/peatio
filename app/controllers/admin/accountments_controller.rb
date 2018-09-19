@@ -7,22 +7,22 @@ module Admin
     helper_method :tabs, :sort_column, :sort_direction
     
     def withdraws
-      @withdraws = Withdraw.all.order('id desc').page(params[:page]).per(20)
+      @withdraws = Withdraw.all.order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
       @withdraws = @withdraws.by_currency_id(params[:currency_id]) if params[:currency_id].present?
       @withdraws = @withdraws.by_aasm_state(params[:aasm_state]) if params[:aasm_state].present?
     end
 
     def members
-      @members = Member.all.order('id desc').page(params[:page]).per(20)
+      @members = Member.all.order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
     end
 
     def trades
-      @trades = Trade.all.order('id desc').page(params[:page]).per(20)
+      @trades = Trade.all.order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
       @trades = @trades.by_market_id(params[:market_id]) if params[:market_id].present?
     end
 
     def orders
-      @orders = Order.all.order('id desc').page(params[:page]).per(20)
+      @orders = Order.all.order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
       @orders = @orders.by_state(params[:state]) if params[:state].present?
       @orders = @orders.by_market_id(params[:market_id]) if params[:market_id].present?
       @orders = @orders.by_bid(params[:bid]) if params[:bid].present?
@@ -30,7 +30,7 @@ module Admin
     end
 
     def deposits
-      @deposits = Deposit.all.order("#{sort_column} #{sort_direction}").page(params[:page]).per(20)
+      @deposits = Deposit.all.order("#{sort_column} #{sort_direction}").page(params[:page]).per(params[:per_page])
       @deposits = @deposits.by_currency_id(params[:currency_id]) if params[:currency_id].present?
       @deposits = @deposits.by_aasm_state(params[:aasm_state]) if params[:aasm_state].present?
     end
@@ -47,11 +47,15 @@ module Admin
     end
 
     def sortable_columns
-      ["fee", "amount", "address"]
+      ['amount' , 'address', 'fee', 'currency_id', 'txid', 'aasm_state',
+       'created_at', 'completed_at', 'rid', 'sum', 'level', 'sn', 'email',
+       'id', 'price', 'volume', 'ask_id', 'bid_id', 'trend', 'market_id', 'funds',
+       'bid', 'ask', 'market', 'origin_volume', 'state', 'type', 'ord_type', 'locked',
+       'origin_locked', 'funds_received', 'trades_count']
     end
   
     def sort_column
-      sortable_columns.include?(params[:column]) ? params[:column] : "fee"
+      sortable_columns.include?(params[:column]) ? params[:column] : "created_at"
     end
   
     def sort_direction

@@ -12,11 +12,10 @@ module ApplicationHelper
  
   def sort_link(column, title = nil)
     title ||= column.titleize
-    direction = column == sort_column.capitalize && sort_direction == "asc" ? "desc" : "asc"
+    direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
     icon = sort_direction == "asc" ? "icon fa fa-chevron-up" : "icon fa fa-chevron-down"
-    icon = column == sort_column.capitalize ? icon : ""
-    p icon
-    link_to "#{title} <span class='#{icon}'></span>".html_safe, {column: column, direction: direction}
+    icon = column == sort_column ? icon : ""
+    link_to "#{title} <span class='#{icon}'></span>".html_safe, params.merge(column: column, direction: direction)
   end
   
 
