@@ -3,6 +3,8 @@
 
 class Deposit < ActiveRecord::Base
   STATES = %i[submitted canceled rejected accepted].freeze
+  scope :by_currency_id, -> (currency_id) { where currency_id: currency_id }
+  scope :by_aasm_state, -> (aasm_state) { where aasm_state: aasm_state }
 
   include AASM
   include AASM::Locking

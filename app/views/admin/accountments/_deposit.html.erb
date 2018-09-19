@@ -1,0 +1,15 @@
+<tr class="table td">
+  <td><%= link_to Member.find_by_id(deposit.member_id).email, url_for([:admin, deposit.member]), target: '_blank' %></td>
+  <td><%= deposit.currency_id %></td>
+  <td><%= deposit.amount %></td>
+  <td><%= deposit.fee %></td>
+  <td class="address"><%= deposit.address %></td>
+  <td>
+    <% if Currency.find_by_id(deposit.currency_id).type =='coin' %>
+        <a href="<%= deposit.transaction_url %>" target="_blank"><%= deposit.txid %></a>
+    <% end %>
+  </td>
+  <td><%= deposit.aasm_state %></td>
+  <td><%= deposit.created_at %></td>
+  <td><%= deposit.completed_at %></td>
+</tr>

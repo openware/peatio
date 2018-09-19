@@ -1,0 +1,61 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :deposit %>
+
+  <div class="card card-accountments" id="deposit">
+    <div class="card-body">
+      <div class="col-24">
+        <div class="card">
+          <div class="m-4">
+             <div class="row">
+              <div class="col-sm-4">
+                <h5>Currency</h5>
+                <% Currency.all.each do |currency| %>
+                  <%= link_to currency.id.upcase, deposits_admin_accountments_path(params.merge(currency_id: currency.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <% end %>
+                <%= link_to 'All', deposits_admin_accountments_path(params.merge(currency_id: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-4">
+                <h5>State</h5>
+                <%= link_to 'Accepted', deposits_admin_accountments_path(params.merge(aasm_state: 'accepted').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Submited', deposits_admin_accountments_path(params.merge(aasm_state: 'submitted').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Canceled', deposits_admin_accountments_path(params.merge(aasm_state: 'canceled').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Rejected', deposits_admin_accountments_path(params.merge(aasm_state: 'rejected').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>   
+                <%= link_to 'All', deposits_admin_accountments_path(params.merge(aasm_state: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-4">
+                 <h5>Page</h5>
+                 <%= link_to '20', deposits_admin_accountments_path(params.merge(per_page: 20).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '50', deposits_admin_accountments_path(params.merge(per_page: 50).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '100', deposits_admin_accountments_path(params.merge(per_page: 100).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '200', deposits_admin_accountments_path(params.merge(per_page: 200).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <% count = Deposit.count %>
+                 <%= link_to 'all', deposits_admin_accountments_path(params.merge(per_page: count).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+             </div>
+          </div>
+        </div>
+        <table class="table table-condensed table-striped">
+          <thead>
+          <tr>
+            <th><%= t('.member_email') %></th>
+            <th><%= sort_link t('.currency_id'), 'Currency' %></th>
+            <th><%= sort_link t('.amount'), 'Amount' %></th>
+            <th><%= sort_link t('.fee'), 'Fee' %></th>
+            <th><%= sort_link t('.address'), 'Address' %></th>
+            <th><%= sort_link t('.txid'), 'Transaction ID' %></th>
+            <th><%= sort_link t('.aasm_state'), 'State' %></th>
+            <th><%= sort_link t('.created_at'), 'Created At' %></th>
+            <th><%= sort_link t('.completed_at'), 'Completed At' %></th>
+          </tr>
+          </thead>
+          <tbody class="list">
+          <%= render partial: 'deposit', collection: @deposits %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @deposits %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

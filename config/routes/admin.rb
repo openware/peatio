@@ -18,6 +18,16 @@ namespace :admin do
     end
   end
 
+  resources :accountments do
+    collection do
+      get 'deposits'
+      get 'withdraws'
+      get 'trades'
+      get 'orders'
+      get 'members'
+    end
+  end
+
   resources 'deposits/:currency',  to: AdminDepositsRouter.new,  as: 'deposit'
   resources 'withdraws/:currency', to: AdminWithdrawsRouter.new, as: 'withdraw'
 end

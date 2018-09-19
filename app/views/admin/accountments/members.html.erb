@@ -1,0 +1,41 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :member %>
+  <div class="card card-accountments" id="members">
+    <div class="card-body">
+      <div class="col-24">
+        <div class="card">
+          <div class="m-4">
+            <div class="row">
+              <div class="col-sm-4">
+                 <h5>Page</h5>
+                 <%= link_to '20', members_admin_accountments_path(params.merge(per_page: 20).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '50', members_admin_accountments_path(params.merge(per_page: 50).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '100', members_admin_accountments_path(params.merge(per_page: 100).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '200', members_admin_accountments_path(params.merge(per_page: 200).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <% count = Member.count %>
+                 <%= link_to 'all', members_admin_accountments_path(params.merge(per_page: count).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+            </div>
+          </div>
+        </div>  
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th><%= sort_link t('.id'), 'Member ID' %></th>
+              <th><%= sort_link t('.level'), 'Level' %></th>
+              <th><%= sort_link t('.sn'), 'SN' %></th>
+              <th><%= sort_link t('.email'), 'Email' %></th>
+              <th><%= sort_link t('.created_at'), 'Created At' %></th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <%= render partial: 'member', collection: @members %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @members %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

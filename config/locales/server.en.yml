@@ -418,6 +418,72 @@ en:
         member_title: User Information
         actions_title: Action
         accounts_title: Account Information
+    accountments:
+      tabs:
+        withdraw: Withdraws
+        deposit: Deposits
+      deposits:
+        member_email: Member email
+        currency_id: currency_id
+        amount: amount
+        fee: fee
+        address: address
+        txid: txid
+        aasm_state: aasm_state
+        created_at: created_at
+        completed_at: completed_at
+        action: Action
+      withdraws:
+        member_email: Member email
+        currency_id: currency_id
+        amount: amount
+        fee: fee
+        txid: txid
+        aasm_state: aasm_state
+        sum: sum
+        rid: rid
+        created_at: created_at
+        completed_at: completed_at
+      members:
+        id: id
+        level: level
+        sn: sn
+        email: email
+        created_at: created_at
+      trades:
+        id: id
+        bid_member_email: Bid Member Email
+        ask_member_email: Ask Member Email
+        price: price
+        volume: volume
+        ask_id: ask_id
+        bid_id: bid_id
+        trend: trend
+        market_id: market_id
+        funds: funds
+        created_at: created_at
+      orders:
+        id: id
+        member_email: Member Email
+        bid: bid
+        ask: ask
+        market: market
+        price: price
+        volume: volume
+        origin_volume: origin_volume
+        fee: fee
+        state: state
+        type: type
+        ord_type: ord_type
+        locked: locked
+        origin_locked: origin_locked
+        funds_received: funds_received
+        trades_count: trades_count
+        created_at: created_at
+      tabs:
+        deposit: Deposit
+        withdraw: Withdraws
+        member: Members        
     dashboard:
       index:
         accounts_title: Account Summary

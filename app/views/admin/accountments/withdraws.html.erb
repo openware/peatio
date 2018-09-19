@@ -1,0 +1,70 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :withdraw %>
+  <div class="card card-accountments" id="withdraws">
+    <div class="card-body">
+      <div class="col-24">
+      <div class="card">
+        <div class="m-4">
+            <div class="row">
+             <div class="col-sm-3">
+                <h5>Currency</h5>
+                <% Currency.all.each do |currency| %>
+                  <%= link_to currency.id.upcase, withdraws_admin_accountments_path(params.merge(currency_id: currency.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <% end %>
+                <%= link_to 'All', withdraws_admin_accountments_path(params.merge(currency_id: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-7">
+              <h5>State</h5>
+
+              <%= link_to 'Accepted', withdraws_admin_accountments_path(params.merge(aasm_state: 'accepted').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Submited', withdraws_admin_accountments_path(params.merge(aasm_state: 'submitted').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Canceled', withdraws_admin_accountments_path(params.merge(aasm_state: 'canceled').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Rejected', withdraws_admin_accountments_path(params.merge(aasm_state: 'rejected').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>   
+              <%= link_to 'Suspected', withdraws_admin_accountments_path(params.merge(aasm_state: 'suspected').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Processing', withdraws_admin_accountments_path(params.merge(aasm_state: 'processing').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Succeed', withdraws_admin_accountments_path(params.merge(aasm_state: 'succeed').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Failed', withdraws_admin_accountments_path(params.merge(aasm_state: 'failed').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Confirming', withdraws_admin_accountments_path(params.merge(aasm_state: 'confirming').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'Prepared', withdraws_admin_accountments_path(params.merge(aasm_state: 'prepared').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              <%= link_to 'All', withdraws_admin_accountments_path(params.merge(aasm_state: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-2">
+                 <h5>Page</h5>
+                 <%= link_to '20', withdraws_admin_accountments_path(params.merge(per_page: 20).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '50', withdraws_admin_accountments_path(params.merge(per_page: 50).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '100', withdraws_admin_accountments_path(params.merge(per_page: 100).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '200', withdraws_admin_accountments_path(params.merge(per_page: 200).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <% count = Withdraw.count %>
+                 <%= link_to 'all', withdraws_admin_accountments_path(params.merge(per_page: count).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+             </div>
+           </div>
+          </div>
+        </div>
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr>
+              <th><%= t('.member_email') %></th>
+              <th><%= sort_link t('.currency_id'), 'Currency' %></th>
+              <th><%= sort_link t('.amount'), 'Amount' %></th>
+              <th><%= sort_link t('.fee'), 'Fee' %></th>
+              <th><%= sort_link t('.rid') %></th>
+              <th><%= sort_link t('.txid'), 'Transaction ID' %></th>
+              <th><%= sort_link t('.aasm_state'), 'State' %></th>
+              <th><%= sort_link t('.sum'), 'Sum' %></th>
+              <th><%= sort_link t('.created_at'), 'Created At' %></th>
+              <th><%= sort_link t('.completed_at'), 'Completed At' %></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="list">
+            <%= render partial: 'withdraw', collection: @withdraws %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @withdraws %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

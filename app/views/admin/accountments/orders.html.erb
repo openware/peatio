@@ -1,0 +1,86 @@
+<div class="container accountments-pages">
+  <%= render 'tabs', active: :order %>
+  <div class="card card-accountments" id="orders">
+    <div class="card-body">
+      <div class="col-24">
+         <div class="card">
+          <div class="m-4">
+             <div class="row">
+              <div class="col-sm-2">
+                <h5>State</h5>
+                <%= link_to 'Cancel', orders_admin_accountments_path(params.merge(state: 'cancel').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Done', orders_admin_accountments_path(params.merge(state: 'done').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'Wait', orders_admin_accountments_path(params.merge(state: 'wait').except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <%= link_to 'All', orders_admin_accountments_path(params.merge(state: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+              <div class="col-sm-3">
+                <h5>Market</h5>
+                <% Market.all.each do |market| %>
+                  <%= link_to market.id, orders_admin_accountments_path(params.merge(market_id: market.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                <% end %>
+                <%= link_to 'All', orders_admin_accountments_path(params.merge(market_id: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+              </div>
+                <div class="col-sm">
+                 <h5>Page</h5>
+                 <%= link_to '20', orders_admin_accountments_path(params.merge(per_page: 20).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '50', orders_admin_accountments_path(params.merge(per_page: 50).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '100', orders_admin_accountments_path(params.merge(per_page: 100).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <%= link_to '200', orders_admin_accountments_path(params.merge(per_page: 200).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                 <% count = Order.count%>
+                 <%= link_to 'all', orders_admin_accountments_path(params.merge(per_page: count).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                </div> 
+              </div>
+              <div class="row top-buffer">
+                <div class="col-sm-12">
+                <div>
+                  <h6>Ask Currency</h6>
+                  <% Currency.all.each do |currency| %>
+                    <%= link_to currency.id.upcase, orders_admin_accountments_path(params.merge(ask: currency.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                  <% end %>
+                  <%= link_to 'All', orders_admin_accountments_path(params.merge(ask: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                </div>
+                <div>
+                  <h6>Bid Currency</h6>
+                  <% Currency.all.each do |currency| %>
+                    <%= link_to currency.id.upcase, orders_admin_accountments_path(params.merge(bid: currency.id).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                  <% end %>
+                  <%= link_to 'All', orders_admin_accountments_path(params.merge(bid: nil).except(:action,:controller)), :class => 'btn btn-sm btn-primary'%>
+                </div>
+              </div> 
+              </div>
+            </div>
+          </div>
+        </div>
+        <table class="table table-condensed table-striped">
+          <thead>
+          <tr>
+            <th><%= sort_link t('.id'), 'Id' %></th>
+            <th><%= t('.member_email') %></th>
+            <th><%= sort_link t('.bid'), 'Bid' %></th>
+            <th><%= sort_link t('.ask'), 'Ask' %></th>
+            <th><%= sort_link t('.market'), 'Market' %></th>
+            <th><%= sort_link t('.price'), 'Price' %></th>
+            <th><%= sort_link t('.volume'), 'Volume' %></th>
+            <th><%= sort_link t('.origin_volume'), 'Origin Volume' %></th>
+            <th><%= sort_link t('.fee'), 'Fee' %></th>
+            <th><%= sort_link t('.state'), 'State' %></th>
+            <th><%= sort_link t('.type'), 'Type' %></th>
+            <th><%= sort_link t('.ord_type'), 'Ord Type' %></th>
+            <th><%= sort_link t('.locked'), 'Locked' %></th>
+            <th><%= sort_link t('.origin_locked'), 'Origin Locked' %></th>
+            <th><%= sort_link t('.funds_received'), 'Funds Recieved' %></th>
+            <th><%= sort_link t('.trades_count'), 'Trades Count' %></th>
+            <th><%= sort_link t('.created_at'), 'Created At' %></th>
+          </tr>
+          </thead>
+          <tbody class="list">
+          <%= render partial: 'order', collection: @orders %>
+          </tbody>
+        </table>
+        <div class="float-right">
+          <%= paginate @orders %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

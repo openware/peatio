@@ -9,6 +9,15 @@ module ApplicationHelper
       return 'active' if (klass.model_name.singular == controller.controller_name.singularize)
     end
   end
+ 
+  def sort_link(column, title = nil)
+    title ||= column.titleize
+    direction = column == sort_column && sort_direction == "asc" ? "desc" : "asc"
+    icon = sort_direction == "asc" ? "icon fa fa-chevron-up" : "icon fa fa-chevron-down"
+    icon = column == sort_column ? icon : ""
+    link_to "#{title} <span class='#{icon}'></span>".html_safe, params.merge(column: column, direction: direction)
+  end
+  
 
   def top_nav_link(link_text, link_path, link_icon, controllers: [], counter: 0, target: '')
     merged = (controllers & controller_path.split('/'))

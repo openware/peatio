@@ -44,7 +44,7 @@ class Wallet < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180813105100
+# Schema version: 20180905112301
 #
 # Table name: wallets
 #
