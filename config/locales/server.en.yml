@@ -33,7 +33,7 @@ en:
       withdraw:
         id: ID
         created_at: Created At
-        completed_at: Done At
+        completed_at: Completed At
         sum: Sum
         fee: Fee
         currency: Currency
@@ -73,7 +73,7 @@ en:
       withdraws/fiat:
         id: ID
         state_and_actions: State/Action
-        sum: Amount
+        sum: Sum
         fee: Fee
         amount: Amount
         created_at: Created At
@@ -95,7 +95,8 @@ en:
         id: ID
         state_and_actions: State/Action
         created_at: Created At
-        sum: Amount
+        completed_at: Completed At
+        sum: Sum
         amount: Amount
         fee: Fee
     errors:
