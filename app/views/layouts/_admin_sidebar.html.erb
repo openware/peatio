@@ -113,6 +113,15 @@
         </li>
       <% end %>
 
+      <% if can? :manage, Order %>
+        <li class="list-icon-item <%= check_active('orders') %>">
+          <%= link_to admin_orders_path do %>
+            <i class="icon fa fa-users"></i>
+            <span class="menu-text"><%= t('.menus.sections.orders') %></span>
+          <% end %>
+        </li>
+      <% end %>
+
     </ul>
   </div>
 </div>

@@ -1,0 +1,26 @@
+<h3><%= t('.orders') %></h3>
+<div class="card">
+  <%= table_for @orders, class: 'table table-bordered table-striped table-condensed' do |t| %>
+    <% t.column :id, "ID" %>
+    <% t.column 'Member Email' do |x| %>
+      <%= link_to x.member.email, url_for([:admin, x.member]) %>
+    <% end %>
+    <% t.column :bid, "Bid" %>
+    <% t.column :ask, "Ask" %>
+    <% t.column :market_id, "Market" %>
+    <% t.column :price, "Price" %>
+    <% t.column :volume, "Volume" %>
+    <% t.column :origin_volume, "Origin Volume" %>
+    <% t.column :fee, "Fee" %>
+    <% t.column :state, "State" %>
+    <% t.column :type, "Type" %>
+    <% t.column :ord_type, "Order Type" %>
+    <% t.column :locked, "Locked" %>
+    <% t.column :origin_locked, "Origin Locked" %>
+    <% t.column :funds_received, "Funds Received" %>
+    <% t.column :trades_count, "Deals" %>
+    <% t.column :created_at, "Created At" %>
+  <% end %>
+
+</div>
+<%= paginate @orders %>

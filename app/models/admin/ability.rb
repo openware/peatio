@@ -18,6 +18,7 @@ module Admin
       can :menu, Withdraw
       Withdraw.descendants.each { |w| can :manage, w }
 
+      can :manage, Order
       can :manage, Market
       can :manage, Currency
       can :manage, Blockchain
