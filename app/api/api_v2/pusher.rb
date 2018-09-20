@@ -16,7 +16,7 @@ module APIv2
       sn = params[:channel_name].split('-', 2).last
       if current_user.sn == sn
         body ::Pusher[params[:channel_name]].authenticate(params[:socket_id])
-        status 201
+        status 200
       else
         status 422
       end
