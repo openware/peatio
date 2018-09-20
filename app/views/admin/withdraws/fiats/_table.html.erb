@@ -2,9 +2,6 @@
   <% t.column :id %>
   <% t.column :created_at %>
   <% t.column :completed_at %>
-  <% t.column 'Currency' do |x| %>
-    <% x.currency.code.upcase %>
-  <% end %>
   <% t.column 'Member email' do |x| %>
     <%= link_to x.member.email, url_for([:admin, x.member]) %>
   <% end %>

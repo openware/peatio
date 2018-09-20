@@ -2,9 +2,6 @@
   <%= table_for deposits, class: 'table table-bordered table-striped' do |t| %>
     <% t.column :id, 'Deposit ID' %>
     <% t.column :created_at, 'Created at' %>
-    <% t.column 'Currency' do |x| %>
-      <%= x.currency.code.upcase %>
-    <% end %>
     <% t.column 'Member email' do |x| %>
       <%= link_to x.member.email, url_for([:admin, x.member]) %>
     <% end %>
