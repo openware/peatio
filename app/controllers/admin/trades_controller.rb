@@ -6,7 +6,8 @@ module Admin
     load_and_authorize_resource
 
     def index
-      @trades = Trade.all.page(params[:page]).per(params[20])
+      @q = Trade.ransack(params[:q])
+      @trades = @q.result(distinct: true).page(params[:page]).per(20)
     end
   end
 end

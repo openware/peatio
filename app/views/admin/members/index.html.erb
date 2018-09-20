@@ -17,16 +17,14 @@
 <h3><%= t('.members') %></h3>
 <div class="card">
   <%= table_for @members, class: 'table table-bordered table-striped table-condensed' do |t| %>
-    <% t.column :id, 'ID'  %>
-    <% t.column :email, 'Email' do |x| %>
+    <% t.column :id, sort_link(@q, :id, 'id') %>
+    <% t.column :email, sort_link(@q, :email, 'Email') do |x| %>
       <code class="text-info">
         <%= x.email %>
       </code>
     <% end %>
-    <% t.column 'SN' do |x| %>
-        <%= x.sn %>
-    <% end %>
-    <% t.column :created_at, 'Created At' %>
+    <% t.column :sn, sort_link(@q, :sn, 'SN') %>
+    <% t.column :created_at, sort_link(@q, :created_at, 'Created At') %>
     <% t.column 'Disabled? (Web/API)' do |x| %>
       <% text = x.disabled? ? 'Yes' : 'No' %>
       <%= link_to text, toggle_admin_member_path(x), remote: true, method: :post, class: 'toggle-web' %>

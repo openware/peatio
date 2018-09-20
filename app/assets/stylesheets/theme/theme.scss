@@ -1593,6 +1593,16 @@ pre {
   .form-control:disabled, .form-control[readonly] {
     background-color: #f1f1f1;
     opacity: 1; }
+  .form-control.small {
+    width: 10%;
+    height: 37px;
+    display: inline-flex;
+  }
+  .form-control.xsmall {
+    width: 6%;
+    height: 37px;
+    display: inline-flex;
+  }
 
 select.form-control:not([size]):not([multiple]) {
   height: calc(2.75rem + 2px); }

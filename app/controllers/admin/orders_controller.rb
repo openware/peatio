@@ -6,7 +6,8 @@ module Admin
     load_and_authorize_resource
 
     def index
-      @orders = Order.all.page(params[:page]).per(params[20])
+      @q = Order.ransack(params[:q])
+      @orders = @q.result(distinct: true).page(params[:page]).per(20)
     end
   end
 end

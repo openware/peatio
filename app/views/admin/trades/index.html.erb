@@ -1,7 +1,24 @@
 <h3><%= t('.trades') %></h3>
+
+<%= search_form_for [:admin, @q] do |f| %>
+  <%= f.label :id_eq, 'Trade id' %>
+  <%= f.search_field :id_eq, class: 'form-control xsmall' %>
+  <%= f.label :ask_member_email_cont, 'Ask member email' %>
+  <%= f.search_field :ask_member_email_cont, class: 'form-control small' %>
+  <%= f.label :bid_member_email_cont, 'Bid member email' %>
+  <%= f.search_field :bid_member_email_cont, class: 'form-control small' %>
+  <%= f.label :ask_id_eq, 'Ask order id' %>
+  <%= f.search_field :ask_id_eq, class: 'form-control xsmall' %>
+  <%= f.label :bid_id_eq , 'Bid order id' %>
+  <%= f.search_field :bid_id_eq, class: 'form-control xsmall' %>
+  <%= f.label :market_id_eq, 'Market' %>
+  <%= f.collection_select :market_id_eq, Market.all, :id, :id, include_blank: 'All', class: 'form-control small' %>
+  <%= f.submit "Filter", class: 'btn btn-primary btn-sm' %>
+<% end %>
+
 <div class="card">
   <%= table_for @trades, class: 'table table-bordered table-striped table-condensed' do |t| %>
-    <% t.column :id, 'ID' %>
+    <% t.column :id, sort_link(@q, :id) %>
     <% t.column 'Ask Member' do |x| %>
       <a href="<%= url_for([:admin, x.ask_member]) %>" target="_blank">
         <code class="text-info"><%= x.ask_member.email %></code>
@@ -15,10 +32,10 @@
     <% t.column :ask_id, 'Ask Order' %>
     <% t.column :bid_id, 'Bid Order' %>
     <% t.column :market_id, 'Market' %>
-    <% t.column :price, 'Price' %>
-    <% t.column :volume, 'Volume' %>
-    <% t.column :funds, 'Funds' %>
-    <% t.column :created_at, 'Created At' %>
+    <% t.column :price, sort_link(@q, :price, 'Price') %>
+    <% t.column :volume, sort_link(@q, :volume, 'Volume') %>
+    <% t.column :funds, sort_link(@q, :funds, 'Funds') %>
+    <% t.column :created_at, sort_link(@q, :created_at, 'Created At') %>
   <% end %>
 </div>
 

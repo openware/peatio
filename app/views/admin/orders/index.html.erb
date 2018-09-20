@@ -1,7 +1,24 @@
 <h3><%= t('.orders') %></h3>
+
+<%= search_form_for [:admin, @q] do |f| %>
+  <%= f.label :id_eq, 'Order id' %>
+  <%= f.search_field :id_eq, class: 'form-control small' %>
+  <%= f.label :member_email_cont, 'Member email' %>
+  <%= f.search_field :member_email_cont, class: 'form-control small' %>
+  <%= f.label :market_id_eq, 'Market' %>
+  <%= f.collection_select :market_id_eq, Market.all, :id, :id, include_blank: 'All', class: 'form-control small' %>
+  <%= f.label :bid_eq, 'Quote currency' %>
+  <%= f.collection_select :bid_eq, Currency.all, :id, :id, include_blank: 'All', class: 'form-control small' %>
+  <%= f.label :ask_eq, 'Base currency' %>
+  <%= f.collection_select :ask_eq, Currency.all, :id, :id, include_blank: 'All', class: 'form-control small' %>
+  <%= f.label :ord_type_eq, 'Order type' %>
+  <%= f.select :ord_type_eq, ['limit', 'market'], include_blank: 'All', class: 'form-control small' %>
+  <%= f.submit "Filter", class: 'btn btn-primary btn-sm' %>
+<% end %>
+
 <div class="card">
   <%= table_for @orders, class: 'table table-bordered table-striped table-condensed' do |t| %>
-    <% t.column :id, 'ID' %>
+    <% t.column :id, sort_link(@q, :id) %>
     <% t.column 'Member Email' do |x| %>
       <a href="<%= url_for([:admin, x.member]) %>" target="_blank">
         <code class="text-info"><%= x.member.email %></code>
@@ -9,20 +26,20 @@
     <% end %>
     <% t.column :ask, 'Base' %>
     <% t.column :bid, 'Quote' %>
-    <% t.column :price, 'Price' %>
-    <% t.column :volume, 'Volume' %>
-    <% t.column :origin_volume, 'Origin Volume' %>
+    <% t.column :price, sort_link(@q, :price, 'Price') %>
+    <% t.column :volume,  sort_link(@q, :volume, 'Volume') %>
+    <% t.column :origin_volume,  sort_link(@q, :origin_volume, 'Origin Volume') %>
     <% t.column 'Fee' do |x| %>
       <%= x.fee * x.funds_received %>
     <% end %>
-    <% t.column :state, 'State' %>
+    <% t.column :state, sort_link(@q, :state, 'State') %>
     <% t.column :type, 'Type' %>
     <% t.column :ord_type, 'Order Type' %>
-    <% t.column :locked, 'Locked' %>
-    <% t.column :origin_locked, 'Origin Locked' %>
-    <% t.column :funds_received, 'Funds Received' %>
-    <% t.column :trades_count, 'Deals' %>
-    <% t.column :created_at, 'Created At' %>
+    <% t.column :locked,  sort_link(@q, :locked, 'Locked') %>
+    <% t.column :origin_locked,  sort_link(@q, :origin_locked, 'Origin Locked') %>
+    <% t.column :funds_received, sort_link(@q, :funds_received, 'Funds Received') %>
+    <% t.column :trades_count, sort_link(@q, :trades_count, 'Deals') %>
+    <% t.column :created_at, sort_link(@q, :created_at, 'Created At') %>
   <% end %>
 </div>
 
