@@ -11,7 +11,9 @@
     <% t.column :price, "Price" %>
     <% t.column :volume, "Volume" %>
     <% t.column :origin_volume, "Origin Volume" %>
-    <% t.column :fee, "Fee" %>
+    <% t.column "Fee" do |x| %>
+      <%= x.fee * x.funds_received %>
+    <% end %>
     <% t.column :state, "State" %>
     <% t.column :type, "Type" %>
     <% t.column :ord_type, "Order Type" %>
