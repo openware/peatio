@@ -1,0 +1,21 @@
+<h3><%= t('.trades') %></h3>
+<div class="card">
+  <%= table_for @trades, class: 'table table-bordered table-striped table-condensed' do |t| %>
+    <% t.column :id, "ID" %>
+    <% t.column "Ask Member" do |x| %>
+      <%= link_to x.ask_member.email, url_for([:admin, x.ask_member]) %>
+    <% end  %>
+    <% t.column "Bid Member" do |x| %>
+      <%= link_to x.bid_member.email, url_for([:admin, x.bid_member]) %>
+    <% end  %>
+    <% t.column :ask_id, "Ask Order" %>
+    <% t.column :bid_id, "Bid Order" %>
+    <% t.column :market_id, "Market" %>
+    <% t.column :price, "Price" %>
+    <% t.column :volume, "Volume" %>
+    <% t.column :funds, "Funds" %>
+    <% t.column :created_at, "Created At" %>
+  <% end %>
+
+</div>
+<%= paginate @trades %>

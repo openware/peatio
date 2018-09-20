@@ -113,11 +113,20 @@
         </li>
       <% end %>
 
-      <% if can? :manage, Order %>
+      <% if can? :read, Order %>
         <li class="list-icon-item <%= check_active('orders') %>">
           <%= link_to admin_orders_path do %>
-            <i class="icon fa fa-users"></i>
+            <i class="icon fa fa-bar-chart"></i>
             <span class="menu-text"><%= t('.menus.sections.orders') %></span>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% if can? :read, Trade %>
+        <li class="list-icon-item <%= check_active('trades') %>">
+          <%= link_to admin_trades_path do %>
+            <i class="icon fa fa-handshake-o"></i>
+            <span class="menu-text"><%= t('.menus.sections.trades') %></span>
           <% end %>
         </li>
       <% end %>

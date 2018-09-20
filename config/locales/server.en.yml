@@ -668,6 +668,8 @@ en:
           deposits: Deposits
           sites_statistics: Analytics
           operating: Operations
+          orders: Orders
+          trade: Trades
         items:
           operating:
             deposits: Deposits
