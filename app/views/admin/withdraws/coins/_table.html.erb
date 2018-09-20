@@ -5,12 +5,16 @@
     </a>
   <% end %>
   <% t.column 'Withdraw Address' do |x| %>
-    <a href="<%= x.wallet_url %>" target="_blank" ><%= x.rid %></a>
+    <a href="<%= x.wallet_url %>" target="_blank">
+      <code class="text-info"><%= x.rid %></code>
+    </a>
   <% end %>
   <% t.column :created_at %>
   <% t.column :completed_at %>
   <% t.column 'Member Email' do |x| %>
-    <%= link_to x.member.email, url_for([:admin, x.member]) %>
+    <a href="<%= url_for([:admin, x.member]) %>" target="_blank">
+      <code class="text-info"><%= x.member.email %></code>
+    </a>
   <% end %>
   <% t.column :amount %>
   <% t.column :fee %>

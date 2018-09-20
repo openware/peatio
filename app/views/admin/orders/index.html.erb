@@ -3,11 +3,12 @@
   <%= table_for @orders, class: 'table table-bordered table-striped table-condensed' do |t| %>
     <% t.column :id, 'ID' %>
     <% t.column 'Member Email' do |x| %>
-      <%= link_to x.member.email, url_for([:admin, x.member]) %>
+      <a href="<%= url_for([:admin, x.member]) %>" target="_blank">
+        <code class="text-info"><%= x.member.email %></code>
+      </a>
     <% end %>
-    <% t.column :bid, 'Bid' %>
-    <% t.column :ask, 'Ask' %>
-    <% t.column :market_id, 'Market' %>
+    <% t.column :ask, 'Base' %>
+    <% t.column :bid, 'Quote' %>
     <% t.column :price, 'Price' %>
     <% t.column :volume, 'Volume' %>
     <% t.column :origin_volume, 'Origin Volume' %>

@@ -3,11 +3,15 @@
   <%= table_for @trades, class: 'table table-bordered table-striped table-condensed' do |t| %>
     <% t.column :id, 'ID' %>
     <% t.column 'Ask Member' do |x| %>
-      <%= link_to x.ask_member.email, url_for([:admin, x.ask_member]) %>
-    <% end  %>
+      <a href="<%= url_for([:admin, x.ask_member]) %>" target="_blank">
+        <code class="text-info"><%= x.ask_member.email %></code>
+      </a>
+    <% end %>
     <% t.column 'Bid Member' do |x| %>
-      <%= link_to x.bid_member.email, url_for([:admin, x.bid_member]) %>
-    <% end  %>
+      <a href="<%= url_for([:admin, x.bid_member]) %>" target="_blank">
+        <code class="text-info"><%= x.bid_member.email %></code>
+      </a>
+    <% end %>
     <% t.column :ask_id, 'Ask Order' %>
     <% t.column :bid_id, 'Bid Order' %>
     <% t.column :market_id, 'Market' %>

@@ -2,8 +2,10 @@
   <% t.column :id %>
   <% t.column :created_at %>
   <% t.column :completed_at %>
-  <% t.column 'Member email' do |x| %>
-    <%= link_to x.member.email, url_for([:admin, x.member]) %>
+  <% t.column 'Member Email' do |x| %>
+    <a href="<%= url_for([:admin, x.member]) %>" target="_blank">
+      <code class="text-info"><%= x.member.email %></code>
+    </a>
   <% end %>
   <% t.column 'Recipient ID' do |x| %>
     <span><%= x.rid %></span>
