@@ -6,8 +6,8 @@ class KLineService
 
   POINT_PERIOD_IN_SECONDS = 60.freeze
 
-  # Point periods are calculated in POINT_PERIOD_IN_SECONDS.
-  # It means that period with value 5 is equal to 5 minutes (5 * 60 = 300).
+  # Point period units are calculated in POINT_PERIOD_IN_SECONDS.
+  # It means that period with value 5 is equal to 5 minutes (5 * POINT_PERIOD_IN_SECONDS = 300).
   AVAILABLE_POINT_PERIODS = [1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080].freeze
 
   AVAILABLE_POINT_LIMITS  = (1..10000).freeze
