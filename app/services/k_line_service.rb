@@ -55,6 +55,7 @@ class KLineService
     left_index  = left_index_for(options)
     right_index = right_index_for(options)
     return [] if right_index < left_index
+
     JSON.parse('[%s]' % redis.lrange(key, left_index, right_index).join(','))
   end
 

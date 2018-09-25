@@ -10,7 +10,7 @@ class Order < ActiveRecord::Base
 
   TYPES = %w[ market limit ]
   enumerize :ord_type, in: TYPES, scope: true
-.find_each
+
   after_commit(on: :create) { trigger_pusher_event }
   before_validation :fix_number_precision, on: :create
 
