@@ -19,5 +19,5 @@ while $running do
 
   tickers.clear
 
-  Kernel.sleep 1
+  Kernel.sleep 5
 end
