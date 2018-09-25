@@ -38,8 +38,8 @@ describe APIv2::K, type: :request do
        [1537372320, 0.4363, 0.4410, 0.2354, 0.6053, 0.7398],
        [1537372380, 0.1810, 0.4969, 0.4091, 0.0798, 0.8797]]
     end
-    let(:point_period)         { KLineService::PERIOD }
-    let(:points_default_limit) { KLineService::DEFAULT_GET_OHLC_LIMIT }
+    let(:point_period)         { KLineService::POINT_PERIOD_IN_SECONDS }
+    let(:points_default_limit) { 30 }
     let(:last_point)  { points.last }
     let(:first_point) { points.first }
 

@@ -8,13 +8,12 @@ module APIv2
     desc 'Get OHLC(k line) of specific market.'
     params do
       use :market
-      optional :period,    type: Integer, default: 1, values: [1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080], desc: "Time period of K line, default to 1. You can choose between 1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080"
+      optional :period,    type: Integer, default: 1, values: KLineService::AVAILABLE_POINT_PERIODS, desc: "Time period of K line, default to 1. You can choose between #{KLineService::AVAILABLE_POINT_PERIODS.join(', ')}"
       optional :time_from, type: Integer, desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data after that time will be returned."
       optional :time_to,   type: Integer, desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data till that time will be returned."
-      optional :limit,     type: Integer, default: 30, values: 1..10000, desc: "Limit the number of returned data points default to 30. Ignored if time_from and time_to are given."
+      optional :limit,     type: Integer, default: 30, values: KLineService::AVAILABLE_POINT_LIMITS, desc: "Limit the number of returned data points default to 30. Ignored if time_from and time_to are given."
     end
     get "/k" do
-      # binding.pry
       KLineService
         .new(params[:market], params[:period])
         .get_ohlc(params.slice(:limit, :time_from, :time_to))

@@ -4,9 +4,13 @@
 class KLineService
   extend Memoist
 
-  PERIOD = 60.freeze
-  # OHCL - open, high, closing, and low prices.
-  DEFAULT_GET_OHLC_LIMIT = 30.freeze
+  POINT_PERIOD_IN_SECONDS = 60.freeze
+
+  # Point periods are calculated in POINT_PERIOD_IN_SECONDS.
+  # It means that period with value 5 is equal to 5 minutes (5 * 60 = 300).
+  AVAILABLE_POINT_PERIODS = [1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080].freeze
+
+  AVAILABLE_POINT_LIMITS  = (1..10000).freeze
 
   def redis
     Redis.new(
@@ -40,12 +44,13 @@ class KLineService
   end
   memoize :first_timestamp
 
+  # OHCL - open, high, closing, and low prices.
   def get_ohlc(options={})
-    options = { limit: DEFAULT_GET_OHLC_LIMIT }
-                .merge(options)
-                .symbolize_keys
-                .tap { |o| o.delete(:limit) if o[:time_from].present? && o[:time_to].present? }
-    return [] if first_timestamp.blank?
+    options = options.symbolize_keys.tap do |o|
+      o.delete(:limit) if o[:time_from].present? && o[:time_to].present?
+    end
+
+    return [] if first_timestamp.nil?
 
     left_index  = left_index_for(options)
     right_index = right_index_for(options)
@@ -55,16 +60,20 @@ class KLineService
 
   private
 
+  def index_for(timestamp)
+    (timestamp - first_timestamp) / POINT_PERIOD_IN_SECONDS / period
+  end
+
   def left_index_for(options)
     left_offsets = [0]
 
     if options[:time_from].present?
-      left_offsets << (options[:time_from] - first_timestamp) / 60 / period
+      left_offsets << index_for(options[:time_from])
     end
 
     if options[:limit].present?
       if options[:time_to].present?
-        left_offsets << (options[:time_to] - first_timestamp) / 60 / period - options[:limit] + 1
+        left_offsets << index_for(options[:time_to]) - options[:limit] + 1
       elsif options[:time_from].blank?
         left_offsets << points_length - options[:limit]
       end
@@ -76,11 +85,11 @@ class KLineService
     right_offsets = [points_length]
 
     if options[:time_to].present?
-      right_offsets << (options[:time_to] - first_timestamp) / 60 / period
+      right_offsets << index_for(options[:time_to])
     end
 
     if options[:limit].present? && options[:time_from].present?
-      right_offsets << (options[:time_from] - first_timestamp) / 60 / period + options[:limit] - 1
+      right_offsets << index_for(options[:time_from]) + options[:limit] - 1
     end
     right_offsets.min
   end
