@@ -27,11 +27,6 @@ module APIv2
       end
     end
 
-    def redis
-      KlineDB.redis
-    end
-    memoize :redis
-
     def current_user
       # JWT authentication provides member email.
       if env.key?('api_v2.authentic_member_email')
@@ -98,68 +93,6 @@ module APIv2
           vol: ticker[:volume]
         }
       }
-    end
-
-    def get_k_json2
-      # Add validations.
-      key = "peatio:#{params[:market]}:k:#{params[:period]}"
-      # binding.pry
-      keys_len = redis.llen(key)
-
-      left_offsets =  [0]
-      right_offsets = [keys_len]
-
-      ts_json = redis.lindex(key, 0)
-      return [] if ts_json.blank?
-      ts = JSON.parse(ts_json).first
-
-      # Add left limit if we have time_from
-      if params[:time_from].present?
-        left_offsets << (params[:time_from] - ts) / 60 / params[:period]
-      end
-
-      # Add right limit if we have time_to
-      if params[:time_to].present?
-        right_offsets << (params[:time_to] - ts) / 60 / params[:period]
-      end
-
-      # TODO: add comments for this behaviour.
-      if params[:limit].present?
-        if params[:time_to].present?
-          left_offsets << (params[:time_to] - ts) / 60 / params[:period] - params[:limit] + 1
-        elsif params[:time_from].present?
-          right_offsets << (params[:time_from] - ts) / 60 / params[:period] + params[:limit] - 1
-        else
-          left_offsets << keys_len - params[:limit]
-        end
-      end
-      left_index = left_offsets.max
-      right_index = right_offsets.min
-      return [] if right_index < left_index
-      JSON.parse('[%s]' % redis.lrange(key, left_index, right_index).join(','))
-    end
-
-    def get_k_json
-      key = "peatio:#{params[:market]}:k:#{params[:period]}"
-      # binding.pry
-      if params[:time_from]
-        ts_json = redis.lindex(key, 0)
-        return [] if ts_json.blank?
-        ts = JSON.parse(ts_json).first
-        offset = (params[:time_from] - ts) / 60 / params[:period]
-        offset = 0 if offset < 0
-        limit_offset = offset + params[:limit] - 1
-        if params[:time_to]
-          end_offset = (params[:time_to] - ts) / 60 / params[:period]
-          end_offset = 0 if end_offset < 0
-          limit_offset = end_offset if end_offset < limit_offset
-        end
-        JSON.parse('[%s]' % redis.lrange(key, offset, limit_offset).join(','))
-      else
-        length = redis.llen(key)
-        offset = [length - params[:limit], 0].max
-        JSON.parse('[%s]' % redis.lrange(key, offset, -1).join(','))
-      end
     end
   end
 end

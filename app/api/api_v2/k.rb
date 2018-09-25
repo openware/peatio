@@ -19,7 +19,8 @@ module APIv2
         .get_ohlc(params.slice(:limit, :time_from, :time_to))
     end
 
-    desc "Get K data with pending trades, which are the trades not included in K data yet, because there's delay between trade generated and processed by K data generator."
+    desc "Get K data with pending trades, which are the trades not included in K data yet, because there's delay between trade generated and processed by K data generator.",
+       deprecated: true
     params do
       use :market
       requires :trade_id,  type: Integer, desc: "The trade id of the first trade you received."
@@ -29,7 +30,9 @@ module APIv2
       optional :limit,     type: Integer, default: 30, values: KLineService::AVAILABLE_POINT_LIMITS, desc: "Limit the number of returned data points, default to 30."
     end
     get "/k_with_pending_trades" do
-      k = get_k_json2
+      k = KLineService
+            .new(params[:market], params[:period])
+            .get_ohlc(params.slice(:limit, :time_from, :time_to))
 
       if params[:trade_id] > 0 && k.present?
         from   = Time.at k.last[0]
