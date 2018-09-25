@@ -38,8 +38,8 @@ describe APIv2::K, type: :request do
        [1537372320, 0.4363, 0.4410, 0.2354, 0.6053, 0.7398],
        [1537372380, 0.1810, 0.4969, 0.4091, 0.0798, 0.8797]]
     end
-    let(:point_period) { 60 }
-    let(:points_default_limit) { 30 }
+    let(:point_period)         { KLineService::PERIOD }
+    let(:points_default_limit) { KLineService::DEFAULT_GET_OHLC_LIMIT }
     let(:last_point)  { points.last }
     let(:first_point) { points.first }
 
@@ -166,17 +166,18 @@ describe APIv2::K, type: :request do
       end
 
       context 'with limits, time_from and time_to' do
-        it 'returns n right points from time_to (subtracts limit from time_to)' do
+        it 'ignores limit' do
           time_from = first_point.first + 1 * point_period
           time_to   = last_point.first - 1 * point_period
           limit     = 5
           load(time_from: time_from, time_to: time_to, limit: limit)
 
-          # Points timestamps should be in range time_from..time_to and we select last 5.
-          expect(response_body.count).to eq limit
+          # All point in time_from..time_to including time_to (time_to - time_from) / 60 + 1.
+          expect(response_body.count).to eq (time_to - time_from) / 60 + 1
+          # Points timestamps should be in range time_from..time_to.
           expect(response_body).to eq\
-            points.select { |p| p.first >= time_from && p.first <= time_to }[-limit..-1]
-          expect(response_body.first.first).to_not eq time_from
+            points.select { |p| p.first >= time_from && p.first <= time_to }
+          expect(response_body.first.first).to eq time_from
           expect(response_body.last.first).to eq time_to
         end
       end
@@ -187,6 +188,7 @@ describe APIv2::K, type: :request do
           limit     = 10
           load(time_from: time_from, limit: limit)
 
+          expect(response_body.count).to eq limit
           # Points timestamps should be bigger than time_from and we select first 10.
           expect(response_body).to eq\
             points.select { |p| p.first >= time_from }[0...limit]
