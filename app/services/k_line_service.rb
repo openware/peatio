@@ -33,17 +33,6 @@ class KLineService
   end
   memoize :key
 
-  def points_length
-    redis.llen(key)
-  end
-  memoize :points_length
-
-  def first_timestamp
-    ts_json = redis.lindex(key, 0)
-    ts_json.blank? ? nil : JSON.parse(ts_json).first
-  end
-  memoize :first_timestamp
-
   # OHCL - open, high, closing, and low prices.
   def get_ohlc(options={})
     options = options.symbolize_keys.tap do |o|
@@ -60,6 +49,17 @@ class KLineService
   end
 
   private
+
+  def points_length
+    redis.llen(key)
+  end
+  memoize :points_length
+
+  def first_timestamp
+    ts_json = redis.lindex(key, 0)
+    ts_json.blank? ? nil : JSON.parse(ts_json).first
+  end
+  memoize :first_timestamp
 
   def index_for(timestamp)
     (timestamp - first_timestamp) / POINT_PERIOD_IN_SECONDS / period
