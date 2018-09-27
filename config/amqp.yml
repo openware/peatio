@@ -16,6 +16,9 @@ exchange:
     type: fanout
 
 queue:
+  member_create:
+    name: peatio.member.create
+    durable: true
   matching:
     name: peatio.matching
     durable: true
@@ -47,6 +50,8 @@ queue:
     name: peatio.trades.errors
 
 binding:
+  member_create:
+    queue: member_create
   matching:
     queue: matching
     clean_start: true

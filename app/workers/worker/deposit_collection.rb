@@ -17,6 +17,9 @@ module Worker
         Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
         return
       end
+
+      Member.trigger_pusher_event(deposit.member, :new_deposit, deposit.as_json_for_event_api)
+
       txid = WalletService[wallet].collect_deposit!(deposit)
       Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{txid}." }
     rescue => e
