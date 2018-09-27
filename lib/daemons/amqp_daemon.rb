@@ -54,7 +54,7 @@ ARGV.each do |id|
     begin
 
       # Invoke Worker#process with floating number of arguments.
-      args          = [JSON.parse(payload), metadata, delivery_info]
+      args          = [(JSON.parse(payload) rescue {}), metadata, delivery_info]
       arity         = worker.method(:process).arity
       resized_args  = arity < 0 ? args : args[0...arity]
       worker.method(:process).call(*resized_args)

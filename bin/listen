@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'bunny'
+
+conn = Bunny.new
+conn.start
+
+ch = conn.create_channel
+q  = ch.queue(ARGV[0], durable: true)
+
+q.subscribe(block: true) do |_, _, body|
+  print body
+  puts
+end
