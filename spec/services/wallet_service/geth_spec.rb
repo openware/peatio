@@ -9,7 +9,7 @@ describe WalletService::Geth do
     WebMock.allow_net_connect!
   end
 
-  let(:deposit) { create(:deposit_eth) }
+  let(:deposit) { Deposit.find_by(currency: :eth) }
   let(:withdraw) { create(:eth_withdraw) }
   let(:deposit_wallet) { Wallet.find_by(currency: :eth, kind: :deposit) }
   let(:hot_wallet) { Wallet.find_by(currency: :eth, kind: :hot) }
@@ -43,7 +43,7 @@ describe WalletService::Geth do
 
   describe '#collect_deposit!' do
     context 'ETH collect deposit' do
-      let(:deposit) { create(:deposit_eth) }
+      let(:deposit) { Deposit.find_by(currency: :eth) }
       let(:eth_payment_address) { deposit.account.payment_address }
 
       let(:issuer) { { address: eth_payment_address.address, secret: eth_payment_address.secret } }
@@ -87,7 +87,7 @@ describe WalletService::Geth do
     end
 
     context 'TRST collect deposit' do
-      let(:deposit) { create(:deposit_trst, amount: 10) }
+      let(:deposit) { create(:new_deposit_trst, amount: 10) }
       let(:trst_payment_address) { deposit.account.payment_address }
 
       let(:deposit_wallet) { Wallet.find_by(currency: :trst, kind: :deposit) }
@@ -203,7 +203,7 @@ describe WalletService::Geth do
   end
 
   describe 'deposit_collection_fees!' do
-    let(:deposit) { create(:deposit_trst, amount: 10) }
+    let(:deposit) { Deposit.find_by(currency: :trst) }
     let(:trst_payment_address) { deposit.account.payment_address }
 
     let(:issuer) { { address: hot_wallet.address, secret: hot_wallet.secret } }

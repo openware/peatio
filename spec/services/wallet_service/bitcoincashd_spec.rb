@@ -11,7 +11,7 @@ describe WalletService::Bitcoincashd do
 
   describe 'WalletService::Bitcoincashd' do
 
-    let(:deposit) { create(:deposit_bch) }
+    let(:deposit) { Deposit.find_by(currency: :bch) }
     let(:withdraw) { create(:bch_withdraw) }
     let(:deposit_wallet) { Wallet.find_by(gateway: :bitcoincashd, kind: :deposit) }
     let(:hot_wallet) { Wallet.find_by(gateway: :bitcoincashd, kind: :hot) }
