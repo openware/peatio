@@ -11,7 +11,7 @@ describe WalletService::Dashd do
 
   describe 'WalletService::Dashd' do
 
-    let(:deposit) { create(:deposit_dash) }
+    let(:deposit) { Deposit.find_by(currency: :dash) }
     let(:withdraw) { create(:dash_withdraw) }
     let(:deposit_wallet) { Wallet.find_by(gateway: :dashd, kind: :deposit) }
     let(:hot_wallet) { Wallet.find_by(gateway: :dashd, kind: :hot) }

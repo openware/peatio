@@ -11,7 +11,7 @@ describe WalletService::Litecoind do
 
   describe 'WalletService::Litecoind' do
 
-    let(:deposit) { create(:deposit_ltc) }
+    let(:deposit) { Deposit.find_by(currency: :ltc) }
     let(:withdraw) { create(:ltc_withdraw) }
     let(:deposit_wallet) { Wallet.find_by(gateway: :litecoind, kind: :deposit) }
     let(:hot_wallet) { Wallet.find_by(gateway: :litecoind, kind: :hot) }

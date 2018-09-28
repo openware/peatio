@@ -13,32 +13,36 @@ FactoryBot.define do
       txout { 0 }
     end
 
-    factory :deposit_bch, class: Deposits::Coin do
+    factory :deposit_usd, class: Deposits::Fiat do
+      currency { Currency.find(:usd) }
+    end
+
+    trait :deposit_bch do
+      type { Deposits::Coin }
       currency { Currency.find(:bch) }
       address { Faker::Bitcoin.address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
 
-    factory :deposit_dash, class: Deposits::Coin do
+    trait :deposit_dash do
+      type { Deposits::Coin }
       currency { Currency.find(:dash) }
       address { Faker::Bitcoin.address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
 
-    factory :deposit_ltc, class: Deposits::Coin do
+    trait :deposit_ltc do
+      type { Deposits::Coin }
       currency { Currency.find(:ltc) }
       address { Faker::Bitcoin.address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
 
-    factory :deposit_usd, class: Deposits::Fiat do
-      currency { Currency.find(:usd) }
-    end
-
-    factory :deposit_eth, class: Deposits::Coin do
+    trait :deposit_eth do
+      type { Deposits::Coin }
       currency { Currency.find(:eth) }
       member { create(:member, :level_3, :barong) }
       address { Faker::Bitcoin.address }
@@ -46,12 +50,15 @@ FactoryBot.define do
       txout { 0 }
     end
 
-    factory :deposit_trst, class: Deposits::Coin do
+    trait :deposit_trst do
+      type { Deposits::Coin }
       currency { Currency.find(:trst) }
       member { create(:member, :level_3, :barong) }
       address { Faker::Bitcoin.address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
+
+    factory :new_deposit_trst, traits: [:deposit_trst]
   end
 end
