@@ -160,6 +160,19 @@ describe APIv2::Orders, type: :request do
   end
 
   describe 'POST /api/v2/orders' do
+
+    # NOTE: THIS CALL SHOULD BE MOVED TO MANAGEMENT API.
+    it 'should create order with fees' do
+      member.get_account(:btc).update_attributes(balance: 100)
+
+      expect do
+        fees = [{ account_id: 1, amount: -100 }, { account_id: 2, amount: 20 }]
+        api_post '/api/v2/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014', fees: fees }
+        expect(response).to be_success
+        expect(JSON.parse(response.body)['id']).to eq OrderAsk.last.id
+      end.to change(OrderAsk, :count).by(1)
+    end
+
     it 'should create a sell order' do
       member.get_account(:btc).update_attributes(balance: 100)
 

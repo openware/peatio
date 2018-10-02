@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180925123806) do
+ActiveRecord::Schema.define(version: 20180926151351) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -97,6 +97,17 @@ ActiveRecord::Schema.define(version: 20180925123806) do
   add_index "deposits", ["member_id", "txid"], name: "index_deposits_on_member_id_and_txid", using: :btree
   add_index "deposits", ["tid"], name: "index_deposits_on_tid", using: :btree
   add_index "deposits", ["type"], name: "index_deposits_on_type", using: :btree
+
+  create_table "fees", force: :cascade do |t|
+    t.integer  "fee_chargeable_id",   limit: 4
+    t.string   "fee_chargeable_type", limit: 255
+    t.datetime "created_at",                                                null: false
+    t.datetime "updated_at",                                                null: false
+    t.integer  "account_id",          limit: 4
+    t.decimal  "amount",                          precision: 32, scale: 16
+  end
+
+  add_index "fees", ["fee_chargeable_type", "fee_chargeable_id"], name: "index_fees_on_fee_chargeable_type_and_fee_chargeable_id", using: :btree
 
   create_table "markets", force: :cascade do |t|
     t.string   "ask_unit",      limit: 10,                                          null: false

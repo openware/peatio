@@ -4,6 +4,8 @@
 class Deposit < ActiveRecord::Base
   STATES = %i[submitted canceled rejected accepted].freeze
 
+  has_many :fees, as: :fee_chargeable
+
   include AASM
   include AASM::Locking
   include BelongsToCurrency

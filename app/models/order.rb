@@ -5,6 +5,8 @@ class Order < ActiveRecord::Base
   include BelongsToMarket
   include BelongsToMember
 
+  has_many :fees, as: :fee_chargeable
+
   extend Enumerize
   enumerize :state, in: { wait: 100, done: 200, cancel: 0 }, scope: true
 
