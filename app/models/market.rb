@@ -131,9 +131,9 @@ private
   end
 
   def must_not_enable_upstream_for_fiat
-      if Currency.find_by_id(ask_unit).fiat? || Currency.find_by_id(bid_unit).fiat?
-        errors.add(:upstream, 'cannot be enable for fiat markets.')
-      end
+    if upstream&.enabled && (Currency.find_by_id(ask_unit).fiat? || Currency.find_by_id(bid_unit).fiat?)
+      errors.add(:upstream, 'cannot be enable for fiat markets.')
+    end
   end
 end
 

@@ -25,7 +25,25 @@ module Worker
       when "submit"
         submit build_order(payload[:order])
       when "cancel"
-        cancel build_order(payload[:order])
+        EM.run {
+          order = build_order(payload[:order])
+          upstream = order.market.upstream
+
+          if upstream.enabled?
+            upstream_service.trader.cancel_order(order.upstream_order_id)
+
+            upstream.on(:error) do |request|
+              Rails.logger.fatal { "Error on upstream order cancel: #{request.response}" }
+              EM.stop
+            end
+
+            upstream.on(:canceled) do
+              Rails.logger.info { "Order #{order.id} was successfully cancelled on upstream" }
+            end
+          end
+
+          cancel order
+        }
       when "reload"
         reload payload[:market]
       when "new"
