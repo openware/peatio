@@ -12,6 +12,11 @@ Signal.trap("TERM") do
   $running = false
 end
 
+@bitfinex_fetcher = BitfinexKLineFetcher.new(redis: @r)
+
+def bitfinex_candles?
+  ENV.fetch('BITFINEX_CANDLES', 'false') == 'true'
+end
 
 def key(market, period = 1)
   "peatio:#{market}:k:#{period}"
@@ -45,6 +50,10 @@ def _k1_set(market, start, period)
 end
 
 def k1(market, start)
+  if bitfinex_candles?
+    return @bitfinex_fetcher.fetch_candle_data(market: market, period: 1, start: start)
+  end
+
   trades = Trade
              .with_market(market)
              .where('created_at >= ? AND created_at < ?', start, 1.minutes.since(start))
@@ -100,6 +109,7 @@ end
 
 def fill(market, period = 1)
   ts = next_ts(market, period)
+  return if ts.blank?
 
   # 30 seconds is a protect buffer to allow update_point to update the previous
   # period one last time, after the previous period passed. After the protect
@@ -118,10 +128,11 @@ end
 while($running) do
   # NOTE: Turn off ticker updates for disabled markets.
   Market.enabled.each do |market|
-    ts = next_ts(market.id, 1)
-    next unless ts
-
     [1, 5, 15, 30, 60, 120, 240, 360, 720, 1440, 4320, 10080].each do |period|
+      if bitfinex_candles?
+        @bitfinex_fetcher.fetch_candle_data(market: market.id, period: period)
+      end
+
       fill(market.id, period)
     end
   end
