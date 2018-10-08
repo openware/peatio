@@ -46,13 +46,11 @@ module WalletService
 
     protected
 
-    def destination_wallet(deposit)
-      # TODO: Dynamicly check wallet balance and select destination wallet.
-      # For keeping it simple we will collect all deposits to hot wallet.
+    def destination_wallets(deposit)
       Wallet
         .active
         .withdraw
-        .find_by(currency_id: deposit.currency_id, kind: :hot)
+        .where(currency_id: deposit.currency_id)
     end
   end
 end
