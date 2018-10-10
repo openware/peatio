@@ -13,11 +13,11 @@ module WalletService
     end
 
     def collect_deposit!(deposit, options={})
-      destination_address = destination_wallet(deposit).address
+      destination_wallets = destination_wallets(deposit)
       if deposit.currency.code.eth?
-        collect_eth_deposit!(deposit, destination_address, options)
+        collect_eth_deposit!(deposit, destination_wallets, options)
       else
-        collect_erc20_deposit!(deposit, destination_address, options)
+        collect_erc20_deposit!(deposit, destination_wallets, options)
       end
     end
 
@@ -51,19 +51,36 @@ module WalletService
         .find_by(currency_id: :eth, kind: :hot)
     end
 
-    def collect_eth_deposit!(deposit, destination_address, options={})
+    def collect_eth_deposit!(deposit, destination_wallets, options={})
       # Default values for Ethereum tx fees.
       options = DEFAULT_ETH_FEE.merge options
 
       # We can't collect all funds we need to subtract gas fees.
-      amount = deposit.amount_to_base_unit! - options[:gas_limit] * options[:gas_price]
+      deposit_amount = deposit.amount_to_base_unit! - options[:gas_limit] * options[:gas_price]
       pa = deposit.account.payment_address
-      client.create_eth_withdrawal!(
-        { address: pa.address, secret: pa.secret },
-        { address: destination_address },
-        amount,
-        options
-      )
+      destination_wallets.each do |wallet|
+        max_wallet_amount = (wallet.max_balance * Currency.find(wallet.currency_id).base_factor).to_i
+        break if deposit_amount == 0
+        wallet_balance = client.load_balance!(wallet.address).to_i
+        if wallet_balance + deposit_amount > max_wallet_amount
+          amount_left = max_wallet_amount - wallet_balance
+          client.create_eth_withdrawal!(
+              { address: pa.address, secret: pa.secret },
+              { address: wallet.address },
+              amount_left,
+              options
+          )
+          deposit_amount -= amount_left
+        else
+          client.create_eth_withdrawal!(
+              { address: pa.address, secret: pa.secret },
+              { address: wallet.address },
+              deposit_amount,
+              options
+          )
+          break
+        end
+      end
     end
 
     def collect_erc20_deposit!(deposit, destination_address, options={})
