@@ -33,7 +33,6 @@ module APIv2
       k = KLineService
             .new(params[:market], params[:period])
             .get_ohlc(params.slice(:limit, :time_from, :time_to))
-
       if params[:trade_id] > 0 && k.present?
         from   = Time.at k.last[0]
         trades = Trade.with_market(params[:market])
