@@ -3,7 +3,7 @@
 
 class Wallet < ActiveRecord::Base
   KIND = %w[hot warm cold deposit].freeze
-  GATEWAYS = %w[bitcoind bitcoincashd litecoind geth dashd rippled bitgo].freeze
+  GATEWAYS = %w[bitcoind bitcoincashd bonpekaod litecoind geth dashd rippled bitgo].freeze
   SETTING_ATTRIBUTES = %i[ uri
                            secret
                            bitgo_test_net
