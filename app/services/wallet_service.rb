@@ -52,5 +52,13 @@ module WalletService
         .withdraw
         .where(currency_id: deposit.currency_id)
     end
+
+    def spread_deposit(deposit)
+      left_amount = deposit.amount
+      destination_wallets.each_with_object({}) do |wallet, spread_hash|
+        break if left_amount == 0
+        wallet_balance = WalletService[wallet].client.load_balance
+      end
+    end
   end
 end
