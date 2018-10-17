@@ -9,7 +9,7 @@ describe WalletService::Dashd do
     WebMock.allow_net_connect!
   end
 
-  describe 'WalletService::Dashd' do
+  describe 'Peatio::WalletService::Dashd' do
 
     let(:deposit) { create(:deposit, :deposit_dash, amount: 10) }
     let(:withdraw) { create(:dash_withdraw) }
@@ -17,7 +17,7 @@ describe WalletService::Dashd do
     let(:hot_wallet) { Wallet.find_by(gateway: :dashd, kind: :hot) }
 
     context '#create_address' do
-      subject { WalletService[deposit_wallet].create_address }
+      subject { Peatio::WalletService[deposit_wallet].create_address }
 
       let(:new_adrress) { 'yborj44WhothaX6vwoMhRMjkq1xELhAWQp' }
 
@@ -40,7 +40,7 @@ describe WalletService::Dashd do
     end
 
     context '#collect_deposit!' do
-      subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
+      subject { Peatio::WalletService[deposit_wallet].collect_deposit!(deposit) }
 
       let(:txid) { 'dcedf50780f251c99e748362c1a035f2916efb9bb44fe5c5c3e857ea74ca06b3' }
       let :listunspent_request do
@@ -75,7 +75,7 @@ describe WalletService::Dashd do
     end
 
     context '#build_withdrawal!' do
-      subject { WalletService[hot_wallet].build_withdrawal!(withdraw) }
+      subject { Peatio::WalletService[hot_wallet].build_withdrawal!(withdraw) }
 
       let(:txid) { 'dcedf50780f251c99e748362c1a035f2916efb9bb44fe5c5c3e857ea74ca06b3' }
 

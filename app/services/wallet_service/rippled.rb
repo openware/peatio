@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletService
-  class Rippled < Base
+  class Rippled < Peatio::WalletService::Base
     def create_address(options = {})
       client.create_address!(options.merge(
         address: "#{wallet.address}?dt=#{generate_destination_tag}",

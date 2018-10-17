@@ -24,7 +24,7 @@ module Withdraws
 
     def audit!
       wallet = Wallet.active.deposit.find_by(currency_id: currency_id)
-      inspection = WalletClient[wallet].inspect_address!(rid)
+      inspection = Peatio::WalletClient[wallet].inspect_address!(rid)
 
       if inspection[:is_valid] == false
         Rails.logger.info { "#{self.class.name}##{id} uses invalid address: #{rid.inspect}" }

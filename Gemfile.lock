@@ -1,3 +1,32 @@
+GIT
+  remote: https://github.com/skyach/peatio-core
+  revision: d6190737bf9635704c3f1a4eef5514bb0daa0799
+  branch: blockchain-wallet-service
+  specs:
+    peatio (0.4.3)
+      amqp
+      bunny
+      clamp
+      em-websocket
+      eventmachine
+      jwt
+      memoist (~> 0.16.0)
+      mysql2
+
+GIT
+  remote: https://github.com/skyach/peatio-nxt
+  revision: 2bbeb3b141c83471f1dcb311b5d4d41d2d47f4f0
+  specs:
+    peatio-nxt (0.1.0)
+      peatio (~> 0.4.3)
+
+GIT
+  remote: https://github.com/skyach/peatio-wcg
+  revision: 5427c961348440026d625850cb582710cda31f1a
+  specs:
+    peatio-wcg (0.1.0)
+      peatio (~> 0.4.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -441,6 +470,9 @@ DEPENDENCIES
   mysql2 (~> 0.4.10)
   passgen (~> 1.0.2)
   peatio (~> 0.4.5)
+  peatio!
+  peatio-nxt!
+  peatio-wcg!
   pry-byebug (~> 3.6)
   puma (~> 3.11.4)
   quiet_assets (~> 1.1)

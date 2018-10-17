@@ -18,7 +18,7 @@ describe WalletService::Geth do
   let(:erc20_options) { WalletService::Geth::DEFAULT_ERC20_FEE }
 
   describe '#create_address' do
-    subject { WalletService[deposit_wallet].create_address }
+    subject { Peatio::WalletService[deposit_wallet].create_address }
 
     let :personal_newAccount_request do
       { jsonrpc: '2.0',
@@ -94,11 +94,11 @@ describe WalletService::Geth do
         }.to_json
       end
 
-      subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
+      subject { Peatio::WalletService[deposit_wallet].collect_deposit!(deposit) }
 
       before do
         stub_request(:post, hot_wallet.uri).with(body: eth_getBalance_request).to_return(body: eth_getBalance_response)
-        WalletClient[deposit_wallet].class.any_instance.expects(:permit_transaction)
+        Peatio::WalletClient[deposit_wallet].class.any_instance.expects(:permit_transaction)
         stub_request(:post, deposit_wallet.uri).with(body: eth_sendTransaction_request).to_return(body: eth_sendTransaction_response)
       end
 
@@ -168,11 +168,11 @@ describe WalletService::Geth do
         }.to_json
       end
 
-      subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
+      subject { Peatio::WalletService[deposit_wallet].collect_deposit!(deposit) }
 
       before do
         stub_request(:post, hot_wallet.uri).with(body: eth_call_request).to_return(body: eth_call_response)
-        WalletClient[deposit_wallet].class.any_instance.expects(:permit_transaction)
+        Peatio::WalletClient[deposit_wallet].class.any_instance.expects(:permit_transaction)
         stub_request(:post, deposit_wallet.uri).with(body: eth_sendTransaction_request).to_return(body: eth_sendTransaction_response)
       end
 
@@ -215,10 +215,10 @@ describe WalletService::Geth do
         }.to_json
       end
 
-      subject { WalletService[hot_wallet].build_withdrawal!(withdraw)}
+      subject { Peatio::WalletService[hot_wallet].build_withdrawal!(withdraw)}
 
       before do
-        WalletClient[hot_wallet].class.any_instance.expects(:permit_transaction)
+        Peatio::WalletClient[hot_wallet].class.any_instance.expects(:permit_transaction)
         stub_request(:post, 'http://127.0.0.1:8545/').with(body: eth_sendTransaction_request).to_return(body: eth_sendTransaction_response)
       end
 
@@ -289,10 +289,10 @@ describe WalletService::Geth do
         }.to_json
       end
 
-      subject { WalletService[hot_wallet].build_withdrawal!(withdraw)}
+      subject { Peatio::WalletService[hot_wallet].build_withdrawal!(withdraw)}
 
       before do
-        WalletClient[hot_wallet].class.any_instance.expects(:permit_transaction)
+        Peatio::WalletClient[hot_wallet].class.any_instance.expects(:permit_transaction)
         stub_request(:post, 'http://127.0.0.1:8545/').with(body: eth_sendTransaction_request).to_return(body: eth_sendTransaction_response)
       end
 
@@ -373,10 +373,10 @@ describe WalletService::Geth do
       }.to_json
     end
 
-    subject { WalletService[deposit_wallet].deposit_collection_fees(deposit) }
+    subject { Peatio::WalletService[deposit_wallet].deposit_collection_fees(deposit) }
 
     before do
-      WalletClient[deposit_wallet].class.any_instance.expects(:permit_transaction)
+      Peatio::WalletClient[deposit_wallet].class.any_instance.expects(:permit_transaction)
       stub_request(:post, deposit_wallet.uri).with(body: eth_sendTransaction_request).to_return(body: eth_sendTransaction_response)
     end
 

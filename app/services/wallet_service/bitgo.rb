@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletService
-  class Bitgo < Base
+  class Bitgo < Peatio::WalletService::Base
 
     def create_address(options = {})
       @client.create_address!(options)

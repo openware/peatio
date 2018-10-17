@@ -4,7 +4,7 @@
 require 'securerandom'
 
 module WalletClient
-  class Rippled < Base
+  class Rippled < Peatio::WalletClient::Base
 
     def initialize(*)
       super
@@ -71,7 +71,7 @@ module WalletClient
         if result['engine_result'].to_s == 'tesSUCCESS' && result['status'].to_s == 'success'
           normalize_txid(result.fetch('tx_json').fetch('hash'))
         else
-          raise Error, "XRP withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed. Message: #{error_message}."
+          raise Peatio::WalletClient::Error, "XRP withdrawal from #{issuer.fetch(:address)} to #{recipient.fetch(:address)} failed. Message: #{error_message}."
         end
       end
     end
@@ -100,7 +100,7 @@ module WalletClient
         if result['status'].to_s == 'success'
           { tx_blob: result['tx_blob'] }
         else
-          raise Error, "XRP sign transaction from #{account_address} to #{destination_address} failed: #{result}."
+          raise Peatio::WalletClient::Error, "XRP sign transaction from #{account_address} to #{destination_address} failed: #{result}."
         end
       end
     end
@@ -152,7 +152,7 @@ module WalletClient
         response.assert_success!.yield_self do |response|
           JSON.parse(response.body).tap do |response|
             response.dig('result', 'error').tap do |error|
-              raise Error, error.inspect if error.present?
+              raise Peatio::WalletClient::Error, error.inspect if error.present?
             end
           end
         end

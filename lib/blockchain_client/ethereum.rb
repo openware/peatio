@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module BlockchainClient
-  class Ethereum < Base
+  class Ethereum < Peatio::BlockchainClient::Base
 
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
@@ -119,7 +119,7 @@ module BlockchainClient
           'Content-Type' => 'application/json' }
       response.assert_success!
       response = JSON.parse(response.body)
-      response['error'].tap { |error| raise Error, error.inspect if error }
+      response['error'].tap { |error| raise Peatio::BlockchainClient::Error, error.inspect if error }
       response
     end
 
@@ -134,7 +134,7 @@ module BlockchainClient
     def permit_transaction(issuer, recipient)
       json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
         unless response['result']
-          raise BlockchainClient::Error, \
+          raise Peatio::BlockchainClient::Error, \
             "#{currency.code.upcase} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} is not permitted."
         end
       end

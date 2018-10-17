@@ -7,7 +7,7 @@ describe Worker::DepositCoinAddress do
     let(:account) { member.ac(:btc) }
     let(:address) { Faker::Bitcoin.address }
     let(:wallet) { Wallet.deposit.find_by_blockchain_key('btc-testnet') }
-    let(:wallet_service) { WalletService[wallet] }
+    let(:wallet_service) { Peatio::WalletService[wallet] }
     subject { account.payment_address.address }
     before do
       wallet_service.class.any_instance

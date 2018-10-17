@@ -34,7 +34,7 @@ describe Withdraw do
       before { subject.submit! }
 
       it 'should be rejected if address is invalid' do
-        WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: false }))
+        Peatio::WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: false }))
         subject.audit!
         expect(subject).to be_rejected
       end
@@ -69,7 +69,7 @@ describe Withdraw do
       end
 
       it 'should accept withdraw with clean history' do
-        WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
+        Peatio::WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
         subject.audit!
         expect(subject).to be_accepted
       end
@@ -77,7 +77,7 @@ describe Withdraw do
       context 'sum less than quick withdraw limit' do
         let(:sum) { '0.099'.to_d }
         it 'should approve quick withdraw directly' do
-          WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
+          Peatio::WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
           subject.audit!
           expect(subject).to be_processing
         end
@@ -108,14 +108,14 @@ describe Withdraw do
     end
 
     it 'transitions to :failed after calling WalletService but getting Exception' do
-      WalletService.stubs(:[]).raises(WalletService::Error)
+      Peatio::WalletService.stubs(:[]).raises(Peatio::WalletService::Error)
       Worker::WithdrawCoin.new.process({ id: subject.id })
 
       expect(subject.reload.failed?).to be true
     end
 
     it 'transitions to :confirming after calling WalletService' do
-      WalletService.stubs(:[]).returns(@rpc)
+      Peatio::WalletService.stubs(:[]).returns(@rpc)
 
       Worker::WithdrawCoin.new.process({ id: subject.id })
 
@@ -125,16 +125,16 @@ describe Withdraw do
     end
 
     it 'does not send coins again if previous attempt failed' do
-      WalletService.stubs(:[]).raises(NameError)
+      Peatio::WalletService.stubs(:[]).raises(NameError)
       begin Worker::WithdrawCoin.new.process({ id: subject.id }); rescue; end
-      WalletService.stubs(:[]).returns(WalletService::Bitcoind)
+      Peatio::WalletService.stubs(:[]).returns(WalletService::Bitcoind)
 
       expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to_not change { subject.account.reload.amount }
       expect(subject.reload.failed?).to be true
     end
 
     it 'unlocks coins after calling rpc but getting Exception' do
-      WalletService.stubs(:[]).raises(NameError)
+      Peatio::WalletService.stubs(:[]).raises(NameError)
 
       expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }
           .to change { subject.account.reload.locked }.by(-subject.sum)

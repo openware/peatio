@@ -9,7 +9,7 @@ describe WalletService::Rippled do
     WebMock.allow_net_connect!
   end
 
-  describe 'WalletService::Rippled' do
+  describe 'Peatio::WalletService::Rippled' do
 
     let(:sign_data) do
       Rails.root.join('spec', 'resources', 'ripple-data', 'sign-transaction.json')
@@ -31,7 +31,7 @@ describe WalletService::Rippled do
     let(:hot_wallet) { Wallet.find_by(gateway: :rippled, kind: :hot)}
 
     context '#create_address!' do
-      let(:service) {WalletService[wallet]}
+      let(:service) {Peatio::WalletService[wallet]}
       let(:wallet) {Wallet.find_by(gateway: :rippled, kind: :deposit)}
       let(:create_address) {service.create_address}
 
@@ -44,7 +44,7 @@ describe WalletService::Rippled do
 
     context '#collect_deposit' do
 
-      subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
+      subject { Peatio::WalletService[deposit_wallet].collect_deposit!(deposit) }
 
       let!(:payment_address) do
         create(:xrp_payment_address, {account: deposit.account, address: 'rN3J1yMz2PCGievtS2XTEgkrmdHiJgzb5Y?dt=917590223', secret: 'changeme'})
@@ -106,12 +106,12 @@ describe WalletService::Rippled do
         }.to_json
       end
 
-      subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
+      subject { Peatio::WalletService[deposit_wallet].collect_deposit!(deposit) }
 
       before do
         stub_request(:post, hot_wallet.uri).with(body: account_info_request).to_return(body: account_info_response)
-        WalletClient[hot_wallet].class.any_instance.expects(:calculate_current_fee).returns(10000)
-        WalletClient[hot_wallet].class.any_instance.expects(:latest_block_number).returns(31234500)
+        Peatio::WalletClient[hot_wallet].class.any_instance.expects(:calculate_current_fee).returns(10000)
+        Peatio::WalletClient[hot_wallet].class.any_instance.expects(:latest_block_number).returns(31234500)
         stub_request(:post, deposit_wallet.uri).with(body: sign_request).to_return(body: sign_data)
         stub_request(:post, deposit_wallet.uri).with(body: submit_request).to_return(body: submit_data)
       end
@@ -161,11 +161,11 @@ describe WalletService::Rippled do
         }.to_json
       end
 
-      subject { WalletService[hot_wallet].build_withdrawal!(withdraw) }
+      subject { Peatio::WalletService[hot_wallet].build_withdrawal!(withdraw) }
 
       before do
-        WalletClient[hot_wallet].class.any_instance.expects(:calculate_current_fee).returns(10000)
-        WalletClient[hot_wallet].class.any_instance.expects(:latest_block_number).returns(31234500)
+        Peatio::WalletClient[hot_wallet].class.any_instance.expects(:calculate_current_fee).returns(10000)
+        Peatio::WalletClient[hot_wallet].class.any_instance.expects(:latest_block_number).returns(31234500)
         # Request with method 'sign' to return a signed binary representation of the transaction.
         stub_request(:post, deposit_wallet.uri).with(body: sign_request).to_return(body: sign_data)
         # Request with method 'submit' method to apply a transaction and send it to the network to be confirmed and included in future ledgers

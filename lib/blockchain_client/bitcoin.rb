@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module BlockchainClient
-  class Bitcoin < Base
+  class Bitcoin < Peatio::BlockchainClient::Base
     def initialize(*)
       super
       @json_rpc_call_id  = 0
@@ -97,7 +97,7 @@ module BlockchainClient
           'Content-Type' => 'application/json' }
       response.assert_success!
       response = JSON.parse(response.body)
-      response['error'].tap { |error| raise Error, error.inspect if error }
+      response['error'].tap { |error| raise Peatio::BlockchainClient::Error, error.inspect if error }
       response
     end
   end

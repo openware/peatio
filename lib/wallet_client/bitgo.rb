@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletClient
-  class Bitgo < Base
+  class Bitgo < Peatio::WalletClient::Base
 
     def initialize(*)
       super

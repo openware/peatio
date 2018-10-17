@@ -11,7 +11,7 @@ while running
     break unless running
     Rails.logger.info { "Processing #{bc.name} blocks." }
 
-    BlockchainService[bc.key].process_blockchain
+    Peatio::BlockchainService[bc.key].process_blockchain
 
     Rails.logger.info { "Finished processing #{bc.name} blocks." }
   rescue => e

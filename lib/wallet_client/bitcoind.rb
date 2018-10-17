@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletClient
-  class Bitcoind < Base
+  class Bitcoind < Peatio::WalletClient::Base
 
     def initialize(*)
       super
@@ -51,7 +51,7 @@ module WalletClient
           'Content-Type' => 'application/json' }
       response.assert_success!
       response = JSON.parse(response.body)
-      response['error'].tap { |error| raise Error, error.inspect if error }
+      response['error'].tap { |error| raise Peatio::WalletClient::Error, error.inspect if error }
       response
     end
   end

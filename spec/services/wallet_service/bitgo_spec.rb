@@ -11,7 +11,7 @@ describe WalletService::Bitgo do
   let(:deposit) { create(:deposit_btc) }
   let(:deposit_wallet) { Wallet.find_by(currency: :btc, kind: :deposit) }
   let(:hot_wallet) { Wallet.find_by(currency: :btc, kind: :hot) }
-  let(:wallet_client) { WalletClient[deposit_wallet] }
+  let(:wallet_client) { Peatio::WalletClient[deposit_wallet] }
   let(:withdraw) { create(:btc_withdraw) }
 
   before do
@@ -37,7 +37,7 @@ describe WalletService::Bitgo do
   end
 
   describe '#create_address' do
-    subject { WalletService[deposit_wallet].create_address(options) }
+    subject { Peatio::WalletService[deposit_wallet].create_address(options) }
 
     before do
       stub_request(request_method, deposit_wallet.bitgo_rest_api_root + request_path)
@@ -66,7 +66,7 @@ describe WalletService::Bitgo do
   end
 
   describe '#collect_deposit!' do
-    subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
+    subject { Peatio::WalletService[deposit_wallet].collect_deposit!(deposit) }
 
     let(:options) { {} }
     let(:request_method) { :post }
@@ -99,7 +99,7 @@ describe WalletService::Bitgo do
   end
 
   describe '#build_withdrawal!' do
-    subject { WalletService[hot_wallet].build_withdrawal!(withdraw) }
+    subject { Peatio::WalletService[hot_wallet].build_withdrawal!(withdraw) }
 
     let(:options) { {} }
     let(:request_method) { :post }

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletService
-  class Bitcoind < Base
+  class Bitcoind < Peatio::WalletService::Base
 
     def create_address(options = {})
       @client.create_address!(options)

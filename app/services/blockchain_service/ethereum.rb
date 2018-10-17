@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module BlockchainService
-  class Ethereum < Base
+  class Ethereum < Peatio::BlockchainService::Base
     # Rough number of blocks per hour for Ethereum is 250.
     def process_blockchain(blocks_limit: 250, force: false)
       latest_block = client.latest_block_number

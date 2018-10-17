@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletService
-  class Geth < Base
+  class Geth < Peatio::WalletService::Base
 
     DEFAULT_ETH_FEE = { gas_limit: 21_000, gas_price: 1_000_000_000 }.freeze
 

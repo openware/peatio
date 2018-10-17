@@ -2,3 +2,5 @@ source 'https://rubygems.org'
 git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
 # List your plugins here.
+gem 'peatio-nxt', github: 'skyach/peatio-nxt'
+gem 'peatio-wcg', github: 'skyach/peatio-wcg'

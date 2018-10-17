@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module BlockchainClient
-  class Ripple < Base
+  class Ripple < Peatio::BlockchainClient::Base
     def initialize(*)
       super
       @json_rpc_call_id  = 0
@@ -111,7 +111,7 @@ module BlockchainClient
         response.assert_success!.yield_self do |response|
           JSON.parse(response.body).tap do |response|
             response.dig('result', 'error').tap do |error|
-              raise Error, error.inspect if error.present?
+              raise Peatio::BlockchainClient::Error, error.inspect if error.present?
             end
           end
         end

@@ -52,7 +52,7 @@ describe WalletService do
         }
       end
 
-      subject { WalletService[deposit_wallet].send(:spread_deposit, deposit) }
+      subject { Peatio::WalletService[deposit_wallet].send(:spread_deposit, deposit) }
 
       before do
         # Hot wallet balance = 50 eth
@@ -104,7 +104,7 @@ describe WalletService do
         }
       end
 
-      subject { WalletService[deposit_wallet].send(:spread_deposit, deposit) }
+      subject { Peatio::WalletService[deposit_wallet].send(:spread_deposit, deposit) }
 
       before do
         warm_wallet.update!(max_balance: 100)
@@ -155,7 +155,7 @@ describe WalletService do
         }
       end
 
-      subject { WalletService[deposit_wallet].send(:spread_deposit, deposit) }
+      subject { Peatio::WalletService[deposit_wallet].send(:spread_deposit, deposit) }
 
       before do
         hot_wallet.update!(max_balance: 100)
@@ -208,7 +208,7 @@ describe WalletService do
         }
       end
 
-      subject { WalletService[deposit_wallet].send(:spread_deposit, deposit) }
+      subject { Peatio::WalletService[deposit_wallet].send(:spread_deposit, deposit) }
 
       before do
         hot_wallet.update!(max_balance: 100)

@@ -37,7 +37,7 @@ module Worker
 
         currency = withdraw.currency
 
-        wallet_service = WalletService[wallet]
+        wallet_service = Peatio::WalletService[wallet]
 
         balance = wallet_service.load_balance(wallet.address, currency)
 

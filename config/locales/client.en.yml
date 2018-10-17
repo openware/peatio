@@ -45,6 +45,7 @@ en:
         rejected: Rejected
         collected: Accepted
         skipped: Skipped
+        pending: Pending
 
       withdraw_fiat:
         title: '{{currency}} Withdraw'

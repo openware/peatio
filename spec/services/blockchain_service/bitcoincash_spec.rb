@@ -30,7 +30,7 @@ describe BlockchainService::Bitcoincash do
         .tap { |b| b.update(height: start_block) }
     end
 
-    let(:client) { BlockchainClient[blockchain.key] }
+    let(:client) { Peatio::BlockchainClient[blockchain.key] }
 
     def request_block_hash_body(block_height)
       { jsonrpc: '1.0',
@@ -105,7 +105,7 @@ describe BlockchainService::Bitcoincash do
         end
 
         # Process blockchain data.
-        BlockchainService[blockchain.key].process_blockchain(force: true)
+        Peatio::BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
       subject { Deposits::Coin.where(currency: currency) }
@@ -127,7 +127,7 @@ describe BlockchainService::Bitcoincash do
 
         it 'doesn\'t change deposit' do
           expect(blockchain.height).to eq start_block
-          expect{ BlockchainService[blockchain.key].process_blockchain(force: true)}.not_to change{subject}
+          expect{ Peatio::BlockchainService[blockchain.key].process_blockchain(force: true)}.not_to change{subject}
         end
       end
     end
@@ -189,7 +189,7 @@ describe BlockchainService::Bitcoincash do
             .to_return(body: tx.to_json)
         end
 
-        BlockchainService[blockchain.key].process_blockchain(force: true)
+        Peatio::BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
       subject { Withdraws::Coin.where(currency: currency) }

@@ -26,7 +26,7 @@ module Worker
         end
         Rails.logger.warn { "Starting collecting deposit with id: #{deposit.id}." }
 
-        txid = WalletService[wallet].collect_deposit!(deposit)
+        txid = Peatio::WalletService[wallet].collect_deposit!(deposit)
 
         Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{txid}." }
 

@@ -327,4 +327,277 @@
     # Geth gateway client settings.
     uri:          http://user:password@127.0.0.1:5005
     secret:       'changeme'
+
+- name:             Nxt Deposit Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      nxt
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             deposit  # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1        # Number of signatures required for performing withdraw.
+  max_balance:      0.0
+  status:           active
+  gateway:          nxt     # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             Nxt Hot Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      nxt
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             hot     # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             Nxt Warm Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      nxt
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             warm    # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      1000.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             Nxt Wallet for paying Asset/Currency fees
+  blockchain_key:   nxt-testnet
+  currency_id:      nxt
+  # Address where deposits will be collected to.
+  address:           'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             fee  # Wallet kind (deposit, hot, warm, cold or fee).
+  nsig:             1           # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          nxt        # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestPeatio Deposit Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testp
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             deposit  # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1        # Number of signatures required for performing withdraw.
+  max_balance:      0.0
+  status:           active
+  gateway:          nxt     # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestPeatio Hot Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testp
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             hot     # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestPeatio Warm Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testp
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             warm    # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      1000.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+
+- name:             TestAsset Deposit Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testa
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             deposit  # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1        # Number of signatures required for performing withdraw.
+  max_balance:      0.0
+  status:           active
+  gateway:          nxt     # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestAsset Hot Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testa
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             hot     # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestAsset Warm Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testa
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             warm    # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      1000.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             Wcg Deposit Wallet
+  blockchain_key:   wcg-testnet
+  currency_id:      wcg
+  # Address where deposits will be collected to.
+  address:          'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             deposit  # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1        # Number of signatures required for performing withdraw.
+  max_balance:      0.0
+  status:           active
+  gateway:          wcg     # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:           http://139.162.189.108:2082
+    secret:       'changeme'
+
+- name:             Wcg Hot Wallet
+  blockchain_key:   wcg-testnet
+  currency_id:      wcg
+  # Address where deposits will be collected to.
+  address:         'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             hot     # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          wcg    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://139.162.189.108:2082
+    secret:       'changeme'
+
+- name:             Wcg Warm Wallet
+  blockchain_key:   wcg-testnet
+  currency_id:      wcg
+  # Address where deposits will be collected to.
+  address:          'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             warm    # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      1000.0
+  status:           active
+  gateway:          wcg    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://139.162.189.108:2082
+    secret:       'changeme'
+
+- name:             Wcg Wallet for paying Asset fees
+  blockchain_key:   wcg-testnet
+  currency_id:      wcg
+  # Address where deposits will be collected to.
+  address:          'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             fee  # Wallet kind (deposit, hot, warm, cold or fee).
+  nsig:             1           # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          wcg        # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             DRT Deposit Wallet
+  blockchain_key:   wcg-testnet
+  currency_id:      drt
+  # Address where deposits will be collected to.
+  address:          'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             deposit  # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1        # Number of signatures required for performing withdraw.
+  max_balance:      0.0
+  status:           active
+  gateway:          wcg     # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:           http://139.162.189.108:2082
+    secret:       'changeme'
+
+- name:             DRT Hot Wallet
+  blockchain_key:   wcg-testnet
+  currency_id:      drt
+  # Address where deposits will be collected to.
+  address:          'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             hot     # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          wcg    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://139.162.189.108:2082
+    secret:       'changeme'
+
+- name:             DRT Warm Wallet
+  blockchain_key:   wcg-testnet
+  currency_id:      drt
+  # Address where deposits will be collected to.
+  address:          'WCG-84YJ-ZEM2-8J7C-EGSDT'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             warm    # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      1000.0
+  status:           active
+  gateway:          wcg    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://139.162.189.108:2082
+    secret:       'changeme'
 <% end %>

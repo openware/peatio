@@ -13,7 +13,7 @@ module Worker
       wallet = Wallet.active.deposit.find_by(currency_id: acc.currency_id)
       return unless wallet
 
-      wallet_service = WalletService[wallet]
+      wallet_service = Peatio::WalletService[wallet]
 
       acc.payment_address.tap do |pa|
         pa.with_lock do

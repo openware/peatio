@@ -77,4 +77,26 @@
     address:         https://bithomp.com/explorer/#{address}
     transaction:     https://bithomp.com/explorer/#{txid}
   status:            active
+
+- key:               nxt-testnet
+  name:              Nxt Testnet
+  client:            nxt                              # API client name.
+  server:            http://127.0.0.1:6876            # Public NXT node endpoint.
+  height:            2024646                          # Initial block number from which sync will be started.
+  min_confirmations: 1                                # Minimal confirmations needed for withdraw and deposit confirmation.
+  explorer:
+    address:         https://test.nxtportal.org/accounts/#{address}
+    transaction:     https://test.nxtportal.org/transactions/#{txid}
+  status:            active
+
+- key:               wcg-testnet
+  name:              Wcg Testnet
+  client:            wcg                              # API client name.
+  server:            http://139.162.189.108:2082      # Public WCG node endpoint.
+  height:            2024646                          # Initial block number from which sync will be started.
+  min_confirmations: 1                                # Minimal confirmations needed for withdraw and deposit confirmation.
+  explorer:
+    address:         https://test.nxtportal.org/accounts/#{address}
+    transaction:     https://test.nxtportal.org/transactions/#{txid}
+  status:            active
 <% end %>

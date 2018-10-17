@@ -7,7 +7,7 @@ describe BlockchainService::Ripple do
     WebMock.allow_net_connect!
   end
 
-  describe 'Client::Ripple' do
+  describe 'BlockchainClient::Ripple' do
     let(:block_data) do
       Rails.root.join('spec', 'resources', 'ripple-data', '40280751-40280751.json')
            .yield_self { |file_path| File.open(file_path) }
@@ -17,9 +17,9 @@ describe BlockchainService::Ripple do
     let(:start_ledger_index) { block_data['result']['ledger']['ledger_index'].to_i }
     let(:latest_block_number) { start_ledger_index }
 
-    let(:client) { BlockchainClient[blockchain.key] }
+    let(:client) { Peatio::BlockchainClient[blockchain.key] }
     let(:process_blockchain) do
-      BlockchainService[blockchain.key].process_blockchain(force: true)
+      Peatio::BlockchainService[blockchain.key].process_blockchain(force: true)
     end
     let(:blockchain) do
       Blockchain.find_by_key('xrp-testnet')
