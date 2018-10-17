@@ -6,7 +6,7 @@ module BlockchainClient
     def initialize(*)
       super
       @json_rpc_call_id  = 0
-      @json_rpc_endpoint = URI.parse(blockchain.server)
+      @json_rpc_endpoint = URI.parse(blockchain.server + "/nxt?")
     end
 
     def endpoint
@@ -73,7 +73,6 @@ module BlockchainClient
 
     def json_rpc(params = {})
       response = connection.post do |req|
-        req.url '/nxt?',
         req.body = params
       end
       response.assert_success!

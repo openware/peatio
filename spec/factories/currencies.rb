@@ -93,5 +93,15 @@ FactoryBot.define do
       quick_withdraw_limit 1000
       withdraw_fee         0.02
     end
+
+    trait :nxt do
+      blockchain_key       'nxt-testnet'
+      code                 'nxt'
+      symbol               'N'
+      type                 'coin'
+      base_factor          100_000_000
+      quick_withdraw_limit 0.1
+      withdraw_fee         0.01
+    end
   end
 end

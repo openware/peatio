@@ -98,5 +98,17 @@ FactoryBot.define do
       explorer_transaction    'https://bithomp.com/explorer/#{txid}'
       status                  'active'
     end
+
+    trait 'nxt-testnet' do
+      key                     'nxt-testnet'
+      name                    'Nxt Testnet'
+      client                  'nxt'
+      server                  'http://127.0.0.1:6876'
+      height                  1350000
+      min_confirmations       1
+      explorer_address        'https://test.nxtportal.org/accounts/#{address}'
+      explorer_transaction    'https://test.nxtportal.org/transactions/#{txid}'
+      status                  'active'
+    end
   end
 end

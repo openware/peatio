@@ -6,7 +6,7 @@ module WalletClient
 
     def initialize(*)
       super
-      @json_rpc_endpoint = URI.parse(wallet.uri)
+      @json_rpc_endpoint = URI.parse(wallet.uri + "/nxt?")
     end
 
     def create_address!(options = {})
@@ -56,7 +56,6 @@ module WalletClient
 
     def json_rpc(params = {})
       response = connection.post do |req|
-        req.url '/nxt?',
         req.body = params
       end
       response.assert_success!
