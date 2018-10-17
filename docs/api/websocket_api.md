@@ -81,38 +81,34 @@ List of subscription channels:
 
 #### Order
 
-Here is structure of `Order` object:
+Here is structure of `Order` event:
 
-| Field           | Description                                |
-|-----------------|--------------------------------------------|
-| `id`            | Unique order id.                           |
-| `side`          | Either `sell` or `buy`.                    |
-| `ord_type`      | Type of order, either `limit` or `market`. |
-| `price`         | Price for each unit.                       |
-| `avg_price`     | Average execution price.                   |
-| `state`         | One of `wait`, `done`, or `cancel`.        |
-| `market_id`     | The market in which the order is placed.   |
-| `created_at`    | Order create time in `iso8601` format.     |
-| `origin_volume` | The amount user want to sell/buy.          |
-| `trades_count`  | Number of trades.                          |
-| `trades`        | List of trades.                            |
+
+| Field           | Description                                                       |
+| --------------- | ----------------------------------------------------------------- |
+| `id`            | Unique order id.                                                  |
+| `kind`          | Type of order, either `bid` or `ask`.                             |
+| `price`         | Price for each unit.                                              |
+| `state`         | One of `wait`, `done`, or `cancel`.                               |
+| `market`        | The market in which the order is placed. (In peatio `market_id`)  |
+| `at`            | Order create time. (In peatio `created_at`)                       |
+| `origin_volume` | The amount user want to sell/buy.                                 |
+| `volume`        | Remaining amount user want to sell/buy.                           |
 
 #### Trade
 
-Here is structure of `Trade` object:
+Here is structure of `Trade` event:
 
-| Field        | Description                              |
-|--------------|----------------------------------------- |
-| `id`         | Uniq trade id.                           |
-| `price`      | Price for each unit.                     |
-| `volume`     | The amount of trade.                     |
-| `funds`      |                                          |
-| `market_id`  | The market in which the order is placed. |
-| `created_at` | Uniq trade id.                           |
-| `side`       | Type of order, either `bid` or `ask`.    |
-| `order_id`   | Order that placed.                       |
-| `bid`        | Bid order object.                        |
-| `ask`        | Ask order object.                        |
+| Field    | Description                                                    |
+| -------- | -------------------------------------------------------------- |
+| `id`     | Uniq trade id.                                                 |
+| `kind`   | Type of order, either `bid` or `ask`.                          |
+| `at`     | Order create time. (In peatio created_at)                      |
+| `price`  | Price for each unit.                                           |
+| `volume` | The amount of trade.                                           |
+| `ask_id` | Id of ask order (OrderAsk).                                    |
+| `bid_id` | Id of bid order (OrderBid).                                    |
+| `market` | The market in which the order is placed. (In peatio market_id) |
 
 ## Start websocket API
 
