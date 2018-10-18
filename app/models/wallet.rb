@@ -6,14 +6,10 @@ class Wallet < ActiveRecord::Base
   extend Enumerize
 
   # We use this attribute values rules for wallet kinds:
-  # 1** - for deposit wallets
-  # 2** - for withdraw wallets
+  # 1** - for deposit wallets.
+  # 2** - for withdraw wallets (sorted by security hot < warm < cold).
   ENUMERIZED_KINDS = { deposit: 100, hot: 210, warm: 220, cold: 230 }.freeze
   enumerize :kind, in: ENUMERIZED_KINDS, scope: true
-
-  DEPOSIT_KINDS  = ENUMERIZED_KINDS.select { |_k, v| v / 100 == 1 }.keys.freeze
-  WITHDRAW_KINDS = ENUMERIZED_KINDS.select { |_k, v| v / 100 == 2 }.keys.freeze
-  KINDS          = (DEPOSIT_KINDS + WITHDRAW_KINDS).freeze
 
   GATEWAYS = %w[bitcoind bitcoincashd litecoind geth dashd rippled bitgo].freeze
   SETTING_ATTRIBUTES = %i[ uri
@@ -41,13 +37,39 @@ class Wallet < ActiveRecord::Base
   validates :uri, url: { allow_blank: true }
 
   scope :active,   -> { where(status: :active) }
-  scope :deposit,  -> { with_kind(DEPOSIT_KINDS) }
-  scope :withdraw, -> { with_kind(WITHDRAW_KINDS) }
+  scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
+  scope :withdraw, -> { where(kind: kinds(withdraw: true, values: true)) }
   scope :ordered,  -> { order(kind: :asc) }
 
   before_validation do
     next unless blockchain_api&.supports_cash_addr_format? && address?
     self.address = CashAddr::Converter.to_cash_address(address)
+  end
+
+  class << self
+    def kinds(options={})
+      ENUMERIZED_KINDS
+        .yield_self do |kinds|
+          case
+          when options.fetch(:deposit, false)
+            kinds.select { |_k, v| v / 100 == 1 }
+          when options.fetch(:withdraw, false)
+            kinds.select { |_k, v| v / 100 == 2 }
+          else
+            kinds
+          end
+        end
+        .yield_self do |kinds|
+          case
+          when options.fetch(:keys, false)
+            kinds.keys
+          when options.fetch(:values, false)
+            kinds.values
+          else
+            kinds
+          end
+        end
+    end
   end
 
   def wallet_url

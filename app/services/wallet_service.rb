@@ -44,21 +44,50 @@ module WalletService
       method_not_implemented
     end
 
+    # TODO: Move to protected
+    def spread_deposit(deposit=Deposit.new(amount: 1, currency_id: :btc))
+      left_amount = deposit.amount
+      collection_spread = []
+      currency = deposit.currency
+      destination_wallets(deposit).each do |wallet|
+          break if left_amount == 0
+          wallet_balance = client.load_balance!(wallet.address)
+          amount_for_wallet = [wallet.max_balance - wallet_balance, left_amount].min
+          next if amount_for_wallet <= 0
+          left_amount -= amount_for_wallet
+          # If amount left is too small we will not able to collect it.
+          # So we collect everything to current wallet.
+          #
+          # NOTE: Uncomment once we merge min_deposit_amount
+          #
+          # if left_amount < currency.min_deposit_amount
+          #   amount_for_wallet += left_amount
+          #   left_amount = 0
+          # end
+          collection_spread << {
+            address: wallet.address,
+            amount: amount_for_wallet
+          }
+      end
+      # If deposit doesn't fit to any wallet collect it to last wallet.
+      # Last wallet is considered to be the most secure.
+      if left_amount > 0
+        spread_deposit << {
+          address: destination_wallets(deposit).last.address,
+          amount: left_amount
+        }
+      end
+      collection_spread
+    end
+
     protected
 
     def destination_wallets(deposit)
       Wallet
         .active
         .withdraw
+        .ordered
         .where(currency_id: deposit.currency_id)
-    end
-
-    def spread_deposit(deposit)
-      left_amount = deposit.amount
-      destination_wallets.each_with_object({}) do |wallet, spread_hash|
-        break if left_amount == 0
-        wallet_balance = WalletService[wallet].client.load_balance
-      end
     end
   end
 end

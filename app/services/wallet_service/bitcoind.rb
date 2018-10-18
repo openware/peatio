@@ -9,34 +9,18 @@ module WalletService
     end
 
     def collect_deposit!(deposit, options={})
-      destination_wallets = destination_wallets(deposit)
       pa = deposit.account.payment_address
 
-      # this will automatically deduct fee from amount
+      # This will automatically deduct fee from amount so we can withdraw exact amount.
       options = options.merge( subtract_fee: true )
-      deposit_amount = deposit.amount
-      destination_wallets.each do |wallet|
-        break if deposit_amount == 0
-        wallet_balance = client.load_balance!
-        if wallet_balance + deposit_amount > wallet.max_balance
-          amount_left = wallet.max_balance - wallet_balance
-          next if amount_left < Currency.find(wallet.currency_id).min_deposit_amount
-          client.create_withdrawal!(
-              { address: pa.address },
-              { address: wallet.address },
-              amount_left,
-              options
-          )
-          deposit_amount -= amount_left
-        else
-          client.create_withdrawal!(
-              { address: pa.address },
-              { address: wallet.address },
-              deposit_amount,
-              options
-          )
-          break
-        end
+      spread_hash = spread_deposit(deposit)
+      spread_hash.each do |collection_unit|
+        client.create_withdrawal!(
+          { address: pa.address },
+          { address: collection_unit[:address]},
+          collection_unit[:amount],
+          options
+        )
       end
     end
 
