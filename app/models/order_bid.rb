@@ -5,6 +5,11 @@ class OrderBid < Order
   has_many :trades, foreign_key: :bid_id
   scope :matching_rule, -> { order(price: :desc, created_at: :asc) }
 
+  validates :origin_volume,
+            presence: true,
+            numericality: { greater_than_or_equal_to: ->(order){ order.market.min_bid_amount }},
+            if: ->(order){ order.market.min_bid_amount.present? }
+
   def hold_account
     member.get_account(bid)
   end

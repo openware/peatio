@@ -18,8 +18,8 @@ feature 'show account info', js: true do
     end
   end
 
-  let!(:ask_order) { create :order_ask, price: '23.6', member: member }
-  let!(:bid_order) { create :order_bid, price: '21.3', member: member }
+  let!(:ask_order) { create :order_ask, price: '23.6', origin_volume: '9.0', member: member }
+  let!(:bid_order) { create :order_bid, price: '21.3', origin_volume: '9.0', member: member }
   let!(:ask_name)  { 'BTC' }
 
   let(:global) { Global[:btcusd] }
