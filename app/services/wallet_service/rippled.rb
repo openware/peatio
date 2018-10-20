@@ -11,33 +11,17 @@ module WalletService
     end
 
     def collect_deposit!(deposit, options={})
-      destination_wallets = destination_wallets(deposit)
       pa = deposit.account.payment_address
 
-      deposit_amount = deposit.amount * Currency.find(wallet.currency_id).base_factor
-      destination_wallets.each do |wallet|
-        break if deposit_amount == 0
-        wallet_balance = client.load_balance!(wallet.address)
-        max_balance_wallet = wallet.max_balance * Currency.find(wallet.currency_id).base_factor
-        if wallet_balance + deposit_amount > max_balance_wallet
-          amount_left = max_balance_wallet - wallet_balance
-          next if amount_left < Currency.find(wallet.currency_id).min_deposit_amount
-          client.create_withdrawal!(
-            { address: pa.address, secret: pa.secret },
-            { address: wallet.address },
-            amount_left / Currency.find(wallet.currency_id).base_factor,
-            options
-          )
-          deposit_amount -= amount_left
-        else
-          client.create_withdrawal!(
-              { address: pa.address, secret: pa.secret },
-              { address: wallet.address },
-              deposit_amount / Currency.find(wallet.currency_id).base_factor,
-              options
-          )
-          break
-        end
+      spread_hash = spread_deposit(deposit)
+      spread_hash.each do |collection_unit|
+        binding.pry
+        client.create_withdrawal!(
+          { address: pa.address, secret: pa.secret },
+          { address: collection_unit[:address] },
+          collection_unit[:amount],
+          options
+        )
       end
     end
 

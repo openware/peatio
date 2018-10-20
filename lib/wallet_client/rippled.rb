@@ -113,10 +113,10 @@ module WalletClient
     end
 
     def load_balance!(address)
-        json_rpc(:account_info, [account: normalize_address(address), ledger_index: 'validated', strict: true])
+      convert_from_base_unit(json_rpc(:account_info, [account: normalize_address(address), ledger_index: 'validated', strict: true])
             .fetch('result')
             .fetch('account_data')
-            .fetch('Balance').to_d
+            .fetch('Balance').to_d)
       rescue => e
         report_exception_to_screen(e)
         0.0
