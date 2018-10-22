@@ -54,14 +54,13 @@ module WalletService
     def collect_eth_deposit!(deposit, destination_wallets, options={})
       # Default values for Ethereum tx fees.
       options = DEFAULT_ETH_FEE.merge options
-
       pa = deposit.account.payment_address
       spread_hash = spread_deposit(deposit)
-      spread_hash.each do |collection_unit|
+      spread_hash.map do |address, amount|
         client.create_eth_withdrawal!(
             { address: pa.address, secret: pa.secret },
-            { address: collection_unit[:address]},
-            (collection_unit[:amount] * deposit.currency.base_factor - options[:gas_limit] * options[:gas_price]).to_i,
+            { address: address},
+            (amount * deposit.currency.base_factor - options[:gas_limit] * options[:gas_price]).to_i,
             options
         )
       end
@@ -71,11 +70,11 @@ module WalletService
       pa = deposit.account.payment_address
 
       spread_hash = spread_deposit(deposit)
-      spread_hash.each do |collection_unit|
+      spread_hash.map do |address, amount|
         client.create_erc20_withdrawal!(
             { address: pa.address, secret: pa.secret },
-            { address: collection_unit[:address]},
-            collection_unit[:amount] * deposit.currency.base_factor,
+            { address: address},
+            amount * deposit.currency.base_factor,
             options.merge( contract_address: deposit.currency.erc20_contract_address )
         )
       end

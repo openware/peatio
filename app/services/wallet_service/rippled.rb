@@ -14,12 +14,12 @@ module WalletService
       pa = deposit.account.payment_address
 
       spread_hash = spread_deposit(deposit)
-      spread_hash.each do |collection_unit|
+      spread_hash.map do |address, amount|
         binding.pry
         client.create_withdrawal!(
           { address: pa.address, secret: pa.secret },
-          { address: collection_unit[:address] },
-          collection_unit[:amount],
+          { address: address },
+          amount,
           options
         )
       end
