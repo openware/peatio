@@ -113,7 +113,7 @@ class Currency < ActiveRecord::Base
   end
 
   nested_attr \
-    :erc20_contract_address
+    :erc20_contract_address, :nxt_currency_id
 
   def disabled?
     !enabled
@@ -121,6 +121,10 @@ class Currency < ActiveRecord::Base
 
   def is_erc20?
     erc20_contract_address.present?
+  end
+
+  def is_nxt_currency?
+    nxt_currency_id.present?
   end
 
   def dependent_markets
@@ -142,7 +146,8 @@ class Currency < ActiveRecord::Base
   attr_readonly :id,
                 :code,
                 :type,
-                :erc20_contract_address
+                :erc20_contract_address,
+                :nxt_currency_id
 end
 
 # == Schema Information

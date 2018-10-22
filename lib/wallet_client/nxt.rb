@@ -17,8 +17,25 @@ module WalletClient
       }
     end
 
-    def create_withdrawal!(issuer, recipient, amount, options = {})
+    def create_coin_withdrawal!(issuer, recipient, amount, options = {})
       withdrawal_request(issuer, recipient, amount, options).fetch('transactionJSON').yield_self do |txn|
+        normalize_txid(txn['transaction'])
+      end
+    end
+
+    def create_currency_withdrawal!(issuer, recipient, amount, options = {})
+      json_rpc(
+          {
+              requestType:  'transferCurrency',
+              currency:     wallet.currency.nxt_currency_id,
+              secretPhrase: issuer.fetch(:secret),
+              recipient:    normalize_address(recipient.fetch(:address)),
+              units:    convert_to_base_unit!(amount),
+              deadline:     60,
+              feeNQT:       options.has_key?(:feeNQT) ? options[:feeNQT] : 0,
+              broadcast:    options.has_key?(:broadcast) ? options[:broadcast] : true
+          }
+      ).yield_self do |txn|
         normalize_txid(txn['transaction'])
       end
     end

@@ -37,15 +37,11 @@ module BlockchainClient
     end
 
     def build_transaction(tx, current_block, currency)
-      { id:            normalize_txid(tx.fetch('transaction')),
-        block_number:  current_block,
-        entries: [
-          {
-            amount:  convert_from_base_unit(tx.fetch('amountNQT'), currency),
-            address: normalize_address(tx['recipientRS'])
-          }
-        ]
-      }
+      if tx['type'] == 0
+        build_coin_transaction(tx, current_block, currency)
+      else
+        build_currency_transaction(tx, current_block, currency)
+      end
     end
 
     def to_address(tx)
@@ -53,7 +49,11 @@ module BlockchainClient
     end
 
     def valid_transaction?(tx)
-      [0, '0'].include?(tx['type'])
+      # ( 0 = coin transfer; 5 = currency transfer )
+      result = tx.has_key?('recipientRS') && [0, 5].include?(tx['type'])
+
+      # check subType i.e 3 = currency transfer
+      tx['type'] == 5 ? [3].include?(tx['subtype']) : result
     end
 
     def invalid_transaction?(tx)
@@ -79,6 +79,34 @@ module BlockchainClient
       response = JSON.parse(response.body)
       response['errorDescription'].tap { |error| raise Error, error.inspect if error }
       response
+    end
+
+    def build_coin_transaction(tx, current_block, currency)
+      entries = [
+          {
+              amount:  convert_from_base_unit(tx.fetch('amountNQT'), currency),
+              address: normalize_address(tx['recipientRS'])
+          }
+      ]
+      entries = []  unless currency.code.nxt?
+      { id:            normalize_txid(tx.fetch('transaction')),
+        block_number:  current_block,
+        entries: entries
+      }
+    end
+
+    def build_currency_transaction(tx, current_block, currency)
+      entries = [
+          {
+              amount:  convert_from_base_unit(tx['attachment']['units'], currency),
+              address: normalize_address(tx['recipientRS'])
+          }
+      ]
+      entries = []  if currency.nxt_currency_id != tx['attachment']['currency']
+      { id:            normalize_txid(tx.fetch('transaction')),
+        block_number:  current_block,
+        entries: entries
+      }
     end
   end
 end
