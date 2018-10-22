@@ -94,5 +94,31 @@ FactoryBot.define do
       uri                'http://127.0.0.1:6876'
       secret             'changeme'
     end
+
+    trait :testp_hot do
+      currency_id        'testp'
+      blockchain_key     'nxt-testnet'
+      name               'TestPeatio Hot Wallet'
+      address            'NXT-Y9NM-7HBT-7A8B-3YUHS'
+      kind               'hot'
+      nsig               2
+      status             'active'
+      gateway            'nxt'
+      uri                'http://127.0.0.1:6876'
+      secret             'changeme'
+    end
+
+    trait :testp_deposit do
+      currency_id        'testp'
+      blockchain_key     'nxt-testnet'
+      name               'TestPeatio Deposit Wallet'
+      address            'NXT-Y9NM-7HBT-7A8B-3YUHS'
+      kind               'deposit'
+      nsig               2
+      status             'active'
+      gateway            'nxt'
+      uri                'http://127.0.0.1:6876'
+      secret             'changeme'
+    end
   end
 end

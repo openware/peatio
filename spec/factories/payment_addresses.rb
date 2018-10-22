@@ -47,6 +47,11 @@ FactoryBot.define do
       account { create(:member, :level_3).get_account(:nxt) }
     end
 
+    trait :testp_address do
+      currency { Currency.find(:testp) }
+      account { create(:member, :level_3).get_account(:testp) }
+    end
+
     factory :btc_payment_address, traits: [:btc_address]
     factory :eth_payment_address, traits: [:eth_address]
     factory :trst_payment_address, traits: [:trst_address]
@@ -55,5 +60,6 @@ FactoryBot.define do
     factory :bch_payment_address, traits: [:bch_address]
     factory :xrp_payment_address, traits: [:xrp_address]
     factory :nxt_payment_address, traits: [:nxt_address]
+    factory :testp_payment_address, traits: [:testp_address]
   end
 end
