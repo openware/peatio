@@ -163,6 +163,71 @@ describe BlockchainService::Nxt do
       end
     end
 
+    context 'one TESTA deposits was created during blockchain proccessing' do
+      # File with real json rpc data for bunch of blocks.
+      let(:block_file_name) { 'asset_transaction/2034907-2034908.json' }
+
+      # Use rinkeby.etherscan.io to fetch transactions data.
+      let(:expected_deposits) do
+        [
+            {
+                amount:   2,
+                address:  'NXT-WN8Y-DFYG-LRXN-8UW4H',
+                txid:     '9693269226043563776'
+            }
+        ]
+      end
+
+      let(:currency) { Currency.find_by_id(:testa) }
+
+      let!(:payment_address) do
+        create(:testa_payment_address, address: 'NXT-WN8Y-DFYG-LRXN-8UW4H')
+      end
+
+      before do
+        # Mock requests and methods.
+        client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
+        client.class.any_instance.stubs(:rpc_call_id).returns(1)
+
+        block_data.each_with_index do |blk, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+              .with(body: request_block_hash_body(blk['height']))
+              .to_return(body: { block: blk['block'] }.to_json)
+
+          # stub get_block
+          stub_request(:post, client.endpoint)
+              .with(body: request_block_body(blk['block']))
+              .to_return(body: blk.to_json)
+        end
+
+        BlockchainService[blockchain.key].process_blockchain(force: true)
+      end
+
+      subject { Deposits::Coin.where(currency: currency) }
+
+      it 'creates one deposit' do
+        expect(Deposits::Coin.where(currency: currency).count).to eq expected_deposits.count
+      end
+
+      it 'creates deposits with correct attributes' do
+        expected_deposits.each do |expected_deposit|
+          expect(subject.where(expected_deposit).count).to eq 1
+        end
+      end
+
+      context 'we process same data one more time' do
+        before do
+          blockchain.update(height: start_block)
+        end
+
+        it 'doesn\'t change deposit' do
+          expect(blockchain.height).to eq start_block
+          expect{ BlockchainService[blockchain.key].process_blockchain(force: true)}.not_to change{subject}
+        end
+      end
+    end
+
     context 'one NXT withdrawals were processed' do
       # File with real json rpc data for bunch of blocks.
       let(:block_file_name) { '2025987-2025989.json' }
@@ -257,6 +322,70 @@ describe BlockchainService::Nxt do
         withdraw_hash = expected_withdrawals[0].merge!\
             member: member,
             account: testp_account,
+            aasm_state: :confirming,
+            currency: currency
+
+        create(:trst_withdraw, withdraw_hash)
+      end
+
+      before do
+        # Mock requests and methods.
+        client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
+        client.class.any_instance.stubs(:rpc_call_id).returns(1)
+
+        block_data.each_with_index do |blk, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+              .with(body: request_block_hash_body(blk['height']))
+              .to_return(body: { block: blk['block'] }.to_json)
+
+          # stub get_block
+          stub_request(:post, client.endpoint)
+              .with(body: request_block_body(blk['block']))
+              .to_return(body: blk.to_json)
+        end
+
+        BlockchainService[blockchain.key].process_blockchain(force: true)
+      end
+
+      subject { Withdraws::Coin.where(currency: currency) }
+
+      it 'doesn\'t create new withdrawals' do
+        expect(subject.count).to eq expected_withdrawals.count
+      end
+
+      it 'changes withdraw state to success' do
+        success_withdraw.reload
+        expect(success_withdraw.confirmations).to_not eq 0
+        if success_withdraw.confirmations >= blockchain.min_confirmations
+          expect(success_withdraw.aasm_state).to eq 'succeed'
+        end
+      end
+    end
+
+    context 'one TESTA withdrawal is processed' do
+      # File with real json rpc data for bunch of blocks.
+      let(:block_file_name) { 'asset_transaction/2034910-2034911.json' }
+
+      let(:expected_withdrawals) do
+        [
+            {
+                sum:  2 + currency.withdraw_fee,
+                rid:  'NXT-Y9NM-7HBT-7A8B-3YUHS',
+                txid: '13156355433153480806'
+            }
+        ]
+      end
+
+      let(:member) { create(:member, :level_3, :barong) }
+      let!(:testa_account) { member.get_account(:testa).tap { |a| a.update!(locked: 10, balance: 50) } }
+
+      let(:currency) { Currency.find_by_id(:testa) }
+
+      let!(:success_withdraw) do
+        withdraw_hash = expected_withdrawals[0].merge!\
+            member: member,
+            account: testa_account,
             aasm_state: :confirming,
             currency: currency
 

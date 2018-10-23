@@ -115,5 +115,17 @@ FactoryBot.define do
       options \
         nxt_currency_id:           '2511604049436153688'
     end
+
+    trait :testa do
+      blockchain_key       'nxt-testnet'
+      code                 'testa'
+      symbol               'T'
+      type                 'coin'
+      base_factor          1_000_000
+      quick_withdraw_limit 0.1
+      withdraw_fee         0.01
+      options \
+        nxt_asset_id:           '14653464112776087970'
+    end
   end
 end
