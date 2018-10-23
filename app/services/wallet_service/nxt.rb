@@ -11,18 +11,22 @@ module WalletService
     def collect_deposit!(deposit, options={})
       destination_address = destination_wallet(deposit).address
 
-      if deposit.currency.code.nxt?
-        collect_coin_deposit(deposit, destination_address, options={})
-      else
+      if deposit.currency.is_nxt_asset?
+        collect_asset_deposit(deposit, destination_address, options={})
+      elsif deposit.currency.is_nxt_currency?
         collect_currency_deposit(deposit, destination_address, options={})
+      else
+        collect_coin_deposit(deposit, destination_address, options={})
       end
     end
 
     def build_withdrawal!(withdraw, options = {})
-      if withdraw.currency.code.nxt?
-        build_coin_withdrawal(withdraw, options = {})
-      else
+      if withdraw.currency.is_nxt_asset?
+        build_asset_withdrawal(withdraw, options = {})
+      elsif withdraw.currency.is_nxt_currency?
         build_currency_withdrawal(withdraw, options = {})
+      else
+        build_coin_withdrawal(withdraw, options = {})
       end
     end
 
@@ -71,6 +75,17 @@ module WalletService
       )
     end
 
+    def collect_asset_deposit(deposit, destination_address, options={})
+      pa = deposit.account.payment_address
+
+      client.create_asset_withdrawal!(
+          { address: pa.address, secret: pa.secret },
+          { address: destination_address },
+          deposit.amount,
+          options.merge(nxt_asset_id: deposit.currency.nxt_asset_id)
+      )
+    end
+
     def build_coin_withdrawal(withdraw, options = {})
       client.create_coin_withdrawal!(
           { address: wallet.address, secret: wallet.secret },
@@ -86,6 +101,15 @@ module WalletService
           { address: withdraw.rid },
           withdraw.amount,
           options.merge(nxt_currency_id: withdraw.currency.nxt_currency_id)
+      )
+    end
+
+    def build_asset_withdrawal(withdraw, options = {})
+      client.create_asset_withdrawal!(
+          { address: wallet.address, secret: wallet.secret },
+          { address: withdraw.rid },
+          withdraw.amount,
+          options.merge(nxt_asset_id: withdraw.currency.nxt_asset_id)
       )
     end
   end

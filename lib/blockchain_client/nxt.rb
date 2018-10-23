@@ -37,10 +37,12 @@ module BlockchainClient
     end
 
     def build_transaction(tx, current_block, currency)
-      if tx['type'] == 0
-        build_coin_transaction(tx, current_block, currency)
-      else
+      if tx['type'] == 2
+        build_asset_transaction(tx, current_block, currency)
+      elsif tx['type'] == 5
         build_currency_transaction(tx, current_block, currency)
+      else
+        build_coin_transaction(tx, current_block, currency)
       end
     end
 
@@ -49,12 +51,15 @@ module BlockchainClient
     end
 
     def valid_transaction?(tx, nxt_currency)
-      # ( 0 = coin transfer; 5 = currency transfer )
-      result = tx.has_key?('recipientRS') && [0, 5].include?(tx['type'])
+      # ( 0 = coin transfer; 5 = currency transfer; 2 = asset transfer)
+      result = tx.has_key?('recipientRS') && [0, 5, 2].include?(tx['type'])
       result = (tx['type'] == 0 ? (convert_from_base_unit(tx['amountNQT'], nxt_currency) > 1) : result)
 
       # check subType i.e 3 = currency transfer
-      tx['type'] == 5 ? [3].include?(tx['subtype']) : result
+      result = tx['type'] == 5 ? [3].include?(tx['subtype']) : result
+
+      # check subType i.e 1 = asset transfer
+      tx['type'] == 2 ? [1].include?(tx['subtype']) : result
     end
 
     def invalid_transaction?(tx, nxt_currency)
@@ -104,6 +109,20 @@ module BlockchainClient
           }
       ]
       entries = []  if currency.nxt_currency_id != tx['attachment']['currency']
+      { id:            normalize_txid(tx.fetch('transaction')),
+        block_number:  current_block,
+        entries: entries
+      }
+    end
+
+    def build_asset_transaction(tx, current_block, currency)
+      entries = [
+          {
+              amount:  convert_from_base_unit(tx['attachment']['quantityQNT'], currency),
+              address: normalize_address(tx['recipientRS'])
+          }
+      ]
+      entries = []  if currency.nxt_asset_id != tx['attachment']['asset']
       { id:            normalize_txid(tx.fetch('transaction')),
         block_number:  current_block,
         entries: entries

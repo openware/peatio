@@ -124,4 +124,19 @@
     #
     # NXT Currency configuration (Monetary System)
     nxt_currency_id:    '2511604049436153688'
+
+- id:                   testa
+  blockchain_key:       nxt-testnet
+  symbol:               'T'
+  type:                 coin
+  precision:            6
+  base_factor:          1_000_000   # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:
+    #
+    # NXT Asset configuration
+    nxt_asset_id:    '14653464112776087970'
 <% end %>

@@ -407,4 +407,53 @@
     # Geth gateway client settings.
     uri:          http://127.0.0.1:6876
     secret:       'changeme'
+
+
+- name:             TestAsset Deposit Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testa
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             deposit  # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1        # Number of signatures required for performing withdraw.
+  max_balance:      0.0
+  status:           active
+  gateway:          nxt     # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestAsset Hot Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testa
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             hot     # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      100.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
+
+- name:             TestAsset Warm Wallet
+  blockchain_key:   nxt-testnet
+  currency_id:      testa
+  # Address where deposits will be collected to.
+  address:          'NXT-Y9NM-7HBT-7A8B-3YUHS'  # IMPORTANT: Always wrap this value in quotes!
+  kind:             warm    # Wallet kind (deposit, hot, warm or cold).
+  nsig:             1       # Number of signatures required for performing withdraw.
+  max_balance:      1000.0
+  status:           active
+  gateway:          nxt    # Gateway client name.
+  settings:
+    #
+    # Geth gateway client settings.
+    uri:          http://127.0.0.1:6876
+    secret:       'changeme'
 <% end %>
