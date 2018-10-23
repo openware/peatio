@@ -48,16 +48,17 @@ module BlockchainClient
       [normalize_address(tx.fetch('recipientRS'))]
     end
 
-    def valid_transaction?(tx)
+    def valid_transaction?(tx, nxt_currency)
       # ( 0 = coin transfer; 5 = currency transfer )
       result = tx.has_key?('recipientRS') && [0, 5].include?(tx['type'])
+      result = (tx['type'] == 0 ? (convert_from_base_unit(tx['amountNQT'], nxt_currency) > 1) : result)
 
       # check subType i.e 3 = currency transfer
       tx['type'] == 5 ? [3].include?(tx['subtype']) : result
     end
 
-    def invalid_transaction?(tx)
-      !valid_transaction?(tx)
+    def invalid_transaction?(tx, nxt_currency)
+      !valid_transaction?(tx, nxt_currency)
     end
 
   protected
