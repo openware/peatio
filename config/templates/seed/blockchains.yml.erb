@@ -88,4 +88,15 @@
     address:         https://test.nxtportal.org/accounts/#{address}
     transaction:     https://test.nxtportal.org/transactions/#{txid}
   status:            active
+
+- key:               wcg-testnet
+  name:              Wcg Testnet
+  client:            wcg                              # API client name.
+  server:            http://139.162.189.108:2082      # Public WCG node endpoint.
+  height:            2024646                          # Initial block number from which sync will be started.
+  min_confirmations: 1                                # Minimal confirmations needed for withdraw and deposit confirmation.
+  explorer:
+    address:         https://test.nxtportal.org/accounts/#{address}
+    transaction:     https://test.nxtportal.org/transactions/#{txid}
+  status:            active
 <% end %>

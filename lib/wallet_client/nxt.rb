@@ -27,7 +27,7 @@ module WalletClient
       json_rpc(
           {
               requestType:  'transferCurrency',
-              currency:     wallet.currency.nxt_currency_id,
+              currency:     wallet.currency.token_currency_id,
               secretPhrase: issuer.fetch(:secret),
               recipient:    normalize_address(recipient.fetch(:address)),
               units:        convert_to_base_unit!(amount),
@@ -44,7 +44,7 @@ module WalletClient
       json_rpc(
           {
               requestType:  'transferAsset',
-              asset:        wallet.currency.nxt_asset_id,
+              asset:        wallet.currency.token_asset_id,
               secretPhrase: issuer.fetch(:secret),
               recipient:    normalize_address(recipient.fetch(:address)),
               quantityQNT:  convert_to_base_unit!(amount),

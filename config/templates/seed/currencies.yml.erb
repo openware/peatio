@@ -122,8 +122,8 @@
   withdraw_fee:         0
   options:
     #
-    # NXT Currency configuration (Monetary System)
-    nxt_currency_id:    '2511604049436153688'
+    # Currency configuration (Monetary System)
+    token_currency_id:    '2511604049436153688'
 
 - id:                   testa
   blockchain_key:       nxt-testnet
@@ -137,6 +137,34 @@
   withdraw_fee:         0
   options:
     #
-    # NXT Asset configuration
-    nxt_asset_id:    '14653464112776087970'
+    # Asset configuration
+    token_asset_id:    '14653464112776087970'
+
+- id:                   wcg
+  blockchain_key:       wcg-testnet
+  symbol:               'W'
+  type:                 coin
+  precision:            8
+  base_factor:          1_00_000_000   # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:              {}
+
+- id:                   drt
+  blockchain_key:       wcg-testnet
+  symbol:               'D'
+  type:                 coin
+  precision:            4
+  base_factor:          10_000 # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:
+    #
+    # Asset configuration
+    token_asset_id:    '7776054229687920460'
+
 <% end %>

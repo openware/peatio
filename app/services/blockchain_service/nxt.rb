@@ -46,7 +46,7 @@ module BlockchainService
         .fetch('transactions')
         .each_with_object([]) do |tx, deposits|
 
-        next if client.invalid_transaction?(tx, nxt_currency) # skip if invalid transaction
+        next if client.invalid_transaction?(tx, currency) # skip if invalid transaction
 
         payment_addresses_where(address: client.to_address(tx)) do |payment_address|
 
@@ -70,7 +70,7 @@ module BlockchainService
         .fetch('transactions')
         .each_with_object([]) do |tx, withdrawals|
 
-        next if client.invalid_transaction?(tx, nxt_currency) # skip if invalid transaction
+        next if client.invalid_transaction?(tx, currency) # skip if invalid transaction
 
         Withdraws::Coin
           .where(currency: currencies)
@@ -104,8 +104,8 @@ module BlockchainService
       Rails.cache.write("processed_#{self.class.name.underscore}_mempool_txids", txns)
     end
 
-    def nxt_currency
-      @nxt_currency ||= Currency.find(:nxt)
+    def currency
+      @currency ||= Currency.find(:nxt)
     end
   end
 end

@@ -50,10 +50,10 @@ module BlockchainClient
       [normalize_address(tx.fetch('recipientRS'))]
     end
 
-    def valid_transaction?(tx, nxt_currency)
+    def valid_transaction?(tx, currency)
       # ( 0 = coin transfer; 5 = currency transfer; 2 = asset transfer)
       result = tx.has_key?('recipientRS') && [0, 5, 2].include?(tx['type'])
-      result = (tx['type'] == 0 ? (convert_from_base_unit(tx['amountNQT'], nxt_currency) > 1) : result)
+      result = (tx['type'] == 0 ? (convert_from_base_unit(tx['amountNQT'], currency) > 1) : result)
 
       # check subType i.e 3 = currency transfer
       result = tx['type'] == 5 ? [3].include?(tx['subtype']) : result
@@ -62,8 +62,8 @@ module BlockchainClient
       tx['type'] == 2 ? [1].include?(tx['subtype']) : result
     end
 
-    def invalid_transaction?(tx, nxt_currency)
-      !valid_transaction?(tx, nxt_currency)
+    def invalid_transaction?(tx, currency)
+      !valid_transaction?(tx, currency)
     end
 
   protected
@@ -108,7 +108,7 @@ module BlockchainClient
               address: normalize_address(tx['recipientRS'])
           }
       ]
-      entries = []  if currency.nxt_currency_id != tx['attachment']['currency']
+      entries = []  if currency.token_currency_id != tx['attachment']['currency']
       { id:            normalize_txid(tx.fetch('transaction')),
         block_number:  current_block,
         entries: entries
@@ -122,7 +122,7 @@ module BlockchainClient
               address: normalize_address(tx['recipientRS'])
           }
       ]
-      entries = []  if currency.nxt_asset_id != tx['attachment']['asset']
+      entries = []  if currency.token_asset_id != tx['attachment']['asset']
       { id:            normalize_txid(tx.fetch('transaction')),
         block_number:  current_block,
         entries: entries

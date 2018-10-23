@@ -11,9 +11,9 @@ module WalletService
     def collect_deposit!(deposit, options={})
       destination_address = destination_wallet(deposit).address
 
-      if deposit.currency.is_nxt_asset?
+      if deposit.currency.is_token_asset?
         collect_asset_deposit(deposit, destination_address, options={})
-      elsif deposit.currency.is_nxt_currency?
+      elsif deposit.currency.is_token_currency?
         collect_currency_deposit(deposit, destination_address, options={})
       else
         collect_coin_deposit(deposit, destination_address, options={})
@@ -21,17 +21,17 @@ module WalletService
     end
 
     def build_withdrawal!(withdraw, options = {})
-      if withdraw.currency.is_nxt_asset?
+      if withdraw.currency.is_token_asset?
         build_asset_withdrawal(withdraw, options = {})
-      elsif withdraw.currency.is_nxt_currency?
+      elsif withdraw.currency.is_token_currency?
         build_currency_withdrawal(withdraw, options = {})
       else
         build_coin_withdrawal(withdraw, options = {})
       end
     end
 
-    def deposit_collection_fees(deposit, value=1, options={})
-      fees_wallet = nxt_fees_wallet
+    def deposit_collection_fees(deposit, value=default_fee, options={})
+      fees_wallet = txn_fees_wallet
       destination_address = deposit.account.payment_address.address
 
       client.create_coin_withdrawal!(
@@ -44,7 +44,11 @@ module WalletService
 
     private
 
-    def nxt_fees_wallet
+    def default_fee
+      1
+    end
+
+    def txn_fees_wallet
       Wallet
           .active
           .withdraw
@@ -54,7 +58,7 @@ module WalletService
     def collect_coin_deposit(deposit, destination_address, options={})
       pa = deposit.account.payment_address
 
-      amount = deposit.amount - 1 #TODO more research for NXT txn fee
+      amount = deposit.amount - default_fee
 
       client.create_coin_withdrawal!(
           { address: pa.address, secret: pa.secret },
@@ -71,7 +75,7 @@ module WalletService
           { address: pa.address, secret: pa.secret },
           { address: destination_address },
           deposit.amount,
-          options.merge(nxt_currency_id: deposit.currency.nxt_currency_id)
+          options.merge(token_currency_id: deposit.currency.token_currency_id)
       )
     end
 
@@ -82,7 +86,7 @@ module WalletService
           { address: pa.address, secret: pa.secret },
           { address: destination_address },
           deposit.amount,
-          options.merge(nxt_asset_id: deposit.currency.nxt_asset_id)
+          options.merge(token_asset_id: deposit.currency.token_asset_id)
       )
     end
 
@@ -100,7 +104,7 @@ module WalletService
           { address: wallet.address, secret: wallet.secret },
           { address: withdraw.rid },
           withdraw.amount,
-          options.merge(nxt_currency_id: withdraw.currency.nxt_currency_id)
+          options.merge(token_currency_id: withdraw.currency.token_currency_id)
       )
     end
 
@@ -109,7 +113,7 @@ module WalletService
           { address: wallet.address, secret: wallet.secret },
           { address: withdraw.rid },
           withdraw.amount,
-          options.merge(nxt_asset_id: withdraw.currency.nxt_asset_id)
+          options.merge(token_asset_id: withdraw.currency.token_asset_id)
       )
     end
   end
