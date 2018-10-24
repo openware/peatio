@@ -42,6 +42,24 @@
                   <dd><%= @currency.erc20_contract_address %></dd>
                 <% end %>
               <% end %>
+
+              <% if @currency.new_record? || @currency.token_asset_id? %>
+                <dt>Token Asset ID</dt>
+                <% if @currency.new_record? %>
+                  <dd><%= f.text_field :token_asset_id, class: 'form-control' %></dd>
+                <% else %>
+                  <dd><%= @currency.token_asset_id %></dd>
+                <% end %>
+              <% end %>
+
+              <% if @currency.new_record? || @currency.token_currency_id? %>
+                <dt>Token Currency ID</dt>
+                <% if @currency.new_record? %>
+                  <dd><%= f.text_field :token_currency_id, class: 'form-control' %></dd>
+                <% else %>
+                  <dd><%= @currency.token_currency_id %></dd>
+                <% end %>
+              <% end %>
             <% end %>
 
             <dt>Enabled?</dt>
