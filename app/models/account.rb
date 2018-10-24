@@ -11,6 +11,7 @@ class Account < ActiveRecord::Base
 
   ZERO = 0.to_d
 
+  has_many :operations
   has_many :payment_addresses, -> { order(id: :asc) }
 
   validates :member_id, uniqueness: { scope: :currency_id }
@@ -120,13 +121,14 @@ class Account < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180529125011
+# Schema version: 20181023073457
 #
 # Table name: accounts
 #
 #  id          :integer          not null, primary key
 #  member_id   :integer          not null
 #  currency_id :string(10)       not null
+#  code        :integer
 #  balance     :decimal(32, 16)  default(0.0), not null
 #  locked      :decimal(32, 16)  default(0.0), not null
 #  created_at  :datetime         not null
