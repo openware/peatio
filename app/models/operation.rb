@@ -1,5 +1,6 @@
 class Operation < ActiveRecord::Base
-    belongs_to :account, required: true
+  belongs_to :account,   required: true
+  belongs_to :reference, polymorphic: true, required: true
 end
 
 # == Schema Information
