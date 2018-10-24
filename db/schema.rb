@@ -11,11 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180925123806) do
+ActiveRecord::Schema.define(version: 20181023073457) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
     t.string   "currency_id", limit: 10,                                         null: false
+    t.integer  "code",        limit: 3
     t.decimal  "balance",                precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "locked",                 precision: 32, scale: 16, default: 0.0, null: false
     t.datetime "created_at",                                                     null: false
@@ -132,6 +133,14 @@ ActiveRecord::Schema.define(version: 20180925123806) do
   add_index "members", ["disabled"], name: "index_members_on_disabled", using: :btree
   add_index "members", ["email"], name: "index_members_on_email", unique: true, using: :btree
   add_index "members", ["sn"], name: "index_members_on_sn", unique: true, using: :btree
+
+  create_table "operations", force: :cascade do |t|
+    t.integer  "account_id", limit: 4,                                         null: false
+    t.decimal  "debit",                precision: 32, scale: 16, default: 0.0, null: false
+    t.decimal  "credit",               precision: 32, scale: 16, default: 0.0, null: false
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
+  end
 
   create_table "orders", force: :cascade do |t|
     t.string   "bid",            limit: 10,                                         null: false
