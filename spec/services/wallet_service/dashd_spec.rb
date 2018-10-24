@@ -11,7 +11,7 @@ describe WalletService::Dashd do
 
   describe 'WalletService::Dashd' do
 
-    let(:deposit) { Deposit.find_by(currency: :dash) }
+    let(:deposit) { create(:deposit_dash, amount: 10) }
     let(:withdraw) { create(:dash_withdraw) }
     let(:deposit_wallet) { Wallet.find_by(gateway: :dashd, kind: :deposit) }
     let(:hot_wallet) { Wallet.find_by(gateway: :dashd, kind: :hot) }
@@ -40,6 +40,21 @@ describe WalletService::Dashd do
     context '#collect_deposit!' do
       subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
 
+      let(:deposit) { create(:deposit_dash, amount: 10) }
+      let :hot_wallet_balance do
+        {
+            result: '0'
+        }.to_json
+      end
+
+      let :request_balance do
+        {
+            jsonrpc:  '1.0',
+            method:   'listunspent',
+            params:   [1, 10000000, ['yborj44WhothaX6vwoMhRMjkq1xELhAWQp']],
+        }.to_json
+      end
+
       let :request_body do
         { jsonrpc: '1.0',
           method: 'sendtoaddress',
@@ -52,10 +67,11 @@ describe WalletService::Dashd do
       end
 
       before do
+        stub_request(:post, hot_wallet.uri).with(body: request_balance).to_return(body: hot_wallet_balance)
         stub_request(:post, deposit_wallet.uri).with(body: request_body).to_return(body: response_body)
       end
 
-      it { is_expected.to eq('dcedf50780f251c99e748362c1a035f2916efb9bb44fe5c5c3e857ea74ca06b3') }
+      it { is_expected.to eq(['dcedf50780f251c99e748362c1a035f2916efb9bb44fe5c5c3e857ea74ca06b3']) }
     end
 
     context '#build_withdrawal!' do

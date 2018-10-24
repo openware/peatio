@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 describe WalletService::Bitcoind do
-
   around do |example|
     WebMock.disable_net_connect!
     example.run
@@ -11,7 +10,7 @@ describe WalletService::Bitcoind do
 
   describe 'WalletService::Bitcoind' do
 
-    let(:deposit) { create(:deposit_btc) }
+    let(:deposit) { create(:deposit_btc, amount: 10) }
     let(:withdraw) { create(:btc_withdraw) }
     let(:deposit_wallet) { Wallet.find_by(gateway: :bitcoind, kind: :deposit) }
     let(:hot_wallet) { Wallet.find_by(gateway: :bitcoind, kind: :hot) }
@@ -40,6 +39,20 @@ describe WalletService::Bitcoind do
     context '#collect_deposit!' do
       subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
 
+      let :hot_wallet_balance do
+        {
+            result: '0'
+        }.to_json
+      end
+
+      let :request_balance do
+        {
+            jsonrpc:  '1.0',
+            method:   'listunspent',
+            params:   [1, 10000000, ['3NwYr8JxjHG2MBkgdBiHCxStSWDzyjS5U8']],
+        }.to_json
+      end
+
       let :request_body do
         { jsonrpc: '1.0',
           method: 'sendtoaddress',
@@ -52,10 +65,11 @@ describe WalletService::Bitcoind do
       end
 
       before do
+        stub_request(:post, hot_wallet.uri).with(body: request_balance).to_return(body: hot_wallet_balance)
         stub_request(:post, deposit_wallet.uri).with(body: request_body).to_return(body: response_body)
       end
 
-      it { is_expected.to eq('dcedf50780f251c99e748362c1a035f2916efb9bb44fe5c5c3e857ea74ca06b3') }
+      it { is_expected.to eq(['dcedf50780f251c99e748362c1a035f2916efb9bb44fe5c5c3e857ea74ca06b3']) }
     end
 
     context '#build_withdrawal!' do

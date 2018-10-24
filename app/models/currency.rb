@@ -140,6 +140,10 @@ class Currency < ActiveRecord::Base
     end
   end
 
+  def min_collection_amount
+    self.min_deposit_amount
+  end
+
   attr_readonly :id,
                 :code,
                 :type,

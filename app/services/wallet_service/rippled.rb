@@ -15,7 +15,6 @@ module WalletService
 
       spread_hash = spread_deposit(deposit)
       spread_hash.map do |address, amount|
-        binding.pry
         client.create_withdrawal!(
           { address: pa.address, secret: pa.secret },
           { address: address },

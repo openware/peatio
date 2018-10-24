@@ -47,7 +47,7 @@ module WalletService
     # TODO: Move to protected
     def spread_deposit(deposit=Deposit.new(amount: 1, currency_id: :btc))
       left_amount = deposit.amount
-      collection_spread = Hash.new
+      collection_spread = Hash.new(0)
       currency = deposit.currency
       destination_wallets(deposit).each do |wallet|
           break if left_amount == 0
@@ -70,7 +70,8 @@ module WalletService
       # If deposit doesn't fit to any wallet collect it to last wallet.
       # Last wallet is considered to be the most secure.
       if left_amount > 0
-        spread_deposit[destination_wallets(deposit).last.address] += left_amount
+        collection_spread[destination_wallets(deposit).last.address] += left_amount
+        left_amount = 0
       end
       collection_spread
     end

@@ -24,6 +24,7 @@ FactoryBot.define do
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
+    factory :deposit_bch, traits: [:deposit_bch]
 
     trait :deposit_dash do
       type { Deposits::Coin }
@@ -32,6 +33,7 @@ FactoryBot.define do
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
+    factory :deposit_dash, traits: [:deposit_dash]
 
     trait :deposit_ltc do
       type { Deposits::Coin }
@@ -40,6 +42,7 @@ FactoryBot.define do
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
+    factory :deposit_ltc, traits: [:deposit_ltc]
 
     trait :deposit_eth do
       type { Deposits::Coin }
@@ -49,6 +52,7 @@ FactoryBot.define do
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
+    factory :deposit_eth, traits: [:deposit_eth]
 
     trait :deposit_trst do
       type { Deposits::Coin }
@@ -58,7 +62,16 @@ FactoryBot.define do
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
+    factory :deposit_trst, traits: [:deposit_trst]
 
-    factory :new_deposit_trst, traits: [:deposit_trst]
+    trait :deposit_xrp do
+      type { Deposits::Coin }
+      currency { Currency.find(:xrp) }
+      member { create(:member, :level_3, :barong) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+    factory :deposit_xrp, traits: [:deposit_xrp]
   end
 end

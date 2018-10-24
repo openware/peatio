@@ -74,7 +74,7 @@ module WalletService
         client.create_erc20_withdrawal!(
             { address: pa.address, secret: pa.secret },
             { address: address},
-            amount * deposit.currency.base_factor,
+            (amount * deposit.currency.base_factor).to_i,
             options.merge( contract_address: deposit.currency.erc20_contract_address )
         )
       end
