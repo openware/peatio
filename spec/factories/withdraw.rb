@@ -166,4 +166,34 @@ FactoryBot.define do
       end
     end
   end
+
+  factory :wcg_withdraw, class: Withdraws::Coin do
+    currency { Currency.find(:wcg) }
+    member { create(:member, :level_3) }
+    rid { Faker::Bitcoin.address }
+    sum { 10.to_d }
+    type 'Withdraws::Coin'
+
+    account do
+      member.get_account(:wcg).tap do |a|
+        a.balance = 50
+        a.save(validate: false)
+      end
+    end
+  end
+
+  factory :drt_withdraw, class: Withdraws::Coin do
+    currency { Currency.find(:drt) }
+    member { create(:member, :level_3) }
+    rid { Faker::Bitcoin.address }
+    sum { 10.to_d }
+    type 'Withdraws::Coin'
+
+    account do
+      member.get_account(:drt).tap do |a|
+        a.balance = 50
+        a.save(validate: false)
+      end
+    end
+  end
 end

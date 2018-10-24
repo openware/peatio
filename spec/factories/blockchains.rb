@@ -110,5 +110,17 @@ FactoryBot.define do
       explorer_transaction    'https://test.nxtportal.org/transactions/#{txid}'
       status                  'active'
     end
+
+    trait 'wcg-testnet' do
+      key                     'wcg-testnet'
+      name                    'Wcg Testnet'
+      client                  'wcg'
+      server                  'http://127.0.0.1:6876'
+      height                  1350000
+      min_confirmations       1
+      explorer_address        'https://test.nxtportal.org/accounts/#{address}'
+      explorer_transaction    'https://test.nxtportal.org/transactions/#{txid}'
+      status                  'active'
+    end
   end
 end

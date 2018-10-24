@@ -127,5 +127,27 @@ FactoryBot.define do
       options \
         token_asset_id:           '14653464112776087970'
     end
+
+    trait :wcg do
+      blockchain_key       'wcg-testnet'
+      code                 'wcg'
+      symbol               'W'
+      type                 'coin'
+      base_factor          1_00_000_000
+      quick_withdraw_limit 0.1
+      withdraw_fee         0.01
+    end
+
+    trait :drt do
+      blockchain_key       'wcg-testnet'
+      code                 'drt'
+      symbol               'D'
+      type                 'coin'
+      base_factor          10_000
+      quick_withdraw_limit 0.1
+      withdraw_fee         0.01
+      options \
+        token_asset_id:           '7776054229687920460'
+    end
   end
 end
