@@ -135,12 +135,17 @@ ActiveRecord::Schema.define(version: 20181023073457) do
   add_index "members", ["sn"], name: "index_members_on_sn", unique: true, using: :btree
 
   create_table "operations", force: :cascade do |t|
-    t.integer  "account_id", limit: 4,                                         null: false
-    t.decimal  "debit",                precision: 32, scale: 16, default: 0.0, null: false
-    t.decimal  "credit",               precision: 32, scale: 16, default: 0.0, null: false
-    t.datetime "created_at",                                                   null: false
-    t.datetime "updated_at",                                                   null: false
+    t.integer  "account_id",     limit: 4,                                           null: false
+    t.integer  "reference_id",   limit: 4,                                           null: false
+    t.string   "reference_type", limit: 255,                                         null: false
+    t.decimal  "debit",                      precision: 32, scale: 16, default: 0.0, null: false
+    t.decimal  "credit",                     precision: 32, scale: 16, default: 0.0, null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
   end
+
+  add_index "operations", ["account_id"], name: "index_operations_on_account_id", using: :btree
+  add_index "operations", ["reference_type", "reference_id"], name: "index_operations_on_reference_type_and_reference_id", using: :btree
 
   create_table "orders", force: :cascade do |t|
     t.string   "bid",            limit: 10,                                         null: false
