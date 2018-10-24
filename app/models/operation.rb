@@ -7,10 +7,17 @@ end
 #
 # Table name: operations
 #
-#  id         :integer          not null, primary key
-#  account_id :integer          not null
-#  debit      :decimal(32, 16)  default(0.0), not null
-#  credit     :decimal(32, 16)  default(0.0), not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :integer          not null, primary key
+#  account_id     :integer          not null
+#  reference_id   :integer          not null
+#  reference_type :string(255)      not null
+#  debit          :decimal(32, 16)  default(0.0), not null
+#  credit         :decimal(32, 16)  default(0.0), not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+# Indexes
+#
+#  index_operations_on_account_id                       (account_id)
+#  index_operations_on_reference_type_and_reference_id  (reference_type,reference_id)
 #
