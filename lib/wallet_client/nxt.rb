@@ -30,7 +30,7 @@ module WalletClient
               currency:     wallet.currency.token_currency_id,
               secretPhrase: issuer.fetch(:secret),
               recipient:    normalize_address(recipient.fetch(:address)),
-              units:        convert_to_base_unit!(amount),
+              units:        amount,
               deadline:     60,
               feeNQT:       options.has_key?(:feeNQT) ? options[:feeNQT] : 0,
               broadcast:    options.has_key?(:broadcast) ? options[:broadcast] : true
@@ -47,7 +47,7 @@ module WalletClient
               asset:        wallet.currency.token_asset_id,
               secretPhrase: issuer.fetch(:secret),
               recipient:    normalize_address(recipient.fetch(:address)),
-              quantityQNT:  convert_to_base_unit!(amount),
+              quantityQNT:  amount,
               deadline:     60,
               feeNQT:       options.has_key?(:feeNQT) ? options[:feeNQT] : 0,
               broadcast:    options.has_key?(:broadcast) ? options[:broadcast] : true
@@ -104,7 +104,7 @@ module WalletClient
               requestType:  'sendMoney',
               secretPhrase: issuer.fetch(:secret),
               recipient:    normalize_address(recipient.fetch(:address)),
-              amountNQT:    convert_to_base_unit!(amount),
+              amountNQT:    amount,
               deadline:     60,
               feeNQT:       options.has_key?(:feeNQT) ? options[:feeNQT] : 0,
               broadcast:    options.has_key?(:broadcast) ? options[:broadcast] : true

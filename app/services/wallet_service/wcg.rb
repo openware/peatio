@@ -7,7 +7,7 @@ module WalletService
     private
 
     def default_fee
-      0.01
+      1000000
     end
 
     def txn_fees_wallet
