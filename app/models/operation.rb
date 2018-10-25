@@ -1,3 +1,6 @@
+# encoding: UTF-8
+# frozen_string_literal: true
+
 class Operation < ActiveRecord::Base
   belongs_to :account,   required: true
   belongs_to :reference, polymorphic: true, required: true

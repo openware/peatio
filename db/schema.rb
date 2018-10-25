@@ -21,7 +21,6 @@ ActiveRecord::Schema.define(version: 20181025105206) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "accounts", ["currency_id", "member_id"], name: "index_accounts_on_currency_id_and_member_id", unique: true, using: :btree
   add_index "accounts", ["member_id", "currency_id", "code"], name: "index_accounts_on_member_id_and_currency_id_and_code", unique: true, using: :btree
   add_index "accounts", ["member_id", "currency_id"], name: "index_accounts_on_member_id_and_currency_id", using: :btree
   add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
