@@ -5,7 +5,11 @@ require 'securerandom'
 
 class Member < ActiveRecord::Base
   has_many :orders
-  has_many :accounts
+
+  # This trick is used to display only deposit accounts.
+  has_many :accounts, -> { where(code: Accounting::Chart.deposit_codes) }
+  has_many :all_accounts, class_name: Account
+
   has_many :payment_addresses, through: :accounts
   has_many :withdraws, -> { order(id: :desc) }
   has_many :deposits, -> { order(id: :desc) }
@@ -96,10 +100,11 @@ class Member < ActiveRecord::Base
   alias :ac :get_account
 
   def touch_accounts
-    Currency.find_each do |currency|
-      next if accounts.where(currency: currency).exists?
-      accounts.create!(currency: currency)
-    end
+    Accounting.find_or_create_for(self)
+  end
+
+  def deposit_accounts
+    Accounting.deposit_accounts_for(self)
   end
 
   def auth(name)

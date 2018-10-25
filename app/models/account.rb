@@ -2,9 +2,7 @@
 # frozen_string_literal: true
 
 class Account < ActiveRecord::Base
-  class AccountError < StandardError
-
-  end
+  AccountError = Class.new(StandardError)
 
   include BelongsToCurrency
   include BelongsToMember
@@ -14,8 +12,8 @@ class Account < ActiveRecord::Base
   has_many :operations
   has_many :payment_addresses, -> { order(id: :asc) }
 
-  validates :member_id, uniqueness: { scope: :currency_id }
-  validates :balance, :locked, numericality: { greater_than_or_equal_to: 0.to_d }
+  validates :member_id, uniqueness: { scope: %i[currency_id code] }
+  # validates :balance, :locked, numericality: { greater_than_or_equal_to: 0.to_d }
 
   scope :enabled, -> { joins(:currency).merge(Currency.where(enabled: true)) }
 
@@ -39,18 +37,31 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def balance
+    operations.sum(:credit) - operations.sum(:debit)
+  end
+
+  def locked_account
+    Account.find_by(
+      member_id: member_id,
+      currency_id: currency_id,
+      code: Accounting::Chart.locked_codes
+    )
+  end
+
+  def locked
+    # Delegate locked computation to account with locked funds.
+    locked_account.balance
+  end
+
   def plus_funds!(amount)
-    update_columns((attributes_after_plus_funds!(amount)))
+    Operation.create!(credit: amount, reference: Deposit.first, account: self)
   end
 
   def plus_funds(amount)
+    raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
     with_lock { plus_funds!(amount) }
     self
-  end
-
-  def attributes_after_plus_funds!(amount)
-    raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
-    { balance: balance + amount }
   end
 
   def sub_funds!(amount)
@@ -116,26 +127,27 @@ class Account < ActiveRecord::Base
   def as_json(*)
     super.merge! \
       deposit_address: payment_address&.address,
-      currency:        currency_id
+      currency:        currency_id,
+      balance:         balance,
+      locked:          locked
   end
 end
 
 # == Schema Information
-# Schema version: 20181023073457
+# Schema version: 20181025105206
 #
 # Table name: accounts
 #
 #  id          :integer          not null, primary key
 #  member_id   :integer          not null
 #  currency_id :string(10)       not null
-#  code        :integer
-#  balance     :decimal(32, 16)  default(0.0), not null
-#  locked      :decimal(32, 16)  default(0.0), not null
+#  code        :integer          not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
 # Indexes
 #
-#  index_accounts_on_currency_id_and_member_id  (currency_id,member_id) UNIQUE
-#  index_accounts_on_member_id                  (member_id)
+#  index_accounts_on_member_id                           (member_id)
+#  index_accounts_on_member_id_and_currency_id           (member_id,currency_id)
+#  index_accounts_on_member_id_and_currency_id_and_code  (member_id,currency_id,code) UNIQUE
 #
