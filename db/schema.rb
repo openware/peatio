@@ -11,19 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181023073457) do
+ActiveRecord::Schema.define(version: 20181025105206) do
 
   create_table "accounts", force: :cascade do |t|
-    t.integer  "member_id",   limit: 4,                                          null: false
-    t.string   "currency_id", limit: 10,                                         null: false
-    t.integer  "code",        limit: 3
-    t.decimal  "balance",                precision: 32, scale: 16, default: 0.0, null: false
-    t.decimal  "locked",                 precision: 32, scale: 16, default: 0.0, null: false
-    t.datetime "created_at",                                                     null: false
-    t.datetime "updated_at",                                                     null: false
+    t.integer  "member_id",   limit: 4,  null: false
+    t.string   "currency_id", limit: 10, null: false
+    t.integer  "code",        limit: 3,  null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   add_index "accounts", ["currency_id", "member_id"], name: "index_accounts_on_currency_id_and_member_id", unique: true, using: :btree
+  add_index "accounts", ["member_id", "currency_id", "code"], name: "index_accounts_on_member_id_and_currency_id_and_code", unique: true, using: :btree
+  add_index "accounts", ["member_id", "currency_id"], name: "index_accounts_on_member_id_and_currency_id", using: :btree
   add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
 
   create_table "authentications", force: :cascade do |t|
