@@ -53,18 +53,14 @@ module WalletService
           break if left_amount == 0
           wallet_balance = client.load_balance!(wallet.address)
           amount_for_wallet = [wallet.max_balance - wallet_balance, left_amount].min
-          # TODO: amount_for_wallet <= currency.min_deposit_amount
           next if amount_for_wallet <= 0
           left_amount -= amount_for_wallet
           # If amount left is too small we will not able to collect it.
           # So we collect everything to current wallet.
-          #
-          # NOTE: Uncomment once we merge min_deposit_amount
-          #
-          # if left_amount < currency.min_deposit_amount
-          #   amount_for_wallet += left_amount
-          #   left_amount = 0
-          # end
+          if left_amount < currency.min_collection_amount
+            amount_for_wallet += left_amount
+            left_amount = 0
+          end
           collection_spread[wallet.address] = amount_for_wallet
       end
       # If deposit doesn't fit to any wallet collect it to last wallet.
@@ -72,6 +68,9 @@ module WalletService
       if left_amount > 0
         collection_spread[destination_wallets(deposit).last.address] += left_amount
         left_amount = 0
+      end
+      unless collection_spread.values.sum == deposit.amount
+        raise Error, "Wrong deposit collection sum"
       end
       collection_spread
     end

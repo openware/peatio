@@ -30,12 +30,12 @@ module WalletService
     end
 
     def deposit_collection_fees(deposit, value=DEFAULT_ERC20_FEE_VALUE, options={})
-      fees_wallet = erc20_fee_wallet
+      fee_wallet = erc20_fee_wallet
       destination_address = deposit.account.payment_address.address
       options = DEFAULT_ETH_FEE.merge options
 
       client.create_eth_withdrawal!(
-        { address: fees_wallet.address, secret: fees_wallet.secret },
+        { address: fee_wallet.address, secret: fee_wallet.secret },
         { address: destination_address },
         value,
         options
@@ -47,7 +47,6 @@ module WalletService
     def erc20_fee_wallet
       Wallet
         .active
-        .withdraw
         .find_by(currency_id: :eth, kind: :fee)
     end
 

@@ -12,6 +12,7 @@ describe WalletService::Geth do
   let(:deposit_wallet) { Wallet.find_by(currency: :eth, kind: :deposit) }
   let(:hot_wallet) { Wallet.find_by(currency: :eth, kind: :hot) }
   let(:warm_wallet) { Wallet.find_by(currency: :eth, kind: :warm) }
+  let(:fee_wallet) { Wallet.find_by(currency: 'eth', kind: 'fee') }
   let(:eth_options) { { gas_limit: 21_000, gas_price: 1_000_000_000 } }
 
   describe '#create_address' do
@@ -249,7 +250,7 @@ describe WalletService::Geth do
     let(:deposit) { create(:deposit_trst, amount: 10) }
     let(:trst_payment_address) { deposit.account.payment_address }
 
-    let(:issuer) { { address: hot_wallet.address.downcase, secret: hot_wallet.secret } }
+    let(:issuer) { { address: fee_wallet.address.downcase, secret: fee_wallet.secret } }
     let(:recipient) { { address: trst_payment_address.address.downcase } }
 
     let!(:payment_address) do

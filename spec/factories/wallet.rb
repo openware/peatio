@@ -60,6 +60,20 @@ FactoryBot.define do
       secret             'changeme'
     end
 
+    trait :eth_fee do
+      currency_id        'eth'
+      blockchain_key     'eth-rinkeby'
+      name               'Ethereum Fee Wallet'
+      address            '0x45a31b15a2ab8a8477375b36b6f5a0c63733dce8'
+      kind               'fee'
+      max_balance        1000.0
+      nsig               2
+      status             'active'
+      gateway            'geth'
+      uri                'http://127.0.0.1:8545'
+      secret             'changeme'
+    end
+
     trait :trst_deposit do
       currency_id        'trst'
       blockchain_key     'eth-rinkeby'

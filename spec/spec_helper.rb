@@ -90,7 +90,7 @@ RSpec.configure do |config|
     I18n.locale = :en
     %w[ eth-rinkeby btc-testnet dash-testnet ltc-testnet bch-testnet xrp-testnet ].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
     %i[ usd btc dash eth xrp trst bch eur ltc ].each { |ccy| FactoryBot.create(:currency, ccy) }
-    %i[ eth_deposit eth_hot trst_deposit trst_hot btc_hot btc_deposit bch_deposit bch_hot dash_deposit dash_hot ltc_deposit ltc_hot xrp_deposit xrp_hot eth_warm ]
+    %i[ eth_deposit eth_hot eth_fee trst_deposit trst_hot btc_hot btc_deposit bch_deposit bch_hot dash_deposit dash_hot ltc_deposit ltc_hot xrp_deposit xrp_hot eth_warm ]
         .each { |ccy| FactoryBot.create(:wallet, ccy) }
     %i[ btcusd dashbtc btceth btcxrp ].each { |market| FactoryBot.create(:market, market) }
     %i[ deposit_bch deposit_dash deposit_ltc deposit_eth deposit_trst deposit_xrp ].each { |deposit| FactoryBot.create(:deposit, deposit) }

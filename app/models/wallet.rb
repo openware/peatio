@@ -8,7 +8,7 @@ class Wallet < ActiveRecord::Base
   # We use this attribute values rules for wallet kinds:
   # 1** - for deposit wallets.
   # 2** - for withdraw wallets (sorted by security hot < warm < cold).
-  ENUMERIZED_KINDS = { deposit: 100, hot: 210, warm: 220, cold: 230 }.freeze
+  ENUMERIZED_KINDS = { deposit: 100, hot: 210, warm: 220, cold: 230, fee: 100 }.freeze
   enumerize :kind, in: ENUMERIZED_KINDS, scope: true
 
   GATEWAYS = %w[bitcoind bitcoincashd litecoind geth dashd rippled bitgo].freeze
