@@ -148,8 +148,8 @@ module Matching
       # outcome_account.assign_attributes outcome_account.attributes_after_unlock_and_sub_funds!(outcome_value)
       # income_account.assign_attributes income_account.attributes_after_plus_funds!(real_income_value)
 
-      outcome_account.unlock_and_sub_funds outcome_value
-      income_account.plus_funds real_income_value
+      outcome_account.unlock_and_sub_funds(outcome_value, trade)
+      income_account.plus_funds(real_income_value, trade)
 
 
       order.volume         -= trade.volume
@@ -162,7 +162,7 @@ module Matching
 
         # Unlock not used funds.
         unless order.locked.zero?
-          outcome_account.assign_attributes outcome_account.attributes_after_unlock_funds!(order.locked)
+          outcome_account.assign_attributes outcome_account.unlock_funds(order.locked, trade)
         end
       elsif order.ord_type == 'market' && order.locked.zero?
         # Partially filled market order has run out it's locked funds.

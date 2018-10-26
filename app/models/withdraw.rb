@@ -130,15 +130,15 @@ class Withdraw < ActiveRecord::Base
 private
 
   def lock_funds
-    account.lock_funds(sum)
+    account.lock_funds(sum, self)
   end
 
   def unlock_funds
-    account.unlock_funds(sum)
+    account.unlock_funds(sum, self)
   end
 
   def unlock_and_sub_funds
-    account.unlock_and_sub_funds(sum)
+    account.unlock_and_sub_funds(sum, self)
   end
 
   def send_coins!

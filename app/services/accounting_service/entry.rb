@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module Accounting
+module AccountingService
   class Entry
     attr_accessor :reference, :debits, :credits
 
