@@ -33,7 +33,7 @@ private
     order.fix_number_precision # number must be fixed before computing locked
     order.locked = order.origin_locked = order.compute_locked
     order.save!
-    order.hold_account!.lock_funds!(order.locked)
+    order.hold_account!.lock_funds(order.locked, order)
   end
 
   def do_cancel(order)
@@ -43,7 +43,7 @@ private
   def do_cancel!(order)
     order.with_lock do
       return unless order.state == Order::WAIT
-      order.hold_account!.unlock_funds!(order.locked)
+      order.hold_account!.unlock_funds(order.locked, order)
       order.update!(state: Order::CANCEL)
     end
   end

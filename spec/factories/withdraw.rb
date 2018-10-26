@@ -8,13 +8,6 @@ FactoryBot.define do
     rid { Faker::Bitcoin.address }
     sum { 10.to_d }
     type 'Withdraws::Coin'
-
-    account do
-      member.get_account(:btc).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :usd_withdraw, class: Withdraws::Fiat do
@@ -23,13 +16,6 @@ FactoryBot.define do
     rid { Faker::Bank.iban }
     sum { 1000.to_d }
     type 'Withdraws::Fiat'
-
-    account do
-      member.get_account(:usd).tap do |a|
-        a.balance = 50_000
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :eth_withdraw, class: Withdraws::Coin do

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module Accounting
+module AccountingService
   Error = Class.new(StandardError)
 
   class << self
@@ -14,7 +14,7 @@ module Accounting
 
     def create_member_accounts(member)
       Currency.find_each do |currency|
-        Accounting::Chart.codes_for(currency).each do |code|
+        AccountingService::Chart.codes_for(currency).each do |code|
           Account.find_or_create_by!(
             member:    member,
             currency:  currency,

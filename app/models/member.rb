@@ -7,7 +7,7 @@ class Member < ActiveRecord::Base
   has_many :orders
 
   # This trick is used to display only deposit accounts.
-  has_many :accounts, -> { where(code: Accounting::Chart.deposit_codes) }
+  has_many :accounts, -> { where(code: AccountingService::Chart.deposit_codes) }
   has_many :all_accounts, class_name: Account
 
   has_many :payment_addresses, through: :accounts
@@ -100,11 +100,11 @@ class Member < ActiveRecord::Base
   alias :ac :get_account
 
   def touch_accounts
-    Accounting.find_or_create_for(self)
+    AccountingService.find_or_create_for(self)
   end
 
   def deposit_accounts
-    Accounting.deposit_accounts_for(self)
+    AccountingService.deposit_accounts_for(self)
   end
 
   def auth(name)

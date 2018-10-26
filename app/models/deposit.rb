@@ -64,7 +64,7 @@ class Deposit < ActiveRecord::Base
   end
 
   def plus_funds
-    account.plus_funds(amount)
+    account.plus_funds(amount, self)
   end
 
   def collect!

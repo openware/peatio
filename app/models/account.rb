@@ -41,83 +41,73 @@ class Account < ActiveRecord::Base
     operations.sum(:credit) - operations.sum(:debit)
   end
 
+  # TODO: Rename this method.
   def locked_account
+    return self if code.in?(AccountingService::Chart.locked_codes)
     Account.find_by(
       member_id: member_id,
       currency_id: currency_id,
-      code: Accounting::Chart.locked_codes
+      code: AccountingService::Chart.locked_codes
     )
   end
 
   def locked
-    # Delegate locked computation to account with locked funds.
-    locked_account.balance
+    # Delegate computation of locked funds to account with locked_code.
+    if code.in?(AccountingService::Chart.locked_codes)
+      balance
+    else
+      locked_account.locked
+    end
   end
 
-  def plus_funds!(amount)
-    Operation.create!(credit: amount, reference: Deposit.first, account: self)
+  def lock_operations
+    operations.lock
   end
 
-  def plus_funds(amount)
+  def with_balance_check!
+    transaction do
+      yield
+      # TODO: Custom Exception message.
+      raise AccountError, "Cannot create operation" if balance < 0
+    end
+  end
+
+  def plus_funds(amount, reference)
     raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
-    with_lock { plus_funds!(amount) }
+    with_balance_check! do
+      operations.create!(credit: amount, reference: reference)
+    end
     self
   end
 
-  def sub_funds!(amount)
-    update_columns(attributes_after_sub_funds!(amount))
-  end
-
-  def sub_funds(amount)
-    with_lock { sub_funds!(amount) }
+  def lock_funds(amount, reference)
+    with_balance_check! do
+      operations.create!(debit: amount, reference: reference)
+      locked_account.plus_funds(amount, reference)
+    end
     self
   end
 
-  def attributes_after_sub_funds!(amount)
-    raise AccountError, "Cannot subtract funds (amount: #{amount})." if amount <= ZERO || amount > balance
-    { balance: balance - amount }
-  end
-
-  def lock_funds!(amount)
-    update_columns(attributes_after_lock_funds!(amount))
-  end
-
-  def lock_funds(amount)
-    with_lock { lock_funds!(amount) }
+  def unlock_funds(amount, reference)
+    with_balance_check! do
+      locked_account.sub_funds(amount, reference)
+      operations.create!(debit: amount, reference: reference)
+    end
     self
   end
 
-  def attributes_after_lock_funds!(amount)
-    raise AccountError, "Cannot lock funds (amount: #{amount})." if amount <= ZERO || amount > balance
-    { balance: balance - amount, locked: locked + amount }
-  end
-
-  def unlock_funds!(amount)
-    update_columns(attributes_after_unlock_funds!(amount))
-  end
-
-  def unlock_funds(amount)
-    with_lock { unlock_funds!(amount) }
+  def sub_funds(amount, reference)
+    with_balance_check! do
+      operations.create!(debit: amount, reference: reference)
+    end
     self
-  end
-
-  def attributes_after_unlock_funds!(amount)
-    raise AccountError, "Cannot unlock funds (amount: #{amount})." if amount <= ZERO || amount > locked
-    { balance: balance + amount, locked: locked - amount }
-  end
-
-  def unlock_and_sub_funds!(amount)
-    update_columns(attributes_after_unlock_and_sub_funds!(amount))
   end
 
   def unlock_and_sub_funds(amount)
-    with_lock { unlock_and_sub_funds!(amount) }
+    with_balance_check! do
+      locked_account.sub_funds(amount, reference)
+    end
     self
-  end
-
-  def attributes_after_unlock_and_sub_funds!(amount)
-    raise AccountError, "Cannot unlock funds (amount: #{amount})." if amount <= ZERO || amount > locked
-    { locked: locked - amount }
   end
 
   def amount
