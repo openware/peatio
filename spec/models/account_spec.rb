@@ -2,15 +2,36 @@
 # frozen_string_literal: true
 
 describe Account do
-  subject { create_account(:btc, balance: '10.0'.to_d, locked: '10.0'.to_d) }
+  let(:initial_balance) { 10.0 }
+  let(:initial_locked) { 10.0 }
 
-  it { expect(subject.amount).to be_d '20' }
-  it { expect(subject.sub_funds('1.0'.to_d).balance).to eql '9.0'.to_d }
-  it { expect(subject.plus_funds('1.0'.to_d).balance).to eql '11.0'.to_d }
-  it { expect(subject.unlock_funds('1.0'.to_d).locked).to eql '9.0'.to_d }
-  it { expect(subject.unlock_funds('1.0'.to_d).balance).to eql '11.0'.to_d }
-  it { expect(subject.lock_funds('1.0'.to_d).locked).to eql '11.0'.to_d }
-  it { expect(subject.lock_funds('1.0'.to_d).balance).to eql '9.0'.to_d }
+  subject { create_account(:btc, balance: initial_balance, locked: initial_locked) }
+
+  it 'sums locked and balance' do
+    expect(subject.amount).to be_d initial_balance + initial_locked
+  end
+
+  context 'operation amount less than account balance' do
+    let(:deposit) { create(:deposit_btc, amount: 1, member: subject.member) }
+    let(:withdraw) { create(:btc_withdraw, sum: 0.5, member: subject.member) }
+
+    it 'creates operation and as result subs funds' do
+      expect{
+        subject.sub_funds(withdraw.sum, withdraw)
+      }.to change{ subject.operations.count }
+
+      expect(subject.balance).to eql(initial_balance - withdraw.sum.to_d)
+    end
+
+    # it 'plus funds' do
+    #   expect(subject.plus_funds('1.0'.to_d, reference).balance).to eql '11.0'.to_d }
+    #
+    # end
+    # it { expect(subject.unlock_funds('1.0'.to_d, reference).locked).to eql '9.0'.to_d }
+    # it { expect(subject.unlock_funds('1.0'.to_d).balance).to eql '11.0'.to_d }
+    # it { expect(subject.lock_funds('1.0'.to_d).locked).to eql '11.0'.to_d }
+    # it { expect(subject.lock_funds('1.0'.to_d).balance).to eql '9.0'.to_d }
+  end
 
   it { expect(subject.unlock_and_sub_funds('1.0'.to_d).balance).to be_d '10' }
   it { expect(subject.unlock_and_sub_funds('1.0'.to_d).locked).to be_d '9' }

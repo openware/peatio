@@ -13,6 +13,13 @@ FactoryBot.define do
       txout { 0 }
     end
 
+    factory :deposit_dash, class: 'Deposits::Coin' do
+      currency { Currency.find(:dash) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
     factory :deposit_usd, class: 'Deposits::Fiat' do
       currency { Currency.find(:usd) }
     end
