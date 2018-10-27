@@ -4,18 +4,6 @@
 module AccountingService
   # Chart is singleton class.
   class Chart
-
-    PLATFORM_ACCOUNTS = {
-      #
-      101 => 'Fiat Assets Account',
-      102 => 'Crypto Assets Account',
-      #
-      310 => 'Fees Revenue Account',
-      #
-      570 => 'Blockchain Fees Expenses'
-      #
-    }
-
     CHART = [
       { code:           201,
         type:           :liabilities,
@@ -30,7 +18,7 @@ module AccountingService
         currency_type:  :coin,
         description:    'Main Crypto Liabilities Account',
         scope:          %i[member]
-    },
+      },
       { code:           211,
         type:           :liabilities,
         kind:           :locked,
@@ -46,6 +34,13 @@ module AccountingService
         scope:          %i[member]
       }
     ].map { |h| OpenStruct.new(h) }
+
+    class << self
+      # TODO: Passing scope to options doesn't work.
+      def where(options)
+        CHART.select { |entry| entry.to_h.merge(options) == entry.to_h }
+      end
+    end
 
     attr_accessor :chart
 
