@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181025105206) do
+ActiveRecord::Schema.define(version: 20181027173222) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,  null: false
@@ -221,7 +221,6 @@ ActiveRecord::Schema.define(version: 20181025105206) do
   end
 
   create_table "withdraws", force: :cascade do |t|
-    t.integer  "account_id",   limit: 4,                             null: false
     t.integer  "member_id",    limit: 4,                             null: false
     t.string   "currency_id",  limit: 10,                            null: false
     t.decimal  "amount",                   precision: 32, scale: 16, null: false
@@ -239,7 +238,6 @@ ActiveRecord::Schema.define(version: 20181025105206) do
   end
 
   add_index "withdraws", ["aasm_state"], name: "index_withdraws_on_aasm_state", using: :btree
-  add_index "withdraws", ["account_id"], name: "index_withdraws_on_account_id", using: :btree
   add_index "withdraws", ["currency_id", "txid"], name: "index_withdraws_on_currency_id_and_txid", unique: true, using: :btree
   add_index "withdraws", ["currency_id"], name: "index_withdraws_on_currency_id", using: :btree
   add_index "withdraws", ["member_id"], name: "index_withdraws_on_member_id", using: :btree
