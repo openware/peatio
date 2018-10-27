@@ -5,7 +5,6 @@ module AccountingService
   # Chart is singleton class.
   class Chart
 
-    # Should be Chart::Entry.
     PLATFORM_ACCOUNTS = {
       #
       101 => 'Fiat Assets Account',
@@ -17,33 +16,64 @@ module AccountingService
       #
     }
 
-    MEMBER_ACCOUNTS = {
-      201 => 'Fiat Liabilities Account',
-      202 => 'Crypto Liabilities Account',
+    CHART = [
+      { code:           201,
+        type:           :liabilities,
+        kind:           :main,
+        currency_type:  :fiat,
+        description:    'Main Fiat Liabilities Account',
+        scope:          %i[member]
+      },
+      { code:           202,
+        type:           :liabilities,
+        kind:           :main,
+        currency_type:  :coin,
+        description:    'Main Crypto Liabilities Account',
+        scope:          %i[member]
+    },
+      { code:           211,
+        type:           :liabilities,
+        kind:           :locked,
+        currency_type:  :fiat,
+        description:    'Locked Fiat Liabilities Account',
+        scope:          %i[member]
+      },
+      { code:           212,
+        type:           :liabilities,
+        kind:           :locked,
+        currency_type:  :coin,
+        description:    'Locked Crypto Liabilities Account',
+        scope:          %i[member]
+      }
+    ].map { |h| OpenStruct.new(h) }
 
-      211 => 'Locked Fiat Liabilities',
-      212 => 'Locked Crypto Liabilities'
-    }
+    attr_accessor :chart
 
-    def chart
-      PLATFORM_ACCOUNTS.merge(MEMBER_ACCOUNTS)
+    def initialize(owner:, currency_id:)
+      @chart = chart_for(owner, currency_id)
     end
 
-    def codes
-      chart.keys
+    def codes(options={})
+      chart
+        .select { |entry| entry.merge(options) == entry }
+        .map(&:code)
     end
 
-    class << self
-      def codes_for(currency)
-        currency.fiat? ? [201, 211] : [202, 212]
-      end
+    def main_codes
 
-      def deposit_codes
-        [201, 202]
-      end
+    end
 
-      def locked_codes
-        [211, 212]
+    def locked_codes
+
+    end
+
+    private
+
+    def chart_for(owner, currency_id)
+      currency = Currency.find(currency_id)
+      CHART.select do |entry|
+        owner.type.in?(entry.scope)\
+        && entry.currency_type == currency.type.to_sym
       end
     end
   end

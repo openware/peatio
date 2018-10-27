@@ -15,7 +15,7 @@ describe Account do
     let(:deposit) { create(:deposit_btc, amount: 1, member: subject.member) }
     let(:withdraw) { create(:btc_withdraw, sum: 0.5, member: subject.member) }
 
-    it 'creates operation and as result subs funds' do
+    it 'creates operation and debit funds' do
       expect{
         subject.sub_funds(withdraw.sum, withdraw)
       }.to change{ subject.operations.count }
@@ -23,10 +23,14 @@ describe Account do
       expect(subject.balance).to eql(initial_balance - withdraw.sum.to_d)
     end
 
-    # it 'plus funds' do
-    #   expect(subject.plus_funds('1.0'.to_d, reference).balance).to eql '11.0'.to_d }
-    #
-    # end
+    it 'creates operation and credit funds' do
+      expect{
+        subject.plus_funds(deposit.amount, deposit)
+      }.to change{ subject.operations.count }
+
+      expect(subject.balance).to eql(initial_balance + deposit.amount.to_d)
+    end
+
     # it { expect(subject.unlock_funds('1.0'.to_d, reference).locked).to eql '9.0'.to_d }
     # it { expect(subject.unlock_funds('1.0'.to_d).balance).to eql '11.0'.to_d }
     # it { expect(subject.lock_funds('1.0'.to_d).locked).to eql '11.0'.to_d }

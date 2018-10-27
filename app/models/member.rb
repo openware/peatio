@@ -91,6 +91,10 @@ class Member < ActiveRecord::Base
     @is_admin ||= self.class.admins.include?(self.email)
   end
 
+  def type
+    :member
+  end
+
   def get_account(model_or_id_or_code)
     accounts.with_currency(model_or_id_or_code).first.yield_self do |account|
       touch_accounts unless account
@@ -100,11 +104,9 @@ class Member < ActiveRecord::Base
   alias :ac :get_account
 
   def touch_accounts
-    AccountingService.find_or_create_for(self)
-  end
-
-  def deposit_accounts
-    AccountingService.deposit_accounts_for(self)
+    Currency.pluck(:id).map do |currency_id|
+      AccountingService.find_or_create_for(self, currency_id)
+    end
   end
 
   def auth(name)
