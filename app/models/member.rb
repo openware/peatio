@@ -7,7 +7,7 @@ class Member < ActiveRecord::Base
   has_many :orders
 
   # This trick is used to display only deposit accounts.
-  has_many :accounts, -> { where(code: AccountingService::Chart.deposit_codes) }
+  has_many :accounts, -> { where(code: [201, 202]) }
   has_many :all_accounts, class_name: Account
 
   has_many :payment_addresses, through: :accounts
@@ -95,11 +95,14 @@ class Member < ActiveRecord::Base
     :member
   end
 
-  def get_account(model_or_id_or_code)
-    accounts.with_currency(model_or_id_or_code).first.yield_self do |account|
-      touch_accounts unless account
-      accounts.with_currency(model_or_id_or_code).first
-    end
+  def get_account(model_or_code)
+    currency_id =
+      case model_or_code
+      when Currency then model_or_code.code
+      else model_or_code
+      end
+
+    AccountingService.find_or_create_for(self, currency_id)
   end
   alias :ac :get_account
 
