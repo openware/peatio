@@ -5,27 +5,11 @@ module AccountingService
   Error = Class.new(StandardError)
 
   class << self
-    def find_or_create_for(member)
-      create_member_accounts(member)
-      Account.where(member: member)
-    end
-
-    private
-
-    def create_member_accounts(member)
-      Currency.find_each do |currency|
-        AccountingService::Chart.codes_for(currency).each do |code|
-          Account.find_or_create_by!(
-            member:    member,
-            currency:  currency,
-            code:      code
-          )
-        end
-      end
-    end
-
-    def create_platform_accounts(member)
-      # TODO:
+    def find_or_create_for(owner, currency_id)
+      "AccountingService::#{owner.type.capitalize}Entry"
+        .constantize
+        .new(owner: owner, currency_id: currency_id)
+        .initialize_accounts!
     end
   end
 end
