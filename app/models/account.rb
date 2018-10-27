@@ -37,82 +37,72 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def balance
-    operations.sum(:credit) - operations.sum(:debit)
-  end
+  # def balance
+  #   operations.sum(:credit) - operations.sum(:debit)
+  # end
 
   # TODO: Rename this method.
-  def locked_account
-    return self if code.in?(AccountingService::Chart.locked_codes)
-    Account.find_by(
-      member_id: member_id,
-      currency_id: currency_id,
-      code: AccountingService::Chart.locked_codes
-    )
-  end
+  # def locked_account
+  #   return self if code.in?(AccountingService::Chart.locked_codes)
+  #   Account.find_by(
+  #     member_id: member_id,
+  #     currency_id: currency_id,
+  #     code: AccountingService::Chart.locked_codes
+  #   )
+  # end
 
-  def locked
-    # Delegate computation of locked funds to account with locked_code.
-    if code.in?(AccountingService::Chart.locked_codes)
-      balance
-    else
-      locked_account.locked
-    end
-  end
+  # def locked
+  #   # Delegate computation of locked funds to account with locked_code.
+  #   if code.in?(AccountingService::Chart.locked_codes)
+  #     balance
+  #   else
+  #     locked_account.locked
+  #   end
+  # end
 
-  def lock_operations
-    operations.lock
-  end
 
-  def with_balance_check!
-    transaction do
-      yield
-      # TODO: Custom Exception message.
-      raise AccountError, "Cannot create operation" if balance < 0
-    end
-  end
 
-  def plus_funds(amount, reference)
-    raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
-    with_balance_check! do
-      operations.create!(credit: amount, reference: reference)
-    end
-    self
-  end
+  # def plus_funds(amount, reference)
+  #   raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
+  #   with_balance_check! do
+  #     account(kind: :main).operations.create!(credit: amount, reference: reference)
+  #   end
+  #   self
+  # end
 
-  def lock_funds(amount, reference)
-    with_balance_check! do
-      operations.create!(debit: amount, reference: reference)
-      locked_account.plus_funds(amount, reference)
-    end
-    self
-  end
+  # def lock_funds(amount, reference)
+  #   with_balance_check! do
+  #     operations.create!(debit: amount, reference: reference)
+  #     locked_account.plus_funds(amount, reference)
+  #   end
+  #   self
+  # end
 
-  def unlock_funds(amount, reference)
-    with_balance_check! do
-      locked_account.sub_funds(amount, reference)
-      operations.create!(debit: amount, reference: reference)
-    end
-    self
-  end
+  # def unlock_funds(amount, reference)
+  #   with_balance_check! do
+  #     locked_account.sub_funds(amount, reference)
+  #     operations.create!(debit: amount, reference: reference)
+  #   end
+  #   self
+  # end
 
-  def sub_funds(amount, reference)
-    with_balance_check! do
-      operations.create!(debit: amount, reference: reference)
-    end
-    self
-  end
+  # def sub_funds(amount, reference)
+  #   with_balance_check! do
+  #     operations.create!(debit: amount, reference: reference)
+  #   end
+  #   self
+  # end
+  #
+  # def unlock_and_sub_funds(amount)
+  #   with_balance_check! do
+  #     locked_account.sub_funds(amount, reference)
+  #   end
+  #   self
+  # end
 
-  def unlock_and_sub_funds(amount)
-    with_balance_check! do
-      locked_account.sub_funds(amount, reference)
-    end
-    self
-  end
-
-  def amount
-    balance + locked
-  end
+  # def amount
+  #   balance + locked
+  # end
 
   def as_json(*)
     super.merge! \

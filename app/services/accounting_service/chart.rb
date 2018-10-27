@@ -55,16 +55,8 @@ module AccountingService
 
     def codes(options={})
       chart
-        .select { |entry| entry.merge(options) == entry }
+        .select { |entry| entry.to_h.merge(options) == entry.to_h }
         .map(&:code)
-    end
-
-    def main_codes
-
-    end
-
-    def locked_codes
-
     end
 
     private
