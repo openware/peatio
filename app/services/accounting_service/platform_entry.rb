@@ -3,6 +3,5 @@
 
 module AccountingService
   class PlatformEntry < MemberEntry
-
   end
 end
