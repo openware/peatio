@@ -42,6 +42,10 @@ module AccountingService
       }
     end
 
+    def operations
+      Operation.where(account_id: accounts.ids)
+    end
+
     def initialize_accounts!
       chart.codes.map do |code|
         Account.find_or_create_by!(
@@ -66,9 +70,7 @@ module AccountingService
     def amount; balance + locked; end
 
     def plus_funds(amount, reference)
-      if amount <= AccountingService::ZERO
-        raise Account::AccountError, "Cannot add funds (amount: #{amount})."
-      end
+      validate_amount!(amount)
 
       with_balance_check! do
         main_account.operations.create!(credit: amount, reference: reference)
@@ -77,6 +79,8 @@ module AccountingService
     end
 
     def lock_funds(amount, reference)
+      validate_amount!(amount)
+
       with_balance_check! do
         main_account.operations.create!(debit: amount, reference: reference)
         locked_account.operations.create!(credit: amount, reference: reference)
@@ -85,14 +89,18 @@ module AccountingService
     end
 
     def unlock_funds(amount, reference)
+      validate_amount!(amount)
+
       with_balance_check! do
         locked_account.operations.create!(debit: amount, reference: reference)
-        main_account.operations.create!(debit: amount, reference: reference)
+        main_account.operations.create!(credit: amount, reference: reference)
       end
       self
     end
 
     def unlock_and_sub_funds(amount, reference)
+      validate_amount!(amount)
+
       with_balance_check! do
         locked_account.operations.create!(debit: amount, reference: reference)
       end
@@ -116,6 +124,10 @@ module AccountingService
         # TODO: AccountingService::Error.
         raise Account::AccountError, "Cannot create operation" if balance < 0
       end
+    end
+
+    def validate_amount!(amount)
+      raise Account::AccountError, "Amount can't be negative (amount: #{amount})."
     end
   end
 end
