@@ -37,8 +37,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-
-
   # TODO: Rename this method.
   # def locked_account
   #   return self if code.in?(AccountingService::Chart.locked_codes)
