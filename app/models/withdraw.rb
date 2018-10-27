@@ -18,13 +18,11 @@ class Withdraw < ActiveRecord::Base
   include AASM::Locking
   include BelongsToCurrency
   include BelongsToMember
-  include BelongsToAccount
   include TIDIdentifiable
   include FeeChargeable
 
   acts_as_eventable prefix: 'withdraw', on: %i[create update]
 
-  before_validation(on: :create) { self.account ||= member&.ac(currency) }
   before_validation { self.completed_at ||= Time.current if completed? }
 
   validates :rid, :aasm_state, presence: true
@@ -127,6 +125,10 @@ class Withdraw < ActiveRecord::Base
       blockchain_txid: txid }
   end
 
+  def account
+    member&.ac(currency)
+  end
+
 private
 
   def lock_funds
@@ -147,12 +149,11 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180925123806
+# Schema version: 20181027173222
 #
 # Table name: withdraws
 #
 #  id           :integer          not null, primary key
-#  account_id   :integer          not null
 #  member_id    :integer          not null
 #  currency_id  :string(10)       not null
 #  amount       :decimal(32, 16)  not null
@@ -171,7 +172,6 @@ end
 # Indexes
 #
 #  index_withdraws_on_aasm_state            (aasm_state)
-#  index_withdraws_on_account_id            (account_id)
 #  index_withdraws_on_currency_id           (currency_id)
 #  index_withdraws_on_currency_id_and_txid  (currency_id,txid) UNIQUE
 #  index_withdraws_on_member_id             (member_id)
