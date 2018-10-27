@@ -84,21 +84,20 @@ class Currency < ActiveRecord::Base
   types.each { |t| define_method("#{t}?") { type == t.to_s } }
 
   def as_json(*)
-    { code:                     code,
-      coin:                     coin?,
-      fiat:                     fiat? }
+    { code: code,
+      coin: coin?,
+      fiat: fiat? }
   end
 
   def summary
-    # locked  = Account.with_currency(code).sum(:locked)
-    # balance = Account.with_currency(code).sum(:balance)
-    # { name:     id.upcase,
-    #   sum:      locked + balance,
-    #   balance:  balance,
-    #   locked:   locked,
-    #   coinable: coin?,
-    #   hot:      coin? ? balance : nil }
-    {}
+    locked = AccountingService.locked_assets_for(id)
+    balance = AccountingService.assets_for(id)
+    { name:     id.upcase,
+      sum:      locked + balance,
+      balance:  balance,
+      locked:   locked,
+      coinable: coin?,
+      hot:      coin? ? balance : nil }
   end
 
   class << self
