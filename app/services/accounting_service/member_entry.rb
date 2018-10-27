@@ -16,6 +16,32 @@ module AccountingService
         AccountingService::Chart.new(owner: owner, currency_id: currency_id)
     end
 
+    # @deprecated This method added for compatibility with Account.
+    def currency
+      Currency.find_by_id(currency_id)
+    end
+
+    # @deprecated This method added for compatibility with Account.
+    def member
+      owner
+    end
+
+    memoize :currency, :member
+
+    # @deprecated This method added for compatibility with Account.
+    def as_json(*)
+      # super.merge! \
+      # deposit_address: payment_address&.address,
+      # currency:        currency_id,
+      # balance:         balance,
+      # locked:          locked
+      {
+        currency:        currency_id,
+        balance:         balance,
+        locked:          locked
+      }
+    end
+
     def initialize_accounts!
       chart.codes.map do |code|
         Account.find_or_create_by!(
@@ -24,6 +50,7 @@ module AccountingService
           code:         code
         )
       end
+      Account.where(currency_id: currency_id, member: owner)
     end
 
     def balance
@@ -38,21 +65,11 @@ module AccountingService
 
     def amount; balance + locked; end
 
-    def as_json(*)
-      # super.merge! \
-      # deposit_address: payment_address&.address,
-      # currency:        currency_id,
-      # balance:         balance,
-      # locked:          locked
-      {
-        currency:        currency_id,
-        balance:         balance,
-        locked:          locked
-      }
-    end
-
     def plus_funds(amount, reference)
-      raise Account::AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
+      if amount <= AccountingService::ZERO
+        raise Account::AccountError, "Cannot add funds (amount: #{amount})."
+      end
+
       with_balance_check! do
         main_account.operations.create!(credit: amount, reference: reference)
       end
@@ -93,7 +110,7 @@ module AccountingService
     memoize :main_account, :locked_account
 
     def with_balance_check!
-      transaction do
+      ActiveRecord::Base.transaction do
         yield
         # TODO: Custom Exception message.
         # TODO: AccountingService::Error.

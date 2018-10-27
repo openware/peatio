@@ -37,9 +37,7 @@ class Account < ActiveRecord::Base
     end
   end
 
-  # def balance
-  #   operations.sum(:credit) - operations.sum(:debit)
-  # end
+
 
   # TODO: Rename this method.
   # def locked_account
@@ -50,17 +48,6 @@ class Account < ActiveRecord::Base
   #     code: AccountingService::Chart.locked_codes
   #   )
   # end
-
-  # def locked
-  #   # Delegate computation of locked funds to account with locked_code.
-  #   if code.in?(AccountingService::Chart.locked_codes)
-  #     balance
-  #   else
-  #     locked_account.locked
-  #   end
-  # end
-
-
 
   # def plus_funds(amount, reference)
   #   raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
@@ -100,9 +87,24 @@ class Account < ActiveRecord::Base
   #   self
   # end
 
-  # def amount
-  #   balance + locked
-  # end
+  def accounting_service
+    AccountingService.find_or_create_for(member, currency_id)
+  end
+
+  # @deprecated
+  def balance
+    accounting_service.balance
+  end
+
+  # @deprecated
+  def locked
+    accounting_service.locked
+  end
+
+  # @deprecated
+  def amount
+    accounting_service.amount
+  end
 
   def as_json(*)
     super.merge! \
