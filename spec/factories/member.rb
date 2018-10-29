@@ -33,6 +33,6 @@ FactoryBot.define do
       level { 3 }
     end
 
-    factory :admin_member, traits: %i[ admin ]
+    factory :admin_member, traits: %i[admin]
   end
 end

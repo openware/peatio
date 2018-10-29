@@ -16,7 +16,7 @@ class Member < ActiveRecord::Base
 
   validates :email, presence: true, uniqueness: true, email: true
   validates :level, numericality: { greater_than_or_equal_to: 0 }
-  validates :role, inclusion: { in: [:member, :admin] }
+  validates :role, inclusion: { in: %w[member admin] }
 
   after_create :touch_accounts
 

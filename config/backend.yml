@@ -12,7 +12,7 @@ services:
       - "3306:3306"
 
   redis:
-    image: redis:4.0.10
+    image: redis:4.0
     volumes:
       - redis_data:/data
     ports:

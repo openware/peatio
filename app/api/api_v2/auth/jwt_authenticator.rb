@@ -74,22 +74,7 @@ module APIv2
       end
 
       def from_barong_payload(payload)
-        Member.find_or_initialize_by(email: fetch_email(payload)).tap do |member|
-          member.transaction do
-            attributes = {
-              level:    payload.fetch(:level).to_i,
-              disabled: payload.fetch(:state).to_s != 'active' }
-
-            # Prevent overheat validations.
-            member.assign_attributes(attributes)
-            member.save!(validate: member.new_record?)
-
-            authentication = member.authentications.find_or_initialize_by(provider: 'barong', uid: fetch_uid(payload))
-
-            # Prevent overheat validations.
-            authentication.save! if authentication.new_record?
-          end
-        end
+        Member.from_payload(payload)
       end
     end
   end

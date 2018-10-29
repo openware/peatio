@@ -1,7 +1,10 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+require_dependency 'authorization/bearer'
+
 class ApplicationController < ActionController::Base
+  include Authorization::Bearer
   include SessionUtils
   extend Memoist
 
@@ -12,22 +15,6 @@ class ApplicationController < ActionController::Base
   #around_action :share_user
 
   private
-
-  # TODO: Share the function in a Service
-  # FIXME: authorize only active
-  def authenticate!(token)
-    jwt_public_key = Rails.configuration.x.jwt_public_key
-    payload, header = Peatio::Auth::JWTAuthenticator.new(jwt_public_key).authenticate!(token)
-    return payload
-
-  rescue => e
-    report_exception(e)
-    if Peatio::Auth::Error === e
-      raise e
-    else
-      raise Peatio::Auth::Error, e.inspect
-    end
-  end
 
   def current_market
     unless params[:market].blank?
@@ -41,7 +28,6 @@ class ApplicationController < ActionController::Base
     payload = authenticate!(token)
     Member::from_payload(payload)
   end
-  memoize :current_user
 
   def auth_member!
     unless current_user
