@@ -9,11 +9,12 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :is_admin?, :current_market, :gon
   before_action :set_language, :set_gon
-  around_action :share_user
+  #around_action :share_user
 
   private
 
   # TODO: Share the function in a Service
+  # FIXME: authorize only active
   def authenticate!(token)
     jwt_public_key = Rails.configuration.x.jwt_public_key
     payload, header = Peatio::Auth::JWTAuthenticator.new(jwt_public_key).authenticate!(token)
@@ -38,8 +39,7 @@ class ApplicationController < ActionController::Base
   def current_user
     token = request.headers['Authorization']
     payload = authenticate!(token)
-    p payload
-    Member.enabled.find_by_email(payload[:email])
+    Member::from_payload(payload)
   end
   memoize :current_user
 
@@ -172,7 +172,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  #FIXME remove this call
   def share_user
+    logger.debug { "DEPRECATED: method share_user" }
     Member.current = current_user
     yield
   ensure

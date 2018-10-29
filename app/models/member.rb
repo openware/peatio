@@ -16,13 +16,14 @@ class Member < ActiveRecord::Base
 
   validates :email, presence: true, uniqueness: true, email: true
   validates :level, numericality: { greater_than_or_equal_to: 0 }
+  validates :role, inclusion: { in: [:member, :admin] }
 
   after_create :touch_accounts
 
   attr_readonly :email
 
   def sn
-    Rails.logger.debug { "SN is deprecated in favor of UID" }
+    logger.debug { "SN is deprecated in favor of UID" }
     uid
   end
 
@@ -83,6 +84,39 @@ private
     def uid(member_id)
       m = Member.where(id: member_id).limit(1).first
       m.uid
+    end
+
+    # Create Member object from payload
+    # == Example payload
+    # {
+    #   :iss=>"barong",
+    #   :sub=>"session",
+    #   :aud=>["peatio"],
+    #   :email=>"admin@barong.io",
+    #   :uid=>"U123456789",
+    #   :role=>"admin",
+    #   :state=>"active",
+    #   :level=>"3",
+    #   :iat=>1540824073,
+    #   :exp=>1540824078,
+    #   :jti=>"4f3226e554fa513a"
+    # }
+    def from_payload(p)
+        params = filter_payload(p)
+        member = Member.find_or_create_by(uid: p[:uid], email: p[:email]) do |m|
+          m.role = params[:role]
+          m.state = params[:state]
+          m.level = params[:level]
+        end
+        member.assign_attributes(params)
+        return member
+    end
+
+    # Filter and validate payload params
+    def filter_payload(payload)
+      payload.select {|key|
+        [:email, :uid, :role, :state, :level].include?(key)
+      }
     end
 
     def trigger_pusher_event(member_or_id, event, data)
