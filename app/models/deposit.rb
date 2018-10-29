@@ -19,7 +19,7 @@ class Deposit < ActiveRecord::Base
   validates :amount,
             numericality: {
               greater_than_or_equal_to:
-                -> (deposit){ deposit.currency.min_collection_amount }
+                -> (deposit){ deposit.currency.min_deposit_amount }
             }
 
   scope :recent, -> { order(id: :desc) }

@@ -28,12 +28,6 @@ module WalletClient
       end
     end
 
-    def load_balance!(address)
-      json_rpc(:listunspent, [1, 10_000_000, [address]])
-        .fetch('result')
-        .sum { |vout| vout['amount'] }
-    end
-
     protected
 
     def connection

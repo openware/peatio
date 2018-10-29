@@ -56,10 +56,11 @@ module WalletService
       pa = deposit.account.payment_address
       spread_hash = spread_deposit(deposit)
       spread_hash.map do |address, amount|
+        deposit_amount = amount * deposit.currency.base_factor - options[:gas_limit] * options[:gas_price]
         client.create_eth_withdrawal!(
             { address: pa.address, secret: pa.secret },
             { address: address},
-            (amount * deposit.currency.base_factor - options[:gas_limit] * options[:gas_price]).to_i,
+            deposit_amount.to_i,
             options
         )
       end
@@ -70,10 +71,11 @@ module WalletService
 
       spread_hash = spread_deposit(deposit)
       spread_hash.map do |address, amount|
+        deposit_amoumt = amount * deposit.currency.base_factor
         client.create_erc20_withdrawal!(
             { address: pa.address, secret: pa.secret },
             { address: address},
-            (amount * deposit.currency.base_factor).to_i,
+            deposit_amoumt.to_i,
             options.merge( contract_address: deposit.currency.erc20_contract_address )
         )
       end

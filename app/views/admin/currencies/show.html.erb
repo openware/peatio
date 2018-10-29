@@ -34,7 +34,7 @@
             <dd><%= f.text_field :deposit_fee, class: 'form-control' %></dd>
 
             <dt>Min collection amount</dt>
-            <dd><%= f.text_field :min_collection_amount, class: 'form-control' %></dd>
+            <dd><%= f.text_field :min_deposit_amount, class: 'form-control' %></dd>
 
             <% if @currency.coin? || @currency.new_record? %>
               <% if @currency.new_record? || @currency.erc20_contract_address? %>

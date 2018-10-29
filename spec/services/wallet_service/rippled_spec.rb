@@ -25,7 +25,7 @@ describe WalletService::Rippled do
         .to_json
     end
 
-    let(:deposit) {create(:deposit_xrp, address: 'rN3J1yMz2PCGievtS2XTEgkrmdHiJgzb5Y', amount: 10)}
+    let(:deposit) {create(:deposit, :deposit_xrp, address: 'rN3J1yMz2PCGievtS2XTEgkrmdHiJgzb5Y', amount: 10)}
     let(:withdraw) {create(:xrp_withdraw)}
     let(:deposit_wallet) { Wallet.find_by(gateway: :rippled, kind: :deposit)}
     let(:hot_wallet) { Wallet.find_by(gateway: :rippled, kind: :hot)}
@@ -50,13 +50,11 @@ describe WalletService::Rippled do
         create(:xrp_payment_address, {account: deposit.account, address: 'rN3J1yMz2PCGievtS2XTEgkrmdHiJgzb5Y?dt=917590223', secret: 'changeme'})
       end
 
-      let :hot_wallet_balance do
-        {
-          result: '0'
-        }.to_json
+      let :account_info_response do
+        { result: '0' }.to_json
       end
 
-      let :request_balance do
+      let :account_info_request do
         {
           jsonrpc:  '1.0',
           id:       1,
@@ -72,9 +70,9 @@ describe WalletService::Rippled do
         }.to_json
       end
 
-      let :sign_request_body do
+      let :sign_request do
         {jsonrpc: '1.0',
-         id:      2,
+         id:      1,
          method:  'sign',
          params:
            [
@@ -93,11 +91,11 @@ describe WalletService::Rippled do
         }.to_json
       end
 
-      let :request_body do
+      let :submit_request do
         {
-          jsonrpc: '1.0',
-          id: 3,
-          method: 'submit',
+          jsonrpc:  '1.0',
+          id:       2,
+          method:   'submit',
           params:
             [
               tx_blob: '1200002280000000240000016861D4838D7EA4C6800000000000000000000000000055534400000000004B4E9C06F24296074F7BC48F92A97916C6DC5'\
@@ -111,11 +109,11 @@ describe WalletService::Rippled do
       subject { WalletService[deposit_wallet].collect_deposit!(deposit) }
 
       before do
-        stub_request(:post, hot_wallet.uri).with(body: request_balance).to_return(body: hot_wallet_balance)
+        stub_request(:post, hot_wallet.uri).with(body: account_info_request).to_return(body: account_info_response)
         WalletClient[hot_wallet].class.any_instance.expects(:calculate_current_fee).returns(10000)
         WalletClient[hot_wallet].class.any_instance.expects(:latest_block_number).returns(31234500)
-        stub_request(:post, deposit_wallet.uri).with(body: sign_request_body).to_return(body: sign_data)
-        stub_request(:post, deposit_wallet.uri).with(body: request_body).to_return(body: submit_data)
+        stub_request(:post, deposit_wallet.uri).with(body: sign_request).to_return(body: sign_data)
+        stub_request(:post, deposit_wallet.uri).with(body: submit_request).to_return(body: submit_data)
       end
 
       it do
@@ -127,7 +125,7 @@ describe WalletService::Rippled do
 
       let(:withdraw) { create(:xrp_withdraw, rid: 'rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn') }
 
-      let :sign_request_body do
+      let :sign_request do
         { jsonrpc: '1.0',
          id:      1,
          method:  'sign',
@@ -148,7 +146,7 @@ describe WalletService::Rippled do
         }.to_json
       end
 
-      let :request_body do
+      let :submit_request do
         {
           jsonrpc: '1.0',
           id:     2,
@@ -169,9 +167,9 @@ describe WalletService::Rippled do
         WalletClient[hot_wallet].class.any_instance.expects(:calculate_current_fee).returns(10000)
         WalletClient[hot_wallet].class.any_instance.expects(:latest_block_number).returns(31234500)
         # Request with method 'sign' to return a signed binary representation of the transaction.
-        stub_request(:post, deposit_wallet.uri).with(body: sign_request_body).to_return(body: sign_data)
+        stub_request(:post, deposit_wallet.uri).with(body: sign_request).to_return(body: sign_data)
         # Request with method 'submit' method to apply a transaction and send it to the network to be confirmed and included in future ledgers
-        stub_request(:post, deposit_wallet.uri).with(body: request_body).to_return(body: submit_data)
+        stub_request(:post, deposit_wallet.uri).with(body: submit_request).to_return(body: submit_data)
       end
 
       it do

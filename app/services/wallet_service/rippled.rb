@@ -12,7 +12,6 @@ module WalletService
 
     def collect_deposit!(deposit, options={})
       pa = deposit.account.payment_address
-
       spread_hash = spread_deposit(deposit)
       spread_hash.map do |address, amount|
         client.create_withdrawal!(

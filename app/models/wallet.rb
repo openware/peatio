@@ -7,8 +7,9 @@ class Wallet < ActiveRecord::Base
 
   # We use this attribute values rules for wallet kinds:
   # 1** - for deposit wallets.
-  # 2** - for withdraw wallets (sorted by security hot < warm < cold).
-  ENUMERIZED_KINDS = { deposit: 100, hot: 210, warm: 220, cold: 230, fee: 100 }.freeze
+  # 2** - for fee wallets.
+  # 3** - for withdraw wallets (sorted by security hot < warm < cold).
+  ENUMERIZED_KINDS = { deposit: 100, fee: 200, hot: 310, warm: 320, cold: 330 }.freeze
   enumerize :kind, in: ENUMERIZED_KINDS, scope: true
 
   GATEWAYS = %w[bitcoind bitcoincashd litecoind geth dashd rippled bitgo].freeze
@@ -38,6 +39,7 @@ class Wallet < ActiveRecord::Base
 
   scope :active,   -> { where(status: :active) }
   scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
+  scope :fee,      -> { where(kind: kinds(fee: true, values: true)) }
   scope :withdraw, -> { where(kind: kinds(withdraw: true, values: true)) }
   scope :ordered,  -> { order(kind: :asc) }
 
@@ -53,8 +55,10 @@ class Wallet < ActiveRecord::Base
           case
           when options.fetch(:deposit, false)
             kinds.select { |_k, v| v / 100 == 1 }
-          when options.fetch(:withdraw, false)
+          when options.fetch(:fee, false)
             kinds.select { |_k, v| v / 100 == 2 }
+          when options.fetch(:withdraw, false)
+            kinds.select { |_k, v| v / 100 == 3 }
           else
             kinds
           end
