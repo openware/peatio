@@ -1,9 +1,13 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+require 'authorization/bearer'
+
 module APIv2
   module Auth
     class JWTAuthenticator
+      include Authorization::Bearer
+
       def initialize(token)
         @token = token
       end
@@ -14,13 +18,9 @@ module APIv2
       #
       # @param [Hash] options
       # @return [String, Member, NilClass]
-      def authenticate!(options = {})
-        payload, header = Peatio::Auth::JWTAuthenticator
-                              .new(Utils.jwt_public_key)
-                              .authenticate!(@token)
-        fetch_member(payload).yield_self do |member|
-          options[:return] == :member ? member : fetch_email(payload)
-        end
+      def authenticate
+        payload, header = authenticate!(@token)
+        fetch_email(payload)
       rescue => e
         report_exception(e)
         if Peatio::Auth::Error === e
@@ -28,16 +28,6 @@ module APIv2
         else
           raise Peatio::Auth::Error, e.inspect
         end
-      end
-
-      #
-      # Exception-safe version of #authenticate!.
-      #
-      # @return [String, Member, NilClass]
-      def authenticate(*args)
-        authenticate!(*args)
-      rescue
-        nil
       end
 
     private
@@ -48,33 +38,15 @@ module APIv2
         end
       end
 
-      def fetch_uid(payload)
-        payload.fetch(:uid).tap { |uid| raise(Peatio::Auth::Error, 'UID is blank.') if uid.blank? }
-      end
-
-      def fetch_scopes(payload)
-        Array.wrap(payload[:scopes]).map(&:to_s).map(&:squash).reject(&:blank).tap do |scopes|
-          raise(Peatio::Auth::Error, 'Token scopes are not defined.') if scopes.empty?
-        end
-      end
-
       def fetch_member(payload)
-        if payload[:iss] == 'barong'
-          begin
-            from_barong_payload(payload)
-          # Handle race conditions when creating member & authentication records.
-          # We do not handle race condition for update operations.
-          # http://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-find_or_create_by
-          rescue ActiveRecord::RecordNotUnique
-            retry
-          end
-        else
-          Member.find_by_email(fetch_email(payload))
+        begin
+          Member::from_payload(payload)
+        # Handle race conditions when creating member & authentication records.
+        # We do not handle race condition for update operations.
+        # http://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-find_or_create_by
+        rescue ActiveRecord::RecordNotUnique
+          retry
         end
-      end
-
-      def from_barong_payload(payload)
-        Member.from_payload(payload)
       end
     end
   end
