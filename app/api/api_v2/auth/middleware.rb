@@ -8,7 +8,7 @@ module APIv2
         return unless auth_by_jwt?
 
         env['api_v2.authentic_member_email'] = \
-          JWTAuthenticator.new(headers['Authorization']).authenticate!(return: :email)
+          JWTAuthenticator.new(headers['Authorization']).authenticate
       end
     private
 
