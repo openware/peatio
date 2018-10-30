@@ -5,7 +5,7 @@ FactoryBot.define do
   factory :member do
     email { Faker::Internet.email }
     level { 0 }
-    uid { "U123456789" }
+    uid { "U#{Faker::Number.number(9)}" }
     role { "member" }
     state { "active" }
 

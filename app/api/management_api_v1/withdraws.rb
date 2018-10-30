@@ -39,7 +39,7 @@ module ManagementAPIv1
     end
     post '/withdraws' do
       currency = Currency.find(params[:currency]) if params[:currency].present?
-      member   = Authentication.find_by!(provider: :barong, uid: params[:uid]).member if params[:uid].present?
+      member   = Member.find_by!(uid: params[:uid]) if params[:uid].present?
 
       Withdraw
         .order(id: :desc)
@@ -89,7 +89,7 @@ module ManagementAPIv1
     end
     post '/withdraws/new' do
       currency = Currency.find(params[:currency])
-      member   = Authentication.find_by(provider: :barong, uid: params[:uid])&.member
+      member   = Member.find_by(uid: params[:uid])
       withdraw = "withdraws/#{currency.type}".camelize.constantize.new \
         sum:            params[:amount],
         member:         member,

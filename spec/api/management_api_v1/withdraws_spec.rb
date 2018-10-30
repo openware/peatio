@@ -37,7 +37,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
 
     it 'filters by member' do
       member = members.last
-      data.merge!(uid: member.authentications.first.uid)
+      data.merge!(uid: member.uid)
       request
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body).count).to eq member.withdraws.count
@@ -82,7 +82,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
     let(:amount) { 0.1575 }
     let(:signers) { %i[alex jeff] }
     let :data do
-      { uid:      member.authentications.first.uid,
+      { uid:      member.uid,
         currency: currency.code,
         amount:   amount,
         rid:      Faker::Bitcoin.address }

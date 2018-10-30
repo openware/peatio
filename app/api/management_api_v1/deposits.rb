@@ -17,8 +17,7 @@ module ManagementAPIv1
     end
     post '/deposits' do
       currency = Currency.find(params[:currency]) if params[:currency].present?
-      member   = Authentication.find_by!(provider: :barong, uid: params[:uid]).member if params[:uid].present?
-
+      member   = Member.find_by!(uid: params[:uid]) if params[:uid].present?
       Deposit
         .order(id: :desc)
         .tap { |q| q.where!(currency: currency) if currency }
@@ -56,7 +55,7 @@ module ManagementAPIv1
       optional :state,    type: String, desc: 'The state of deposit.', values: %w[accepted]
     end
     post '/deposits/new' do
-      member   = Authentication.find_by(provider: :barong, uid: params[:uid])&.member
+      member   = Member.find_by(uid: params[:uid])
       currency = Currency.find(params[:currency])
       data     = { member: member, currency: currency }.merge!(params.slice(:amount, :tid))
       deposit  = ::Deposits::Fiat.new(data)

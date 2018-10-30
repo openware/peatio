@@ -58,7 +58,7 @@ describe ManagementAPIv1::Deposits, type: :request do
 
     it 'filters by member' do
       member = members.last
-      data.merge!(uid: member.authentications.first.uid)
+      data.merge!(uid: member.uid)
       request
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body).count).to eq member.deposits.count
@@ -77,7 +77,7 @@ describe ManagementAPIv1::Deposits, type: :request do
     let(:currency) { Currency.find(:usd) }
     let(:amount) { 750.77 }
     let :data do
-      { uid:      member.authentications.first.uid,
+      { uid:      member.uid,
         currency: currency.code,
         amount:   amount }
     end

@@ -15,7 +15,7 @@ describe ManagementAPIv1::Deposits, type: :request do
       post_json '/management_api/v1/accounts/balance', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
-    let(:data) { { uid: member.authentications.sample.uid, currency: 'usd'} }
+    let(:data) { { uid: member.uid, currency: 'usd'} }
     let(:signers) { %i[alex jeff] }
     let(:member) { create(:member, :barong) }
 
