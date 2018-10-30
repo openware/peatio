@@ -14,7 +14,7 @@ module ManagementAPIv1
     end
 
     post '/accounts/balance' do
-      member = Authentication.find_by!(provider: :barong, uid: params[:uid]).member
+      member = Member.find_by!(uid: params[:uid])
       account = member.get_account(params[:currency])
       present account, with: ManagementAPIv1::Entities::Balance
       status 200
