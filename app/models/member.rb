@@ -22,11 +22,6 @@ class Member < ActiveRecord::Base
 
   attr_readonly :email
 
-  def sn
-    logger.debug { "SN is deprecated in favor of UID" }
-    uid
-  end
-
   def trades
     Trade.where('bid_member_id = ? OR ask_member_id = ?', id, id)
   end
@@ -81,15 +76,18 @@ private
     #   :exp=>1540824078,
     #   :jti=>"4f3226e554fa513a"
     # }
+
     def from_payload(p)
         params = filter_payload(p)
+        validate_payload(params)
         member = Member.find_or_create_by(uid: p[:uid], email: p[:email]) do |m|
           m.role = params[:role]
           m.state = params[:state]
           m.level = params[:level]
         end
         member.assign_attributes(params)
-        return member
+        member.save
+        member
     end
 
     # Filter and validate payload params
@@ -97,6 +95,29 @@ private
       payload.select {|key|
         [:email, :uid, :role, :state, :level].include?(key)
       }
+    end
+
+    def validate_payload(p)
+      fetch_email(p)
+      p.fetch(:uid).tap { |uid| raise(Peatio::Auth::Error, 'UID is blank.') if uid.blank? }
+    end
+
+    def fetch_email(payload)
+      payload[:email].to_s.tap do |email|
+        raise(Peatio::Auth::Error, 'E-Mail is blank.') if email.blank?
+        raise(Peatio::Auth::Error, 'E-Mail is invalid.') unless EmailValidator.valid?(email)
+      end
+    end
+
+    def search(field: nil, term: nil)
+      case field
+      when 'email', 'uid'
+        where("members.#{field} LIKE ?", "%#{term}%")
+      when 'wallet_address'
+        joins(:payment_addresses).where('payment_addresses.address LIKE ?', "%#{term}%")
+      else
+        all
+      end.order(:id).reverse_order
     end
 
     def trigger_pusher_event(member_or_id, event, data)

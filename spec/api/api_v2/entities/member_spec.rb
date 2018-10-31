@@ -6,7 +6,7 @@ describe APIv2::Entities::Member do
 
   subject { OpenStruct.new APIv2::Entities::Member.represent(member).serializable_hash }
 
-  it { expect(subject.sn).to eq member.sn }
+  it { expect(subject.uid).to eq member.uid }
   it { expect(subject.email).to eq member.email }
 
   it 'accounts' do

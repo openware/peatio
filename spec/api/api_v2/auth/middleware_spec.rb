@@ -20,7 +20,7 @@ describe APIv2::Auth::Middleware, type: :request do
 
   context 'when using JWT authentication' do
     let(:member) { create(:member, :level_3) }
-    let(:payload) { { x: 'x', y: 'y', z: 'z', email: member.email } }
+    let(:payload) { { x: 'x', y: 'y', z: 'z', email: member.email, uid: 'U123456789' } }
     let(:token) { jwt_build(payload) }
 
     it 'should deny access when token is not given' do

@@ -24,9 +24,13 @@ class ApplicationController < ActionController::Base
   memoize :current_market
 
   def current_user
-    token = request.headers['Authorization']
-    payload = authenticate!(token)
-    Member::from_payload(payload)
+    if request.headers['Authorization']
+      token = request.headers['Authorization']
+      payload = authenticate!(token)
+      Member::from_payload(payload)
+    else
+      nil
+    end
   end
 
   def auth_member!
@@ -130,7 +134,7 @@ class ApplicationController < ActionController::Base
 
     if current_user
       gon.user = {
-        sn: current_user.sn
+        sn: current_user&.uid
       }
       gon.accounts = current_user.accounts.enabled.includes(:currency).inject({}) do |memo, account|
         memo[account.currency.code] = {
