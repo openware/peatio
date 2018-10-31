@@ -102,7 +102,7 @@ class Member < ActiveRecord::Base
       else model_or_code
       end
 
-    AccountingService.find_or_create_for(self, currency_id)
+    Account.find_by(member: self, currency: currency_id)
   end
   alias :ac :get_account
 

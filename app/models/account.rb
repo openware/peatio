@@ -47,43 +47,21 @@ class Account < ActiveRecord::Base
   #   )
   # end
 
-  # def plus_funds(amount, reference)
-  #   raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
-  #   with_balance_check! do
-  #     account(kind: :main).operations.create!(credit: amount, reference: reference)
-  #   end
-  #   self
-  # end
+  def plus_funds(amount, reference)
+    accounting_service.plus_funds(amount, reference)
+  end
 
-  # def lock_funds(amount, reference)
-  #   with_balance_check! do
-  #     operations.create!(debit: amount, reference: reference)
-  #     locked_account.plus_funds(amount, reference)
-  #   end
-  #   self
-  # end
+  def lock_funds(amount, reference)
+    accounting_service.lock_funds(amount, reference)
+  end
 
-  # def unlock_funds(amount, reference)
-  #   with_balance_check! do
-  #     locked_account.sub_funds(amount, reference)
-  #     operations.create!(debit: amount, reference: reference)
-  #   end
-  #   self
-  # end
+  def unlock_funds(amount, reference)
+    accounting_service.unlock_funds(amount, reference)
+  end
 
-  # def sub_funds(amount, reference)
-  #   with_balance_check! do
-  #     operations.create!(debit: amount, reference: reference)
-  #   end
-  #   self
-  # end
-  #
-  # def unlock_and_sub_funds(amount)
-  #   with_balance_check! do
-  #     locked_account.sub_funds(amount, reference)
-  #   end
-  #   self
-  # end
+  def unlock_and_sub_funds(amount, reference)
+    accounting_service.unlock_and_sub_funds(amount, reference)
+  end
 
   def accounting_service
     AccountingService.find_or_create_for(member, currency_id)

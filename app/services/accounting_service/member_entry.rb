@@ -108,6 +108,7 @@ module AccountingService
     end
 
   private
+
     def account(options={})
       codes = chart.codes(options)
       accounts.find_by(code: codes)
@@ -122,12 +123,12 @@ module AccountingService
         yield
         # TODO: Custom Exception message.
         # TODO: AccountingService::Error.
-        raise Account::AccountError, "Cannot create operation" if balance < 0
+        raise AccountingService::Error, "Cannot create operation" if balance < 0
       end
     end
 
     def validate_amount!(amount)
-      raise Account::AccountError, "Amount can't be negative (amount: #{amount})."
+      raise AccountingService::Error, "Amount can't be negative (amount: #{amount})." if amount < 0
     end
   end
 end
