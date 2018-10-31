@@ -48,6 +48,11 @@ describe APIv2::Auth::JWTAuthenticator do
     expect { subject.authenticate }.to raise_error(Peatio::Auth::Error) { |e| expect(e.reason).to match /failed to decode and verify jwt/i }
   end
 
+  it 'should raise exception when state is not active' do
+    payload[:state] = 'blocked'
+    expect { subject.authenticate }.to raise_error(Peatio::Auth::Error) { |e| expect(e.reason).to match /State is not active./ }
+  end
+
   describe 'on the fly registration' do
 
     context 'token issued by Barong' do
@@ -72,11 +77,10 @@ describe APIv2::Auth::JWTAuthenticator do
         member = create(:member, :level_1)
         uid    = Faker::Internet.password(12, 12)
         member.update(uid: uid)
-        payload.merge!(email: member.email, uid: uid, state: 'blocked', level: 3, role: 'member')
+        payload.merge!(email: member.email, uid: uid, state: 'active', level: 3, role: 'member')
         expect { subject.authenticate }.not_to change(Member, :count)
         member.reload
         expect(member.email).to eq payload[:email]
-        expect(member.state).to eq 'blocked'
         expect(member.level).to eq 3
         expect(member.uid).to eq payload[:uid]
       end
