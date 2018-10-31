@@ -63,7 +63,7 @@ module Matching
 
         accounts_table = Account
           .lock
-          .select(:id, :member_id, :currency_id, :balance, :locked)
+          .select(:id, :member_id, :currency_id)
           .where(member_id: [@ask.member_id, @bid.member_id].uniq, currency_id: [@market.ask_unit, @market.bid_unit])
           .each_with_object({}) { |record, memo| memo["#{record.currency_id}:#{record.member_id}"] = record }
 
@@ -82,6 +82,7 @@ module Matching
         strike(@trade, @bid, accounts_table["#{@bid.bid}:#{@bid.member_id}"], accounts_table["#{@bid.ask}:#{@bid.member_id}"])
 
         ([@ask, @bid] + accounts_table.values).map do |record|
+          next if record.class == Account
           table     = record.class.arel_table
           statement = Arel::UpdateManager.new(table.engine)
           statement.table(table)
@@ -162,7 +163,7 @@ module Matching
 
         # Unlock not used funds.
         unless order.locked.zero?
-          outcome_account.assign_attributes outcome_account.unlock_funds(order.locked, trade)
+          outcome_account.unlock_funds(order.locked, trade)
         end
       elsif order.ord_type == 'market' && order.locked.zero?
         # Partially filled market order has run out it's locked funds.

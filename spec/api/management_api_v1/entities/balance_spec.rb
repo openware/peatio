@@ -3,8 +3,7 @@
 
 describe ManagementAPIv1::Entities::Balance do
   let(:member) { create(:member, :barong) }
-  let(:record) { member.ac(:usd) }
-  before { record.update!(balance: 1000.85, locked: 330.55) }
+  let(:record) { create_account(:usd, balance: 1000.85, locked: 330.55, member: member) }
   subject { OpenStruct.new ManagementAPIv1::Entities::Balance.represent(record).serializable_hash }
 
   it { expect(subject.uid).to eq record.member.uid }

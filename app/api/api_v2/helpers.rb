@@ -61,7 +61,7 @@ module APIv2
       order = build_order(attrs)
       Ordering.new(order).submit
       order
-    rescue Account::AccountError => e
+    rescue Account::AccountError, AccountingService::Error => e
       report_exception_to_screen(e)
       raise CreateOrderAccountError, e.inspect
     rescue => e

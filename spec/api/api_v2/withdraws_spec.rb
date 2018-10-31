@@ -6,8 +6,12 @@ describe APIv2::Withdraws, type: :request do
   let(:token) { jwt_for(member) }
   let(:level_0_member) { create(:member, :level_0) }
   let(:level_0_member_token) { jwt_for(level_0_member) }
-  let(:btc_withdraws) { create_list(:btc_withdraw, 20, member: member) }
-  let(:usd_withdraws) { create_list(:usd_withdraw, 20, member: member) }
+  let(:account_btc) { create_account(:btc, balance: 50000, locked: 1000, member: member) }
+  let(:account_usd) { create_account(:usd, balance: 50000, locked: 1000, member: member) }
+
+  let(:btc_withdraws) { create_list(:btc_withdraw, 20, member: account_btc.member) }
+  let(:usd_withdraws) { create_list(:usd_withdraw, 20, member: account_usd.member) }
+
 
   before do
     # Force evaluate all.
@@ -64,7 +68,7 @@ describe APIv2::Withdraws, type: :request do
     end
 
     it 'should sort withdraws' do
-      ordered_withdraws = btc_withdraws.sort_by(&:id).reverse
+      ordered_withdraws = Withdraw.where(currency_id: :btc, member: member).sort_by(&:id).reverse
 
       api_get '/api/v2/withdraws', params: { currency: 'BTC', limit: 100 }, token: token
       expect(response).to be_success

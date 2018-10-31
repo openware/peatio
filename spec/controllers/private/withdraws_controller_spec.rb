@@ -5,10 +5,9 @@ describe Private::WithdrawsController, type: :controller do
   describe '#create' do
     let(:params) { { withdraw: { currency: :btc, sum: 90.1, rid: 'rfUKVVX5KJQ2FsWYrjS6JMedz3jdjPhRPZ' } } }
     let(:request) { post :create, params.merge(currency: params[:withdraw][:currency]), session }
-    let(:session) { { member_id: member.id } }
-    let :member do
-      create(:member, :level_3).tap { |m| m.get_account(:btc).plus_funds(100) }
-    end
+    let(:session) { { member_id: account_btc.member.id } }
+    let(:member){ create(:member, :level_3) }
+    let(:account_btc) { create_account(:btc, balance: 1000, member: member) }
 
     it 'creates withdraw' do
       request

@@ -82,6 +82,7 @@ module AccountingService
       validate_amount!(amount)
 
       with_balance_check! do
+        raise AccountingService::Error, "Cannot lock funds (amount: #{amount})." if amount <= 0 || amount > balance
         main_account.operations.create!(debit: amount, reference: reference)
         locked_account.operations.create!(credit: amount, reference: reference)
       end
@@ -92,6 +93,7 @@ module AccountingService
       validate_amount!(amount)
 
       with_balance_check! do
+        raise AccountingService::Error, "Cannot unlock funds (amount: #{amount})." if amount <= 0 || amount > locked
         locked_account.operations.create!(debit: amount, reference: reference)
         main_account.operations.create!(credit: amount, reference: reference)
       end
@@ -102,6 +104,7 @@ module AccountingService
       validate_amount!(amount)
 
       with_balance_check! do
+        raise AccountingService::Error, "Cannot unlock funds (amount: #{amount})." if amount <= 0 || amount > locked
         locked_account.operations.create!(debit: amount, reference: reference)
       end
       self
@@ -122,12 +125,12 @@ module AccountingService
         yield
         # TODO: Custom Exception message.
         # TODO: AccountingService::Error.
-        raise Account::AccountError, "Cannot create operation" if balance < 0
+        raise AccountingService::Error, "Cannot create operation" if balance < 0
       end
     end
 
     def validate_amount!(amount)
-      raise Account::AccountError, "Amount can't be negative (amount: #{amount})."
+      raise AccountingService::Error, "Amount can't be negative (amount: #{amount})." if amount < 0
     end
   end
 end

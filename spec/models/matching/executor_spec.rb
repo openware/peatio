@@ -142,10 +142,10 @@ describe Matching::Executor do
     end
 
     it 'should unlock funds not used by bid order' do
-      locked_before = bid.hold_account.reload.locked
+      locked_before = bid.hold_account.locked
 
       subject.execute!
-      locked_after = bid.hold_account.reload.locked
+      locked_after = bid.hold_account.locked
 
       expect(locked_after).to eq locked_before - (price * volume)
     end
@@ -159,13 +159,14 @@ describe Matching::Executor do
   context 'execution fail' do
     let(:ask) { ::Matching::LimitOrder.new create(:order_ask, price: price, volume: volume, member: alice).to_matching_attributes }
     let(:bid) { ::Matching::LimitOrder.new create(:order_bid, price: price, volume: volume, member: bob).to_matching_attributes }
+    let(:withdraw_btc) { create(:btc_withdraw, sum: '1000000000.0'.to_d, member: alice) }
 
     it 'should not create trade' do
-      # set locked funds to 0 so strike will fail
-      alice.get_account(:btc).update_attributes(locked: ::Trade::ZERO)
+      # update locked funds to 0 so strike will fail
+      alice.ac(:btc).unlock_funds(withdraw_btc.sum, withdraw_btc) # updates locked fund to 0
 
       expect do
-        expect { subject.execute! }.to raise_error(Account::AccountError)
+        expect { subject.execute! }.to raise_error(AccountingService::Error)
       end.not_to change(Trade, :count)
     end
   end

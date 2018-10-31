@@ -130,13 +130,12 @@ describe BlockchainService::Bitcoin do
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:btc_account) { member.get_account(:btc).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:btc_account) { create_account(:btc, balance: 10, locked: 10, member: member) }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: btc_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:btc_withdraw, withdrawal_hash)
@@ -164,7 +163,7 @@ describe BlockchainService::Bitcoin do
         BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
-      subject { Withdraws::Coin.where(currency: currency) }
+      subject { Withdraws::Coin.where(currency: currency).where.not(txid: nil) }
 
       it 'doesn\'t create new withdrawals' do
         expect(subject.count).to eq expected_withdrawals.count

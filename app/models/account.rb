@@ -13,7 +13,6 @@ class Account < ActiveRecord::Base
   has_many :payment_addresses, -> { order(id: :asc) }
 
   validates :member_id, uniqueness: { scope: %i[currency_id code] }
-  # validates :balance, :locked, numericality: { greater_than_or_equal_to: 0.to_d }
 
   scope :enabled, -> { joins(:currency).merge(Currency.where(enabled: true)) }
 
@@ -37,53 +36,21 @@ class Account < ActiveRecord::Base
     end
   end
 
-  # TODO: Rename this method.
-  # def locked_account
-  #   return self if code.in?(AccountingService::Chart.locked_codes)
-  #   Account.find_by(
-  #     member_id: member_id,
-  #     currency_id: currency_id,
-  #     code: AccountingService::Chart.locked_codes
-  #   )
-  # end
+  def plus_funds(amount, reference)
+    accounting_service.plus_funds(amount, reference)
+  end
 
-  # def plus_funds(amount, reference)
-  #   raise AccountError, "Cannot add funds (amount: #{amount})." if amount <= ZERO
-  #   with_balance_check! do
-  #     account(kind: :main).operations.create!(credit: amount, reference: reference)
-  #   end
-  #   self
-  # end
+  def lock_funds(amount, reference)
+    accounting_service.lock_funds(amount, reference)
+  end
 
-  # def lock_funds(amount, reference)
-  #   with_balance_check! do
-  #     operations.create!(debit: amount, reference: reference)
-  #     locked_account.plus_funds(amount, reference)
-  #   end
-  #   self
-  # end
+  def unlock_funds(amount, reference)
+    accounting_service.unlock_funds(amount, reference)
+  end
 
-  # def unlock_funds(amount, reference)
-  #   with_balance_check! do
-  #     locked_account.sub_funds(amount, reference)
-  #     operations.create!(debit: amount, reference: reference)
-  #   end
-  #   self
-  # end
-
-  # def sub_funds(amount, reference)
-  #   with_balance_check! do
-  #     operations.create!(debit: amount, reference: reference)
-  #   end
-  #   self
-  # end
-  #
-  # def unlock_and_sub_funds(amount)
-  #   with_balance_check! do
-  #     locked_account.sub_funds(amount, reference)
-  #   end
-  #   self
-  # end
+  def unlock_and_sub_funds(amount, reference)
+    accounting_service.unlock_and_sub_funds(amount, reference)
+  end
 
   def accounting_service
     AccountingService.find_or_create_for(member, currency_id)

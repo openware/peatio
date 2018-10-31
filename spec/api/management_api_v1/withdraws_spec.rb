@@ -23,8 +23,8 @@ describe ManagementAPIv1::Withdraws, type: :request do
     before do
       Withdraw::STATES.tap do |states|
         (states.count * 2).times do
-          create(:btc_withdraw, member: members.sample, aasm_state: states.sample, rid: Faker::Bitcoin.address)
-          create(:usd_withdraw, member: members.sample, aasm_state: states.sample, rid: Faker::Bank.iban)
+          create_account(:btc, balance: 12.13, locked: 3.14, member: members.sample, aasm_state: states.sample, rid: Faker::Bitcoin.address)
+          create_account(:usd, balance: 2014.47, member: members.sample, aasm_state: states.sample, rid: Faker::Bank.iban)
         end
       end
     end
@@ -82,14 +82,14 @@ describe ManagementAPIv1::Withdraws, type: :request do
     let(:amount) { 0.1575 }
     let(:signers) { %i[alex jeff] }
     let :data do
-      { uid:      member.authentications.first.uid,
+      { uid:      member.uid,
         currency: currency.code,
         amount:   amount,
         rid:      Faker::Bitcoin.address }
     end
     let(:account) { member.accounts.with_currency(currency).first }
     let(:balance) { 1.2 }
-    before { account.plus_funds(balance) }
+    before { account.plus_funds(balance, account) }
 
     context 'crypto withdraw' do
       it 'creates new withdraw and immediately submits it' do
@@ -165,7 +165,8 @@ describe ManagementAPIv1::Withdraws, type: :request do
 
     let(:signers) { %i[alex jeff] }
     let(:data) { { tid: record.tid } }
-    let(:record) { create(:btc_withdraw, member: member) }
+    let(:record) { account.member.withdraws.last }
+    let(:account) { create_account(:btc, balance: 1000.85, locked: 330.55, member: member) }
     let(:member) { create(:member, :barong) }
 
     it 'returns withdraw by TID' do
@@ -185,9 +186,9 @@ describe ManagementAPIv1::Withdraws, type: :request do
     let(:signers) { %i[alex jeff] }
     let(:data) { { tid: record.tid } }
     let(:account) { member.accounts.with_currency(currency).first }
-    let(:record) { "Withdraws::#{currency.type.camelize}".constantize.create!(member: member, account: account, sum: amount, rid: Faker::Bank.iban, currency: currency) }
+    let(:record) { create("#{currency.id}_withdraw", member: member, sum: amount, rid: Faker::Bank.iban) }
     let(:balance) { 800.77 }
-    before { account.plus_funds(balance) }
+    before { account.plus_funds(balance, account) }
 
     context 'crypto withdraws' do
       let(:currency) { Currency.find(:btc) }

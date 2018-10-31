@@ -4,8 +4,8 @@
 describe APIv2::Currencies, type: :request do
   let(:member) do
     create(:member, :level_3).tap do |m|
-      m.get_account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
-      m.get_account(:usd).update_attributes(balance: 2014.47, locked: 0)
+      create_account(:btc, balance: 12.13, locked: 3.14, member: m)
+      create_account(:usd, balance: 2014.47, member: m)
     end
   end
 

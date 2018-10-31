@@ -115,8 +115,8 @@ describe APIv2::Orders, type: :request do
 
   describe 'POST /api/v2/orders/multi' do
     before do
-      member.get_account(:btc).update_attributes(balance: 100)
-      member.get_account(:usd).update_attributes(balance: 100_000)
+      create_account(:btc, balance: 100, member: member)
+      create_account(:usd, balance: 100_000, member: member)
     end
 
     it 'should create a sell order and a buy order' do
@@ -161,7 +161,7 @@ describe APIv2::Orders, type: :request do
 
   describe 'POST /api/v2/orders' do
     it 'should create a sell order' do
-      member.get_account(:btc).update_attributes(balance: 100)
+      create_account(:btc, balance: 100, member: member)
 
       expect do
         api_post '/api/v2/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
@@ -171,7 +171,7 @@ describe APIv2::Orders, type: :request do
     end
 
     it 'should create a buy order' do
-      member.get_account(:usd).update_attributes(balance: 100_000)
+      create_account(:usd, balance: 100_000, member: member)
 
       expect do
         api_post '/api/v2/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '12.13', price: '2014' }
@@ -206,7 +206,7 @@ describe APIv2::Orders, type: :request do
 
     context 'succesful' do
       before do
-        member.get_account(:usd).update_attributes(locked: order.price * order.volume)
+        create_account(:usd, balance: 1000, locked: order.price * order.volume, member: member)
       end
 
       it 'should cancel specified order' do
@@ -233,8 +233,8 @@ describe APIv2::Orders, type: :request do
       create(:order_ask, market_id: 'btcusd', price: '12.326', volume: '3.14', origin_volume: '12.13', member: member)
       create(:order_bid, market_id: 'btcusd', price: '12.326', volume: '3.14', origin_volume: '12.13', member: member)
 
-      member.get_account(:btc).update_attributes(locked: '5')
-      member.get_account(:usd).update_attributes(locked: '50')
+      create_account(:btc, balance: 1000, locked: 5, member: member)
+      create_account(:usd, balance: 1000, locked: 50, member: member)
     end
 
     it 'should cancel all my orders' do

@@ -27,7 +27,7 @@ describe Account do
       currency = Currency.find(:dash)
       currency.transaction do
         currency.update_columns(enabled: false)
-        expect(Account.enabled.count).to eq 21
+        expect(Account.enabled.count).to eq 42
         currency.update_columns(enabled: true)
       end
     end
@@ -43,6 +43,28 @@ describe Account do
         previous.update!(address: '1JSmYcCjBGm7RbjPppjZ1gGTDpBEmTGgGA')
         expect(subject.payment_address!).not_to eq previous
       end
+    end
+  end
+
+  describe "associations" do
+    it "should have many operations" do
+      t = Account.reflect_on_association(:operations)
+      expect(t.macro).to eq(:has_many)
+    end
+
+    it "should have many payment_addresses" do
+      t = Account.reflect_on_association(:payment_addresses)
+      expect(t.macro).to eq(:has_many)
+    end
+
+    it "should have many currency" do
+      t = Account.reflect_on_association(:currency)
+      expect(t.macro).to eq(:belongs_to)
+    end
+
+    it "should have many member" do
+      t = Account.reflect_on_association(:member)
+      expect(t.macro).to eq(:belongs_to)
     end
   end
 end

@@ -24,13 +24,6 @@ FactoryBot.define do
     rid { Faker::Bitcoin.address }
     sum { 10.to_d }
     type { 'Withdraws::Coin' }
-
-    account do
-      member.get_account(:eth).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :ltc_withdraw, class: Withdraws::Coin do
@@ -39,13 +32,6 @@ FactoryBot.define do
     rid { Faker::Bitcoin.address }
     sum { 10.to_d }
     type { 'Withdraws::Coin' }
-
-    account do
-      member.get_account(:ltc).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :dash_withdraw, class: Withdraws::Coin do
@@ -54,13 +40,6 @@ FactoryBot.define do
     rid { Faker::Bitcoin.address }
     sum { 10.to_d }
     type { 'Withdraws::Coin' }
-
-    account do
-      member.get_account(:dash).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :bch_withdraw, class: Withdraws::Coin do
@@ -69,13 +48,6 @@ FactoryBot.define do
     rid { Faker::Bitcoin.address }
     sum { 10.to_d }
     type { 'Withdraws::Coin' }
-
-    account do
-      member.get_account(:bch).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :trst_withdraw, class: Withdraws::Coin do
@@ -84,13 +56,6 @@ FactoryBot.define do
     rid { Faker::Bitcoin.address }
     sum { 10.to_d }
     type { 'Withdraws::Coin' }
-
-    account do
-      member.get_account(:trst).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 
   factory :xrp_withdraw, class: Withdraws::Coin do
@@ -99,12 +64,5 @@ FactoryBot.define do
     rid { 'r4kpJtnx4goLYXoRdi7mbkRpZ9Xpx2RyPN' }
     sum { 10.to_d }
     type { 'Withdraws::Coin' }
-
-    account do
-      member.get_account(:xrp).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-      end
-    end
   end
 end

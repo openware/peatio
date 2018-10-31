@@ -50,16 +50,22 @@ describe Serializers::EventAPI::TradeCompleted, 'Event API' do
       funds:        '0.42'
   end
 
+  let(:deposit_btc) { create(:deposit_btc, amount: '100'.to_d, member: seller) }
+  let(:withdraw_btc) { create(:btc_withdraw, sum: '100'.to_d, member: seller) }
+
+  let(:deposit_usd) { create(:deposit_usd, amount: '100'.to_d, member: buyer) }
+  let(:withdraw_usd) { create(:usd_withdraw, sum: '14'.to_d, member: buyer) }
+
   subject { executor.execute! }
 
   before do
-    seller.ac(:btc).plus_funds('100.0'.to_d)
-    seller.ac(:btc).lock_funds('100.0'.to_d)
+    seller.ac(:btc).plus_funds(deposit_btc.amount, deposit_btc)
+    seller.ac(:btc).lock_funds(withdraw_btc.amount, withdraw_btc)
   end
 
   before do
-    buyer.ac(:usd).plus_funds('100.0'.to_d)
-    buyer.ac(:usd).lock_funds('14.0'.to_d)
+    buyer.ac(:usd).plus_funds(deposit_usd.amount, deposit_usd)
+    buyer.ac(:usd).lock_funds(withdraw_usd.amount, withdraw_usd)
   end
 
   before { Trade.any_instance.expects(:created_at).returns(completed_at).at_least_once }

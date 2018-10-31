@@ -209,13 +209,12 @@ describe BlockchainService::Ethereum do
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:eth_account) { member.get_account(:eth).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:eth_account) { create_account(:eth, balance: 50, locked: 50, member: member) }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: eth_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:eth_withdraw, withdrawal_hash)
@@ -243,7 +242,7 @@ describe BlockchainService::Ethereum do
         BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
-      subject { Withdraws::Coin.where(currency: currency) }
+      subject { Withdraws::Coin.where(currency: currency).where.not(txid: nil) }
 
       it 'doesn\'t create new withdrawals' do
         expect(subject.count).to eq expected_withdrawals.count
@@ -288,14 +287,13 @@ describe BlockchainService::Ethereum do
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:trst_account) { member.get_account(:trst).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:trst_account) { create_account(:trst, balance: 50, locked: 50, member: member) }
 
       let(:currency) { Currency.find_by_id(:trst) }
 
       let!(:failed_withdraw) do
         withdraw_hash = expected_withdrawals[0].merge!\
             member: member,
-            account: trst_account,
             aasm_state: :confirming,
             currency: currency
 
@@ -305,7 +303,6 @@ describe BlockchainService::Ethereum do
       let!(:success_withdraw) do
         withdraw_hash = expected_withdrawals[1].merge!\
             member: member,
-            account: trst_account,
             aasm_state: :confirming,
             currency: currency
 
@@ -331,7 +328,7 @@ describe BlockchainService::Ethereum do
         BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
-      subject { Withdraws::Coin.where(currency: currency) }
+      subject { Withdraws::Coin.where(currency: currency).where.not(txid: nil) }
 
       it 'doesn\'t create new withdrawals' do
         expect(subject.count).to eq expected_withdrawals.count

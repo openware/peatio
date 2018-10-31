@@ -2,16 +2,21 @@
 # frozen_string_literal: true
 
 describe Withdraw do
+  let(:initial_balance) { 5000 }
+  let(:initial_locked) { 500 }
+  let(:account_btc) { create_account(:btc, balance: initial_balance, locked: initial_locked ) }
+  let(:account_usd) { create_account(:usd, balance: initial_balance, locked: initial_locked ) }
+
   describe '#fix_precision' do
     it 'should round down to max precision' do
-      withdraw = create(:btc_withdraw, sum: '0.123456789')
+      withdraw = create(:btc_withdraw, sum: '0.123456789', member: account_btc.member)
       expect(withdraw.sum).to eq('0.12345678'.to_d)
     end
   end
 
   context 'bank withdraw' do
     describe '#audit!' do
-      subject { create(:usd_withdraw) }
+      subject { create(:usd_withdraw, member: account_usd.member) }
       before  { subject.submit! }
 
       it 'should accept withdraw with clean history' do
@@ -29,7 +34,7 @@ describe Withdraw do
 
   context 'coin withdraw' do
     describe '#audit!' do
-      subject { create(:btc_withdraw, sum: sum) }
+      subject { create(:btc_withdraw, sum: sum, member: account_btc.member) }
       let(:sum) { 10.to_d }
       before { subject.submit! }
 
@@ -41,7 +46,7 @@ describe Withdraw do
 
       context 'internal recipient' do
         let(:payment_address) { create(:btc_payment_address) }
-        subject { create(:btc_withdraw, rid: payment_address.address) }
+        subject { create(:btc_withdraw, rid: payment_address.address, member: account_btc.member) }
 
         around do |example|
           WebMock.disable_net_connect!
@@ -84,18 +89,10 @@ describe Withdraw do
       end
     end
 
-    describe 'account id assignment' do
-      subject { build :btc_withdraw, account_id: 999 }
-
-      it 'don\'t accept account id from outside' do
-        subject.save
-        expect(subject.account_id).to eq(subject.member.get_account(subject.currency).id)
-      end
-    end
   end
 
   context 'Worker::WithdrawCoin#process' do
-    subject { create(:btc_withdraw) }
+    subject { create(:btc_withdraw, member: account_btc.member) }
     before do
       @rpc = mock
       @rpc.stubs(load_balance!: 50_000, build_withdrawal!: '12345')
@@ -143,7 +140,7 @@ describe Withdraw do
   end
 
   context 'aasm_state' do
-    subject { create(:usd_withdraw, sum: 1000) }
+    subject { create(:usd_withdraw, sum: 10, member: account_usd.member) }
 
     before do
       subject.stubs(:send_withdraw_confirm_email)
@@ -156,7 +153,7 @@ describe Withdraw do
     it 'transitions to :submitted after calling #submit!' do
       subject.submit!
       expect(subject.submitted?).to be true
-      expect(subject.sum).to eq subject.account.locked
+      expect(subject.sum).to eq subject.account.locked - initial_locked
     end
 
     it 'transitions to :rejected after calling #reject!' do
@@ -202,7 +199,7 @@ describe Withdraw do
         subject.cancel!
 
         expect(subject.canceled?).to be true
-        expect(subject.account.locked).to eq 0
+        expect(subject.account.locked).to eq initial_locked
       end
 
       it 'transitions from :submitted to :canceled after calling #cancel!' do
@@ -210,7 +207,7 @@ describe Withdraw do
         subject.cancel!
 
         expect(subject.canceled?).to be true
-        expect(subject.account.locked).to eq 0
+        expect(subject.account.locked).to eq initial_locked
       end
 
       it 'transitions from :accepted to :canceled after calling #cancel!' do
@@ -219,7 +216,7 @@ describe Withdraw do
         subject.cancel!
 
         expect(subject.canceled?).to be true
-        expect(subject.account.locked).to eq 0
+        expect(subject.account.locked).to eq initial_locked
       end
     end
   end
@@ -243,17 +240,17 @@ describe Withdraw do
   end
 
   context 'fee is set to fixed value of 10' do
-    let(:withdraw) { create(:usd_withdraw, sum: 200) }
-    before { Currency.any_instance.expects(:withdraw_fee).once.returns(10) }
+    let(:withdraw) { create(:usd_withdraw, sum: 20, member: account_usd.member) }
+    before { Currency.any_instance.expects(:withdraw_fee).twice.returns(10) }
     it 'computes fee' do
       expect(withdraw.fee).to eql 10.to_d
-      expect(withdraw.amount).to eql 190.to_d
+      expect(withdraw.amount).to eql 10.to_d
     end
   end
 
   context 'fee exceeds amount' do
-    let(:withdraw) { build(:usd_withdraw, sum: 200) }
-    before { Currency.any_instance.expects(:withdraw_fee).once.returns(200) }
+    let(:withdraw) { build(:usd_withdraw, sum: 10, member: account_usd.member) }
+    before { Currency.any_instance.expects(:withdraw_fee).twice.returns(10) }
     it 'fails validation' do
       expect(withdraw.save).to eq false
       expect(withdraw.errors.full_messages).to eq ['Amount must be greater than 0.0']
@@ -261,35 +258,34 @@ describe Withdraw do
   end
 
   it 'automatically generates TID if it is blank' do
-    expect(create(:btc_withdraw).tid).not_to be_blank
+    expect(create(:btc_withdraw, member: account_btc.member).tid).not_to be_blank
   end
 
   it 'doesn\'t generate TID if it is not blank' do
-    expect(create(:btc_withdraw, tid: 'TID1234567890xyz').tid).to eq 'TID1234567890xyz'
+    expect(create(:btc_withdraw, member: account_btc.member, tid: 'TID1234567890xyz').tid).to eq 'TID1234567890xyz'
   end
 
   it 'validates uniqueness of TID' do
-    record1 = create(:btc_withdraw)
-    record2 = build(:btc_withdraw, tid: record1.tid)
+    record1 = create(:btc_withdraw, member: account_btc.member)
+    record2 = build(:btc_withdraw, member: account_btc.member, tid: record1.tid)
     record2.save
     expect(record2.errors.full_messages.first).to match(/tid has already been taken/i)
   end
 
   it 'uppercases TID' do
-    record = create(:btc_withdraw)
+    record = create(:btc_withdraw, member: account_btc.member)
     expect(record.tid).to eq record.tid.upcase
   end
 
   context 'CashAddr' do
     let(:member) { create(:member) }
-    let(:account) { member.ac(:bch).tap { |x| x.update!(balance: 1.0.to_d) } }
+    let(:account_bch) { create_account(:bch, balance: 1, locked: 1) }
     let :record do
       Withdraws::Coin.new \
         currency: Currency.find(:bch),
-        member:   member,
+        member:   account_bch.member,
         rid:      address,
-        sum:      1.0.to_d,
-        account:  account
+        sum:      1.0.to_d
     end
 
     context 'valid CashAddr address' do

@@ -125,13 +125,12 @@ describe BlockchainService::Litecoin do
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:ltc_account) { member.get_account(:ltc).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:ltc_account) { create_account(:ltc, balance: 10, locked: 10, member: member) }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: ltc_account,
             aasm_state: :confirming,
             currency: currency
           withdrawals << create(:ltc_withdraw, withdrawal_hash)
@@ -159,7 +158,7 @@ describe BlockchainService::Litecoin do
         BlockchainService[blockchain.key].process_blockchain(force: true)
       end
 
-      subject { Withdraws::Coin.where(currency: currency) }
+      subject { Withdraws::Coin.where(currency: currency).where.not(txid: nil) }
 
       it 'doesn\'t create new withdrawals' do
         expect(subject.count).to eq expected_withdrawals.count

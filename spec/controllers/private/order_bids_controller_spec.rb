@@ -2,11 +2,8 @@
 # frozen_string_literal: true
 
 describe Private::OrderBidsController, type: :controller do
-  let(:member) do
-    create(:member, :level_3).tap do |m|
-      m.get_account(:usd).update_attributes(balance: '30000')
-    end
-  end
+  let(:member){ create(:member, :level_3) }
+  let(:account_usd) { create_account(:usd, balance: 30000, member: member) }
 
   let(:market) { Market.find(:btcusd) }
   let(:params) do
@@ -20,7 +17,7 @@ describe Private::OrderBidsController, type: :controller do
   context 'POST :create' do
     it 'should create a buy order' do
       expect do
-        post :create, params, member_id: member.id
+        post :create, params, member_id: account_usd.member.id
         expect(response).to be_success
         expect(response.body).to eq '{"result":true,"message":"Success"}'
       end.to change(OrderBid, :count).by(1)
@@ -29,11 +26,11 @@ describe Private::OrderBidsController, type: :controller do
 
   context 'POST :clear' do
     it 'should cancel all my bids in current market' do
-      o1 = create(:order_bid, member: member, market: market)
-      o2 = create(:order_bid, member: member, market: Market.find(:dashbtc))
+      o1 = create(:order_bid, member: account_usd.member, market: market)
+      o2 = create(:order_bid, member: account_usd.member, market: Market.find(:dashbtc))
       expect(member.orders.size).to eq 2
 
-      post :clear, { market_id: market.id }, member_id: member.id
+      post :clear, { market_id: market.id }, member_id: account_usd.member.id
       expect(response).to be_success
       expect(assigns(:orders).size).to eq 1
       expect(assigns(:orders).first).to eq o1

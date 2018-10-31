@@ -24,9 +24,12 @@ describe Serializers::EventAPI::OrderCreated do
 
   let(:created_at) { Time.current }
 
+  let(:deposit_btc) { create(:deposit_btc, amount: '100'.to_d, member: buyer) }
+  let(:withdraw_btc) { create(:btc_withdraw, sum: '100'.to_d, member: buyer) }
+
   before do
-    buyer.ac(:btc).plus_funds('100.0'.to_d)
-    buyer.ac(:btc).lock_funds('100.0'.to_d)
+    buyer.ac(:btc).plus_funds(deposit_btc.amount, deposit_btc)
+    buyer.ac(:btc).lock_funds(withdraw_btc.sum, withdraw_btc)
   end
 
   before { OrderBid.any_instance.expects(:created_at).returns(created_at).at_least_once }

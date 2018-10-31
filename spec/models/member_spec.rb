@@ -24,7 +24,7 @@ describe Member do
       end.to change(member.accounts, :count).by(Currency.codes.size)
 
       Currency.codes.each do |code|
-        expect(Account.with_currency(code).where(member_id: member.id).count).to eq 1
+        expect(Account.with_currency(code).where(member_id: member.id).count).to eq 2
       end
     end
   end

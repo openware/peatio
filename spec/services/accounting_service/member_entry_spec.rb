@@ -54,65 +54,78 @@ describe AccountingService::MemberEntry do
     end
   end
 
-  it { expect(subject.unlock_and_sub_funds('1.0'.to_d).balance).to be_d '10' }
-  it { expect(subject.unlock_and_sub_funds('1.0'.to_d).locked).to be_d '9' }
+  context 'operation amount is negative' do
+    let(:deposit) { create(:deposit_btc, amount: 1, member: subject.member) }
+    let(:withdraw) { create(:btc_withdraw, sum: 0.5, member: subject.member) }
 
-  it { expect(subject.sub_funds('0.1'.to_d).balance).to eql '9.9'.to_d }
-  it { expect(subject.plus_funds('0.1'.to_d).balance).to eql '10.1'.to_d }
-  it { expect(subject.unlock_funds('0.1'.to_d).locked).to eql '9.9'.to_d }
-  it { expect(subject.unlock_funds('0.1'.to_d).balance).to eql '10.1'.to_d }
-  it { expect(subject.lock_funds('0.1'.to_d).locked).to eql '10.1'.to_d }
-  it { expect(subject.lock_funds('0.1'.to_d).balance).to eql '9.9'.to_d }
+    it { expect { subject.plus_funds(-1, deposit) }.to raise_error(AccountingService::Error) }
+    it { expect { subject.lock_funds(-1.0, withdraw) }.to raise_error(AccountingService::Error) }
+    it { expect { subject.unlock_funds(-1.0, withdraw) }.to raise_error(AccountingService::Error) }
+    it { expect { subject.unlock_and_sub_funds(-1.0, withdraw) }.to raise_error(AccountingService::Error) }
+  end
 
-  it { expect(subject.sub_funds('10.0'.to_d).balance).to eql '0.0'.to_d }
-  it { expect(subject.plus_funds('10.0'.to_d).balance).to eql '20.0'.to_d }
-  it { expect(subject.unlock_funds('10.0'.to_d).locked).to eql '0.0'.to_d }
-  it { expect(subject.unlock_funds('10.0'.to_d).balance).to eql '20.0'.to_d }
-  it { expect(subject.lock_funds('10.0'.to_d).locked).to eql '20.0'.to_d }
-  it { expect(subject.lock_funds('10.0'.to_d).balance).to eql '0.0'.to_d }
+  context 'operation is greater than balance/locked' do
+    let(:withdraw) { create(:btc_withdraw, sum: 0.5, member: subject.member) }
 
-  it { expect { subject.sub_funds('11.0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.lock_funds('11.0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.unlock_funds('11.0'.to_d) }.to raise_error(Account::AccountError) }
+    it 'should raise error on lock_funds' do
+      expect{
+        subject.lock_funds(40, withdraw)
+      }.to raise_error(AccountingService::Error) { |e| expect(e.message).to eq 'Cannot lock funds (amount: 40).' }
 
-  it { expect { subject.sub_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.plus_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.lock_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.unlock_funds('-1.0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.sub_funds('0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.plus_funds('0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.lock_funds('0'.to_d) }.to raise_error(Account::AccountError) }
-  it { expect { subject.unlock_funds('0'.to_d) }.to raise_error(Account::AccountError) }
+      expect(subject.balance).to eql(initial_balance)
+      expect(subject.locked).to eql(initial_locked)
+    end
+
+    it 'should raise error on unlock_funds' do
+      expect{
+        subject.unlock_funds(40, withdraw)
+      }.to raise_error(AccountingService::Error) { |e| expect(e.message).to eq 'Cannot unlock funds (amount: 40).' }
+
+      expect(subject.balance).to eql(initial_balance)
+      expect(subject.locked).to eql(initial_locked)
+    end
+
+    it 'should raise error on unlock_and_sub_funds' do
+      expect{
+        subject.unlock_and_sub_funds(40, withdraw)
+      }.to raise_error(AccountingService::Error) { |e| expect(e.message).to eq 'Cannot unlock funds (amount: 40).' }
+
+      expect(subject.balance).to eql(initial_balance)
+      expect(subject.locked).to eql(initial_locked)
+    end
+  end
 
   describe 'double operation' do
-    let(:strike_volume) { '10.0'.to_d }
-    let(:account) { create_account }
+    let(:deposit) { create(:deposit_btc, amount: 1, member: subject.member) }
+    let(:withdraw) { create(:btc_withdraw, sum: 1, member: subject.member) }
 
     it 'expect double operation funds' do
-      expect do
-        account.plus_funds(strike_volume)
-        account.sub_funds(strike_volume)
-      end.to_not(change { account.balance })
+      subject.plus_funds(deposit.amount, deposit)
+      subject.unlock_and_sub_funds(withdraw.sum, withdraw)
+      expect(subject.balance).to eql(initial_balance + deposit.amount)
+      expect(subject.locked).to eql(initial_locked - withdraw.sum)
     end
   end
 
   describe 'concurrent lock_funds' do
-    it 'should raise error on the second lock_funds' do
-      account1 = Account.find subject.id
-      account2 = Account.find subject.id
+    let(:deposit) { create(:deposit_btc, amount: 1, member: subject.member) }
+    let(:withdraw) { create(:btc_withdraw, sum: 0.5, member: subject.member) }
 
-      expect(subject.reload.balance).to eq BigDecimal.new('10')
+    it 'should raise error on the second lock_funds' do
+      account1 = Account.find subject.accounts.first.id
+      account2 = Account.find subject.accounts.first.id
+
+      expect(subject.balance).to eq initial_balance
 
       expect do
         ActiveRecord::Base.transaction do
-          account1.lock_funds(8)
+          account1.lock_funds(11, withdraw)
         end
         ActiveRecord::Base.transaction do
-          account2.lock_funds(8)
+          account2.lock_funds(11, withdraw)
         end
-      end.to raise_error(Account::AccountError) { |e| expect(e.message).to eq 'Cannot lock funds (amount: 8).' }
-
-      expect(subject.reload.balance).to eq BigDecimal.new('2')
+      end.to raise_error(AccountingService::Error) { |e| expect(e.message).to eq 'Cannot lock funds (amount: 11).' }
+      expect(subject.balance).to eq initial_balance - 11
     end
   end
 end

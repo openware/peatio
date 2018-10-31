@@ -10,4 +10,8 @@ json.accounts do
     account.as_json.merge!(currency_icon_url: currency_icon_url(account.currency))
   end.tap { |collection| json.merge!(collection) }
 end
-json.withdraws @withdraws
+json.withdraws do
+  @withdraws.map do |withdraw|
+    withdraw.as_json(except: :currency_id).merge!(currency: withdraw.currency.code)
+  end.tap { |collection| json.merge!(collection) }
+end

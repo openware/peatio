@@ -53,16 +53,13 @@ describe BlockchainService::Ripple do
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:xrp_account) do
-        member.get_account(:xrp)
-              .tap { |a| a.update!(locked: 150, balance: 500) }
-      end
+
+      let!(:xrp_account) { create_account(:xrp, balance: 150, locked: 150, member: member) }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawals << create(:xrp_withdraw, withdrawal_hash.merge(
                                                  member: member,
-                                                 account: xrp_account,
                                                  aasm_state: :confirming,
                                                  currency: currency
                                                ))
@@ -82,7 +79,7 @@ describe BlockchainService::Ripple do
           .to_return(body: {}.to_json)
       end
 
-      subject { Withdraws::Coin.where(currency: currency) }
+      subject { Withdraws::Coin.where(currency: currency).where.not(txid: nil) }
 
       it "doesn't create new withdrawals" do
         process_blockchain

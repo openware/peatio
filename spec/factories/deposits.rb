@@ -13,8 +13,43 @@ FactoryBot.define do
       txout { 0 }
     end
 
+    factory :deposit_bch, class: 'Deposits::Coin' do
+      currency { Currency.find(:bch) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_ltc, class: 'Deposits::Coin' do
+      currency { Currency.find(:ltc) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
     factory :deposit_dash, class: 'Deposits::Coin' do
       currency { Currency.find(:dash) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_eth, class: 'Deposits::Coin' do
+      currency { Currency.find(:eth) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_trst, class: 'Deposits::Coin' do
+      currency { Currency.find(:trst) }
+      address { Faker::Bitcoin.address }
+      txid { Faker::Lorem.characters(64) }
+      txout { 0 }
+    end
+
+    factory :deposit_xrp, class: 'Deposits::Coin' do
+      currency { Currency.find(:xrp) }
       address { Faker::Bitcoin.address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }

@@ -2,12 +2,9 @@
 # frozen_string_literal: true
 
 describe APIv2::Trades, type: :request do
-  let(:member) do
-    create(:member, :level_3).tap do |m|
-      m.get_account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
-      m.get_account(:usd).update_attributes(balance: 2014.47, locked: 0)
-    end
-  end
+  let(:member) { create(:member, :level_3) }
+  let(:account_btc) { create_account(:btc, balance: 12.13,   locked: 3.14, member: member) }
+  let(:account_usd) { create_account(:usd, balance: 2014.47, locked: 0, member: member) }
 
   let(:token) { jwt_for(member) }
 

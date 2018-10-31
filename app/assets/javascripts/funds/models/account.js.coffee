@@ -10,7 +10,7 @@ class Account extends PeatioModel.Model
     Deposit.findAllBy('currency', @currency)
 
   withdraws: ->
-    Withdraw.findAllBy('account_id', @id)
+    Withdraw.findAllBy('currency', @currency)
 
   topDeposits: ->
     @deposits().reverse().slice(0,3)
