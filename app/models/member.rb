@@ -106,7 +106,7 @@ private
           m.level = params[:level]
         end
         member.assign_attributes(params)
-        member.save
+        member.save if member.changed?
         member
     end
 
@@ -120,6 +120,9 @@ private
     def validate_payload(p)
       fetch_email(p)
       p.fetch(:uid).tap { |uid| raise(Peatio::Auth::Error, 'UID is blank.') if uid.blank? }
+      p.fetch(:role).tap { |role| raise(Peatio::Auth::Error, 'Role is blank.') if role.blank? }
+      p.fetch(:state).tap { |state| raise(Peatio::Auth::Error, 'State is blank.') if state.blank? }
+      p.fetch(:level).tap { |level| raise(Peatio::Auth::Error, 'Level is blank.') if level.blank? }
     end
 
     def fetch_email(payload)
