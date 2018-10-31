@@ -49,12 +49,6 @@ describe APIv2::Auth::JWTAuthenticator do
   end
 
   describe 'on the fly registration' do
-    context 'token not issued by Barong' do
-      before { payload[:iss] = 'someone' }
-      it 'should not register member unless token is issued by Barong' do
-        expect { subject.authenticate }.not_to change(Member, :count)
-      end
-    end
 
     context 'token issued by Barong' do
       before { payload[:iss] = 'barong' }
@@ -78,7 +72,7 @@ describe APIv2::Auth::JWTAuthenticator do
         member = create(:member, :level_1)
         uid    = Faker::Internet.password(12, 12)
         member.update(uid: uid)
-        payload.merge!(email: member.email, uid: uid, state: 'blocked', level: 3)
+        payload.merge!(email: member.email, uid: uid, state: 'blocked', level: 3, role: 'member')
         expect { subject.authenticate }.not_to change(Member, :count)
         member.reload
         expect(member.email).to eq payload[:email]

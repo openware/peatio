@@ -18,11 +18,10 @@ module APIv2
       #
       # @param [Hash] options
       # @return [String, Member, NilClass]
-      def authenticate(options = {})
+      def authenticate
         payload, header = authenticate!(@token)
-        fetch_member(payload).yield_self do |member|
-          options[:return] == :member ? member : Member::fetch_email(payload)
-        end
+        fetch_member(payload)
+        Member::fetch_email(payload)
       rescue => e
         report_exception(e)
         if Peatio::Auth::Error === e

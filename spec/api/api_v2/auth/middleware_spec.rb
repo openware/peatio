@@ -20,7 +20,10 @@ describe APIv2::Auth::Middleware, type: :request do
 
   context 'when using JWT authentication' do
     let(:member) { create(:member, :level_3) }
-    let(:payload) { { x: 'x', y: 'y', z: 'z', email: member.email, uid: 'U123456789' } }
+    let(:payload) do
+      { x: 'x', y: 'y', z: 'z', email: member.email,\
+        uid: 'U123456789', role: 'member', state: 'active', level: '3' }
+    end
     let(:token) { jwt_build(payload) }
 
     it 'should deny access when token is not given' do
@@ -33,13 +36,6 @@ describe APIv2::Auth::Middleware, type: :request do
       api_get '/api/v2/', token: '123.456.789'
       expect(response.code).to eq '401'
       expect(response.body).to eq '{"error":{"code":2001,"message":"2001: Authorization failed: Failed to decode and verify JWT"}}'
-    end
-
-    it 'should deny access when member doesn\'t exist' do
-      payload[:email] = 'foo@bar.baz'
-      api_get '/api/v2/', token: token
-      expect(response.code).to eq '401'
-      expect(response.body).to eq '{"error":{"code":2001,"message":"2001: Authorization failed"}}'
     end
 
     it 'should allow access when valid token is given' do
