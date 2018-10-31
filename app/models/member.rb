@@ -121,8 +121,11 @@ private
       fetch_email(p)
       p.fetch(:uid).tap { |uid| raise(Peatio::Auth::Error, 'UID is blank.') if uid.blank? }
       p.fetch(:role).tap { |role| raise(Peatio::Auth::Error, 'Role is blank.') if role.blank? }
-      p.fetch(:state).tap { |state| raise(Peatio::Auth::Error, 'State is blank.') if state.blank? }
       p.fetch(:level).tap { |level| raise(Peatio::Auth::Error, 'Level is blank.') if level.blank? }
+      p.fetch(:state).tap do |state|
+        raise(Peatio::Auth::Error, 'State is blank.') if state.blank?
+        raise(Peatio::Auth::Error, 'State is not active.') unless state == 'active'
+      end
     end
 
     def fetch_email(payload)
