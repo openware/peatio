@@ -49,7 +49,7 @@ describe APIv2::Auth::JWTAuthenticator do
   end
 
   it 'should raise exception when state is not active' do
-    payload[:state] = 'blocked'
+    payload.merge!(level: 1, state: 'disabled', role: 'member' )
     expect { subject.authenticate }.to raise_error(Peatio::Auth::Error) { |e| expect(e.reason).to match /State is not active./ }
   end
 
