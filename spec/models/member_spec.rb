@@ -5,11 +5,11 @@ describe Member do
   let(:member) { build(:member, :level_3) }
   subject { member }
 
-  describe 'sn' do
+  describe 'uid' do
     subject(:member) { create(:member, :level_3) }
-    it { expect(member.sn).to_not be_nil }
-    it { expect(member.sn).to_not be_empty }
-    it { expect(member.sn).to match /\AU[A-Z0-9]{9}$/ }
+    it { expect(member.uid).to_not be_nil }
+    it { expect(member.uid).to_not be_empty }
+    it { expect(member.uid).to match /\AU[A-Z0-9]{9}$/ }
   end
 
   describe 'before_create' do

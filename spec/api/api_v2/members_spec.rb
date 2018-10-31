@@ -16,7 +16,7 @@ describe APIv2::Members, type: :request do
       api_get '/api/v2/members/me', token: token
       expect(response).to be_success
       result = JSON.parse(response.body)
-      expect(result['sn']).to eq member.sn
+      expect(result['uid']).to eq member.uid
       expect(result['accounts']).to match [
         { 'currency' => 'bch', 'balance' => '0.0', 'locked' => '0.0' },
         { 'currency' => 'btc', 'balance' => '12.13', 'locked' => '3.14' },
