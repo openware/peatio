@@ -11,11 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20181126101312) do
-=======
-ActiveRecord::Schema.define(version: 20181028000150) do
->>>>>>> Add gateway auth for development environment
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -29,7 +25,6 @@ ActiveRecord::Schema.define(version: 20181028000150) do
   add_index "accounts", ["currency_id", "member_id"], name: "index_accounts_on_currency_id_and_member_id", unique: true, using: :btree
   add_index "accounts", ["member_id"], name: "index_accounts_on_member_id", using: :btree
 
-<<<<<<< HEAD
   create_table "assets", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
@@ -44,22 +39,6 @@ ActiveRecord::Schema.define(version: 20181028000150) do
   add_index "assets", ["currency_id"], name: "index_assets_on_currency_id", using: :btree
   add_index "assets", ["reference_type", "reference_id"], name: "index_assets_on_reference_type_and_reference_id", using: :btree
 
-  create_table "authentications", force: :cascade do |t|
-    t.string   "provider",   limit: 30,   null: false
-    t.string   "uid",        limit: 255,  null: false
-    t.string   "token",      limit: 1024
-    t.integer  "member_id",  limit: 4,    null: false
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-  end
-
-  add_index "authentications", ["member_id"], name: "index_authentications_on_member_id", using: :btree
-  add_index "authentications", ["provider", "member_id", "uid"], name: "index_authentications_on_provider_and_member_id_and_uid", unique: true, using: :btree
-  add_index "authentications", ["provider", "member_id"], name: "index_authentications_on_provider_and_member_id", unique: true, using: :btree
-  add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", unique: true, using: :btree
-
-=======
->>>>>>> Add gateway auth for development environment
   create_table "blockchains", force: :cascade do |t|
     t.string   "key",                  limit: 255,             null: false
     t.string   "name",                 limit: 255
