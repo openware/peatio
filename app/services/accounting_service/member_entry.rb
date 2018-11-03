@@ -140,6 +140,8 @@ module AccountingService
       end
     end
 
+    protected
+
     def validate_amount!(amount)
       raise AccountingService::Error, "Amount can't be negative (amount: #{amount})." if amount < 0
     end

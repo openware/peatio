@@ -50,14 +50,16 @@ module AccountingService
       { code:           410,
         type:           :revenue,
         kind:           :main,
+        currency_type:  :coin,
         description:    'Revenue Account',
-        scope:          %i[member]
+        scope:          %i[platform]
       },
       { code:           542,
         type:           :expense,
         kind:           :main,
+        currency_type:  :coin,
         description:    'Expense Account',
-        scope:          %i[member]
+        scope:          %i[platform]
       }
     ].map { |h| OpenStruct.new(h) }
 
