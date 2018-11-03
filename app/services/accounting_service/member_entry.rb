@@ -58,54 +58,57 @@ module AccountingService
     end
 
     def balance
-      operations = account(kind: :main).operations
+      operations = account(kind: :main, type: :liabilities).operations
       operations.sum(:credit) - operations.sum(:debit)
     end
 
     def locked
-      operations = account(kind: :locked).operations
+      operations = account(kind: :locked, type: :liabilities).operations
       operations.sum(:credit) - operations.sum(:debit)
     end
 
     def amount; balance + locked; end
 
-    def plus_funds(amount, reference)
+    def plus_funds(amount, reference, currency = nil)
       validate_amount!(amount)
 
       with_balance_check! do
-        main_account.operations.create!(credit: amount, reference: reference)
+        main_asset_account(currency || reference.currency).operations.create!(credit: amount, reference: reference)
+        main_liability_account(currency || reference.currency).operations.create!(credit: amount, reference: reference)
       end
       self
     end
 
-    def lock_funds(amount, reference)
+    def lock_funds(amount, reference, currency = nil)
       validate_amount!(amount)
 
       with_balance_check! do
         raise AccountingService::Error, "Cannot lock funds (amount: #{amount})." if amount <= 0 || amount > balance
-        main_account.operations.create!(debit: amount, reference: reference)
-        locked_account.operations.create!(credit: amount, reference: reference)
+        main_asset_account(currency || reference.currency).operations.create!(debit: amount, reference: reference)
+        main_liability_account(currency || reference.currency).operations.create!(debit: amount, reference: reference)
+        locked_liability_account(currency || reference.currency).operations.create!(credit: amount, reference: reference)
       end
       self
     end
 
-    def unlock_funds(amount, reference)
+    def unlock_funds(amount, reference, currency = nil)
       validate_amount!(amount)
 
       with_balance_check! do
         raise AccountingService::Error, "Cannot unlock funds (amount: #{amount})." if amount <= 0 || amount > locked
-        locked_account.operations.create!(debit: amount, reference: reference)
-        main_account.operations.create!(credit: amount, reference: reference)
+        locked_liability_account(currency || reference.currency).operations.create!(debit: amount, reference: reference)
+        main_liability_account(currency || reference.currency).operations.create!(credit: amount, reference: reference)
+        main_asset_account(currency || reference.currency).operations.create!(credit: amount, reference: reference)
       end
       self
     end
 
-    def unlock_and_sub_funds(amount, reference)
+    def unlock_and_sub_funds(amount, reference, currency = nil)
       validate_amount!(amount)
 
       with_balance_check! do
         raise AccountingService::Error, "Cannot unlock funds (amount: #{amount})." if amount <= 0 || amount > locked
-        locked_account.operations.create!(debit: amount, reference: reference)
+        locked_liability_account(currency || reference.currency).operations.create!(debit: amount, reference: reference)
       end
       self
     end
@@ -116,9 +119,17 @@ module AccountingService
       accounts.find_by(code: codes)
     end
 
-    def main_account; account(kind: :main); end
-    def locked_account; account(kind: :locked); end
-    memoize :main_account, :locked_account
+    def main_liability_account(currency)
+      account(kind: :main, currency_type: (currency.fiat? ? :fiat : :coin), type: :liabilities)
+    end
+
+    def locked_liability_account(currency)
+      account(kind: :locked, currency_type: (currency.fiat? ? :fiat : :coin), type: :liabilities)
+    end
+
+    def main_asset_account(currency)
+      account(kind: :main, currency_type: (currency.fiat? ? :fiat : :coin), type: :assets)
+    end
 
     def with_balance_check!
       ActiveRecord::Base.transaction do

@@ -87,7 +87,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
         amount:   amount,
         rid:      Faker::Bitcoin.address }
     end
-    let(:account) { member.accounts.with_currency(currency).first }
+    let(:account) { member.ac(currency) }
     let(:balance) { 1.2 }
     before { account.plus_funds(balance, account) }
 

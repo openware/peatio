@@ -36,20 +36,20 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def plus_funds(amount, reference)
-    accounting_service.plus_funds(amount, reference)
+  def plus_funds(amount, reference, currency = nil)
+    accounting_service.plus_funds(amount, reference, currency)
   end
 
-  def lock_funds(amount, reference)
-    accounting_service.lock_funds(amount, reference)
+  def lock_funds(amount, reference, currency = nil)
+    accounting_service.lock_funds(amount, reference, currency)
   end
 
-  def unlock_funds(amount, reference)
-    accounting_service.unlock_funds(amount, reference)
+  def unlock_funds(amount, reference, currency = nil)
+    accounting_service.unlock_funds(amount, reference, currency)
   end
 
-  def unlock_and_sub_funds(amount, reference)
-    accounting_service.unlock_and_sub_funds(amount, reference)
+  def unlock_and_sub_funds(amount, reference, currency = nil)
+    accounting_service.unlock_and_sub_funds(amount, reference, currency)
   end
 
   def accounting_service

@@ -93,7 +93,7 @@ describe ManagementAPIv1::Deposits, type: :request do
       record = Deposit.find_by_tid!(JSON.parse(response.body).fetch('tid'))
       expect(record.amount).to eq 750.77
       expect(record.aasm_state).to eq 'submitted'
-      expect(record.account).to eq member.accounts.with_currency(currency).first
+      expect(record.account).to eq member.ac(currency)
     end
 
     it 'can create fiat deposit and immediately accept it' do

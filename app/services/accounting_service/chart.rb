@@ -5,6 +5,20 @@ module AccountingService
   # Chart is singleton class.
   class Chart
     CHART = [
+      { code:           101,
+        type:           :assets,
+        kind:           :main,
+        currency_type:  :fiat,
+        description:    'Main Fiat Assets Account',
+        scope:          %i[member]
+      },
+      { code:           102,
+        type:           :assets,
+        kind:           :main,
+        currency_type:  :coin,
+        description:    'Main Crypto Assets Account',
+        scope:          %i[member]
+      },
       { code:           201,
         type:           :liabilities,
         kind:           :main,
@@ -31,6 +45,18 @@ module AccountingService
         kind:           :locked,
         currency_type:  :coin,
         description:    'Locked Crypto Liabilities Account',
+        scope:          %i[member]
+      },
+      { code:           410,
+        type:           :revenue,
+        kind:           :main,
+        description:    'Revenue Account',
+        scope:          %i[member]
+      },
+      { code:           542,
+        type:           :expense,
+        kind:           :main,
+        description:    'Expense Account',
         scope:          %i[member]
       }
     ].map { |h| OpenStruct.new(h) }
