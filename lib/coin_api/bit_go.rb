@@ -49,7 +49,7 @@ module CoinAPI
     end
 
     def load_deposit!(txid)
-      rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/tx/' + normalize_txid(txid))
+      rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer/' + normalize_txid(txid))
         .yield_self { |tx| build_deposit(tx) }
     end
 
@@ -118,7 +118,7 @@ module CoinAPI
     def build_deposit(tx)
       entries = build_deposit_entries(tx)
       return if entries.blank?
-      { id:            normalize_txid(tx.fetch('id')),
+      { id:            normalize_txid(tx.fetch('txid')),
         confirmations: tx.fetch('confirmations').to_i,
         entries:       entries,
         received_at:   Time.parse(tx.fetch('date')) }
@@ -129,7 +129,7 @@ module CoinAPI
         .map do |entry|
           next unless entry['wallet'] == wallet_id
           next unless entry['valueString'].to_d > 0
-          next if currency.code.xrp? && tx['destinationTag'].blank?
+          next if currency.code.xrp? && !(entry['address'].include? "?dt=")
           next if entry.key?('outputs') && entry['outputs'] != 1
           entry
         end
@@ -147,7 +147,7 @@ module CoinAPI
         begin
           batch_deposits = nil
           query          = { limit: 100, prevId: next_batch_ref }
-          response       = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/tx', query)
+          response       = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', query)
           next_batch_ref = response['nextBatchPrevId']
           batch_deposits = response.fetch('transactions')
                                    .map { |tx| build_deposit(tx) }
