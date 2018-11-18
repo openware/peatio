@@ -49,6 +49,7 @@ module ManagementAPIv1
     mount ManagementAPIv1::Deposits
     mount ManagementAPIv1::Withdraws
     mount ManagementAPIv1::Tools
+    mount ManagementAPIv1::Members
 
     # The documentation is accessible at http://localhost:3000/swagger?url=/management_api/v1/swagger
     add_swagger_documentation base_path:   PREFIX,
