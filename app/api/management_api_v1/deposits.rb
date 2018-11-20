@@ -69,6 +69,34 @@ module ManagementAPIv1
       end
     end
 
+    desc 'Creates new coin deposit with state set to «submitted». ' \
+         'For users which doesnt exist on Peatio but there is on Barong' do
+      @settings[:scope] = :write_deposits
+      success ManagementAPIv1::Entities::Deposit
+    end
+    params do
+      requires :uid,      type: String, desc: 'The shared user ID.'
+      requires :address,  type: String, desc: 'Destination address of wallet.'
+      requires :txout,    type: String, desc: 'Txout.'
+      requires :txid,     type: Integer, desc: 'Transaction ID.'
+      requires :tid,      type: String, desc: 'The shared transaction ID. Must not exceed 64 characters.'
+      requires :currency, type: String, values: -> { Currency.coins.codes(bothcase: true) }, desc: 'The currency code.'
+      requires :amount,   type: BigDecimal, desc: 'The deposit amount.'
+      optional :state,    type: String, desc: 'The state of deposit.', values: %w[accepted]
+    end
+    post '/deposits/coin' do
+      member   = Authentication.find_by(provider: :barong, uid: params[:uid])&.member
+      currency = Currency.find(params[:currency])
+      data     = { member: member, currency: currency }.merge!(params.slice(:amount, :tid, :address, :txid, :txout))
+      deposit  = ::Deposits::Coin.new(data)
+      if deposit.save
+        present deposit, with: ManagementAPIv1::Entities::Deposit
+      else
+        body errors: deposit.errors.full_messages
+        status 422
+      end
+    end
+
     desc 'Allows to load money or cancel deposit.' do
       @settings[:scope] = :write_deposits
       success ManagementAPIv1::Entities::Deposit

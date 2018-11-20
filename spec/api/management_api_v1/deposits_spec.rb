@@ -159,6 +159,128 @@ describe ManagementAPIv1::Deposits, type: :request do
     end
   end
 
+  describe 'create CCY deposits' do
+    let(:member) { create(:member, :barong) }
+    let(:currency) { Currency.find(:btc) }
+    let(:amount) { 750 }
+    let :data do
+      { uid:      member.authentications.first.uid,
+        address:  '1BoatSLRHtKNngkdXEeobR76b53LETtpyT',
+        txout: '0x0',
+        txid: 1,
+        tid: '0x0',
+        currency: currency.code,
+        amount:   amount }
+    end
+    let(:signers) { %i[alex jeff] }
+
+    def request
+      post_json '/management_api/v1/deposits/coin', multisig_jwt_management_api_v1({ data: data }, *signers)
+    end
+
+    it 'creates new CCY deposit with state «submitted»' do
+      request
+      expect(response.status).to eq 201
+      record = Deposit.find_by_tid!(JSON.parse(response.body).fetch('tid'))
+      expect(record.amount).to eq 750
+      expect(record.aasm_state).to eq 'submitted'
+      expect(record.account).to eq member.accounts.with_currency(currency).first
+    end
+
+    it 'denies access unless enough signatures are supplied' do
+      data[:state] = :accepted
+      signers.clear.concat %i[james jeff]
+      expect { request }.not_to(change { member.accounts.with_currency(currency).first.balance })
+      expect(response.status).to eq 401
+    end
+
+    it 'validates member' do
+      data.delete(:uid)
+      request
+      expect(response.body).to match(/uid is missing/i)
+      data[:uid] = '1234567890'
+      request
+      expect(response.body).to match(/member can't be blank/i)
+    end
+
+    it 'validates address' do
+      data.delete(:address)
+      request
+      expect(response.body).to match(/address is missing/i)
+      data[:address] = '1234567890'
+      request
+      expect(response.status).to eq 201
+    end
+
+    it 'validates txout' do
+      data.delete(:txout)
+      request
+      expect(response.body).to match(/txout is missing/i)
+      data[:txout] = '1234567890'
+      request
+      expect(response.status).to eq 201
+    end
+
+    it 'validates txid' do
+      data.delete(:txid)
+      request
+      expect(response.body).to match(/txid is missing/i)
+      data[:txid] = 2
+      request
+      expect(response.status).to eq 201
+    end
+
+    it 'validates tid' do
+      data.delete(:tid)
+      request
+      expect(response.body).to match(/tid is missing/i)
+      data[:tid] = '2'
+      request
+      expect(response.status).to eq 201
+    end
+
+    it 'validates currency' do
+      data.delete(:currency)
+      request
+      expect(response.body).to match(/currency is missing/i)
+      data[:currency] = 'usd'
+      request
+      expect(response.body).to match(/currency does not have a valid value/i)
+    end
+
+    it 'validates amount' do
+      data.delete(:amount)
+      request
+      expect(response.body).to match(/amount is missing/i)
+      data[:amount] = '-340.50'
+      request
+      expect(response.body).to match(/amount must be greater than 0/i)
+    end
+
+    it 'validates state' do
+      data[:state] = 'submitted'
+      request
+      expect(response.body).to match(/state does not have a valid value/i)
+    end
+
+    context 'when fiat instead of coin is supplied' do
+      let(:currency) { Currency.find(:usd) }
+      it 'doesn\'t work' do
+        request
+        expect(response.body).to match(/currency does not have a valid value/i)
+      end
+    end
+
+    context 'extremely precise values' do
+      it 'keeps precision for amount' do
+        data.merge!(amount: '0.0000000123456789')
+        request
+        expect(response).to have_http_status(201)
+        expect(Deposit.last.amount.to_s).to eq data[:amount]
+      end
+    end
+  end
+
   describe 'get deposit' do
     def request
       post_json '/management_api/v1/deposits/get', multisig_jwt_management_api_v1({ data: data }, *signers)
