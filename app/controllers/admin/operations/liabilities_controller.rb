@@ -6,9 +6,9 @@ module Admin
     class LiabilitiesController < BaseController
       def index
         @liabilities = ::Operations::Liability.includes(:reference, :currency)
-                        .order(id: :desc)
-                        .page(params[:page])
-                        .per(20)
+                                              .order(id: :desc)
+                                              .page(params[:page])
+                                              .per(20)
       end
     end
   end
