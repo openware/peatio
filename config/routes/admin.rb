@@ -20,4 +20,8 @@ namespace :admin do
 
   resources 'deposits/:currency',  to: AdminDepositsRouter.new,  as: 'deposit'
   resources 'withdraws/:currency', to: AdminWithdrawsRouter.new, as: 'withdraw'
+
+  [:liability, :asset, :revenue, :expense].each do |type|
+    resources "operations/#{type.to_s}", only: [:index],  to: AdminOperationsRouter.new(type),  as: "#{type.to_s}_operations"
+  end
 end
