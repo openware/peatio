@@ -6,9 +6,9 @@ module Admin
     class RevenuesController < BaseController
       def index
         @revenues = ::Operations::Revenue.includes(:reference, :currency)
-                        .order(id: :desc)
-                        .page(params[:page])
-                        .per(20)
+                                         .order(id: :desc)
+                                         .page(params[:page])
+                                         .per(20)
       end
     end
   end
