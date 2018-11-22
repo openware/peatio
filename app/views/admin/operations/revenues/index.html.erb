@@ -1,0 +1,9 @@
+<h3>Revenues</h3>
+<div class="card">
+
+<%= render partial: 'admin/operations/shared/table', locals: { objects: @revenues} %>
+</div>
+
+<div class="float-right">
+  <%= paginate @revenues, params: { route: :admin_revenue_operations } %>
+</div>
