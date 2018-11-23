@@ -22,6 +22,6 @@ namespace :admin do
   resources 'withdraws/:currency', to: AdminWithdrawsRouter.new, as: 'withdraw'
 
   [:liability, :asset, :revenue, :expense].each do |type|
-    resources "operations/#{type.to_s}", only: [:index],  to: AdminOperationsRouter.new(type),  as: "#{type.to_s}_operations"
+    resources "operations/#{type.to_s}/:currency", only: [:index],  to: AdminOperationsRouter.new(type),  as: "#{type.to_s}_operations"
   end
 end
