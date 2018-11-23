@@ -47,6 +47,14 @@ module Operations
         debit!(reference: reference, amount: amount, kind: from_kind, member_id: member_id, currency: currency)
         credit!(reference: reference, amount: amount, kind: to_kind, member_id: member_id, currency: currency)
       end
+
+      def balance(currency: nil, member: nil)
+        if member.blank?
+          super(currency: currency)
+        else
+          # TODO
+        end
+      end
     end
   end
 end

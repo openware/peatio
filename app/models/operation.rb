@@ -52,10 +52,12 @@ class Operation < ActiveRecord::Base
 
     def balance(currency: nil)
       if currency.blank?
-        defaul_balance = Hash[Currency.pluck(:id).collect { |id| [id.to_sym, 0] }]
-        group(:currency_id)
-        .sum('credit - debit')
-        .merge defaul_balance
+        db_balances = group(:currency_id)
+                        .sum('credit - debit')
+
+        Currency.ids.map(&:to_sym).each_with_object({}) do |id, memo|
+          memo[id] = db_balances[id] || 0
+        end
       else
         where(currency: currency)
         .sum('credit - debit')
