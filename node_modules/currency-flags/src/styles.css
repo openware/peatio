@@ -1,0 +1,21 @@
+.currency-flag {
+  display: inline-block;
+  width: 24px;
+  height: 16px;
+  background-size: cover;
+}
+
+.currency-flag-sm {
+  width: 16px;
+  height: 10px;
+}
+
+.currency-flag-lg {
+  width: 36px;
+  height: 24px;
+}
+
+.currency-flag-xl {
+  width: 48px;
+  height: 32px;
+}
