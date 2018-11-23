@@ -50,9 +50,15 @@ class Operation < ActiveRecord::Base
       )
     end
 
-    def balance(currency:)
-      where(currency: currency).yield_self do |operations|
-        operations.sum(:credit) - operations.sum(:debit)
+    def balance(currency: nil)
+      if currency.blank?
+        defaul_balance = Hash[Currency.pluck(:id).collect { |id| [id.to_sym, 0] }]
+        group(:currency_id)
+        .sum('credit - debit')
+        .merge defaul_balance
+      else
+        where(currency: currency)
+        .sum('credit - debit')
       end
     end
   end
