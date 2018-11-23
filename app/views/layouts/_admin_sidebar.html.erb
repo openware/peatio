@@ -138,6 +138,13 @@
             </ul>
           </div>
         </li>
+
+        <li class="list-icon-item <%= check_active('balance_sheet') %>">
+          <%= link_to admin_balance_sheet_path do %>
+            <i class="icon fa fa-users"></i>
+            <span class="menu-text"><%= t('.menus.sections.balance_sheet') %></span>
+          <% end %>
+        </li>
       <% end %>
     </ul>
   </div>
