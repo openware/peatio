@@ -199,19 +199,13 @@ private
         kind: :locked
       )
 
-      # Debit main fiat/crypto Asset account.
-      # NOTE: Debit amount = sum - fee.
-      Operations::Asset.debit!(
-        reference: self,
-        amount: amount
-      )
-
       # Credit main fiat/crypto Revenue account.
       # NOTE: Credit amount = fee.
-      Operations::Revenue.credit!(
-        reference: self,
-        amount: fee
-      )
+      Operations::Revenue.credit!(reference: self, amount: fee)
+
+      # Debit main fiat/crypto Asset account.
+      # NOTE: Debit amount = sum - fee.
+      Operations::Asset.debit!(reference: self, amount: amount)
     end
   end
 

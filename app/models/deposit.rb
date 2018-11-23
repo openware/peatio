@@ -96,7 +96,10 @@ class Deposit < ActiveRecord::Base
   def record_complete_operations!
     transaction do
       # Credit main fiat/crypto Asset account.
-      Operations::Asset.credit!(reference: self, amount: amount)
+      Operations::Asset.credit!(reference: self, amount: amount + fee)
+
+      # Credit main fiat/crypto Revenue account.
+      Operations::Revenue.credit!(reference: self, amount: fee)
 
       # Credit main fiat/crypto Liability account.
       Operations::Liability.credit!(

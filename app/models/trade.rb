@@ -150,7 +150,6 @@ class Trade < ActiveRecord::Base
     Operations::Revenue.credit!(
       reference: self,
       amount:    ask_currency_fee,
-      kind:      :main,
       currency:  ask.currency
     )
 
@@ -158,7 +157,6 @@ class Trade < ActiveRecord::Base
     Operations::Revenue.credit!(
       reference: self,
       amount:    bid_currency_fee,
-      kind:      :main,
       currency:  bid.currency
     )
   end
