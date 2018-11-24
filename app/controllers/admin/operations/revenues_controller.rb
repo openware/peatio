@@ -8,10 +8,10 @@ module Admin
     class RevenuesController < BaseController
       def index
         @revenues = ::Operations::Revenue.includes(:reference, :currency)
-                                         .where(currency: currency)
-                                         .order(id: :desc)
-                                         .page(params[:page])
-                                         .per(20)
+        @revenues = @revenues.where(currency: currency) if currency
+        @revenues = @revenues.order(id: :desc)
+                             .page(params[:page])
+                             .per(20)
       end
     end
   end

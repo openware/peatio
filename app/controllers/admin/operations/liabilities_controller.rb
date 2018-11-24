@@ -8,10 +8,10 @@ module Admin
     class LiabilitiesController < BaseController
       def index
         @liabilities = ::Operations::Liability.includes(:reference, :currency)
-                                              .where(currency: currency)
-                                              .order(id: :desc)
-                                              .page(params[:page])
-                                              .per(20)
+        @liabilities = @liabilities.where(currency: currency) if currency
+        @liabilities = @liabilities.order(id: :desc)
+                                   .page(params[:page])
+                                   .per(20)
       end
     end
   end

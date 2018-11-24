@@ -22,7 +22,7 @@ namespace :admin do
   resources 'withdraws/:currency', to: AdminWithdrawsRouter.new, as: 'withdraw'
 
   [:liability, :asset, :revenue, :expense].each do |type|
-    resources "operations/#{type.to_s.pluralize}/:currency", only: [:index],  to: AdminOperationsRouter.new(type),  as: "#{type.to_s}_operations"
+    get "operations/#{type.to_s.pluralize}/(:currency)", to: AdminOperationsRouter.new(type),  as: "#{type.to_s}_operations"
   end
 
   get 'balance_sheet', to: 'balance_sheet#index', as: 'balance_sheet'

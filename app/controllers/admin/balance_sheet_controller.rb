@@ -4,8 +4,8 @@
 module Admin
   class BalanceSheetController < BaseController
     def index
-      @assets = ::Operations::Asset.group(:currency_id).sum(:credit)
-      @liabilities = ::Operations::Liability.group(:currency_id).sum(:debit)
+      @assets = ::Operations::Asset.balance
+      @liabilities = ::Operations::Liability.balance
       @balances = @assets.merge(@liabilities){ |k, a, b| a - b}
     end
   end
