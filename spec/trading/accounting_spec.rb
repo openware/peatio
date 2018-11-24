@@ -69,4 +69,13 @@ describe 'Accounting' do
 
     expect(asset.merge(liability){ |k, a, b| a - b}).to eq (revenue.merge(expense){ |k, a, b| a - b})
   end
+
+  it 'assert the balance is 15 / 18$' do
+    asset = Operations::Asset.balance
+    liability = Operations::Liability.balance
+    balance = asset.merge(liability){ |k, a, b| a - b}
+
+    expect(balance.fetch(:btc)).to eq '15.0'.to_d
+    expect(balance.fetch(:usd)).to eq '18.0'.to_d
+  end
 end
