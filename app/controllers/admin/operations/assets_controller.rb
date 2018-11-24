@@ -8,10 +8,10 @@ module Admin
     class AssetsController < BaseController
       def index
         @assets = ::Operations::Asset.includes(:reference, :currency)
-                                     .where(currency: currency)
-                                     .order(id: :desc)
-                                     .page(params[:page])
-                                     .per(20)
+        @assets = @assets.where(currency: currency) if currency
+        @assets = @assets.order(id: :desc)
+                         .page(params[:page])
+                         .per(20)
       end
     end
   end

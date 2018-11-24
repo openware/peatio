@@ -10,7 +10,7 @@ module Admin
     protected
 
       def currency
-        Currency.find(params[:currency])
+        params[:currency] ? Currency.find(params[:currency]) : nil
       end
       helper_method :currency
     end

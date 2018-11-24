@@ -122,18 +122,7 @@
           <div class="sub-menu hidden">
             <ul class="list-unstyled list-menu mb-0">
               <% [:liability, :asset, :revenue, :expense].each do |o| %>
-                <li>
-                  <%= link_to "javascript:void(0);", class: 'has-arrow waves-effect waves-dark nested-child-popover', 'aria-expanded': "false", onclick: "displayNestedChild(this)" do %>
-                    <span class="menu-text"><%= o.to_s.upcase %></span>
-                  <% end %>
-                  <div class="sub-menu hidden">
-                    <ul class="list-unstyled list-menu mb-0">
-                      <% Currency.ordered.codes.each do |c| %>
-                        <li><%= link_to c.upcase, send("admin_#{o.to_s}_operations_path", c) %></li>
-                      <% end %>
-                    </ul>
-                  </div>
-                </li>
+                <li><%= link_to o.to_s.upcase, send("admin_#{o.to_s}_operations_path") %></li>
               <% end %>
             </ul>
           </div>
@@ -141,7 +130,7 @@
 
         <li class="list-icon-item <%= check_active('balance_sheet') %>">
           <%= link_to admin_balance_sheet_path do %>
-            <i class="icon fa fa-users"></i>
+            <i class="icon fa fa-balance-scale"></i>
             <span class="menu-text"><%= t('.menus.sections.balance_sheet') %></span>
           <% end %>
         </li>
