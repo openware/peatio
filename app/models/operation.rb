@@ -56,7 +56,7 @@ class Operation < ActiveRecord::Base
                         .sum('credit - debit')
 
         Currency.ids.map(&:to_sym).each_with_object({}) do |id, memo|
-          memo[id] = db_balances[id] || 0
+          memo[id] = db_balances[id.to_s] || 0
         end
       else
         where(currency: currency)
