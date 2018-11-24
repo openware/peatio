@@ -4,6 +4,10 @@
     <% x.currency.code.upcase %>
   <% end %>
 
+  <% t.column 'Account Kind' do |x| %>
+    <%= Operations::Chart::find_chart(x.code).fetch(:kind).upcase %>
+  <% end %>
+
   <% if objects.klass.name.demodulize == "Liability" %>
     <% t.column 'Member ID' do |x| %>
       <code class="text-info"><%= x.member_id %></code>
