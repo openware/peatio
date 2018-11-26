@@ -19,16 +19,13 @@ class ActionDispatch::Routing::Mapper
 end
 
 Peatio::Application.routes.draw do
-
-  root 'welcome#index'
+  root 'main#index'
 
   get '/signout' => 'sessions#destroy', :as => :signout
   get '/auth/failure' => 'sessions#failure', :as => :failure
   match '/auth/:provider/callback' => 'sessions#create', via: %i[get post]
 
   scope module: :private do
-    resources :settings, only: [:index]
-
     resources :withdraw_destinations, only: %i[ create update ]
 
     resources :funds, only: [:index] do
