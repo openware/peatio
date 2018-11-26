@@ -535,7 +535,7 @@ en:
   'false': false
   view_on_github: View on Github
   slogan:
-    heading: Peatio Open-Source Exchange
+    heading: RubyKube Open-Source Exchange
     subheading: Cloud deployment made simple and secure
     text1: Peatio - Cryptocurrency exchange for managing digital currency.
     text2: We provide Peatio installation and configuration services.
@@ -578,7 +578,6 @@ en:
     order_history: Order History
     trade_history: Trade History
     account_history: Account History
-    my_profile: My Profile
     back: Back
     total: Total
     deposit: Deposit

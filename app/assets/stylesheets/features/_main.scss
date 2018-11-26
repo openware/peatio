@@ -1,10 +1,14 @@
-#welcome-index {
+#main-index {
     color: rgb(83, 102, 120);
-    height: 100vh;
+    height: 90vh;
     position: relative;
 
     .container {
       padding-top: 20px;
+    }
+
+    .mt-15 {
+      margin-top: 5rem !important;
     }
 
     .welcome-logo {
@@ -14,10 +18,8 @@
       img {
         display:    block;
         margin:     0 auto;
-        width:      auto;
-        height:     auto;
-        max-width:  500px;
-        max-height: 200px;
+        width:  300px;
+        height: 300px;
       }
     }
 
