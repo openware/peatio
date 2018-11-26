@@ -129,7 +129,7 @@ class Member < ActiveRecord::Base
       currency_type: currency.type.to_sym
     )
     liabilities = Operations::Liability.where(member_id: id, currency: currency, code: account_code)
-    liabilities.sum(:credit) - liabilities.sum(:debit)
+    liabilities.sum('credit - debit')
   end
 
   def legacy_balance_for(currency:, kind:)

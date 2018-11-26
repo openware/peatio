@@ -1,7 +1,7 @@
 
 <%= table_for objects, class: 'table table-bordered table-striped' do |t| %>
   <% t.column 'Currency' do |x| %>
-    <% x.currency.code.upcase %>
+    <% x.currency_id.upcase %>
   <% end %>
 
   <% t.column 'Account Kind' do |x| %>

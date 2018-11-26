@@ -4,7 +4,6 @@ module Operations
   # {Liability} is a balance sheet operation
   class Liability < Operation
     class << self
-      # TODO: To many params.
       def credit!(reference:, amount:, kind:, member_id: nil, currency: nil)
         return if amount.zero?
 
@@ -23,7 +22,6 @@ module Operations
         )
       end
 
-      # TODO: To many params.
       # TODO: Validate member balance before debit.
       def debit!(reference:, amount:, kind:, member_id: nil, currency: nil)
         return if amount.zero?
@@ -43,17 +41,10 @@ module Operations
         )
       end
 
-      def transfer!(reference:, amount:, from_kind:, to_kind:, member_id: nil, currency: nil)
+      def transfer!(reference:, amount:, from_kind:,
+                    to_kind:, member_id: nil, currency: nil)
         debit!(reference: reference, amount: amount, kind: from_kind, member_id: member_id, currency: currency)
         credit!(reference: reference, amount: amount, kind: to_kind, member_id: member_id, currency: currency)
-      end
-
-      def balance(currency: nil, member: nil)
-        if member.blank?
-          super(currency: currency)
-        else
-          # TODO
-        end
       end
     end
   end

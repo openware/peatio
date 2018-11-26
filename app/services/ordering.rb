@@ -30,7 +30,6 @@ class Ordering
 private
 
   def do_submit(order)
-    # binding.pry
     order.fix_number_precision # number must be fixed before computing locked
     order.locked = order.origin_locked = order.compute_locked
     order.save!
