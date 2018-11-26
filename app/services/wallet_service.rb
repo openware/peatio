@@ -44,7 +44,8 @@ module WalletService
       method_not_implemented
     end
 
-    # TODO: Move to protected
+    protected
+
     def spread_deposit(deposit)
       left_amount = deposit.amount
       collection_spread = Hash.new(0)
@@ -80,8 +81,6 @@ module WalletService
       end
       collection_spread
     end
-
-    protected
 
     def destination_wallets(deposit)
       Wallet

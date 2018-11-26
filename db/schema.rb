@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181017114624) do
+ActiveRecord::Schema.define(version: 20181126101312) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -57,20 +57,21 @@ ActiveRecord::Schema.define(version: 20181017114624) do
   add_index "blockchains", ["status"], name: "index_blockchains_on_status", using: :btree
 
   create_table "currencies", force: :cascade do |t|
-    t.string   "blockchain_key",       limit: 32
-    t.string   "symbol",               limit: 1,                                               null: false
-    t.string   "type",                 limit: 30,                             default: "coin", null: false
-    t.decimal  "deposit_fee",                       precision: 32, scale: 16, default: 0.0,    null: false
-    t.decimal  "quick_withdraw_limit",              precision: 32, scale: 16, default: 0.0,    null: false
-    t.decimal  "min_deposit_amount",                precision: 32, scale: 16, default: 0.0,    null: false
-    t.decimal  "withdraw_fee",                      precision: 32, scale: 16, default: 0.0,    null: false
-    t.string   "options",              limit: 1000,                           default: "{}",   null: false
-    t.boolean  "enabled",                                                     default: true,   null: false
-    t.integer  "base_factor",          limit: 8,                              default: 1,      null: false
-    t.integer  "precision",            limit: 1,                              default: 8,      null: false
-    t.string   "icon_url",             limit: 255
-    t.datetime "created_at",                                                                   null: false
-    t.datetime "updated_at",                                                                   null: false
+    t.string   "blockchain_key",        limit: 32
+    t.string   "symbol",                limit: 1,                                               null: false
+    t.string   "type",                  limit: 30,                             default: "coin", null: false
+    t.decimal  "deposit_fee",                        precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "quick_withdraw_limit",               precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "min_deposit_amount",                 precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "min_collection_amount",              precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "withdraw_fee",                       precision: 32, scale: 16, default: 0.0,    null: false
+    t.string   "options",               limit: 1000,                           default: "{}",   null: false
+    t.boolean  "enabled",                                                      default: true,   null: false
+    t.integer  "base_factor",           limit: 8,                              default: 1,      null: false
+    t.integer  "precision",             limit: 1,                              default: 8,      null: false
+    t.string   "icon_url",              limit: 255
+    t.datetime "created_at",                                                                    null: false
+    t.datetime "updated_at",                                                                    null: false
   end
 
   add_index "currencies", ["enabled"], name: "index_currencies_on_enabled", using: :btree
