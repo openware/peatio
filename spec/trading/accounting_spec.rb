@@ -48,6 +48,11 @@ describe 'Accounting' do
       funds:        '12000'
   end
 
+  let(:asset_balance) { Operations::Asset.balance }
+  let(:liability_balance) { Operations::Liability.balance }
+  let(:revenue_balance) { Operations::Revenue.balance }
+  let(:expense_balance) { Operations::Expense.balance }
+
   before do
     deposit_btc.accept!
     deposit_usd.accept!
@@ -62,20 +67,36 @@ describe 'Accounting' do
   end
 
   it 'assert that asset - liabilities = revenue - expense' do
-    asset = Operations::Asset.balance
-    liability = Operations::Liability.balance
-    revenue = Operations::Revenue.balance
-    expense = Operations::Expense.balance
-
-    expect(asset.merge(liability){ |k, a, b| a - b}).to eq (revenue.merge(expense){ |k, a, b| a - b})
+    expect(asset_balance.merge(liability_balance){ |k, a, b| a - b}).to eq (revenue_balance.merge(expense_balance){ |k, a, b| a - b})
   end
 
-  it 'assert the balance is 15 / 18$' do
-    asset = Operations::Asset.balance
-    liability = Operations::Liability.balance
-    balance = asset.merge(liability){ |k, a, b| a - b}
+  it 'assert the balance is 15.0 / 18.0 $' do
+    balance = asset_balance.merge(liability_balance){ |k, a, b| a - b}
 
     expect(balance.fetch(:btc)).to eq '15.0'.to_d
     expect(balance.fetch(:usd)).to eq '18.0'.to_d
+  end
+
+  context 'withdraws' do
+    let(:btc_withdraw) { create(:new_btc_withdraw, sum: 1000.to_d, member: buyer ) }
+
+    before do
+      btc_withdraw.submit!
+      btc_withdraw.accept!
+      btc_withdraw.process!
+      btc_withdraw.dispatch!
+      btc_withdraw.success!
+    end
+
+    it 'after btc withdraw, assert that asset - liabilities = revenue - expense' do
+      expect(asset_balance.merge(liability_balance){ |k, a, b| a - b}).to eq (revenue_balance.merge(expense_balance){ |k, a, b| a - b})
+    end
+
+    it 'after btc withdraw (fee: 0.01) assert the balance is 15.01 / 18.0 $' do
+      balance = asset_balance.merge(liability_balance){ |k, a, b| a - b}
+
+      expect(balance.fetch(:btc)).to eq '15.01'.to_d
+      expect(balance.fetch(:usd)).to eq '18.0'.to_d
+    end
   end
 end
