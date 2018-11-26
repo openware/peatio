@@ -50,9 +50,13 @@ class Operation < ActiveRecord::Base
       )
     end
 
-    def balance(currency: nil)
+    def balance(currency: nil, date_range: nil)
       if currency.blank?
-        db_balances = group(:currency_id)
+        db_balances = all
+        db_balances = db_balances.where(created_at: \
+                            Date.parse(date_range.split('-')[0].strip).beginning_of_day.. \
+                            Date.parse(date_range.split('-')[1].strip).end_of_day) if date_range
+        db_balances = db_balances.group(:currency_id)
                         .sum('credit - debit')
 
         Currency.ids.map(&:to_sym).each_with_object({}) do |id, memo|
