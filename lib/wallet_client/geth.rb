@@ -61,7 +61,7 @@ module WalletClient
     end
 
     def permit_transaction(issuer, recipient)
-      json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
+      json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), '0x5']).tap do |response|
         unless response['result']
           raise WalletClient::Error, \
             "#{wallet.name} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} is not permitted."
