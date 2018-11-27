@@ -37,10 +37,10 @@ copy filter.service file to /etc/systemd/system/filter.service
 
 #Steps to setup Parity:
 
-1. wget https://releases.parity.io/v2.2.1/x86_64-unknown-linux-gnu/parity
-2. chmod +x parity
-3. sudo mv parity /usr/loca/bin
+1. `wget https://releases.parity.io/v2.2.1/x86_64-unknown-linux-gnu/parity`
+2. `chmod +x parity`
+3. `sudo mv parity /usr/loca/bin`
 Sync parity :
-4. parity --jsonrpc-interface=0.0.0.0 --jsonrpc-apis eth,personal,net,web3,rpc --geth
- for testnet :
-parity --chain ropsten --jsonrpc-interface=0.0.0.0 --jsonrpc-apis eth,personal,net,web3,rpc --geth
+4. `parity --jsonrpc-interface=0.0.0.0 --jsonrpc-apis eth,personal,net,web3,rpc --geth`
+5.For testnet :
+`parity --chain ropsten --jsonrpc-interface=0.0.0.0 --jsonrpc-apis eth,personal,net,web3,rpc --geth`
