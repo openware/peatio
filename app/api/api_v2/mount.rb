@@ -50,7 +50,6 @@ module APIv2
     mount APIv2::K
     mount APIv2::Tools
     mount APIv2::Withdraws
-    mount APIv2::Sessions
     mount APIv2::Fees
     mount APIv2::MemberLevels
     mount APIv2::Currencies

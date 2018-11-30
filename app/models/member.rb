@@ -77,8 +77,7 @@ private
 
   class << self
     def uid(member_id)
-      m = Member.where(id: member_id).limit(1).first
-      m.uid
+      Member.find_by(id: member_id).uid
     end
 
     # Create Member object from payload
@@ -98,23 +97,21 @@ private
     # }
 
     def from_payload(p)
-        params = filter_payload(p)
-        validate_payload(params)
-        member = Member.find_or_create_by(uid: p[:uid], email: p[:email]) do |m|
-          m.role = params[:role]
-          m.state = params[:state]
-          m.level = params[:level]
-        end
-        member.assign_attributes(params)
-        member.save if member.changed?
-        member
+      params = filter_payload(p)
+      validate_payload(params)
+      member = Member.find_or_create_by(uid: p[:uid], email: p[:email]) do |m|
+        m.role = params[:role]
+        m.state = params[:state]
+        m.level = params[:level]
+      end
+      member.assign_attributes(params)
+      member.save if member.changed?
+      member
     end
 
     # Filter and validate payload params
     def filter_payload(payload)
-      payload.select {|key|
-        [:email, :uid, :role, :state, :level].include?(key)
-      }
+      payload.slice(:email, :uid, :role, :state, :level)
     end
 
     def validate_payload(p)

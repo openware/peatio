@@ -5,14 +5,12 @@ require_dependency 'authorization/bearer'
 
 class ApplicationController < ActionController::Base
   include Authorization::Bearer
-  include SessionUtils
   extend Memoist
 
   protect_from_forgery with: :exception
 
   helper_method :current_user, :is_admin?, :current_market, :gon
   before_action :set_language, :set_gon
-  #around_action :share_user
 
   private
 
@@ -27,7 +25,7 @@ class ApplicationController < ActionController::Base
     if request.headers['Authorization']
       token = request.headers['Authorization']
       payload = authenticate!(token)
-      Member::from_payload(payload)
+      Member.from_payload(payload)
     else
       nil
     end
@@ -148,8 +146,6 @@ class ApplicationController < ActionController::Base
 
     gon.bank_details_html = ENV['BANK_DETAILS_HTML']
 
-    gon.barong_domain = ENV["BARONG_DOMAIN"]
-
     gon.ranger_host = ENV["RANGER_HOST"] || '0.0.0.0'
     gon.ranger_port = ENV["RANGER_PORT"] || '8081'
     gon.ranger_connect_secure = ENV["RANGER_CONNECT_SECURE"] || false
@@ -160,16 +156,5 @@ class ApplicationController < ActionController::Base
     cookies[:lang].tap do |locale|
       I18n.locale = locale if locale.present? && I18n.available_locales.include?(locale.to_sym)
     end
-  end
-
-  #FIXME remove this call
-  def share_user
-    logger.debug { "DEPRECATED: method share_user" }
-    Member.current = current_user
-    yield
-  ensure
-    # http://stackoverflow.com/questions/2513383/access-current-user-in-model
-    # To address the thread variable leak issues in Puma/Thin webserver
-    Member.current = nil
   end
 end
