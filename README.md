@@ -25,7 +25,7 @@ Help is greatly appreciated, feel free to submit pull-requests or open issues.
 
 * Linux / Mac OSX
 * Docker / Kubernetes
-* Ruby 2.5.0
+* Ruby 2.5.3
 * Rails 4.2+
 * Redis 2.0+
 * MySQL 5.7

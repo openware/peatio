@@ -42,8 +42,8 @@ source ~/.bash_profile
 Install Ruby and set it as the default version:
 
 ```shell
-rbenv install 2.5.0
-rbenv global 2.5.0
+rbenv install 2.5.3
+rbenv global 2.5.3
 
 ruby -v
 ```
