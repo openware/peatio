@@ -19,11 +19,10 @@ module APIv2
       # @param [Hash] options
       # @return [String, Member, NilClass]
       def authenticate
-        payload, header = authenticate!(@token)
+        payload, _header = authenticate!(@token)
         fetch_member(payload)
-        Member::fetch_email(payload)
+        Member.fetch_email(payload)
       rescue => e
-        report_exception(e)
         if Peatio::Auth::Error === e
           raise e
         else
@@ -35,7 +34,7 @@ module APIv2
 
       def fetch_member(payload)
         begin
-          Member::from_payload(payload)
+          Member.from_payload(payload)
           # Handle race conditions when creating member & authentication records.
           # We do not handle race condition for update operations.
           # http://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-find_or_create_by
