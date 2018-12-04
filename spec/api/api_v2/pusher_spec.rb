@@ -24,7 +24,7 @@ describe APIv2::Pusher, type: :request do
     end
 
     it do
-      expect(subject).to have_http_status 201
+      expect(subject).to have_http_status 200
       expect(subject.body).to eq JSON.dump(auth: channel_token)
     end
   end
