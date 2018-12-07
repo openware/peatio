@@ -30,7 +30,7 @@ module API
 
         expose :trades_count
         expose :trades, if: {type: :full} do |order, options|
-          ::V2::Entities::Trade.represent order.trades, side: side
+          API::V2::Entities::Trade.represent order.trades, side: side
         end
 
         private

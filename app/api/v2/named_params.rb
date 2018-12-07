@@ -17,7 +17,7 @@ module API
         requires :market,
                 type: String,
                 desc: -> { V2::Entities::Market.documentation[:id] },
-                values: -> { Market.enabled.ids }
+                values: -> { ::Market.enabled.ids }
       end
 
       params :order do

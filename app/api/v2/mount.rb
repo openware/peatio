@@ -39,6 +39,7 @@ module API
 
       mount Public::Mount => 'public'
       mount Account::Mount => 'account'
+      mount Market::Mount => 'market'
       # mount V2::Account
       # mount V2::Market
       # mount V2::Management

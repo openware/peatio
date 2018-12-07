@@ -37,7 +37,7 @@ module API
       memoize :current_user
 
       def current_market
-        Market.enabled.find_by_id(params[:market])
+        ::Market.enabled.find_by_id(params[:market])
       end
       memoize :current_market
 
@@ -62,7 +62,7 @@ module API
         order = build_order(attrs)
         Ordering.new(order).submit
         order
-      rescue Account::AccountError => e
+      rescue ::Account::AccountError => e
         report_exception_to_screen(e)
         raise CreateOrderAccountError, e.inspect
       rescue => e
