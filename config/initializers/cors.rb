@@ -1,13 +1,15 @@
 require 'grape/middleware/error'
 
-module APIv2CORS
-  def rack_response(*args)
-    if env.fetch('REQUEST_URI').match?(/\A\/api\/v2\//)
-      args << {} if args.count < 3
-      APIv2::CORS.call(args[2])
+module APIv2
+  module CORS
+    def rack_response(*args)
+      if env.fetch('REQUEST_URI').match?(/\A\/api\/v2\//)
+        args << {} if args.count < 3
+        API::V2::CORS.call(args[2])
+      end
+      super(*args)
     end
-    super(*args)
   end
 end
 
-Grape::Middleware::Error.prepend APIv2CORS
+Grape::Middleware::Error.prepend APIv2::CORS

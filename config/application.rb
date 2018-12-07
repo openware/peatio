@@ -17,11 +17,15 @@ require_relative 'plugins'
 module Peatio
   class Application < Rails::Application
 
+    # Eager loading app dir
+    config.eager_load_paths += Dir[Rails.root.join('app')]
+
     # Configure Sentry as early as possible.
     if ENV['SENTRY_DSN_BACKEND'].present?
       require 'sentry-raven'
       Raven.configure { |config| config.dsn = ENV['SENTRY_DSN_BACKEND'] }
     end
+
 
     # Require Scout.
     require 'scout_apm' if Rails.env.in?(ENV['SCOUT_ENV'].to_s.split(',').map(&:squish))
