@@ -15,7 +15,7 @@ module API
         resource :markets do
           desc 'Get all available markets.'
           get "/" do
-            present Market.enabled.ordered, with: API::V2::Entities::Market
+            present ::Market.enabled.ordered, with: API::V2::Entities::Market
           end
 
           desc 'Get the order book of specified market.'
@@ -68,7 +68,7 @@ module API
 
           desc 'Get ticker of all markets.'
           get "/tickers" do
-            Market.enabled.ordered.inject({}) do |h, m|
+            ::Market.enabled.ordered.inject({}) do |h, m|
               h[m.id] = format_ticker Global[m.id].ticker
               h
             end

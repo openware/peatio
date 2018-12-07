@@ -10,7 +10,6 @@ module API
       PREFIX = '/api'
       API_VERSION = 'v2'
 
-      cascade false
 
       format         :json
       content_type   :json, 'application/json'
@@ -40,10 +39,7 @@ module API
       mount Public::Mount => 'public'
       mount Account::Mount => 'account'
       mount Market::Mount => 'market'
-
-      route :any, '*path' do
-        error! 'Route is not found', 404
-      end
+      mount Management::Mount => 'management'
 
       # The documentation is accessible at http://localhost:3000/swagger?url=/api/v2/swagger
       add_swagger_documentation base_path:   PREFIX,

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe ManagementAPIv1::Deposits, type: :request do
+describe API::V2::Management::Deposits, type: :request do
   before do
     defaults_for_management_api_v1_security_configuration!
     management_api_v1_security_configuration.merge! \
@@ -12,7 +12,7 @@ describe ManagementAPIv1::Deposits, type: :request do
 
   describe 'get balance' do
     def request
-      post_json '/management_api/v1/accounts/balance', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/accounts/balance', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:data) { { uid: member.uid, currency: 'usd'} }

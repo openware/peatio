@@ -1,11 +1,11 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe ManagementAPIv1::Entities::Deposit do
+describe API::V2::Management::Entities::Deposit do
   context 'fiat' do
     let(:record) { create(:deposit_usd, member: create(:member, :barong)) }
 
-    subject { OpenStruct.new ManagementAPIv1::Entities::Deposit.represent(record).serializable_hash }
+    subject { OpenStruct.new API::V2::Management::Entities::Deposit.represent(record).serializable_hash }
 
     it { expect(subject.tid).to eq record.tid }
     it { expect(subject.currency).to eq 'usd' }
@@ -22,7 +22,7 @@ describe ManagementAPIv1::Entities::Deposit do
   context 'coin' do
     let(:record) { create(:deposit_btc, member: create(:member, :barong)) }
 
-    subject { OpenStruct.new ManagementAPIv1::Entities::Deposit.represent(record).serializable_hash }
+    subject { OpenStruct.new API::V2::Management::Entities::Deposit.represent(record).serializable_hash }
 
     it { expect(subject.tid).to eq record.tid }
     it { expect(subject.currency).to eq 'btc' }

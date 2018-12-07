@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe ManagementAPIv1::Deposits, type: :request do
+describe API::V2::Management::Deposits, type: :request do
   before do
     defaults_for_management_api_v1_security_configuration!
     management_api_v1_security_configuration.merge! \
@@ -13,7 +13,7 @@ describe ManagementAPIv1::Deposits, type: :request do
 
   describe 'list deposits' do
     def request
-      post_json '/management_api/v1/deposits', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/deposits', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:data) { {} }
@@ -84,7 +84,7 @@ describe ManagementAPIv1::Deposits, type: :request do
     let(:signers) { %i[alex jeff] }
 
     def request
-      post_json '/management_api/v1/deposits/new', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/deposits/new', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     it 'creates new fiat deposit with state «submitted»' do
@@ -161,7 +161,7 @@ describe ManagementAPIv1::Deposits, type: :request do
 
   describe 'get deposit' do
     def request
-      post_json '/management_api/v1/deposits/get', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/deposits/get', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:signers) { %i[alex jeff] }
@@ -177,7 +177,7 @@ describe ManagementAPIv1::Deposits, type: :request do
 
   describe 'update deposit' do
     def request
-      put_json '/management_api/v1/deposits/state', multisig_jwt_management_api_v1({ data: data }, *signers)
+      put_json '/api/v2/management/deposits/state', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:currency) { Currency.find(:usd) }

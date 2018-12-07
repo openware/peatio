@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe ManagementAPIv1::Tools, type: :request do
+describe API::V2::Management::Tools, type: :request do
   before do
     defaults_for_management_api_v1_security_configuration!
     management_api_v1_security_configuration.merge! \
@@ -10,12 +10,12 @@ describe ManagementAPIv1::Tools, type: :request do
       }
   end
 
-  describe '/timestamp' do
+  describe 'management/timestamp' do
     let(:data) { {} }
     let(:signers) { %i[jeff] }
 
     def request
-      post_json '/management_api/v1/timestamp',
+      post_json '/api/v2/management/timestamp',
                 multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 

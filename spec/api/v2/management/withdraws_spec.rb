@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe ManagementAPIv1::Withdraws, type: :request do
+describe API::V2::Management::Withdraws, type: :request do
   before do
     defaults_for_management_api_v1_security_configuration!
     management_api_v1_security_configuration.merge! \
@@ -13,7 +13,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
 
   describe 'list withdraws' do
     def request
-      post_json '/management_api/v1/withdraws', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/withdraws', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:data) { {} }
@@ -74,7 +74,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
 
   describe 'create withdraw' do
     def request
-      post_json '/management_api/v1/withdraws/new', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/withdraws/new', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:member) { create(:member, :barong) }
@@ -160,7 +160,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
 
   describe 'get withdraw' do
     def request
-      post_json '/management_api/v1/withdraws/get', multisig_jwt_management_api_v1({ data: data }, *signers)
+      post_json '/api/v2/management/withdraws/get', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:signers) { %i[alex jeff] }
@@ -176,7 +176,7 @@ describe ManagementAPIv1::Withdraws, type: :request do
 
   describe 'update withdraw' do
     def request
-      put_json '/management_api/v1/withdraws/action', multisig_jwt_management_api_v1({ data: data }, *signers)
+      put_json '/api/v2/management/withdraws/action', multisig_jwt_management_api_v1({ data: data }, *signers)
     end
 
     let(:currency) { Currency.find(:usd) }

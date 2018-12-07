@@ -30,7 +30,7 @@ module API
 
         desc 'Returns trading fees for markets.'
         get '/fees/trading' do
-          trading_fees = Market.enabled.ordered.map do |m|
+          trading_fees = ::Market.enabled.ordered.map do |m|
             ask_fee = Fee.new(:relative, m.ask_fee)
             bid_fee = Fee.new(:relative, m.bid_fee)
             TradingFee.new(m.id, ask_fee, bid_fee)

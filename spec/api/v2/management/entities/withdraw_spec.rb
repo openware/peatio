@@ -1,13 +1,13 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe ManagementAPIv1::Entities::Withdraw do
+describe API::V2::Management::Entities::Withdraw do
   context 'fiat' do
     let(:rid) { Faker::Bank.iban }
     let(:member) { create(:member, :barong) }
     let(:record) { create(:usd_withdraw, member: member, rid: rid) }
 
-    subject { OpenStruct.new ManagementAPIv1::Entities::Withdraw.represent(record).serializable_hash }
+    subject { OpenStruct.new API::V2::Management::Entities::Withdraw.represent(record).serializable_hash }
 
     it { expect(subject.tid).to eq record.tid }
     it { expect(subject.rid).to eq rid }
@@ -26,7 +26,7 @@ describe ManagementAPIv1::Entities::Withdraw do
     let(:member) { create(:member, :barong) }
     let(:record) { create(:btc_withdraw, member: member, rid: rid) }
 
-    subject { OpenStruct.new ManagementAPIv1::Entities::Withdraw.represent(record).serializable_hash }
+    subject { OpenStruct.new API::V2::Management::Entities::Withdraw.represent(record).serializable_hash }
 
     it { expect(subject.tid).to eq record.tid }
     it { expect(subject.rid).to eq rid }

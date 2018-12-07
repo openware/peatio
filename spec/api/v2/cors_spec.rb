@@ -35,7 +35,6 @@ describe API::V2::Account::Balances, type: :request do
 
   it 'sends CORS headers when invalid parameter supplied' do
     api_get '/api/v2/account/deposits', token: token, params: { currency: 'uah' }
-    binding.pry
     expect(response).to have_http_status 422
     check_cors(response)
   end
