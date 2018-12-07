@@ -238,7 +238,7 @@ ActiveRecord::Schema.define(version: 20181210162905) do
 
   create_table "wallets", force: :cascade do |t|
     t.string   "blockchain_key", limit: 32
-    t.string   "currency_id",    limit: 10
+    t.string   "currency_id",    limit: 5
     t.string   "name",           limit: 64
     t.string   "address",        limit: 255,                                           null: false
     t.integer  "kind",           limit: 4,                                             null: false
