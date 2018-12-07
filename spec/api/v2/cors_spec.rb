@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe APIv2::Members, type: :request do
+describe API::V2::Account::Balances, type: :request do
   let(:member) { create(:member, :level_3) }
   let(:token) { jwt_for(member) }
 
@@ -16,25 +16,26 @@ describe APIv2::Members, type: :request do
 
   it 'sends CORS headers when requesting using OPTIONS' do
     reset! unless integration_session
-    integration_session.send :process, 'OPTIONS', '/api/v2/members/me'
+    integration_session.send :process, 'OPTIONS', '/api/v2/account/balances'
     expect(response).to be_success
     check_cors(response)
   end
 
   it 'sends CORS headers when requesting using GET' do
-    api_get '/api/v2/members/me', token: token
+    api_get '/api/v2/account/balances', token: token
     expect(response).to be_success
     check_cors(response)
   end
 
   it 'sends CORS headers ever when user is not authenticated' do
-    api_get '/api/v2/members/me'
+    api_get '/api/v2/account/balances'
     expect(response).to have_http_status 401
     check_cors(response)
   end
 
   it 'sends CORS headers when invalid parameter supplied' do
-    api_get '/api/v2/deposits', token: token, params: { currency: 'uah' }
+    api_get '/api/v2/account/deposits', token: token, params: { currency: 'uah' }
+    binding.pry
     expect(response).to have_http_status 422
     check_cors(response)
   end

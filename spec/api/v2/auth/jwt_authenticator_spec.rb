@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe APIv2::Auth::JWTAuthenticator do
+describe API::V2::Auth::JWTAuthenticator do
   let :token do
     'Bearer ' + jwt_build(payload)
   end
@@ -26,7 +26,7 @@ describe APIv2::Auth::JWTAuthenticator do
     { x: 'x', y: 'y', z: 'z', email: member.email, uid: 'BARONG1234' }
   end
 
-  subject { APIv2::Auth::JWTAuthenticator.new(request.headers['Authorization']) }
+  subject { API::V2::Auth::JWTAuthenticator.new(request.headers['Authorization']) }
 
   it 'should raise exception when email is not provided' do
     payload.delete(:email)

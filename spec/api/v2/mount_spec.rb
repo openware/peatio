@@ -1,17 +1,19 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module APIv2
-  class Mount
-    get('/null') { '' }
-    get('/broken') { raise Error, code: 2_014_310, text: 'MtGox bankrupt' }
+module API
+  module V2
+    class Mount
+      get('/null') { '' }
+      get('/broken') { raise Error, code: 2_014_310, text: 'MtGox bankrupt' }
+    end
   end
 end
 
-describe APIv2::Mount, type: :request do
-  let(:middlewares) { APIv2::Mount.middleware }
+describe API::V2::Mount, type: :request do
+  let(:middlewares) { API::V2::Mount.middleware }
   it 'should use auth and attack middleware' do
-    expect(middlewares.drop(1)).to eq [[:use, APIv2::Auth::Middleware], [:use, Rack::Attack], [:use, APIv2::CORS::Middleware]]
+    expect(middlewares.drop(1)).to eq [[:use, API::V2::Auth::Middleware], [:use, Rack::Attack], [:use, API::V2::CORS::Middleware]]
   end
 
   it 'should allow 3rd party ajax call' do
@@ -33,7 +35,6 @@ describe APIv2::Mount, type: :request do
     it 'should render json error message' do
       get '/api/v2/non/exist'
       expect(response.code).to eq '404'
-      expect(response.body).to eq '404 Not Found'
     end
   end
 end

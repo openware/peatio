@@ -17,7 +17,7 @@ module API
             is_array: true,
             success: API::V2::Entities::Account
         get '/balances' do
-          present current_user.enabled.accounts, with: Entities::Account
+          present current_user.accounts.enabled, with: Entities::Account
         end
 
         desc 'Get user account by currency' do

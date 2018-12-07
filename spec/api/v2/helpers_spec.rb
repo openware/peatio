@@ -1,20 +1,22 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module APIv2
-  class AuthTest < Grape::API
-    get('/auth_test') do
-      authenticate!
-      current_user
+module API
+  module V2
+    class AuthTest < Grape::API
+      get('/auth_test') do
+        authenticate!
+        current_user
+      end
     end
-  end
 
-  class Mount
-    mount AuthTest
+    class Mount
+      mount AuthTest
+    end
   end
 end
 
-describe APIv2::Helpers, type: :request do
+describe API::V2::Helpers, type: :request do
   context '#authentic?' do
     let!(:member) { create(:member, :level_3) }
     let!(:token) { jwt_for(member) }

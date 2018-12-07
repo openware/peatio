@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe APIv2::Entities::Order do
+describe API::V2::Entities::Order do
   let(:order) do
     create(
       :order_ask,
@@ -13,7 +13,7 @@ describe APIv2::Entities::Order do
   end
 
   context 'default exposure' do
-    subject { OpenStruct.new APIv2::Entities::Order.represent(order, {}).serializable_hash }
+    subject { OpenStruct.new API::V2::Entities::Order.represent(order, {}).serializable_hash }
 
     it { expect(subject.id).to eq order.id }
 
@@ -40,7 +40,7 @@ describe APIv2::Entities::Order do
       create(:trade, ask: order, volume: '8.0', price: '12')
       create(:trade, ask: order, volume: '0.99', price: '12.56')
 
-      json = APIv2::Entities::Order.represent(order, type: :full).serializable_hash
+      json = API::V2::Entities::Order.represent(order, type: :full).serializable_hash
       expect(json[:trades].size).to eq 2
     end
   end

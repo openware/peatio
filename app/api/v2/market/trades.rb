@@ -11,7 +11,7 @@ module API
         params do
           use :market, :trade_filters
         end
-        get '/trades/my' do
+        get '/trades' do
           authenticate!
           trading_must_be_permitted!
 

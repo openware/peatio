@@ -1,12 +1,12 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe APIv2::Entities::Trade do
+describe API::V2::Entities::Trade do
   let(:trade) do
     create :trade, ask: create(:order_ask), bid: create(:order_bid)
   end
 
-  subject { OpenStruct.new APIv2::Entities::Trade.represent(trade, side: 'sell').serializable_hash }
+  subject { OpenStruct.new API::V2::Entities::Trade.represent(trade, side: 'sell').serializable_hash }
 
   it { expect(subject.id).to eq trade.id }
   it { expect(subject.order_id).to be_nil }

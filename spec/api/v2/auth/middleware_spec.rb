@@ -1,22 +1,24 @@
 # encoding: UTF-8
 # frozen_string_literal: true
-module APIv2
-  class TestApp < Grape::API
-    helpers APIv2::Helpers
-    use APIv2::Auth::Middleware
+module API
+  module V2
+    class TestApp < Grape::API
+      helpers API::V2::Helpers
+      use API::V2::Auth::Middleware
 
-    get '/' do
-      authenticate!
-      current_user.email
+      get '/' do
+        authenticate!
+        current_user.email
+      end
     end
-  end
 
-  class Mount
-    mount TestApp
+    class Mount
+      mount TestApp
+    end
   end
 end
 
-describe APIv2::Auth::Middleware, type: :request do
+describe API::V2::Auth::Middleware, type: :request do
 
   context 'when using JWT authentication' do
     let(:member) { create(:member, :level_3) }

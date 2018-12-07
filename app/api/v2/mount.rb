@@ -40,24 +40,10 @@ module API
       mount Public::Mount => 'public'
       mount Account::Mount => 'account'
       mount Market::Mount => 'market'
-      # mount V2::Account
-      # mount V2::Market
-      # mount V2::Management
-      # mount V2::Accounts
-      # mount V2::Markets
-      # mount V2::Tickers
-      # mount V2::Members
-      # mount V2::Deposits
-      # mount V2::Orders
-      # mount V2::OrderBooks
-      # mount V2::Trades
-      # mount V2::K
-      # mount V2::Tools
-      # mount V2::Withdraws
-      # mount V2::Sessions
-      # mount V2::Fees
-      # mount V2::MemberLevels
-      # mount V2::Currencies
+
+      route :any, '*path' do
+        error! 'Route is not found', 404
+      end
 
       # The documentation is accessible at http://localhost:3000/swagger?url=/api/v2/swagger
       add_swagger_documentation base_path:   PREFIX,
