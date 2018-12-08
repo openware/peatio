@@ -51,6 +51,110 @@ module Matching
     end
 
     def create_trade_and_strike_orders
+      if @market.base == 'spot'
+        create_trade_and_strike_orders_for_spot
+      else
+        create_trade_and_strike_orders_for_future
+      end
+    end
+
+    def create_trade_and_strike_orders_for_future
+      _trend = trend
+
+      ActiveRecord::Base.transaction do
+        Order.lock.where(id: [@payload[:ask_id], @payload[:bid_id]]).to_a.tap do |orders|
+          @ask = orders.find { |order| order.id == @payload[:ask_id] }
+          @bid = orders.find { |order| order.id == @payload[:bid_id] }
+        end
+
+        validate!
+
+        accounts_table = Account
+          .lock
+          .select(:id, :member_id, :currency_id, :balance, :locked)
+          .where(member_id: [@ask.member_id, @bid.member_id].uniq, currency_id: @market.bid_unit)
+          .each_with_object({}) { |record, memo| memo["#{record.member_id}"] = record }
+
+        positions_table = Position
+          .lock
+          .where(market_id: @market.id, member_id: [@ask.member_id, @bid.member_id].uniq)
+          .each_with_object({}) { |record, memo| memo["#{record.member_id}"] = record }
+
+        @trade = Trade.new \
+          ask:           @ask,
+          ask_member_id: @ask.member_id,
+          bid:           @bid,
+          bid_member_id: @bid.member_id,
+          price:         @price,
+          volume:        @volume,
+          funds:         @funds,
+          market:        @market,
+          trend:         _trend
+    
+        margin = @trade.volume * @trade.price * @market.margin_rate
+        strike_contracts @trade, @ask, accounts_table["@ask.member_id"], accounts_table["@bid.member_id"]
+        strike_without_accounts @trade, @bid
+        positions_table["@ask.member_id"].volume -= @trade.volume
+        positions_table["@ask.member_id"].credit += @trade.volume * @price
+        positions_table["@ask.member_id"].margin += margin
+        accounts_table["@ask.member_id"].assign_attributes accounts_table["@ask.member_id"].attributes_after_unlock_and_sub_funds! margin 
+        positions_table["@ask.member_id"].credit += @trade.volume * @price
+        positions_table["@bid.member_id"].volume += @trade.volume
+        positions_table["@bid.member_id"].credit -= @trade.volume * @price
+        positions_table["@bid.member_id"].margin += margin
+        accounts_table["@bid.member_id"].assign_attributes accounts_table["@ask.member_id"].attributes_after_unlock_and_sub_funds! margin
+
+        ([@ask, @bid] + accounts_table.values + positions_table.values).map do |record|
+          table     = record.class.arel_table
+          statement = Arel::UpdateManager.new(table.engine)
+          statement.table(table)
+          statement.where(table[:id].eq(record.id))
+          updates = record.changed_attributes.map do |(attribute, previous_value)|
+            if Order === record
+              value = record.public_send(attribute)
+              [table[attribute], { wait: 100, done: 200, cancel: 0 }.with_indifferent_access.fetch(value, value)]
+            else
+              [table[attribute], record.public_send(attribute)]
+            end
+          end
+          statement.set updates
+          statement.to_sql
+        end.join('; ').tap do |sql|
+          Rails.logger.debug { sql }
+          client = ActiveRecord::Base.connection.raw_connection
+          client.query(sql)
+          while client.next_result
+          end
+        end
+
+        @trade.save(validate: false)
+      end
+    end
+
+    def strike_without_accounts(trade, order)
+      outcome_value, income_value = OrderAsk === order ? [trade.volume, trade.funds] : [trade.funds, trade.volume]
+      fee                         = income_value * order.fee
+      real_income_value           = income_value - fee
+
+      order.volume         -= trade.volume
+      order.locked         -= outcome_value
+      order.funds_received += income_value
+      order.trades_count   += 1
+
+      if order.volume.zero?
+        order.state = Order::DONE
+
+        # Unlock not used funds.
+        unless order.locked.zero?
+          outcome_account.assign_attributes outcome_account.attributes_after_unlock_funds!(order.locked)
+        end
+      elsif order.ord_type == 'market' && order.locked.zero?
+        # Partially filled market order has run out it's locked funds.
+        order.state = Order::CANCEL
+      end
+    end
+
+    def create_trade_and_strike_orders_for_spot
       _trend = trend
 
       ActiveRecord::Base.transaction do

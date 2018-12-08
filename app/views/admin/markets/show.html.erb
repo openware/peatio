@@ -68,6 +68,22 @@
           <label>Position</label>
           <%= f.number_field :position, class: 'form-control' %>
         </div>
+        <div class="form-group">
+          <label>Market Base Type</label>
+          <%= f.select :base, [['spot'], ['future']], {}, { class: 'form-control mb-3' } %>
+        </div>
+        <div class="form-group">
+          <label>Expire Date</label>
+          <%= f.text_field :expired_at, class: 'form-control' %>
+        </div>
+
+        <label>Margin Rate</label>
+        <%= f.text_field :margin_rate, class: 'form-control mb-3' %>
+
+
+        <label>Maintenance Rate</label>
+        <%= f.text_field :maintenance_rate, class: 'form-control mb-3' %>
+
       </div>
     </div>
 

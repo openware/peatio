@@ -63,7 +63,15 @@ class Market < ActiveRecord::Base
   end
 
   def name
-    "#{ask_unit}/#{bid_unit}".upcase
+    raw_name.upcase
+  end
+
+  def raw_name
+    if base == 'future' then 
+      return "#{ask_unit}#{expired_at&.strftime('%y%m')}"
+    else
+      return "#{ask_unit}/#{bid_unit}"
+    end
   end
 
   def as_json(*)
@@ -129,29 +137,33 @@ private
 end
 
 # == Schema Information
-# Schema version: 20180813105100
+# Schema version: 20181206193050
 #
 # Table name: markets
 #
-#  id            :string(20)       not null, primary key
-#  ask_unit      :string(10)       not null
-#  bid_unit      :string(10)       not null
-#  ask_fee       :decimal(17, 16)  default(0.0), not null
-#  bid_fee       :decimal(17, 16)  default(0.0), not null
-#  max_bid       :decimal(17, 16)
-#  min_ask       :decimal(17, 16)  default(0.0), not null
-#  ask_precision :integer          default(8), not null
-#  bid_precision :integer          default(8), not null
-#  position      :integer          default(0), not null
-#  enabled       :boolean          default(TRUE), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id               :string(20)       not null, primary key
+#  ask_unit         :string(10)       not null
+#  bid_unit         :string(10)       not null
+#  ask_fee          :decimal(17, 16)  default(0.0), not null
+#  bid_fee          :decimal(17, 16)  default(0.0), not null
+#  max_bid          :decimal(17, 16)
+#  min_ask          :decimal(17, 16)  default(0.0), not null
+#  ask_precision    :integer          default(8), not null
+#  bid_precision    :integer          default(8), not null
+#  position         :integer          default(0), not null
+#  enabled          :boolean          default(TRUE), not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  base             :string(255)      default("spot")
+#  expired_at       :datetime
+#  margin_rate      :decimal(32, 16)  default(0.1), not null
+#  maintenance_rate :decimal(2, 2)    default(0.75), not null
 #
 # Indexes
 #
-#  index_markets_on_ask_unit               (ask_unit)
-#  index_markets_on_ask_unit_and_bid_unit  (ask_unit,bid_unit) UNIQUE
-#  index_markets_on_bid_unit               (bid_unit)
-#  index_markets_on_enabled                (enabled)
-#  index_markets_on_position               (position)
+#  index_markets_on_ask_unit                        (ask_unit)
+#  index_markets_on_base_and_ask_unit_and_bid_unit  (base,ask_unit,bid_unit) UNIQUE
+#  index_markets_on_bid_unit                        (bid_unit)
+#  index_markets_on_enabled                         (enabled)
+#  index_markets_on_position                        (position)
 #

@@ -120,7 +120,7 @@ class Account < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20180529125011
+# Schema version: 20181129070643
 #
 # Table name: accounts
 #

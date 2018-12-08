@@ -50,6 +50,7 @@ module APIv2
         member:        current_user,
         ask:           current_market&.base_unit,
         bid:           current_market&.quote_unit,
+        base:          current_market&.base,
         market:        current_market,
         ord_type:      attrs[:ord_type] || 'limit',
         price:         attrs[:price],

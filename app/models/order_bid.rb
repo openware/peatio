@@ -42,10 +42,17 @@ class OrderBid < Order
     end
   end
 
+  def compute_margin
+    position = hold_position!
+    to_credit = position.credit - compute_locked  
+    to_margin = config.margin_rate * to_credit.abs
+    gain = position.credit + position.volume * Global[market_id].ticker[:last]
+    to_margin - position.margin
+  end
 end
 
 # == Schema Information
-# Schema version: 20180813105100
+# Schema version: 20181129070643
 #
 # Table name: orders
 #

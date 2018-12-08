@@ -50,6 +50,10 @@ module Admin
 
     def permitted_market_attributes
       attributes = [
+        :base,
+        :expired_at,
+        :margin_rate,
+        :maintenance_rate,
         :bid_unit,
         :bid_fee,
         :ask_unit,

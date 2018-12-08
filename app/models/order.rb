@@ -10,6 +10,7 @@ class Order < ActiveRecord::Base
 
   TYPES = %w[ market limit ]
   enumerize :ord_type, in: TYPES, scope: true
+  attr_accessor :base
 
   after_commit(on: :create) { trigger_pusher_event }
   before_validation :fix_number_precision, on: :create
@@ -18,6 +19,7 @@ class Order < ActiveRecord::Base
   validates :origin_volume, numericality: { greater_than: 0.to_d }
   validates :price, numericality: { greater_than: 0 }, if: ->(order) { order.ord_type == 'limit' }
   validate  :market_order_validations, if: ->(order) { order.ord_type == 'market' }
+  validates :volume, numericality: { only_integer: true }, if: ->(order) { order.base == 'future' }
   
   WAIT   = 'wait'
   DONE   = 'done'
@@ -131,10 +133,21 @@ class Order < ActiveRecord::Base
     required_funds
   end
 
+  def hold_bid_account!
+    Account.lock.find_by!(member_id: member_id, currency_id: bid)
+  end
+
+  def hold_position!
+    Position.lock.find_by!(member_id: member_id, market_id: market_id)
+  end
+
+  def margin
+    config.margin_rate * volume * price
+  end
 end
 
 # == Schema Information
-# Schema version: 20180813105100
+# Schema version: 20181129070643
 #
 # Table name: orders
 #
