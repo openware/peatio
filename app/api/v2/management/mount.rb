@@ -46,6 +46,7 @@ module API
         mount Management::Deposits
         mount Management::Withdraws
         mount Management::Tools
+        mount Management::Operations
 
         # The documentation is accessible at http://localhost:3000/swagger?url=/management_api/v1/swagger
         add_swagger_documentation base_path:   nil,
