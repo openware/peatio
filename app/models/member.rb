@@ -6,6 +6,7 @@ require 'securerandom'
 class Member < ActiveRecord::Base
   has_many :orders
   has_many :accounts
+  has_many :positions  
   has_many :payment_addresses, through: :accounts
   has_many :withdraws, -> { order(id: :desc) }
   has_many :deposits, -> { order(id: :desc) }
@@ -20,6 +21,7 @@ class Member < ActiveRecord::Base
   validates :level, numericality: { greater_than_or_equal_to: 0 }
 
   after_create :touch_accounts
+  after_create :touch_positions
 
   attr_readonly :email
 
@@ -99,6 +101,13 @@ class Member < ActiveRecord::Base
     Currency.find_each do |currency|
       next if accounts.where(currency: currency).exists?
       accounts.create!(currency: currency)
+    end
+  end
+
+  def touch_positions
+    Market.of_future.find_each do |market|
+      next if positions.where(market: market).exists?
+      positions.create!(market: market)
     end
   end
 

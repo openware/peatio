@@ -23,6 +23,7 @@ class Market < ActiveRecord::Base
   scope :ordered, -> { order(position: :asc) }
   scope :enabled, -> { where(enabled: true) }
   scope :with_base_unit, -> (base_unit){ where(ask_unit: base_unit) }
+  scope :of_future, -> { where(base: 'future')}
 
   validate { errors.add(:ask_unit, :invalid) if ask_unit == bid_unit }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
@@ -41,6 +42,7 @@ class Market < ActiveRecord::Base
   validate :must_not_disable_all_markets, on: :update
 
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
+  after_create { Member.find_each(&:touch_positions) }, if: ->(market) { market.base == 'future' }
 
   # @deprecated
   def base_unit
