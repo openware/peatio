@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181206193050) do
+ActiveRecord::Schema.define(version: 20181211210725) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 20181206193050) do
     t.decimal  "maintenance_rate",             precision: 2,  scale: 2,  default: 0.75,   null: false
   end
 
+  add_index "markets", ["ask_unit", "bid_unit"], name: "index_markets_on_ask_unit_and_bid_unit", using: :btree
   add_index "markets", ["ask_unit"], name: "index_markets_on_ask_unit", using: :btree
   add_index "markets", ["base", "ask_unit", "bid_unit"], name: "index_markets_on_base_and_ask_unit_and_bid_unit", unique: true, using: :btree
   add_index "markets", ["bid_unit"], name: "index_markets_on_bid_unit", using: :btree

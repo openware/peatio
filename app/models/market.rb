@@ -42,7 +42,10 @@ class Market < ActiveRecord::Base
   validate :must_not_disable_all_markets, on: :update
 
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
-  after_create { Member.find_each(&:touch_positions) }, if: ->(market) { market.base == 'future' }
+  after_create :touch_positions, if: ->(market) { market.base == 'future' }
+
+  def touch_positions
+  end
 
   # @deprecated
   def base_unit
@@ -139,7 +142,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20181206193050
+# Schema version: 20181211210725
 #
 # Table name: markets
 #
@@ -164,6 +167,7 @@ end
 # Indexes
 #
 #  index_markets_on_ask_unit                        (ask_unit)
+#  index_markets_on_ask_unit_and_bid_unit           (ask_unit,bid_unit)
 #  index_markets_on_base_and_ask_unit_and_bid_unit  (base,ask_unit,bid_unit) UNIQUE
 #  index_markets_on_bid_unit                        (bid_unit)
 #  index_markets_on_enabled                         (enabled)
