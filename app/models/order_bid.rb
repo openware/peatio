@@ -31,23 +31,13 @@ class OrderBid < Order
     config.fix_number_precision(:bid, funds_used / funds_received)
   end
 
-  LOCKING_BUFFER_FACTOR = '1.1'.to_d
   def compute_locked
-    case ord_type
-    when 'limit'
-      price*volume
-    when 'market'
-      funds = estimate_required_funds(Global[market_id].asks) {|p, v| p*v }
-      funds*LOCKING_BUFFER_FACTOR
-    end
+    config.base == 'future'? compute_margin : compute_bid_locked
   end
 
   def compute_margin
-    position = hold_position!
-    to_credit = position.credit - compute_locked  
-    to_margin = config.margin_rate * to_credit.abs
-    gain = position.credit + position.volume * Global[market_id].ticker[:last]
-    to_margin - position.margin
+    _ = compute_bid_locked
+    hold_position.dmargin(- _) + fee * _
   end
 end
 

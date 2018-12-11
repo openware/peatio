@@ -11,11 +11,13 @@ class OrderAsk < Order
             if: :is_limit_order?
 
   def hold_account
-    member.get_account(ask)
+    currency = config.base == 'future' ? bid : ask
+    member.get_account(currency) 
   end
 
   def hold_account!
-    Account.lock.find_by!(member_id: member_id, currency_id: ask)
+    currency = config.base == 'future' ? bid : ask
+    Account.lock.find_by!(member_id: member_id, currency_id: currency)
   end
 
   def expect_account
@@ -32,21 +34,13 @@ class OrderAsk < Order
   end
 
   def compute_locked
-    case ord_type
-    when 'limit'
-      volume
-    when 'market'
-      estimate_required_funds(Global[market_id].bids) {|p, v| v}
-    end
+    config.base == 'future'? compute_margin : compute_ask_locked
   end
 
   def compute_margin
-    position = hold_position!
-    gain = position.credit + position.volume * price
-    dv = volume - (position.volume.abs + position.volume) / 2
-    maring = config.margin_rate * price * (dv + dv.abs) / 2
-    margin += (gain.abs - gain) / 2 
-  end
+    _ = compute_bid_locked
+    hold_position.dmargin(_) + fee * _ 
+  end  
 end
 
 # == Schema Information

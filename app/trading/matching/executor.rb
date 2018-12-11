@@ -91,18 +91,8 @@ module Matching
           market:        @market,
           trend:         _trend
     
-        margin = @trade.volume * @trade.price * @market.margin_rate
-        strike_contracts @trade, @ask, accounts_table["@ask.member_id"], accounts_table["@bid.member_id"]
-        strike_without_accounts @trade, @bid
-        positions_table["@ask.member_id"].volume -= @trade.volume
-        positions_table["@ask.member_id"].credit += @trade.volume * @price
-        positions_table["@ask.member_id"].margin += margin
-        accounts_table["@ask.member_id"].assign_attributes accounts_table["@ask.member_id"].attributes_after_unlock_and_sub_funds! margin 
-        positions_table["@ask.member_id"].credit += @trade.volume * @price
-        positions_table["@bid.member_id"].volume += @trade.volume
-        positions_table["@bid.member_id"].credit -= @trade.volume * @price
-        positions_table["@bid.member_id"].margin += margin
-        accounts_table["@bid.member_id"].assign_attributes accounts_table["@ask.member_id"].attributes_after_unlock_and_sub_funds! margin
+        strike_contracts @trade, @ask, accounts_table["@ask.member_id"], positions_table["@ask.member_id"]
+        strike_contracts @trade, @bid, accounts_table["@bid.member_id"], positions_table["@bid.member_id"]
 
         ([@ask, @bid] + accounts_table.values + positions_table.values).map do |record|
           table     = record.class.arel_table
@@ -131,24 +121,38 @@ module Matching
       end
     end
 
-    def strike_without_accounts(trade, order)
-      outcome_value, income_value = OrderAsk === order ? [trade.volume, trade.funds] : [trade.funds, trade.volume]
-      fee                         = income_value * order.fee
-      real_income_value           = income_value - fee
+    def strike_contracts(trade, order, account, position)      
+      if OrderAsk === order 
+        position.volume -= trade.volume
+        position.credit += trade.volume * trade.price
+      else 
+        position.volume += trade.volume
+        position.credit -= trade.volume * trade.price        
+      end
 
+      fee = trade.funds * order.fee
       order.volume         -= trade.volume
-      order.locked         -= outcome_value
-      order.funds_received += income_value
       order.trades_count   += 1
+      dmargin = position.dmargin 0
+
+      order.funds_received += dmargin * trade.price
+      if dmargin < 0
+        account.balance - dmargin
+      else
+        account.assign_attributes account.attributes_after_unlock_and_sub_funds! dmargin         
+      end
+      position.margin += dmargin
+      order.locked -= dmargin
 
       if order.volume.zero?
         order.state = Order::DONE
-
         # Unlock not used funds.
-        unless order.locked.zero?
-          outcome_account.assign_attributes outcome_account.attributes_after_unlock_funds!(order.locked)
+        if order.locked > 0
+          account.assign_attributes account.attributes_after_unlock_funds!(order.locked)
+        elsif  order.locked < 0
+          account.assign_attributes account.attributes_after_lock_funds!(-order.locked)          
         end
-      elsif order.ord_type == 'market' && order.locked.zero?
+      elsif order.ord_type == 'market' && order.locked < 0
         # Partially filled market order has run out it's locked funds.
         order.state = Order::CANCEL
       end

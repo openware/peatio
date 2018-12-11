@@ -136,6 +136,30 @@ class Order < ActiveRecord::Base
   def hold_bid_account!
     Account.lock.find_by!(member_id: member_id, currency_id: bid)
   end
+  
+  def hold_position
+    Position.find_by!(member_id: member_id, market_id: market_id)
+  end
+  
+  LOCKING_BUFFER_FACTOR = '1.1'.to_d
+  def compute_bid_locked
+    case ord_type
+    when 'limit'
+      price*volume
+    when 'market'
+      funds = estimate_required_funds(Global[market_id].asks) {|p, v| p*v }
+      funds*LOCKING_BUFFER_FACTOR
+    end
+  end
+
+  def compute_ask_locked
+    case ord_type
+    when 'limit'
+      volume
+    when 'market'
+      estimate_required_funds(Global[market_id].bids) {|p, v| v}
+    end
+  end  
 
   def hold_position!
     Position.lock.find_by!(member_id: member_id, market_id: market_id)

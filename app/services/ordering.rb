@@ -33,11 +33,7 @@ private
     order.fix_number_precision # number must be fixed before computing locked
     order.locked = order.origin_locked = order.compute_locked
     order.save!
-    if order.config.base == 'future'
-      order.hold_bid_account!.lock_funds!(order.compute_margin)
-    else 
-      order.hold_account!.lock_funds!(order.locked)
-    end
+    order.hold_account!.lock_funds!(order.locked)
   end
 
   def do_cancel(order)
