@@ -136,10 +136,10 @@ module Matching
       dmargin = position.dmargin 0
 
       order.funds_received += dmargin * trade.price
-      if dmargin < 0
-        account.balance - dmargin
+      if dmargin + fee < 0
+        account.balance - dmargin - fee 
       else
-        account.assign_attributes account.attributes_after_unlock_and_sub_funds! dmargin         
+        account.assign_attributes account.attributes_after_unlock_and_sub_funds! dmargin + fee         
       end
       position.margin += dmargin
       order.locked -= dmargin
