@@ -37,14 +37,23 @@ class Market < ActiveRecord::Base
   validates :min_ask, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :max_bid, numericality: { allow_blank: true, greater_than_or_equal_to: ->(market){ market.min_ask }}
 
-  before_validation(on: :create) { self.id = "#{ask_unit}#{bid_unit}" }
+  before_validation :set_id, on: :create 
 
   validate :must_not_disable_all_markets, on: :update
 
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
   after_create :touch_positions, if: ->(market) { market.base == 'future' }
 
+  def set_id 
+    if self.base == 'future' 
+      self.id = "#{ask_unit}#{bid_unit}#{expired_at&.strftime('%y%m')}"
+    else
+      self.id = "#{ask_unit}#{bid_unit}" 
+    end
+  end
+
   def touch_positions
+    Member.find_each(&:touch_positions)
   end
 
   # @deprecated

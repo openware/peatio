@@ -32,7 +32,7 @@ class OrderBid < Order
   end
 
   def compute_locked
-    config.base == 'future'? compute_margin : compute_bid_locked
+    base == 'future'? compute_margin : compute_bid_locked
   end
 
   def compute_margin

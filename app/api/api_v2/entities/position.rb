@@ -4,9 +4,18 @@
 module APIv2
   module Entities
     class Position < Base
-      expose :id, documentation: "Unique order id."
-      expose :market_id, as: :market, documentation: "The market in which the order is placed, e.g. 'btcusd'. All available markets can be found at /api/v2/markets."
-      expose :avg_price, documentation: "Average execution price, average of price in trades."  do |position, options|
+      expose :id, documentation: { type: Integer, desc: "Unique order id." }
+      expose :market_id, 
+             as: :market, 
+             documentation: { 
+               desc: "The market in which the order is placed, e.g. 'btcusd'. All available markets can be found at /api/v2/markets.", 
+               type: String,
+             }
+      expose :avg_price, 
+             documentation: { 
+              desc: "Average execution price, average of price in trades.",
+              type: BigDecimal,
+             } do |position, options|
         (position.credit / position.volume).abs
       end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181211212810) do
+ActiveRecord::Schema.define(version: 20181213052609) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -140,23 +140,24 @@ ActiveRecord::Schema.define(version: 20181211212810) do
   add_index "members", ["sn"], name: "index_members_on_sn", unique: true, using: :btree
 
   create_table "orders", force: :cascade do |t|
-    t.string   "bid",            limit: 10,                                         null: false
-    t.string   "ask",            limit: 10,                                         null: false
-    t.string   "market_id",      limit: 20,                                         null: false
-    t.decimal  "price",                     precision: 32, scale: 16
-    t.decimal  "volume",                    precision: 32, scale: 16,               null: false
-    t.decimal  "origin_volume",             precision: 32, scale: 16,               null: false
-    t.decimal  "fee",                       precision: 32, scale: 16, default: 0.0, null: false
-    t.integer  "state",          limit: 4,                                          null: false
-    t.string   "type",           limit: 8,                                          null: false
-    t.integer  "member_id",      limit: 4,                                          null: false
-    t.string   "ord_type",       limit: 30,                                         null: false
-    t.decimal  "locked",                    precision: 32, scale: 16, default: 0.0, null: false
-    t.decimal  "origin_locked",             precision: 32, scale: 16, default: 0.0, null: false
-    t.decimal  "funds_received",            precision: 32, scale: 16, default: 0.0
-    t.integer  "trades_count",   limit: 4,                            default: 0,   null: false
-    t.datetime "created_at",                                                        null: false
-    t.datetime "updated_at",                                                        null: false
+    t.string   "bid",            limit: 10,                                             null: false
+    t.string   "ask",            limit: 10,                                             null: false
+    t.string   "market_id",      limit: 20,                                             null: false
+    t.decimal  "price",                      precision: 32, scale: 16
+    t.decimal  "volume",                     precision: 32, scale: 16,                  null: false
+    t.decimal  "origin_volume",              precision: 32, scale: 16,                  null: false
+    t.decimal  "fee",                        precision: 32, scale: 16, default: 0.0,    null: false
+    t.integer  "state",          limit: 4,                                              null: false
+    t.string   "type",           limit: 8,                                              null: false
+    t.integer  "member_id",      limit: 4,                                              null: false
+    t.string   "ord_type",       limit: 30,                                             null: false
+    t.decimal  "locked",                     precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "origin_locked",              precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "funds_received",             precision: 32, scale: 16, default: 0.0
+    t.integer  "trades_count",   limit: 4,                             default: 0,      null: false
+    t.datetime "created_at",                                                            null: false
+    t.datetime "updated_at",                                                            null: false
+    t.string   "base",           limit: 255,                           default: "spot"
   end
 
   add_index "orders", ["member_id"], name: "index_orders_on_member_id", using: :btree

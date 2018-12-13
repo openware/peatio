@@ -11,12 +11,12 @@ class OrderAsk < Order
             if: :is_limit_order?
 
   def hold_account
-    currency = config.base == 'future' ? bid : ask
+    currency = base == 'future' ? bid : ask
     member.get_account(currency) 
   end
 
   def hold_account!
-    currency = config.base == 'future' ? bid : ask
+    currency = base == 'future' ? bid : ask
     Account.lock.find_by!(member_id: member_id, currency_id: currency)
   end
 
@@ -34,7 +34,7 @@ class OrderAsk < Order
   end
 
   def compute_locked
-    config.base == 'future'? compute_margin : compute_ask_locked
+    base == 'future'? compute_margin : compute_ask_locked
   end
 
   def compute_margin
