@@ -6,7 +6,6 @@ require 'openssl'
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
-ENV['ADMIN'] ||= 'admin@peatio.tech'
 ENV['EVENT_API_JWT_PRIVATE_KEY'] ||= Base64.urlsafe_encode64(OpenSSL::PKey::RSA.generate(2048).to_pem)
 
 # We remove lib/peatio.rb from LOAD_PATH because of conflict with peatio gem.
@@ -28,17 +27,6 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
-
-%i[ google_oauth2 auth0 barong ].each do |provider|
-  { provider:     provider.to_s,
-    uid:          '1234567890',
-    info:         { email: "johnsmith@#{provider.to_s.gsub(/_/, '-')}-provider.com" },
-    credentials:  {}
-  }.tap do |hash|
-    hash.merge!(level: rand(1..3), state: %w[ pending active ].sample) if provider == :barong
-    OmniAuth.config.add_mock(provider, hash)
-  end
-end
 
 RSpec.configure do |config|
   # ## Mock Framework
@@ -90,8 +78,9 @@ RSpec.configure do |config|
     I18n.locale = :en
     %w[ eth-rinkeby btc-testnet dash-testnet ltc-testnet bch-testnet xrp-testnet ].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
     %i[ usd btc dash eth xrp trst bch eur ltc ].each { |ccy| FactoryBot.create(:currency, ccy) }
-    %i[ eth_hot btc_hot btc_deposit xrp_hot].each { |ccy| FactoryBot.create(:wallet, ccy) }
-    %i[ btcusd dashbtc btceth btcxrp].each { |market| FactoryBot.create(:market, market) }
+    %i[ eth_deposit eth_hot eth_fee trst_deposit trst_hot btc_hot btc_deposit bch_deposit bch_hot dash_deposit dash_hot ltc_deposit ltc_hot xrp_deposit xrp_hot eth_warm ]
+        .each { |ccy| FactoryBot.create(:wallet, ccy) }
+    %i[ btcusd dashbtc btceth btcxrp ].each { |market| FactoryBot.create(:market, market) }
   end
 
   config.append_after :each do

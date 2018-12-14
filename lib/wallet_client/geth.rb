@@ -82,6 +82,27 @@ module WalletClient
       txid.downcase
     end
 
+    def load_balance!(address, currency)
+      if currency.code.eth?
+        json_rpc(:eth_getBalance, [normalize_address(address), 'latest'])
+          .fetch('result')
+          .hex
+          .to_d
+          .yield_self { |amount| convert_from_base_unit(amount) }
+      else
+        load_balance_of_address(address, currency)
+      end
+    end
+
+    def load_balance_of_address(address, currency)
+      data = abi_encode('balanceOf(address)', normalize_address(address))
+      json_rpc(:eth_call, [{ to: contract_address(currency), data: data }, 'latest'])
+        .fetch('result')
+        .hex
+        .to_d
+        .yield_self { |amount| convert_from_base_unit(amount) }
+    end
+
     protected
 
     def abi_encode(method, *args)

@@ -13,6 +13,12 @@ module BlockchainClient
       @json_rpc_endpoint
     end
 
+    def load_balance!(address, currency)
+      json_rpc(:listunspent, [1, 10_000_000, [address]])
+        .fetch('result')
+        .sum { |vout| vout['amount'] }
+    end
+
     def load_deposit!(txid)
       json_rpc(:gettransaction, [normalize_txid(txid)]).fetch('result').yield_self { |tx| build_standalone_deposit(tx) }
     end
@@ -54,7 +60,9 @@ module BlockchainClient
         next unless item['scriptPubKey'].has_key?('addresses')
         next if address != normalize_address(item['scriptPubKey']['addresses'][0])
 
-        { amount: item.fetch('value').to_d, address: normalize_address(item['scriptPubKey']['addresses'][0]) }
+        { amount:   item.fetch('value').to_d,
+          address:  normalize_address(item['scriptPubKey']['addresses'][0]),
+          txout:    item.fetch('n') }
       end.compact
 
       { id:            normalize_txid(tx.fetch('txid')),

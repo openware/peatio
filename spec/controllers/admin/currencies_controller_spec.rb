@@ -2,13 +2,15 @@
 # frozen_string_literal: true
 
 describe Admin::CurrenciesController, type: :controller do
+  before(:each) { inject_authorization!(member) }
   let(:member) { create(:admin_member) }
   let :attributes do
     { code:                             'nbn',
       blockchain_key:                   Blockchain.first.key,
       type:                             'coin',
       symbol:                           'N',
-      quick_withdraw_limit:             '1.5'.to_d,
+      withdraw_limit_24h:               '1.5'.to_d,
+      withdraw_limit_72h:               '2.5'.to_d,
       withdraw_fee:                     '0.001'.to_d,
       deposit_fee:                      '0.0'.to_d,
       enabled:                          true,
@@ -38,7 +40,8 @@ describe Admin::CurrenciesController, type: :controller do
       { code:                             'mkd',
         type:                             'fiat',
         symbol:                           'X',
-        quick_withdraw_limit:             '5.55'.to_d,
+        withdraw_limit_24h:               '2.5'.to_d,
+        withdraw_limit_72h:               '3.5'.to_d,
         withdraw_fee:                     '0.006'.to_d,
         deposit_fee:                      '0.05'.to_d,
         enabled:                          false,

@@ -9,18 +9,19 @@ module WalletService
     end
 
     def collect_deposit!(deposit, options={})
-      destination_address = destination_wallet(deposit).address
       pa = deposit.account.payment_address
 
-      # this will automatically deduct fee from amount
+      # This will automatically deduct fee from amount so we can withdraw exact amount.
       options = options.merge( subtract_fee: true )
-
-      client.create_withdrawal!(
-        { address: pa.address },
-        { address: destination_address },
-        deposit.amount,
-        options
-      )
+      spread_hash = spread_deposit(deposit)
+      spread_hash.map do |address, amount|
+        client.create_withdrawal!(
+          { address: pa.address },
+          { address: address},
+          amount,
+          options
+        )
+      end
     end
 
     def build_withdrawal!(withdraw, options = {})
@@ -30,6 +31,10 @@ module WalletService
         withdraw.amount,
         options
       )
+    end
+
+    def load_balance(address, currency)
+      client.load_balance!(address, currency)
     end
   end
 end

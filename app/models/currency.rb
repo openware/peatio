@@ -1,6 +1,8 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+
+
 class Currency < ActiveRecord::Base
   serialize :options, JSON
 
@@ -20,8 +22,10 @@ class Currency < ActiveRecord::Base
   validates :options, length: { maximum: 1000 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
 
-  validates :quick_withdraw_limit,
+  validates :withdraw_limit_24h,
+            :withdraw_limit_72h,
             :min_deposit_amount,
+            :min_collection_amount,
             :withdraw_fee,
             :deposit_fee,
             numericality: { greater_than_or_equal_to: 0 }
@@ -147,25 +151,27 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20181129070643
+# Schema version: 20181126101312
 #
 # Table name: currencies
 #
-#  id                   :string(10)       not null, primary key
-#  blockchain_key       :string(32)
-#  symbol               :string(1)        not null
-#  type                 :string(30)       default("coin"), not null
-#  deposit_fee          :decimal(32, 16)  default(0.0), not null
-#  quick_withdraw_limit :decimal(32, 16)  default(0.0), not null
-#  min_deposit_amount   :decimal(32, 16)  default(0.0), not null
-#  withdraw_fee         :decimal(32, 16)  default(0.0), not null
-#  options              :string(1000)     default({}), not null
-#  enabled              :boolean          default(TRUE), not null
-#  base_factor          :integer          default(1), not null
-#  precision            :integer          default(8), not null
-#  icon_url             :string(255)
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
+#  id                    :string(10)       not null, primary key
+#  blockchain_key        :string(32)
+#  symbol                :string(1)        not null
+#  type                  :string(30)       default("coin"), not null
+#  deposit_fee           :decimal(32, 16)  default(0.0), not null
+#  withdraw_limit_24h    :decimal(32, 16)  default(0.0), not null
+#  withdraw_limit_72h    :decimal(32, 16)  default(0.0), not null
+#  min_deposit_amount    :decimal(32, 16)  default(0.0), not null
+#  min_collection_amount :decimal(32, 16)  default(0.0), not null
+#  withdraw_fee          :decimal(32, 16)  default(0.0), not null
+#  options               :string(1000)     default({}), not null
+#  enabled               :boolean          default(TRUE), not null
+#  base_factor           :integer          default(1), not null
+#  precision             :integer          default(8), not null
+#  icon_url              :string(255)
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
 #
 # Indexes
 #
