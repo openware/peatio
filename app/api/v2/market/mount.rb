@@ -9,6 +9,7 @@ module API::V2
 
       mount Market::Orders
       mount Market::Trades
+      mount Market::Positions
     end
   end
 end
