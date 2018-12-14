@@ -44,7 +44,7 @@ class OrderAsk < Order
 end
 
 # == Schema Information
-# Schema version: 20181129070643
+# Schema version: 20181213052609
 #
 # Table name: orders
 #
@@ -66,6 +66,7 @@ end
 #  trades_count   :integer          default(0), not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  base           :string(255)      default("spot")
 #
 # Indexes
 #

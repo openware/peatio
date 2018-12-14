@@ -20,7 +20,6 @@ module APIv2
       end
 
       expose :volume,
-             format_with: :integer,
              documentation: {
                desc: 'Position volume.',
                type: Integer,
