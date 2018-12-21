@@ -29,7 +29,7 @@ steps:
     restore: true
   volumes:
   - name: bundle-cache
-    path: /tmp/cache
+    path: /tmp
 
 - name: Run rspec
   image: ruby:2.5.3
@@ -54,9 +54,9 @@ steps:
     rebuild: true
   volumes:
   - name: bundle-cache
-    path: /tmp/cache
+    path: /tmp
 
 volumes:
 - name: bundle-cache
   host:
-    path: /tmp/cache
+    path: /tmp
