@@ -27,9 +27,9 @@ steps:
     mount:
     - vendor/bundle
     restore: true
-#  volumes:
-#  - name: bundle-cache
-#    path: /cache
+  volumes:
+  - name: bundle-cache
+    path: /cache
 
 - name: Run rspec
   image: ruby:2.5.3
@@ -52,11 +52,11 @@ steps:
     mount:
     - vendor/bundle
     rebuild: true
-#  volumes:
-#  - name: bundle-cache
-#    path: /cache
+  volumes:
+  - name: bundle-cache
+    path: /cache
 
-#volumes:
-#- name: bundle-cache
-#  host:
-#    path: /cache
+volumes:
+- name: bundle-cache
+  host:
+    path: /cache
