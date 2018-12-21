@@ -1,8 +1,0 @@
-pipeline:
-  restore-cache:
-    image: drillster/drone-volume-cache
-    restore: true
-    mount:
-    - node_modules
-    volumes:
-    - /tmp/cache:/cache
