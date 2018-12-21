@@ -29,7 +29,7 @@ steps:
     restore: true
   volumes:
   - name: bundle-cache
-    path: /tmp/cache/peatio
+    path: /tmp/cache
 
 - name: Run rspec
   image: ruby:2.5.3
@@ -54,9 +54,9 @@ steps:
     rebuild: true
   volumes:
   - name: bundle-cache
-    path: /tmp/cache/peatio
+    path: /tmp/cache
 
 volumes:
 - name: bundle-cache
   host:
-    path: /tmp/cache/peatio
+    path: /tmp/cache
