@@ -1,0 +1,62 @@
+kind: pipeline
+name: default
+
+services:
+- name: database
+  image: mysql:5.7
+  ports:
+    - 3306
+  environment:
+    MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+
+- name: rabbitmq
+  image: rabbitmq:3.7.6-management
+  ports:
+    - 5672
+
+- name: redis
+  image: redis:4.0
+  ports:
+    - 6379
+
+steps:
+- name: restore-cache
+  pull: default
+  image: drillster/drone-volume-cache
+  settings:
+    mount:
+    - vendor/bundle
+    restore: true
+#  volumes:
+#  - name: bundle-cache
+#    path: /cache
+
+- name: Run rspec
+  image: ruby:2.5.3
+  environment:
+    DATABASE_HOST: database
+    RABBITMQ_HOST: rabbitmq
+    EVENT_API_RABBITMQ_HOST: rabbitmq
+    REDIS_URL: redis://redis:6379
+    RAILS_ENV: test
+  commands:
+    - ./bin/init_config
+    - bundle install --deployment --without production development --jobs=$(nproc) --retry=3 --path vendor/bundle
+    - bundle exec rake db:create db:migrate
+    - LOG_LEVEL=warn bundle exec rspec spec/api/v2/account/withdraws_spec.rb
+
+- name: rebuild-cache
+  pull: default
+  image: drillster/drone-volume-cache
+  settings:
+    mount:
+    - vendor/bundle
+    rebuild: true
+#  volumes:
+#  - name: bundle-cache
+#    path: /cache
+
+#volumes:
+#- name: bundle-cache
+#  host:
+#    path: /cache
