@@ -43,7 +43,7 @@ steps:
     - ./bin/init_config
     - bundle install --deployment --without production development --jobs=$(nproc) --retry=3 --path vendor/bundle
     - bundle exec rake db:create db:migrate
-    - LOG_LEVEL=warn bundle exec rspec spec/api/v2/account/withdraws_spec.rb
+    - LOG_LEVEL=warn bundle exec rspec
 
 - name: rebuild-cache
   pull: default
