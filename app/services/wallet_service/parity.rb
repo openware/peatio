@@ -2,6 +2,6 @@
 # frozen_string_literal: true
 
 module WalletService
-  class Geth < Ethereum
+  class Parity < Ethereum
   end
 end

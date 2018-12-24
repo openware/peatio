@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe BlockchainService::Ethereum do
+describe BlockchainService::Parity do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,15 +9,15 @@ describe BlockchainService::Ethereum do
     WebMock.allow_net_connect!
   end
 
-  describe 'Client::Ethereum' do
+  describe 'Client::Parity' do
     let(:block_data) do
-      Rails.root.join('spec', 'resources', 'ethereum-data', block_file_name)
+      Rails.root.join('spec', 'resources', 'ethereum-data', 'kovan', block_file_name)
         .yield_self { |file_path| File.open(file_path) }
         .yield_self { |file| JSON.load(file) }
     end
 
     let(:transaction_receipt_data) do
-      Rails.root.join('spec', 'resources', 'ethereum-data/transaction-receipts', block_file_name)
+        Rails.root.join('spec', 'resources', 'ethereum-data', 'kovan/transaction-receipts', block_file_name)
           .yield_self { |file_path| File.open(file_path) }
           .yield_self { |file| JSON.load(file) }
     end
@@ -26,39 +26,36 @@ describe BlockchainService::Ethereum do
     let(:latest_block)  { block_data.last['result']['number'].hex }
 
     let(:blockchain) do
-      Blockchain.find_by_key('eth-rinkeby')
+      Blockchain.find_by_key('eth-kovan')
         .tap { |b| b.update(height: start_block) }
     end
 
     let(:client) { BlockchainClient[blockchain.key] }
 
-    def request_receipt_body(txid, index)
+    def request_receipt_body(txid)
       { jsonrpc: '2.0',
         id:      1,
         method:  :eth_getTransactionReceipt,
-        params:  [txid]
-      }.to_json
+        params:  [txid] }.to_json
     end
 
-    def request_body(block_number, index)
+    def request_body(block_number)
       { jsonrpc: '2.0',
         id:      1,
         method:  :eth_getBlockByNumber,
-        params:  [block_number, true]
-      }.to_json
+        params:  [block_number, true] }.to_json
     end
 
     context 'single ETH deposit was created during blockchain proccessing' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '2621839-2621843.json' }
+      let(:block_file_name) { '9000003-9000006.json' }
 
-      # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_deposits) do
         [
           {
-            amount:   '0xde0b6b3a7640000'.hex.to_d / currency.base_factor,
-            address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
-            txid:     '0xb60e22c6eed3dc8cd7bc5c7e38c50aa355c55debddbff5c1c4837b995b8ee96d'
+            amount:   '0x29a2241af62c0000'.hex.to_d / currency.base_factor,
+            address:  '0x8daa2b5d364cf3761a025f0005d55bd83ef4716f',
+            txid:     '0x70f1aa055b0547e216268c83a56ba7769c3ebb1ab023b85233efcf8e0a4efd90'
           }
         ]
       end
@@ -66,25 +63,26 @@ describe BlockchainService::Ethereum do
       let(:currency) { Currency.find_by_id(:eth) }
 
       let!(:payment_address) do
-        create(:eth_payment_address, address: '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa')
+        create(:eth_payment_address, address: '0x8daa2b5d364cf3761a025f0005d55bd83ef4716f')
       end
 
       before do
+        currency.update('blockchain_key': 'eth-kovan')
         # Mock requests and methods.
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
         client.class.any_instance.stubs(:rpc_call_id).returns(1)
 
         Deposits::Coin.where(currency: currency).delete_all
 
-        block_data.each_with_index do |blk, index|
+        block_data.each do |blk|
           stub_request(:post, client.endpoint)
-            .with(body: request_body(blk['result']['number'],index))
+            .with(body: request_body(blk['result']['number']))
             .to_return(body: blk.to_json)
         end
 
-        transaction_receipt_data.each_with_index do |rcpt, index|
+        transaction_receipt_data.each do |rcpt|
           stub_request(:post, client.endpoint)
-            .with(body: request_receipt_body(rcpt['result']['transactionHash'],index))
+            .with(body: request_receipt_body(rcpt['result']['transactionHash']))
             .to_return(body: rcpt.to_json)
         end
 
@@ -116,36 +114,35 @@ describe BlockchainService::Ethereum do
       end
     end
 
-    context 'two TRST deposits were created during blockchain proccessing' do
+    context 'two RING deposits were created during blockchain proccessing' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '2621839-2621843.json' }
+      let(:block_file_name) { '9755696-9755698.json' }
 
-      # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_deposits) do
         [
           {
-            amount:   '0x1e8480'.hex.to_d / currency.base_factor,
-            address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
-            txid:     '0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d',
-            txout:    8
+            amount:   '0x1b1ae4d6e2ef500000'.hex.to_d / currency.base_factor,
+            address:  '0x23236af7d03c4b0720f709593f5ace0ea92e77ca',
+            txid:     '0x86c73840543d46a697052ad8c83be3a0bf120f6062c39bad4087715b521c9c20',
+            txout:    1
           },
           {
-            amount:   '0x1e8480'.hex.to_d / currency.base_factor,
-            address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6dac',
-            txid:     '0xd5cc0d1d5dd35f4b57572b440fb4ef39a4ab8035657a21692d1871353bfbceea',
-            txout:    9
-          }
+            amount:   '0x1b1ae4d6e2ef500000'.hex.to_d / currency.base_factor,
+            address:  '0x23236af7d03c4b0720f709593f5ace0ea92e77cf',
+            txid:     '0x3f7a0e8b9be58f54b0a084bef1a32e10add73c97bf4406689da70cc71765775c',
+            txout:    2
+           }
         ]
       end
 
-      let(:currency) { Currency.find_by_id(:trst) }
+      let(:currency) { Currency.find_by_id(:ring) }
 
       let!(:payment_address) do
-        create(:trst_payment_address, address: '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa')
+        create(:ring_payment_address, address: '0x23236af7d03c4b0720f709593f5ace0ea92e77cf')
       end
 
       let!(:second_payment_address) do
-        create(:trst_payment_address, address: '0xe3cb6897d83691a8eb8458140a1941ce1d6e6dac')
+        create(:ring_payment_address, address: '0x23236af7d03c4b0720f709593f5ace0ea92e77ca')
       end
 
       before do
@@ -155,15 +152,15 @@ describe BlockchainService::Ethereum do
 
         Deposits::Coin.where(currency: currency).delete_all
 
-        block_data.each_with_index do |blk, index|
+        block_data.each do |blk|
           stub_request(:post, client.endpoint)
-            .with(body: request_body(blk['result']['number'], index))
+            .with(body: request_body(blk['result']['number']))
             .to_return(body: blk.to_json)
         end
 
-        transaction_receipt_data.each_with_index do |rcpt, index|
+        transaction_receipt_data.each do |rcpt|
           stub_request(:post, client.endpoint)
-              .with(body: request_receipt_body(rcpt['result']['transactionHash'],index))
+              .with(body: request_receipt_body(rcpt['result']['transactionHash']))
               .to_return(body: rcpt.to_json)
         end
         BlockchainService[blockchain.key].process_blockchain(force: true)
@@ -193,34 +190,33 @@ describe BlockchainService::Ethereum do
       end
     end
 
-    context 'two TRST deposit in one transaction were created during blockchain proccessing' do
+    context 'two RING deposit in one transaction were created during blockchain proccessing' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '2621839-2621843.json' }
+      let(:block_file_name) { '9755696-9755698.json' }
 
-      # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_deposits) do
         [
           {
-            amount:   '0x1e8480'.hex.to_d / currency.base_factor,
+            amount:   '0x5142cdcdf5268c0000'.hex.to_d / currency.base_factor,
             address:  '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa',
-            txid:     '0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d'
+            txid:     '0x647f28bf8a191b70b91b999a28a91669fa6d02f01ddd9c12dbfd15293e0acd63'
           },
           {
-            amount:   '0x1e8480'.hex.to_d / currency.base_factor,
+            amount:   '0xde0b6b3a7640000'.hex.to_d / currency.base_factor,
             address:  '0x4b6a630ff1f66604d31952bdce2e4950efc99821',
-            txid:     '0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d'
+            txid:     '0x647f28bf8a191b70b91b999a28a91669fa6d02f01ddd9c12dbfd15293e0acd63'
           }
         ]
       end
 
-      let(:currency) { Currency.find_by_id(:trst) }
+      let(:currency) { Currency.find_by_id(:ring) }
 
       let!(:payment_address) do
-        create(:trst_payment_address, address: '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa')
+        create(:ring_payment_address, address: '0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa')
       end
 
       let!(:second_payment_address) do
-        create(:trst_payment_address, address: '0x4b6a630ff1f66604d31952bdce2e4950efc99821')
+        create(:ring_payment_address, address: '0x4b6a630ff1f66604d31952bdce2e4950efc99821')
       end
 
       before do
@@ -228,15 +224,15 @@ describe BlockchainService::Ethereum do
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
         client.class.any_instance.stubs(:rpc_call_id).returns(1)
 
-        block_data.each_with_index do |blk, index|
+        block_data.each do |blk|
           stub_request(:post, client.endpoint)
-            .with(body: request_body(blk['result']['number'], index))
+            .with(body: request_body(blk['result']['number']))
             .to_return(body: blk.to_json)
         end
 
-        transaction_receipt_data.each_with_index do |rcpt, index|
+        transaction_receipt_data.each do |rcpt|
           stub_request(:post, client.endpoint)
-              .with(body: request_receipt_body(rcpt['result']['transactionHash'],index))
+              .with(body: request_receipt_body(rcpt['result']['transactionHash']))
               .to_return(body: rcpt.to_json)
         end
         BlockchainService[blockchain.key].process_blockchain(force: true)
@@ -255,27 +251,21 @@ describe BlockchainService::Ethereum do
       end
     end
 
-    context 'three ETH withdrawals were processed' do
+    context 'two ETH withdrawals were processed' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '2621895-2621903.json' }
+      let(:block_file_name) { '9669001-9669005.json' }
 
-      # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_withdrawals) do
         [
           {
-            sum:  '0x14d1120d7b160000'.hex.to_d / currency.base_factor + currency.withdraw_fee,
-            rid:  '0xb3ebc7b5b631e8d145f383c8cd07f0f00dd56a30',
-            txid: '0x643ff4da78faca97454766d9c2a1d455c19083591c87013740acc60286d6dd80'
+            sum:  '0xaa87bee538000'.hex.to_d / currency.base_factor + currency.withdraw_fee,
+            rid:  '0x31e129134d07ad43fda9e0c3d397c9ad2b3b2637',
+            txid: '0xca3f16e57db2d98f1c9007a729ca073f4405ac64d0389961eb4f08eb9164182b'
           },
           {
-            sum:  '0xde0b6b3a7640000'.hex.to_d / currency.base_factor + currency.withdraw_fee,
-            rid:  '0xb3ebc7b5b631e8d145f383c8cd07f0f00dd56a30',
-            txid: '0x5d7f014e7f64c1a8010e64e1f6b6d52efa9c78bb113615bf97d60f30c9cd290b'
-          },
-          {
-            sum:  '0xde0b6b3a7640000'.hex.to_d / currency.base_factor + currency.withdraw_fee,
-            rid:  '0xb3ebc7b5b631e8d145f383c8cd07f0f00dd56a30',
-            txid: '0x66516a32e90c22a8104b3a3ec2d533efdfcfc004166aa05b555237a4aded99ad'
+            sum:  '0xaa87bee538000'.hex.to_d / currency.base_factor + currency.withdraw_fee,
+            rid:  '0x12eafeffa3a6685b029a67fab2e80ab020055140',
+            txid: '0xe6227270b5816f72a6e4ec687609f8c6bd6862bf78c5a3fec3eb784f93849ead'
           }
         ]
       end
@@ -297,19 +287,20 @@ describe BlockchainService::Ethereum do
       let(:currency) { Currency.find_by_id(:eth) }
 
       before do
+        currency.update('blockchain_key': 'eth-kovan')
         # Mock requests and methods.
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
         client.class.any_instance.stubs(:rpc_call_id).returns(1)
 
-        block_data.each_with_index do |blk, index|
+        block_data.each do |blk|
           stub_request(:post, client.endpoint)
-            .with(body: request_body(blk['result']['number'], index))
+            .with(body: request_body(blk['result']['number']))
             .to_return(body: blk.to_json)
         end
 
-        transaction_receipt_data.each_with_index do |rcpt, index|
+        transaction_receipt_data.each do |rcpt|
           stub_request(:post, client.endpoint)
-              .with(body: request_receipt_body(rcpt['result']['transactionHash'],index))
+              .with(body: request_receipt_body(rcpt['result']['transactionHash']))
               .to_return(body: rcpt.to_json)
         end
         BlockchainService[blockchain.key].process_blockchain(force: true)
@@ -340,48 +331,48 @@ describe BlockchainService::Ethereum do
       end
     end
 
-    context 'two TRST withdrawal is processed' do
+    context 'two RING withdrawal is processed' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '2621895-2621903.json' }
+      let(:block_file_name) { '9755696-9755698.json' }
 
       let(:expected_withdrawals) do
         [
-            {
-                sum:  0.0005 + currency.withdraw_fee,
-                rid:  '0xb3ebc7b5b631e8d145f383c8cd07f0f00dd56a30',
-                txid: '0xf3605c58b3a43bc048d58dcc2e49548930f6d2a2927fb098f1d17a03ee599d95'
-            },
-            {
-                sum:  0.0005 + currency.withdraw_fee,
-                rid:  '0xfb410459854d10622c45cf242247f368ce49b90c',
-                txid: '0xa44a641b57f8d50c89e5ab8e9ce4bac97f42ff2ce7f79e8f5451b379c8a65f93'
-            }
+          {
+            sum:  0.0005 + currency.withdraw_fee,
+            rid:  '0xecd7a31404e7263c488816ebb329b5bb3f98a431',
+            txid: '0x86c73840543d46a697052ad8c83be3a0bf120f6062c39bad4087715b521c9c20'
+          },
+          {
+            sum:  0.0005 + currency.withdraw_fee,
+            rid:  '0xecd7a31404e7263c488816ebb329b5bb3f98a431',
+            txid: '0x62c2dd800a2e66a6d6d57c630c2ca243fb592f3f49e0f7b49b666da5cdabd543'
+          }
         ]
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:trst_account) { member.get_account(:trst).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:ring_account) { member.get_account(:ring).tap { |a| a.update!(locked: 10, balance: 50) } }
 
-      let(:currency) { Currency.find_by_id(:trst) }
+      let(:currency) { Currency.find_by_id(:ring) }
 
       let!(:failed_withdraw) do
-        withdraw_hash = expected_withdrawals[0].merge!\
-            member: member,
-            account: trst_account,
-            aasm_state: :confirming,
-            currency: currency
+        withdraw_hash = expected_withdrawals[1].merge!\
+          member: member,
+          account: ring_account,
+          aasm_state: :confirming,
+          currency: currency
 
-        create(:trst_withdraw, withdraw_hash)
+        create(:ring_withdraw, withdraw_hash)
       end
 
       let!(:success_withdraw) do
-        withdraw_hash = expected_withdrawals[1].merge!\
-            member: member,
-            account: trst_account,
-            aasm_state: :confirming,
-            currency: currency
+        withdraw_hash = expected_withdrawals[0].merge!\
+          member: member,
+          account: ring_account,
+          aasm_state: :confirming,
+          currency: currency
 
-        create(:trst_withdraw, withdraw_hash)
+        create(:ring_withdraw, withdraw_hash)
       end
 
       before do
@@ -389,15 +380,15 @@ describe BlockchainService::Ethereum do
         client.class.any_instance.stubs(:latest_block_number).returns(latest_block)
         client.class.any_instance.stubs(:rpc_call_id).returns(1)
 
-        block_data.each_with_index do |blk, index|
+        block_data.each do |blk|
           stub_request(:post, client.endpoint)
-              .with(body: request_body(blk['result']['number'], index))
+              .with(body: request_body(blk['result']['number']))
               .to_return(body: blk.to_json)
         end
 
-        transaction_receipt_data.each_with_index do |rcpt, index|
+        transaction_receipt_data.each do |rcpt|
           stub_request(:post, client.endpoint)
-              .with(body: request_receipt_body(rcpt['result']['transactionHash'],index))
+              .with(body: request_receipt_body(rcpt['result']['transactionHash']))
               .to_return(body: rcpt.to_json)
         end
         BlockchainService[blockchain.key].process_blockchain(force: true)

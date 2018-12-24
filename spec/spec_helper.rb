@@ -76,9 +76,9 @@ RSpec.configure do |config|
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
     I18n.locale = :en
-    %w[ eth-rinkeby btc-testnet dash-testnet ltc-testnet bch-testnet xrp-testnet ].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
-    %i[ usd btc dash eth xrp trst bch eur ltc ].each { |ccy| FactoryBot.create(:currency, ccy) }
-    %i[ eth_deposit eth_hot eth_fee trst_deposit trst_hot btc_hot btc_deposit bch_deposit bch_hot dash_deposit dash_hot ltc_deposit ltc_hot xrp_deposit xrp_hot eth_warm ]
+    %w[  eth-kovan eth-rinkeby btc-testnet dash-testnet ltc-testnet bch-testnet xrp-testnet ].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
+    %i[ usd btc dash eth xrp trst ring bch eur ltc ].each { |ccy| FactoryBot.create(:currency, ccy) }
+    %i[ eth_deposit eth_hot eth_fee eth_warm peth_deposit peth_hot peth_fee peth_warm trst_deposit trst_hot ring_deposit ring_hot btc_hot btc_deposit bch_deposit bch_hot dash_deposit dash_hot ltc_deposit ltc_hot xrp_deposit xrp_hot ]
         .each { |ccy| FactoryBot.create(:wallet, ccy) }
     %i[ btcusd dashbtc btceth btcxrp ].each { |market| FactoryBot.create(:market, market) }
   end
@@ -91,7 +91,7 @@ RSpec.configure do |config|
   config.default_retry_count = 3
   config.display_try_failure_messages = true
   config.exceptions_to_retry = [Net::ReadTimeout]
-  
+
   if Bullet.enable?
     config.before(:each) { Bullet.start_request }
     config.after :each do

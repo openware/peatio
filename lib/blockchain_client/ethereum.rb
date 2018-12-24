@@ -3,7 +3,6 @@
 
 module BlockchainClient
   class Ethereum < Base
-
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
 
@@ -18,7 +17,7 @@ module BlockchainClient
     end
 
     def get_block(height)
-      current_block   = height || 0
+      current_block = height || 0
       json_rpc(:eth_getBlockByNumber, ["0x#{current_block.to_s(16)}", true]).fetch('result')
     end
 
@@ -129,15 +128,6 @@ module BlockchainClient
 
     def block_information(number)
       json_rpc(:eth_getBlockByNumber, [number, false]).fetch('result')
-    end
-
-    def permit_transaction(issuer, recipient)
-      json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
-        unless response['result']
-          raise BlockchainClient::Error, \
-            "#{currency.code.upcase} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} is not permitted."
-        end
-      end
     end
 
     def abi_encode(method, *args)
