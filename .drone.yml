@@ -21,6 +21,7 @@ services:
 
 steps:
 # Copy bundler cache from the host machine to your build environment.
+# Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
 - name: restore-cache
   pull: default
   image: drillster/drone-volume-cache
@@ -58,6 +59,7 @@ steps:
     - LOG_LEVEL=warn bundle exec rspec
 
 # Copy bundler cache from the build environment to your host machine.
+# Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
 - name: rebuild-cache
   pull: default
   image: drillster/drone-volume-cache
