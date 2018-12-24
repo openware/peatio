@@ -24,12 +24,12 @@ steps:
   pull: default
   image: drillster/drone-volume-cache
   settings:
+    restore: true
     mount:
     - vendor/bundle
-    restore: true
   volumes:
   - name: bundle-cache
-    path: /tmp:/cache
+    path: /cache
 
 - name: Run rspec
   image: ruby:2.5.3
@@ -42,19 +42,20 @@ steps:
   commands:
     - ./bin/init_config
     - bundle install --deployment --without production development --jobs=$(nproc) --retry=3 --path vendor/bundle
+    - sleep 20
     - bundle exec rake db:create db:migrate
-    - LOG_LEVEL=warn bundle exec rspec
+    - LOG_LEVEL=warn bundle exec rspec spec/api/v2/public/currencies_spec.rb
 
 - name: rebuild-cache
   pull: default
   image: drillster/drone-volume-cache
   settings:
+    rebuild: true
     mount:
     - vendor/bundle
-    rebuild: true
   volumes:
   - name: bundle-cache
-    path: /tmp:/cache
+    path: /cache
 
 volumes:
 - name: bundle-cache
