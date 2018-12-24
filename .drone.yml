@@ -20,6 +20,7 @@ services:
     - 6379
 
 steps:
+# Copy bundler cache from the host machine to your build environment.
 - name: restore-cache
   pull: default
   image: drillster/drone-volume-cache
@@ -31,7 +32,18 @@ steps:
   - name: bundle-cache
     path: /cache
 
-- name: Run rspec
+# Wait mysql to be ready for taking connections.
+- name: ping-mysql
+  image: mysql:5.7
+  environment:
+    DATABASE_HOST: database
+  commands:
+    - while ! mysqladmin ping -h$DATABASE_HOST -uroot --silent; do
+    - sleep 2
+    - done
+
+# Initialize application. Install dependencies. Migrate database. Run rspec.
+- name: run-rspec
   image: ruby:2.5.3
   environment:
     DATABASE_HOST: database
@@ -41,11 +53,11 @@ steps:
     RAILS_ENV: test
   commands:
     - ./bin/init_config
-    - bundle install --deployment --without production development --jobs=$(nproc) --retry=3 --path vendor/bundle
-    - sleep 20
+    - bundle install --deployment --without production development --jobs=$(nproc) --retry=3
     - bundle exec rake db:create db:migrate
     - LOG_LEVEL=warn bundle exec rspec
 
+# Copy bundler cache from the build environment to your host machine.
 - name: rebuild-cache
   pull: default
   image: drillster/drone-volume-cache
