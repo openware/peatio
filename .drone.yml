@@ -44,7 +44,7 @@ steps:
     - bundle install --deployment --without production development --jobs=$(nproc) --retry=3 --path vendor/bundle
     - sleep 20
     - bundle exec rake db:create db:migrate
-    - LOG_LEVEL=warn bundle exec rspec spec/api/v2/public/currencies_spec.rb
+    - LOG_LEVEL=warn bundle exec rspec
 
 - name: rebuild-cache
   pull: default
