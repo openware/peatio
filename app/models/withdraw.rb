@@ -22,6 +22,9 @@ class Withdraw < ActiveRecord::Base
 
   validates :rid, :aasm_state, presence: true
   validates :txid, uniqueness: { scope: :currency_id }, if: :txid?
+  validates :sum,
+            presence: true,
+            numericality: { greater_than_or_equal_to: ->(withdraw) { withdraw.currency.min_withdraw_amount }}
 
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
 

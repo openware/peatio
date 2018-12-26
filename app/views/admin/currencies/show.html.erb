@@ -24,14 +24,17 @@
               <dd><%= @currency.type.titleize %></dd>
             <% end %>
 
-            <dt>Quick withdraw limit</dt>
-            <dd><%= f.text_field :quick_withdraw_limit, class: 'form-control' %></dd>
+            <dt>Deposit fee (fiat only)</dt>
+            <dd><%= f.text_field :deposit_fee, class: 'form-control' %></dd>
 
             <dt>Withdraw fee</dt>
             <dd><%= f.text_field :withdraw_fee, class: 'form-control' %></dd>
 
-            <dt>Deposit fee (fiat only)</dt>
-            <dd><%= f.text_field :deposit_fee, class: 'form-control' %></dd>
+            <dt>Min withdraw amount</dt>
+            <dd><%= f.text_field :min_withdraw_amount, class: 'form-control' %></dd>
+
+            <dt>Quick withdraw limit</dt>
+            <dd><%= f.text_field :quick_withdraw_limit, class: 'form-control' %></dd>
 
             <% if @currency.coin? || @currency.new_record? %>
               <dt>Case sensitive?</dt>

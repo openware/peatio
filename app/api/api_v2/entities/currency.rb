@@ -16,6 +16,7 @@ module APIv2
       expose :deposit_fee, documentation: 'Currency deposit fee'
       expose :withdraw_fee, documentation: 'Currency withdraw fee'
 
+      expose :min_withdraw_amount, documentation: 'Currency min withdraw amount'
       expose :quick_withdraw_limit, documentation: 'Currency quick withdraw limit'
       expose :deposit_confirmations, if: -> (currency){ currency.type == 'coin' },
              documentation: 'Number of deposit confirmations for currency'

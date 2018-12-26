@@ -51,9 +51,10 @@ module Admin
     def permitted_currency_attributes
       attributes = [
         :symbol,
-        :quick_withdraw_limit,
-        :withdraw_fee,
         :deposit_fee,
+        :withdraw_fee,
+        :min_withdraw_amount,
+        :quick_withdraw_limit,
         :deposit_confirmations,
         :enabled,
         :wallet_url_template,
