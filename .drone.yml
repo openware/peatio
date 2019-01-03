@@ -71,6 +71,31 @@ steps:
   - name: bundle-cache
     path: /cache
 
+- name: show-vendor
+  image: ruby:2.5.3
+  environment:
+    DATABASE_HOST: database
+    RABBITMQ_HOST: rabbitmq
+    EVENT_API_RABBITMQ_HOST: rabbitmq
+    REDIS_URL: redis://redis:6379
+    RAILS_ENV: test
+  commands:
+    - ls -R vendor/bundle
+
+- name: docker-build-and-push
+  image: plugins/docker
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: syaroslav/peatio
+  when:
+    event:
+    - push
+    branch:
+    - drone
+
 volumes:
 - name: bundle-cache
   host:
