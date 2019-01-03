@@ -30,7 +30,7 @@ addons:
 
 # Execute all of the commands which need to be executed before installing dependencies.
 before_install:
-  - gem install bundler
+  - gem install bundler -v 1.16.6
   - . $HOME/.nvm/nvm.sh
   - nvm install 8
   - nvm use 8
