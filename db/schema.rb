@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181213052609) do
+ActiveRecord::Schema.define(version: 20181229051129) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -28,8 +28,8 @@ ActiveRecord::Schema.define(version: 20181213052609) do
   create_table "assets", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
-    t.integer  "reference_id",   limit: 4,                                           null: false
-    t.string   "reference_type", limit: 255,                                         null: false
+    t.integer  "reference_id",   limit: 4
+    t.string   "reference_type", limit: 255
     t.decimal  "debit",                      precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "credit",                     precision: 32, scale: 16, default: 0.0, null: false
     t.datetime "created_at",                                                         null: false
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20181213052609) do
   add_index "blockchains", ["status"], name: "index_blockchains_on_status", using: :btree
 
   create_table "currencies", force: :cascade do |t|
+    t.string   "name",                  limit: 255
     t.string   "blockchain_key",        limit: 32
     t.string   "symbol",                limit: 1,                                               null: false
     t.string   "type",                  limit: 30,                             default: "coin", null: false
@@ -104,8 +105,8 @@ ActiveRecord::Schema.define(version: 20181213052609) do
   create_table "expenses", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
-    t.integer  "reference_id",   limit: 4,                                           null: false
-    t.string   "reference_type", limit: 255,                                         null: false
+    t.integer  "reference_id",   limit: 4
+    t.string   "reference_type", limit: 255
     t.decimal  "debit",                      precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "credit",                     precision: 32, scale: 16, default: 0.0, null: false
     t.datetime "created_at",                                                         null: false
@@ -119,8 +120,8 @@ ActiveRecord::Schema.define(version: 20181213052609) do
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
     t.integer  "member_id",      limit: 4,                                           null: false
-    t.integer  "reference_id",   limit: 4,                                           null: false
-    t.string   "reference_type", limit: 255,                                         null: false
+    t.integer  "reference_id",   limit: 4
+    t.string   "reference_type", limit: 255
     t.decimal  "debit",                      precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "credit",                     precision: 32, scale: 16, default: 0.0, null: false
     t.datetime "created_at",                                                         null: false
@@ -138,6 +139,8 @@ ActiveRecord::Schema.define(version: 20181213052609) do
     t.decimal  "bid_fee",                      precision: 17, scale: 16, default: 0.0,    null: false
     t.decimal  "max_bid",                      precision: 17, scale: 16
     t.decimal  "min_ask",                      precision: 17, scale: 16, default: 0.0,    null: false
+    t.decimal  "min_bid_amount",               precision: 32, scale: 16, default: 0.0,    null: false
+    t.decimal  "min_ask_amount",               precision: 32, scale: 16, default: 0.0,    null: false
     t.integer  "ask_precision",    limit: 1,                             default: 8,      null: false
     t.integer  "bid_precision",    limit: 1,                             default: 8,      null: false
     t.integer  "position",         limit: 4,                             default: 0,      null: false
@@ -224,8 +227,8 @@ ActiveRecord::Schema.define(version: 20181213052609) do
   create_table "revenues", force: :cascade do |t|
     t.integer  "code",           limit: 4,                                           null: false
     t.string   "currency_id",    limit: 255,                                         null: false
-    t.integer  "reference_id",   limit: 4,                                           null: false
-    t.string   "reference_type", limit: 255,                                         null: false
+    t.integer  "reference_id",   limit: 4
+    t.string   "reference_type", limit: 255
     t.decimal  "debit",                      precision: 32, scale: 16, default: 0.0, null: false
     t.decimal  "credit",                     precision: 32, scale: 16, default: 0.0, null: false
     t.datetime "created_at",                                                         null: false

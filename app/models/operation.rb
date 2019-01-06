@@ -11,12 +11,16 @@ class Operation < ActiveRecord::Base
 
   self.abstract_class = true
 
+  MEMBER_TYPES = %i[liability].freeze
+  PLATFORM_TYPES = %i[asset expense revenue].freeze
+  TYPES = (MEMBER_TYPES + PLATFORM_TYPES).freeze
+
   class << self
     def operation_type
       name.demodulize.downcase.to_sym
     end
 
-    def credit!(reference:, amount:, kind: :main, currency: nil)
+    def credit!(amount:, kind: :main, reference: nil, currency: nil)
       return if amount.zero?
 
       currency ||= reference.currency
@@ -30,24 +34,24 @@ class Operation < ActiveRecord::Base
         reference:   reference,
         currency_id: currency.id,
         code:        account_code
-      )
+      ).tap(&:save!)
     end
 
-    def debit!(reference:, amount:, kind: :main, currency: nil)
+    def debit!(amount:, kind: :main, reference: nil, currency: nil)
       return if amount.zero?
 
       currency ||= reference.currency
       account_code = Operations::Chart.code_for(
         type:          operation_type,
         kind:          kind,
-        currency_type: currency.type.to_sym
+        currency_type: currency.type
       )
-      create!(
+      new(
         debit:       amount,
         reference:   reference,
         currency_id: currency.id,
         code:        account_code
-      )
+      ).tap(&:save!)
     end
 
     def balance(currency: nil, created_at_from: nil, created_at_to: nil)
