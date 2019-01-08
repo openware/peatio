@@ -46,8 +46,10 @@ class Global
     open = Rails.cache.read("peatio:#{market_id}:ticker:open") || ticker[:last]
     best_buy_price   = bids.first && bids.first[0] || ZERO
     best_sell_price  = asks.first && asks.first[0] || ZERO
+    change = 100 * (ticker[:last] - open) / open
 
     ticker.merge({
+      change: change.nan? ? 0.0 : change.round(2),
       open: open,
       volume: h24_volume,
       sell: best_sell_price,

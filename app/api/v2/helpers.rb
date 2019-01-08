@@ -86,6 +86,8 @@ module API
       def format_ticker(ticker)
         { at: ticker[:at],
           ticker: {
+            change: ticker[:change],
+            open: ticker[:open],
             buy: ticker[:buy],
             sell: ticker[:sell],
             low: ticker[:low],
