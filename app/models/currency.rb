@@ -3,7 +3,15 @@
 
 
 class Currency < ActiveRecord::Base
-  serialize :options, JSON
+
+  DEFAULT_OPTIONS_SCHEMA = {
+    erc20_contract_address: {
+      title: 'ERC20 Contract Address',
+      type: 'string'
+    }
+  }
+  OPTIONS_ATTRIBUTES = %i[erc20_contract_address gas_limit gas_price].freeze
+  store :options, accessors: OPTIONS_ATTRIBUTES, coder: JSON
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
 
@@ -21,25 +29,26 @@ class Currency < ActiveRecord::Base
   validates :options, length: { maximum: 1000 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
 
-  validates :withdraw_limit_24h,
-            :withdraw_limit_72h,
+  validates :deposit_fee,
             :min_deposit_amount,
             :min_collection_amount,
             :withdraw_fee,
-            :deposit_fee,
+            :min_withdraw_amount,
+            :withdraw_limit_24h,
+            :withdraw_limit_72h,
             numericality: { greater_than_or_equal_to: 0 }
 
-  validate { errors.add(:options, :invalid) unless Hash === options }
-
+  validate :validate_options
   validate { errors.add(:base, 'Cannot disable display currency!') if disabled? && code == ENV.fetch('DISPLAY_CURRENCY').downcase }
 
   # TODO: Add specs to this validation.
   validate :must_not_disable_all_markets, on: :update
 
+  before_validation :initialize_options
   before_validation { self.deposit_fee = 0 unless fiat? }
 
   before_validation do
-    self.erc20_contract_address = erc20_contract_address.try(:downcase)
+    self.erc20_contract_address = erc20_contract_address.try(:downcase) if erc20_contract_address.present?
   end
 
   after_create { Member.find_each(&:touch_accounts) }
@@ -88,9 +97,9 @@ class Currency < ActiveRecord::Base
   types.each { |t| define_method("#{t}?") { type == t.to_s } }
 
   def as_json(*)
-    { code:                     code,
-      coin:                     coin?,
-      fiat:                     fiat? }
+    { code: code,
+      coin: coin?,
+      fiat: fiat? }
   end
 
   def summary
@@ -103,21 +112,6 @@ class Currency < ActiveRecord::Base
       coinable: coin?,
       hot:      coin? ? balance : nil }
   end
-
-  class << self
-    def nested_attr(*names)
-      names.each do |name|
-        name_string = name.to_s
-        define_method(name)              { options[name_string] }
-        define_method(name_string + '?') { options[name_string].present? }
-        define_method(name_string + '=') { |value| options[name_string] = value }
-        define_method(name_string + '!') { options.fetch!(name_string) }
-      end
-    end
-  end
-
-  nested_attr \
-    :erc20_contract_address
 
   def disabled?
     !enabled
@@ -143,27 +137,49 @@ class Currency < ActiveRecord::Base
     end
   end
 
+  def initialize_options
+    self.options = options.present? ? options : {}
+  end
+
+  def validate_options
+    errors.add(:options, :invalid) unless Hash === options if options.present?
+  end
+
+  def build_options_schema
+    default_schema = DEFAULT_OPTIONS_SCHEMA
+    props_schema = (options.keys - OPTIONS_ATTRIBUTES.map(&:to_s)) \
+                       .map{|v| [v, { title: v.to_s.humanize, format: "table"}]}.to_h
+    default_schema.merge!(props_schema)
+  end
+
+  def set_options_values
+    options.keys.present?  ? \
+          options.keys.map{|v| [v, options[v]]}.to_h \
+          : OPTIONS_ATTRIBUTES.map(&:to_s).map{|v| [v, '']}.to_h
+  end
+
   attr_readonly :id,
                 :code,
-                :type,
-                :erc20_contract_address
+                :type
 end
 
 # == Schema Information
-# Schema version: 20181126101312
+# Schema version: 20181219115439
 #
 # Table name: currencies
 #
 #  id                    :string(10)       not null, primary key
+#  name                  :string(255)
 #  blockchain_key        :string(32)
 #  symbol                :string(1)        not null
 #  type                  :string(30)       default("coin"), not null
 #  deposit_fee           :decimal(32, 16)  default(0.0), not null
-#  withdraw_limit_24h    :decimal(32, 16)  default(0.0), not null
-#  withdraw_limit_72h    :decimal(32, 16)  default(0.0), not null
 #  min_deposit_amount    :decimal(32, 16)  default(0.0), not null
 #  min_collection_amount :decimal(32, 16)  default(0.0), not null
 #  withdraw_fee          :decimal(32, 16)  default(0.0), not null
+#  min_withdraw_amount   :decimal(32, 16)  default(0.0), not null
+#  withdraw_limit_24h    :decimal(32, 16)  default(0.0), not null
+#  withdraw_limit_72h    :decimal(32, 16)  default(0.0), not null
 #  options               :string(1000)     default({}), not null
 #  enabled               :boolean          default(TRUE), not null
 #  base_factor           :integer          default(1), not null
