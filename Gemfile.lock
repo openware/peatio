@@ -15,14 +15,14 @@ GIT
 
 GIT
   remote: https://github.com/skyach/peatio-nxt
-  revision: 2bbeb3b141c83471f1dcb311b5d4d41d2d47f4f0
+  revision: 4c7de4291ef8f4353facc6ba134dd2ae57e4a745
   specs:
     peatio-nxt (0.1.0)
       peatio (~> 0.4.3)
 
 GIT
   remote: https://github.com/skyach/peatio-wcg
-  revision: 5427c961348440026d625850cb582710cda31f1a
+  revision: 31fadca99f965bad728b8477fe751c446b9d6c53
   specs:
     peatio-wcg (0.1.0)
       peatio (~> 0.4.3)
