@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 2019_01_10_091240) do
     t.decimal "min_withdraw_amount", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "withdraw_limit_24h", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "withdraw_limit_72h", precision: 32, scale: 16, default: "0.0", null: false
-    t.string "options", default: "{}"
+    t.string "options", limit: 1000, default: "{}"
     t.boolean "enabled", default: true, null: false
     t.bigint "base_factor", default: 1, null: false
     t.integer "precision", limit: 1, default: 8, null: false

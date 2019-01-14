@@ -179,7 +179,7 @@ end
 #  min_withdraw_amount   :decimal(32, 16)  default(0.0), not null
 #  withdraw_limit_24h    :decimal(32, 16)  default(0.0), not null
 #  withdraw_limit_72h    :decimal(32, 16)  default(0.0), not null
-#  options               :string(255)      default({})
+#  options               :string(1000)     default({})
 #  enabled               :boolean          default(TRUE), not null
 #  base_factor           :bigint(8)        default(1), not null
 #  precision             :integer          default(8), not null
