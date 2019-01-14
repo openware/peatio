@@ -49,7 +49,7 @@ module Peatio
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     config.i18n.load_path += Dir[root.join('config', 'locales', '*.{yml}')]
-    config.i18n.available_locales = ['en', 'ru']
+    config.i18n.available_locales = ['en']
 
     # Configure relative url root by setting URL_ROOT_PATH environment variable.
     # Used by workbench with API Gateway.

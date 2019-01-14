@@ -46,7 +46,6 @@ tags
 .idea
 
 /vendor/bundle
-/vendor/assets/yarn_components
 /vendor/plugins
 .env
 .DS_Store
@@ -56,3 +55,9 @@ tags
 # Ignore useless yarn files and cache
 .cache
 .yarnrc
+
+# Ignore Node Modules
+/node_modules
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
