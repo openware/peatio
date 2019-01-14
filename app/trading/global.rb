@@ -49,7 +49,7 @@ class Global
     change = 100 * (ticker[:last] - open) / open
 
     ticker.merge({
-      change: change.nan? ? 0.0 : change.round(2),
+      change: change.nan? ? ZERO : change.round(2).to_s,
       open: open,
       volume: h24_volume,
       sell: best_sell_price,
