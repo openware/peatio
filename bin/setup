@@ -3,37 +3,46 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-# path to your application root
-APP_ROOT = File.expand_path('../../', __FILE__)
+require 'fileutils'
+include FileUtils
 
-Dir.chdir APP_ROOT do
+# path to your application root.
+APP_ROOT = File.expand_path('..', __dir__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+chdir APP_ROOT do
+  # This script is a starting point to setup your application.
+  # Add necessary setup steps to this file.
   puts "\n=== Copying config files ==="
-  system 'bin/init_config'
+  system! 'bin/init_config'
 
   puts "\n=== Install yarn packages ==="
-  system 'bin/rake yarn:install'
+  system! 'bin/rake yarn:install'
 
   puts "\n=== Removing old logs and tempfiles ==="
-  system 'rm -f log/* log/daemons/*'
-  system 'bin/rake tmp:clear tmp:create'
+  system! 'rm -f log/* log/daemons/*'
+  system! 'bin/rake tmp:clear tmp:create'
 
   if ENV['JWT_PUBLIC_KEY'].nil?
     puts "\n=== Creating secrets"
-    system "bundle exec peatio security keygen --path=config/secrets"
+    system! "bundle exec peatio security keygen --path=config/secrets"
   end
 
   puts "\n=== Starting backends"
-  system "docker-compose -f config/backend.yml up -d"
+  system! "docker-compose -f config/backend.yml up -d"
 
   # in production we run db:setup as k8s jobs
   if ENV['RAILS_ENV'] == 'production'
     puts "\n=== Compiling assets ==="
-    system 'bin/rake assets:clobber assets:precompile'
+    system! 'bin/rake assets:clobber assets:precompile'
 
     puts "\n=== Preparing database schema ==="
-    system 'bin/rake db:schema:dump'
+    system! 'bin/rake db:schema:dump'
   else
     puts "\n=== Setup database ==="
-    system 'bin/rake db:create db:migrate db:seed'
+    system! 'bin/rake db:create db:migrate db:seed'
   end
 end

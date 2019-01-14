@@ -24,7 +24,7 @@ describe API::V2::Account::Deposits, type: :request do
 
     it 'login deposits' do
       api_get '/api/v2/account/deposits', token: token
-      expect(response).to be_success
+      expect(response).to be_successful
     end
 
     it 'deposits num' do

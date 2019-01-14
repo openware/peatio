@@ -68,7 +68,7 @@ describe Account do
       account1 = Account.find subject.id
       account2 = Account.find subject.id
 
-      expect(subject.reload.balance).to eq BigDecimal.new('10')
+      expect(subject.reload.balance).to eq BigDecimal('10')
 
       expect do
         ActiveRecord::Base.transaction do
@@ -79,7 +79,7 @@ describe Account do
         end
       end.to raise_error(Account::AccountError) { |e| expect(e.message).to eq 'Cannot lock funds (amount: 8).' }
 
-      expect(subject.reload.balance).to eq BigDecimal.new('2')
+      expect(subject.reload.balance).to eq BigDecimal('2')
     end
   end
 

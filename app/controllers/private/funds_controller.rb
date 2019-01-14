@@ -22,7 +22,7 @@ module Private
 
     def gen_address
       current_user.accounts.enabled.each(&:payment_address)
-      render nothing: true
+      render body: nil
     end
   end
 end

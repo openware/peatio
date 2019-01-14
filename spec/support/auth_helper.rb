@@ -6,7 +6,7 @@ module AuthTestHelpers
 
   def auth_get(method, params, token)
     request.headers[AUTH_HEADER_NAME] = "Bearer #{token}"
-    get(method, params)
+    get(method, params: params)
   end
 
   def inject_authorization!(m)

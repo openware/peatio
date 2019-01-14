@@ -41,13 +41,13 @@ describe API::V2::Account::Withdraws, type: :request do
 
     it 'should return withdraws for all currencies by default' do
       api_get '/api/v2/account/withdraws', params: { limit: 1000 }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %w[ btc usd ]
     end
 
     it 'should return withdraws specified currency' do
       api_get '/api/v2/account/withdraws', params: { currency: 'BTC', limit: 1000 }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).map { |x| x['currency'] }.uniq.sort).to eq %w[ btc ]
     end
 
@@ -55,11 +55,11 @@ describe API::V2::Account::Withdraws, type: :request do
       ordered_withdraws = btc_withdraws.sort_by(&:id).reverse
 
       api_get '/api/v2/account/withdraws', params: { currency: 'BTC', limit: 10, page: 1 }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).first['id']).to eq ordered_withdraws[0].id
 
       api_get '/api/v2/account/withdraws', params: { currency: 'BTC', limit: 10, page: 2 }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).first['id']).to eq ordered_withdraws[10].id
     end
 
@@ -67,7 +67,7 @@ describe API::V2::Account::Withdraws, type: :request do
       ordered_withdraws = btc_withdraws.sort_by(&:id).reverse
 
       api_get '/api/v2/account/withdraws', params: { currency: 'BTC', limit: 100 }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       results = JSON.parse(response.body)
       expect(results.map { |x| x['id'] }).to eq ordered_withdraws.map(&:id)
     end

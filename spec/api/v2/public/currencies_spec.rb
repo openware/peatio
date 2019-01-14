@@ -16,7 +16,7 @@ describe API::V2::Public::Currencies, type: :request do
 
     it 'returns information about specified currency' do
       get "/api/v2/public/currencies/#{coin.id}"
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result.fetch('id')).to eq coin.id
@@ -24,7 +24,7 @@ describe API::V2::Public::Currencies, type: :request do
 
     it 'returns correct keys for fiat' do
       get "/api/v2/public/currencies/#{fiat.id}"
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
 
@@ -37,7 +37,7 @@ describe API::V2::Public::Currencies, type: :request do
 
     it 'returns correct keys for coin' do
       get "/api/v2/public/currencies/#{coin.id}"
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expected_for_coin.each { |key| expect(result).to have_key key }
@@ -52,23 +52,23 @@ describe API::V2::Public::Currencies, type: :request do
   describe 'GET /api/v2/public/currencies' do
     it 'lists enabled currencies' do
       get '/api/v2/public/currencies'
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result.size).to eq Currency.enabled.size
     end
 
     it 'lists enabled coins' do
-      get '/api/v2/public/currencies', type: 'coin'
-      expect(response).to be_success
+      get '/api/v2/public/currencies', params: { type: 'coin' }
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result.size).to eq Currency.coins.enabled.size
     end
 
     it 'lists enabled fiats' do
-      get '/api/v2/public/currencies', type: 'fiat'
-      expect(response).to be_success
+      get '/api/v2/public/currencies', params: { type: 'fiat' }
+      expect(response).to be_successful
 
       result = JSON.parse(response.body, symbolize_names: true)
       expect(result.size).to eq Currency.fiats.enabled.size
@@ -76,7 +76,7 @@ describe API::V2::Public::Currencies, type: :request do
     end
 
     it 'returns error in case of invalid type' do
-      get '/api/v2/public/currencies', type: 'invalid'
+      get '/api/v2/public/currencies', params: { type: 'invalid' }
       expect(response).to have_http_status 422
     end
   end

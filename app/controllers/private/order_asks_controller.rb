@@ -13,7 +13,7 @@ module Private
     def clear
       @orders = OrderAsk.where(member_id: current_user.id).with_state(:wait).with_market(current_market)
       Ordering.new(@orders).cancel
-      render status: 200, nothing: true
+      render status: 200, body: nil
     end
 
     def currency

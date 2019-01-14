@@ -4,36 +4,39 @@
 module EasyTable
   module Components
     module Columns
-      def column_with_custom(title, label_or_opts = nil, opts = {}, &block)
+      def column(title, label_or_opts = nil, opts = {}, &block)
         if @options[:model]
           label_or_opts ||= {}
           label_or_opts.merge!({model: @options[:model]})
         end
-
         if @options[:scope]
           label_or_opts ||= {}
           label_or_opts.merge!({scope: @options[:scope]})
         end
-
-        column_without_custom(title, label_or_opts, opts, &block)
+        if label_or_opts.is_a?(Hash) && label_or_opts.extractable_options?
+          label = nil
+          opts = label_or_opts
+        else
+          label = label_or_opts
+          opts = opts
+        end
+        child = node << Tree::TreeNode.new(title)
+        column = Column.new(child, title, label, opts, @template, block)
+        child.content = column
       end
-
-      alias_method_chain :column, :custom  
     end
 
     module Base
-      def translate_with_custom(key)
+      def translate(key)
         if @opts[:model]
           @opts[:model].human_attribute_name(@title)
         elsif @opts[:scope]
           I18n.t("easy_table.#{@opts[:scope]}.#{@title}")
         else
-          translate_without_custom(key)
+          controller = @template.controller_name
+          I18n.t("easy_table.#{controller.singularize}.#{key}", default: key.to_s)
         end
       end
-
-      alias_method_chain :translate, :custom  
     end
   end
 end
-

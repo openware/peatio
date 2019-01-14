@@ -56,7 +56,7 @@ class OrderBid < Order
 end
 
 # == Schema Information
-# Schema version: 20180813105100
+# Schema version: 20181229051129
 #
 # Table name: orders
 #
@@ -71,7 +71,7 @@ end
 #  state          :integer          not null
 #  type           :string(8)        not null
 #  member_id      :integer          not null
-#  ord_type       :string           not null
+#  ord_type       :string(30)       not null
 #  locked         :decimal(32, 16)  default(0.0), not null
 #  origin_locked  :decimal(32, 16)  default(0.0), not null
 #  funds_received :decimal(32, 16)  default(0.0)

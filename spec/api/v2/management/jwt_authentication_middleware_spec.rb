@@ -15,7 +15,7 @@ describe API::V2::Management::JWTAuthenticationMiddleware, type: :request do
 
   it 'works in standard conditions' do
     post_json '/api/v2/management/timestamp', multisig_jwt_management_api_v1({}, :alex)
-    expect(response).to be_success
+    expect(response).to be_successful
   end
 
   it 'allows only POST, PUT, and DELETE' do
@@ -36,7 +36,7 @@ describe API::V2::Management::JWTAuthenticationMiddleware, type: :request do
   end
 
   it 'requires JSON in the request body' do
-    post '/api/v2/management/timestamp', 'foo=baz&baz=qux'
+    post '/api/v2/management/timestamp', params: 'foo=baz&baz=qux'
     expect(response).to have_http_status(400)
     expect(response.body).to match(/only json/i)
   end
@@ -59,7 +59,7 @@ describe API::V2::Management::JWTAuthenticationMiddleware, type: :request do
     before { config[:jwt].merge!(iss: 'qux') }
     it 'validates issuer' do
       post_json '/api/v2/management/timestamp', multisig_jwt_management_api_v1({ iss: 'qux' }, :alex)
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 
@@ -78,7 +78,7 @@ describe API::V2::Management::JWTAuthenticationMiddleware, type: :request do
     before { config[:jwt].merge!(aud: 'qux') }
     it 'validates audience' do
       post_json '/api/v2/management/timestamp', multisig_jwt_management_api_v1({ aud: 'qux' }, :alex)
-      expect(response).to be_success
+      expect(response).to be_successful
     end
   end
 

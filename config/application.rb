@@ -1,11 +1,9 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
-require 'rails'
-
-%w( active_record action_controller action_view sprockets ).each { |framework| require "#{framework}/railtie" }
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -16,8 +14,16 @@ require_relative 'plugins'
 
 module Peatio
   class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.2
 
-    # Eager loading app dir
+    # Settings in config/environments/* take precedence over those specified here.
+    # Application configuration can go into files in config/initializers
+    # -- all .rb files in that directory are automatically loaded after loading
+    # the framework and any gems in your application.
+
+    # Adding Grape API
+    # Eager loading all app/ folder
     config.eager_load_paths += Dir[Rails.root.join('app')]
 
     # Configure Sentry as early as possible.
@@ -25,7 +31,6 @@ module Peatio
       require 'sentry-raven'
       Raven.configure { |config| config.dsn = ENV['SENTRY_DSN_BACKEND'] }
     end
-
 
     # Require Scout.
     require 'scout_apm' if Rails.env.in?(ENV['SCOUT_ENV'].to_s.split(',').map(&:squish))
@@ -44,10 +49,7 @@ module Peatio
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     config.i18n.load_path += Dir[root.join('config', 'locales', '*.{yml}')]
-    config.i18n.available_locales = ['en']
-
-    # Don't suppress exceptions in before_commit & after_commit callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
+    config.i18n.available_locales = ['en', 'ru']
 
     # Configure relative url root by setting URL_ROOT_PATH environment variable.
     # Used by workbench with API Gateway.
@@ -66,5 +68,8 @@ module Peatio
 
     # Disable CSRF.
     config.action_controller.allow_forgery_protection = false
+
+    config.middleware.use ActionDispatch::Flash
+
   end
 end

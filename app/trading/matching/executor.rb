@@ -84,7 +84,7 @@ module Matching
 
         ([@ask, @bid] + accounts_table.values).map do |record|
           table     = record.class.arel_table
-          statement = Arel::UpdateManager.new(table.engine)
+          statement = Arel::UpdateManager.new
           statement.table(table)
           statement.where(table[:id].eq(record.id))
           updates = record.changed_attributes.map do |(attribute, previous_value)|

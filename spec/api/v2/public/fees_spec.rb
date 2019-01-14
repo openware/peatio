@@ -5,7 +5,7 @@ describe API::V2::Public::Fees, type: :request do
   describe 'GET /api/v2/public/fees/withdraw' do
     it 'returns withdraw fees for every enabled currency' do
       get '/api/v2/public/fees/withdraw'
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result.size).to eq 8
@@ -14,7 +14,7 @@ describe API::V2::Public::Fees, type: :request do
     it 'returns correct currency withdraw fee' do
       get '/api/v2/public/fees/withdraw'
 
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       currency = result.find { |c| c['currency'] == 'usd' }
@@ -30,7 +30,7 @@ describe API::V2::Public::Fees, type: :request do
   describe 'GET /api/v2/public/fees/deposit' do
     it 'returns deposit fees for every enabled currency' do
       get '/api/v2/public/fees/deposit'
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result.size).to eq 8
@@ -39,7 +39,7 @@ describe API::V2::Public::Fees, type: :request do
     it 'returns correct currency deposit fee' do
       get '/api/v2/public/fees/deposit'
 
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       currency = result.find { |c| c['currency'] == 'usd' }
@@ -55,7 +55,7 @@ describe API::V2::Public::Fees, type: :request do
   describe 'GET /api/v2/public/fees/trading' do
     it 'returns trading fees for enabled markets' do
       get '/api/v2/public/fees/trading'
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result.size).to eq Market.enabled.count
@@ -64,7 +64,7 @@ describe API::V2::Public::Fees, type: :request do
     it 'returns correct trading fees' do
       get '/api/v2/public/fees/trading'
 
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       market = result.find { |c| c['market'] == 'btcusd' }

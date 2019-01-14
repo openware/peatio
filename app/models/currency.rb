@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-class Currency < ActiveRecord::Base
+class Currency < ApplicationRecord
 
   DEFAULT_OPTIONS_SCHEMA = {
     erc20_contract_address: {
@@ -163,7 +163,7 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20181219133822
+# Schema version: 20190110091240
 #
 # Table name: currencies
 #
@@ -179,9 +179,9 @@ end
 #  min_withdraw_amount   :decimal(32, 16)  default(0.0), not null
 #  withdraw_limit_24h    :decimal(32, 16)  default(0.0), not null
 #  withdraw_limit_72h    :decimal(32, 16)  default(0.0), not null
-#  options               :string(1000)     default({}), not null
+#  options               :string(255)      default({})
 #  enabled               :boolean          default(TRUE), not null
-#  base_factor           :integer          default(1), not null
+#  base_factor           :bigint(8)        default(1), not null
 #  precision             :integer          default(8), not null
 #  icon_url              :string(255)
 #  created_at            :datetime         not null
@@ -189,5 +189,6 @@ end
 #
 # Indexes
 #
-#  index_currencies_on_enabled  (enabled)
+#  index_currencies_on_enabled           (enabled)
+#  index_currencies_on_enabled_and_code  (enabled)
 #

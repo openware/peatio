@@ -3,7 +3,7 @@
 
 module Private
   class BaseController < ::ApplicationController
-    before_filter :no_cache, :auth_member!
+    before_action :no_cache, :auth_member!
 
     private
 

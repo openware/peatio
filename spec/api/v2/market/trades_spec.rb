@@ -39,7 +39,7 @@ describe API::V2::Market::Trades, type: :request do
 
   describe 'GET /api/v2/market/trades' do
     it 'requires authentication' do
-      get '/api/v2/market/trades', market: 'btcusd'
+      get '/api/v2/market/trades', params: { market: 'btcusd' }
 
       expect(response.code).to eq '401'
       expect(response.body).to eq '{"error":{"code":2001,"message":"Authorization failed"}}'
@@ -47,7 +47,7 @@ describe API::V2::Market::Trades, type: :request do
 
     it 'returns all my recent trades' do
       api_get '/api/v2/market/trades', params: { market: 'btcusd' }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
 
@@ -60,14 +60,14 @@ describe API::V2::Market::Trades, type: :request do
     it 'returns 1 trade' do
       api_get '/api/v2/market/trades', params: { market: 'btcusd', limit: 1 }, token: token
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).size).to eq 1
     end
 
     it 'returns trades before timestamp' do
       api_get '/api/v2/market/trades', params: { market: 'btcusd', timestamp: 30.hours.ago.to_i }, token: token
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).size).to eq 1
     end
 

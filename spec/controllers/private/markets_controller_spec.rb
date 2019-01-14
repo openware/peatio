@@ -15,7 +15,7 @@ describe Private::MarketsController, type: :controller do
 
   context 'non-login user' do
     describe 'GET /markets/btcusd' do
-      before { get :show, data }
+      before { get :show, params: data }
 
       it { expect(response.status).to eq 200 }
       it { expect(assigns(:member)).to be_nil }

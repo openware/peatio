@@ -3,6 +3,7 @@
 
 require 'base64'
 require 'openssl'
+require 'rails_helper'
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'

@@ -21,8 +21,8 @@ describe Private::OrderBidsController, type: :controller do
   context 'POST :create' do
     it 'should create a buy order' do
       expect do
-        post :create, params, member_id: member.id
-        expect(response).to be_success
+        post :create, params: params.merge!(member_id: member.id)
+        expect(response).to be_successful
         expect(response.body).to eq '{"result":true,"message":"Success"}'
       end.to change(OrderBid, :count).by(1)
     end
@@ -34,8 +34,8 @@ describe Private::OrderBidsController, type: :controller do
       o2 = create(:order_bid, member: member, market: Market.find(:dashbtc))
       expect(member.orders.size).to eq 2
 
-      post :clear, { market_id: market.id }, member_id: member.id
-      expect(response).to be_success
+      post :clear, params: { market_id: market.id, member_id: member.id }
+      expect(response).to be_successful
       expect(assigns(:orders).size).to eq 1
       expect(assigns(:orders).first).to eq o1
     end

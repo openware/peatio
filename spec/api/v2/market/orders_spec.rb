@@ -16,7 +16,7 @@ describe API::V2::Market::Orders, type: :request do
     end
 
     it 'should require authentication' do
-      get '/api/v2/market/orders', market: 'btcusd'
+      get '/api/v2/market/orders', params: { market: 'btcusd' }
       expect(response.code).to eq '401'
     end
 
@@ -36,37 +36,37 @@ describe API::V2::Market::Orders, type: :request do
     it 'should return active orders by default' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd' }, token: token
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).size).to eq 2
     end
 
     it 'should return complete orders' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', state: Order::DONE }, token: token
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).first['state']).to eq Order::DONE
     end
 
     it 'should return paginated orders' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', limit: 1, page: 1 }, token: token
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).first['price']).to eq '11.0'
 
       api_get '/api/v2/market/orders', params: { market: 'btcusd', limit: 1, page: 2 }, token: token
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(JSON.parse(response.body).first['price']).to eq '13.0'
     end
 
     it 'should sort orders' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', order_by: 'asc' }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       orders = JSON.parse(response.body)
       expect(orders[0]['id']).to be < orders[1]['id']
 
       api_get '/api/v2/market/orders', params: { market: 'btcusd', order_by: 'desc' }, token: token
-      expect(response).to be_success
+      expect(response).to be_successful
       orders = JSON.parse(response.body)
       expect(orders[0]['id']).to be > orders[1]['id']
     end
@@ -90,7 +90,7 @@ describe API::V2::Market::Orders, type: :request do
 
     it 'should get specified order' do
       api_get "/api/v2/market/orders/#{order.id}", token: token
-      expect(response).to be_success
+      expect(response).to be_successful
 
       result = JSON.parse(response.body)
       expect(result['id']).to eq order.id
@@ -120,7 +120,7 @@ describe API::V2::Market::Orders, type: :request do
 
       expect do
         api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(JSON.parse(response.body)['id']).to eq OrderAsk.last.id
       end.to change(OrderAsk, :count).by(1)
     end
@@ -130,7 +130,7 @@ describe API::V2::Market::Orders, type: :request do
 
       expect do
         api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '12.13', price: '2014' }
-        expect(response).to be_success
+        expect(response).to be_successful
         expect(JSON.parse(response.body)['id']).to eq OrderBid.last.id
       end.to change(OrderBid, :count).by(1)
     end
@@ -168,7 +168,7 @@ describe API::V2::Market::Orders, type: :request do
         AMQPQueue.expects(:enqueue).with(:matching, action: 'cancel', order: order.to_matching_attributes)
         expect do
           api_post "/api/v2/market/orders/#{order.id}/cancel", token: token
-          expect(response).to be_success
+          expect(response).to be_successful
           expect(JSON.parse(response.body)['id']).to eq order.id
         end.not_to change(Order, :count)
       end
@@ -199,7 +199,7 @@ describe API::V2::Market::Orders, type: :request do
 
       expect do
         api_post '/api/v2/market/orders/cancel', token: token
-        expect(response).to be_success
+        expect(response).to be_successful
 
         result = JSON.parse(response.body)
         expect(result.size).to eq 2
@@ -213,7 +213,7 @@ describe API::V2::Market::Orders, type: :request do
 
       expect do
         api_post '/api/v2/market/orders/cancel', token: token, params: { side: 'sell' }
-        expect(response).to be_success
+        expect(response).to be_successful
 
         result = JSON.parse(response.body)
         expect(result.size).to eq 1
@@ -228,7 +228,7 @@ describe API::V2::Market::Orders, type: :request do
 
       expect do
         api_post '/api/v2/market/orders/cancel', token: token, params: { side: 'sell ' }
-        expect(response).to be_success
+        expect(response).to be_successful
       end.not_to change(Order, :count)
     end
   end

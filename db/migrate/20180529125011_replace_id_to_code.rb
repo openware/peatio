@@ -1,4 +1,4 @@
-class ReplaceIdToCode < ActiveRecord::Migration
+class ReplaceIdToCode < ActiveRecord::Migration[4.2]
   def change
     ActiveRecord::Base.transaction do
       execute %[ALTER TABLE `currencies` CHANGE `code` `code` VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL;]
@@ -25,7 +25,7 @@ class ReplaceIdToCode < ActiveRecord::Migration
 
       execute %[UPDATE `currencies` SET `id` = `code`;]
       execute %[ALTER TABLE `currencies` DROP `code`;]
-      remove_index :currencies, column: %i[enabled code]
+      # remove_index :currencies, column: %i[enabled code]
       add_index :currencies, [:enabled]
     end
   end
