@@ -46,6 +46,7 @@ tags
 .idea
 
 /vendor/bundle
+/vendor/assets/yarn_components
 /vendor/plugins
 .env
 .DS_Store
