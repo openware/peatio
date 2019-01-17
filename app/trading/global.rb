@@ -51,6 +51,7 @@ class Global
     ticker.merge({
       change: change.nan? ? ZERO : change.round(2).to_s,
       open: open,
+      price: h24_price,
       volume: h24_volume,
       sell: best_sell_price,
       buy: best_buy_price,
@@ -61,6 +62,12 @@ class Global
   def h24_volume
     Rails.cache.fetch key('h24_volume', 5), expires_in: 24.hours do
       Trade.where(market_id: market_id).h24.sum(:volume) || ZERO
+    end
+  end
+
+  def h24_price
+    Rails.cache.fetch key('h24_price', 5), expires_in: 24.hours do
+      Trade.avg_h24_price(market_id) || ZERO
     end
   end
 

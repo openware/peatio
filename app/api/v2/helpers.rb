@@ -87,6 +87,7 @@ module API
         { at: ticker[:at],
           ticker: {
             change: ticker[:change],
+            price: ticker[:price],
             open: ticker[:open],
             buy: ticker[:buy],
             sell: ticker[:sell],
