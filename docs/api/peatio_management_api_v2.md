@@ -1,12 +1,17 @@
-Management API v1
-=================
+Peatio Management API v2
+========================
 Management API is server-to-server API with high privileges.
 
-**Version:** 2.0.0-alpha
+**Version:** 2.0.16-alpha
+
+**Contact information:**  
+peatio.tech  
+https://www.peatio.tech  
+hello@peatio.tech  
 
 **License:** https://github.com/rubykube/peatio/blob/master/LICENSE.md
 
-### /v1/accounts/balance
+### /accounts/balance
 ---
 ##### ***POST***
 **Description:** Queries the account balance for the given UID and currency.
@@ -24,7 +29,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Queries the account balance for the given UID and currency. | [Balance](#balance) |
 
-### /v1/deposits/state
+### /deposits/state
 ---
 ##### ***PUT***
 **Description:** Allows to load money or cancel deposit.
@@ -42,7 +47,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 200 | Allows to load money or cancel deposit. | [Deposit](#deposit) |
 
-### /v1/deposits/new
+### /deposits/new
 ---
 ##### ***POST***
 **Description:** Creates new fiat deposit with state set to «submitted». Optionally pass field «state» set to «accepted» if want to load money instantly. You can also use PUT /fiat_deposits/:id later to load money or cancel deposit.
@@ -63,7 +68,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Creates new fiat deposit with state set to «submitted». Optionally pass field «state» set to «accepted» if want to load money instantly. You can also use PUT /fiat_deposits/:id later to load money or cancel deposit. | [Deposit](#deposit) |
 
-### /v1/deposits/get
+### /deposits/get
 ---
 ##### ***POST***
 **Description:** Returns deposit by TID.
@@ -80,7 +85,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Returns deposit by TID. | [Deposit](#deposit) |
 
-### /v1/deposits
+### /deposits
 ---
 ##### ***POST***
 **Description:** Returns deposits as paginated collection.
@@ -101,7 +106,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Returns deposits as paginated collection. | [Deposit](#deposit) |
 
-### /v1/withdraws/action
+### /withdraws/action
 ---
 ##### ***PUT***
 **Summary:** Performs action on withdraw.
@@ -121,7 +126,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 200 | Performs action on withdraw. | [Withdraw](#withdraw) |
 
-### /v1/withdraws/new
+### /withdraws/new
 ---
 ##### ***POST***
 **Summary:** Creates new withdraw.
@@ -145,7 +150,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Creates new withdraw. | [Withdraw](#withdraw) |
 
-### /v1/withdraws/get
+### /withdraws/get
 ---
 ##### ***POST***
 **Description:** Returns withdraw by ID.
@@ -162,7 +167,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Returns withdraw by ID. | [Withdraw](#withdraw) |
 
-### /v1/withdraws
+### /withdraws
 ---
 ##### ***POST***
 **Description:** Returns withdraws as paginated collection.
@@ -183,7 +188,7 @@ Management API is server-to-server API with high privileges.
 | ---- | ----------- | ------ |
 | 201 | Returns withdraws as paginated collection. | [Withdraw](#withdraw) |
 
-### /v1/timestamp
+### /timestamp
 ---
 ##### ***POST***
 **Description:** Returns server time in seconds since Unix epoch.
@@ -193,6 +198,160 @@ Management API is server-to-server API with high privileges.
 | Code | Description |
 | ---- | ----------- |
 | 201 | Returns server time in seconds since Unix epoch. |
+
+### /assets/new
+---
+##### ***POST***
+**Description:** Creates new asset operation.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency code. | Yes | string |
+| debit | formData | Operation debit amount. | No | double |
+| credit | formData | Operation credit amount. | No | double |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Creates new asset operation. | [Operation](#operation) |
+
+### /assets
+---
+##### ***POST***
+**Description:** Returns assets as paginated collection.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency for operations filtering. | No | string |
+| page | formData | The page number (defaults to 1). | No | integer |
+| limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Returns assets as paginated collection. | [Operation](#operation) |
+
+### /expenses/new
+---
+##### ***POST***
+**Description:** Creates new expense operation.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency code. | Yes | string |
+| debit | formData | Operation debit amount. | No | double |
+| credit | formData | Operation credit amount. | No | double |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Creates new expense operation. | [Operation](#operation) |
+
+### /expenses
+---
+##### ***POST***
+**Description:** Returns expenses as paginated collection.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency for operations filtering. | No | string |
+| page | formData | The page number (defaults to 1). | No | integer |
+| limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Returns expenses as paginated collection. | [Operation](#operation) |
+
+### /revenues/new
+---
+##### ***POST***
+**Description:** Creates new revenue operation.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency code. | Yes | string |
+| debit | formData | Operation debit amount. | No | double |
+| credit | formData | Operation credit amount. | No | double |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Creates new revenue operation. | [Operation](#operation) |
+
+### /revenues
+---
+##### ***POST***
+**Description:** Returns revenues as paginated collection.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency for operations filtering. | No | string |
+| page | formData | The page number (defaults to 1). | No | integer |
+| limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Returns revenues as paginated collection. | [Operation](#operation) |
+
+### /liabilities/new
+---
+##### ***POST***
+**Description:** Creates new liability operation.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency code. | Yes | string |
+| uid | formData | The user ID for operation owner. | No | string |
+| debit | formData | Operation debit amount. | No | double |
+| credit | formData | Operation credit amount. | No | double |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Creates new liability operation. | [Operation](#operation) |
+
+### /liabilities
+---
+##### ***POST***
+**Description:** Returns liabilities as paginated collection.
+
+**Parameters**
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| currency | formData | The currency for operations filtering. | No | string |
+| uid | formData | The user ID for operations filtering. | No | string |
+| page | formData | The page number (defaults to 1). | No | integer |
+| limit | formData | The number of objects per page (defaults to 100, maximum is 1000). | No | integer |
+
+**Responses**
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Returns liabilities as paginated collection. | [Operation](#operation) |
 
 ### Models
 ---
@@ -240,3 +399,16 @@ Returns withdraws as paginated collection.
 | state | string | The withdraw state. «prepared» – initial state, money are not locked. «submitted» – withdraw has been allowed by outer service for further validation, money are locked. «canceled» – withdraw has been canceled by outer service, money are unlocked. «accepted» – system has validated withdraw and queued it for processing by worker, money are locked. «rejected» – system has validated withdraw and found errors, money are unlocked. «suspected» – system detected suspicious activity, money are unlocked. «processing» – worker is processing withdraw as the current moment, money are locked. «succeed» – worker has successfully processed withdraw, money are subtracted from the account. «failed» – worker has encountered an unhandled error while processing withdraw, money are unlocked. | No |
 | created_at | string | The datetime when withdraw was created. | No |
 | blockchain_txid | string | The transaction ID on the Blockchain (coin only). | No |
+
+### Operation  
+
+Returns liabilities as paginated collection.
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| code | string | The Account code which this operation related to. | No |
+| currency | string | Operation currency ID. | No |
+| credit | string | Operation credit amount. | No |
+| debit | string | Operation debit amount. | No |
+| uid | string | The shared user ID. | No |
+| created_at | string | The datetime when operation was created. | No |

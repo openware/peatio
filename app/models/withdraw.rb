@@ -30,6 +30,9 @@ class Withdraw < ActiveRecord::Base
   validates :rid, :aasm_state, presence: true
   validates :txid, uniqueness: { scope: :currency_id }, if: :txid?
   validates :block_number, allow_blank: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validates :sum,
+            presence: true,
+            numericality: { greater_than_or_equal_to: ->(withdraw) { withdraw.currency.min_withdraw_amount }}
 
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
 
@@ -76,7 +79,7 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :reject do
-      transitions from: %i[submitted accepted], to: :rejected
+      transitions from: %i[submitted accepted confirming], to: :rejected
       after do
         unlock_funds
         record_cancel_operations!
@@ -88,9 +91,22 @@ class Withdraw < ActiveRecord::Base
       after :send_coins!
     end
 
+    event :load do
+      transitions from: :accepted, to: :confirming do
+        # Load event is available only for coin withdrawals.
+        guard do
+          coin? && txid?
+        end
+      end
+    end
+
     event :dispatch do
-      # TODO: add validations that txid and block_number are not blank.
-      transitions from: :processing, to: :confirming
+      transitions from: :processing, to: :confirming do
+        # Validate txid presence on coin withdrawal dispatch.
+        guard do
+          fiat? || txid?
+        end
+      end
     end
 
     event :success do

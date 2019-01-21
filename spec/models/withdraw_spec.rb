@@ -450,6 +450,25 @@ describe Withdraw do
         end
       end
     end
+    context :load do
+      let(:txid) { 'a738cb8411e2141f3de43c5f3e7a3aabe71c099bb91d296ded84f0daf29d881c' }
+
+      subject { create(:btc_withdraw) }
+
+      before { subject.submit! }
+      before { subject.accept! }
+
+      it 'doesn\'t change state after calling #load! when withdrawing coin currency' do
+        subject.load!
+        expect(subject.accepted?).to be true
+      end
+
+      it 'transitions to :confirming after calling #load! when withdrawing coin currency' do
+        subject.update(txid: txid)
+        subject.load!
+        expect(subject.confirming?).to be true
+      end
+    end
   end
 
   context '#quick?' do
@@ -561,6 +580,23 @@ describe Withdraw do
         expect(record.errors.full_messages).to include 'Rid is invalid'
       end
     end
+  end
+
+  context 'validate min withdrawal sum' do
+
+    subject { build(:btc_withdraw, sum: 0.1) }
+
+    before do 
+      Currency.find('btc').update(min_withdraw_amount: 0.5.to_d)
+    end
+
+    it { expect(subject).not_to be_valid }
+
+    it do
+      subject.save
+      expect(subject.errors[:sum]).to match(["must be greater than or equal to 0.5"])
+    end
+
   end
 
   it 'doesn\'t raise exceptions in before_validation callbacks if member doesn\'t exist' do
