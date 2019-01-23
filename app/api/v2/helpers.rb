@@ -28,6 +28,12 @@ module API
         end
       end
 
+      def withdraw_api_must_be_enabled!
+        if ENV.false?('ENABLE_ACCOUNT_WITHDRAWAL_API')
+          raise Error.new(text: 'Account withdrawal API is disabled', status: 422)
+        end
+      end
+
       def current_user
         # JWT authentication provides member email.
         if env.key?('api_v2.authentic_member_email')
@@ -84,16 +90,14 @@ module API
       end
 
       def format_ticker(ticker)
+        permitted_keys = %i[buy sell low high open last volume
+                            avg_price price_change_percent]
+
+        # Add vol for compatibility with old API.
+        formatted_ticker = ticker.slice(*permitted_keys)
+                             .merge(vol: ticker[:volume])
         { at: ticker[:at],
-          ticker: {
-            buy: ticker[:buy],
-            sell: ticker[:sell],
-            low: ticker[:low],
-            high: ticker[:high],
-            last: ticker[:last],
-            vol: ticker[:volume]
-          }
-        }
+          ticker: formatted_ticker }
       end
     end
   end

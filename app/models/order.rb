@@ -11,11 +11,12 @@ class Order < ActiveRecord::Base
   TYPES = %w[ market limit ]
   enumerize :ord_type, in: TYPES, scope: true
 
-  after_commit(on: :create) { trigger_pusher_event }
+  after_commit :trigger_pusher_event
   before_validation :fix_number_precision, on: :create
 
   validates :ord_type, :volume, :origin_volume, :locked, :origin_locked, presence: true
   validates :price, numericality: { greater_than: 0 }, if: ->(order) { order.ord_type == 'limit' }
+  validates :origin_volume, numericality: { greater_than: 0 }
   validate  :market_order_validations, if: ->(order) { order.ord_type == 'market' }
   validate :vol_is_loosely_integer, if: ->(order) { order.base == 'futures' }
 
@@ -62,6 +63,9 @@ class Order < ActiveRecord::Base
   end
 
   def trigger_pusher_event
+    # skip market type orders, they should not appear on trading-ui
+    return if ord_type != 'limit'
+
     Member.trigger_pusher_event member_id, :order, \
       id:            id,
       at:            at,
