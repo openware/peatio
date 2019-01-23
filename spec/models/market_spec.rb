@@ -3,7 +3,7 @@
 
 describe Market do
   context 'enabled market' do
-    it { expect(Market.enabled.count).to eq(4) }
+    it { expect(Market.enabled.count).to eq(5) }
   end
 
   context 'market attributes' do

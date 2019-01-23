@@ -5,6 +5,7 @@ describe Matching::Executor do
   let(:alice)  { who_is_billionaire }
   let(:bob)    { who_is_billionaire }
   let(:market) { Market.find('btcusd') }
+  let(:futures_market) { Market.find('btc_usd_1903') }
   let(:price)  { 10.to_d }
   let(:volume) { 5.to_d }
 
@@ -167,6 +168,34 @@ describe Matching::Executor do
       expect do
         expect { subject.execute! }.to raise_error(Account::AccountError)
       end.not_to change(Trade, :count)
+    end
+  end
+
+  context 'futures execution' do
+    let(:ask) { ::Matching::LimitOrder.new create(:order_ask, market_id: 'btc_usd_1903', price: price, volume: volume, member: alice).to_matching_attributes }
+    let(:bid) { ::Matching::LimitOrder.new create(:order_bid, market_id: 'btc_usd_1903', price: price, volume: volume, member: bob).to_matching_attributes }
+
+    subject do
+      Matching::Executor.new(
+        market_id:    futures_market.id,
+        ask_id:       ask.id,
+        bid_id:       bid.id,
+        strike_price: price.to_s('F'),
+        volume:       volume.to_s('F'),
+        funds:        (price * volume).to_s('F')
+      )
+    end
+
+    it 'should create futures trade' do
+      expect do
+        trade = subject.execute!
+
+        expect(trade.trend).to eq 'up'
+        expect(trade.price).to eq price
+        expect(trade.volume).to eq volume
+        expect(trade.ask_id).to eq ask.id
+        expect(trade.bid_id).to eq bid.id
+      end.to change(Trade, :count).by(1)
     end
   end
 end

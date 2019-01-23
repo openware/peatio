@@ -143,6 +143,7 @@ describe API::V2::Market::Orders, type: :request do
         expect(response).to be_success
         expect(JSON.parse(response.body)['id']).to eq OrderBid.last.id
         expect(member.get_account(:usd).balance).to be < 100_000
+        expect(member.get_account(:usd).locked).to be > 12 * 2014 * Order.last.fee
       end.to change(OrderBid, :count).by(1)
     end
 
