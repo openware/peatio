@@ -91,8 +91,8 @@ module Matching
           market:        @market,
           trend:         _trend
 
-        strike_contracts @trade, @ask, accounts_table["@ask.member_id"], positions_table["@ask.member_id"]
-        strike_contracts @trade, @bid, accounts_table["@bid.member_id"], positions_table["@bid.member_id"]
+        strike_contracts @trade, @ask, accounts_table["#{@ask.member_id}"], positions_table["#{@ask.member_id}"]
+        strike_contracts @trade, @bid, accounts_table["#{@bid.member_id}"], positions_table["#{@bid.member_id}"]
 
         ([@ask, @bid] + accounts_table.values + positions_table.values).map do |record|
           table     = record.class.arel_table
@@ -135,8 +135,8 @@ module Matching
       order.trades_count   += 1
       dmargin = position.dmargin 0
 
-      order.funds_received += dmargin * trade.price
-      if dmargin + fee < 0
+      order.funds_received += trade.funds
+      if dmargin + fee <= 0
         account.balance - dmargin - fee
       else
         account.assign_attributes account.attributes_after_unlock_and_sub_funds! dmargin + fee
