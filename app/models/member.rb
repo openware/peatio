@@ -6,7 +6,7 @@ require 'securerandom'
 class Member < ActiveRecord::Base
   has_many :orders
   has_many :accounts
-  has_many :positions  
+  has_many :positions
   has_many :payment_addresses, through: :accounts
   has_many :withdraws, -> { order(id: :desc) }
   has_many :deposits, -> { order(id: :desc) }
@@ -48,7 +48,7 @@ class Member < ActiveRecord::Base
   end
 
   def touch_positions
-    Market.of_future.find_each do |market|
+    Market.of_futures.find_each do |market|
       next if positions.where(market: market).exists?
       positions.create!(market: market)
     end

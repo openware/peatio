@@ -23,7 +23,7 @@ class Market < ActiveRecord::Base
   scope :ordered, -> { order(position: :asc) }
   scope :enabled, -> { where(enabled: true) }
   scope :with_base_unit, -> (base_unit){ where(ask_unit: base_unit) }
-  scope :of_future, -> { where(base: 'future')}
+  scope :of_futures, -> { where(base: 'futures')}
 
   validate { errors.add(:ask_unit, :invalid) if ask_unit == bid_unit }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
@@ -39,19 +39,19 @@ class Market < ActiveRecord::Base
 
   validates :min_ask_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :min_bid_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  
-  before_validation :set_id, on: :create 
+
+  before_validation :set_id, on: :create
 
   validate :must_not_disable_all_markets, on: :update
 
   after_commit { AMQPQueue.enqueue(:matching, action: 'new', market: id) }
-  after_create :touch_positions, if: ->(market) { market.base == 'future' }
+  after_create :touch_positions, if: ->(market) { market.base == 'futures' }
 
-  def set_id 
-    if self.base == 'future' 
-      self.id = "#{ask_unit}#{bid_unit}#{expired_at&.strftime('%y%m')}"
+  def set_id
+    if self.base == 'futures'
+      self.id = "#{ask_unit}_#{bid_unit}_#{expired_at&.strftime('%y%m')}"
     else
-      self.id = "#{ask_unit}#{bid_unit}" 
+      self.id = "#{ask_unit}#{bid_unit}"
     end
   end
 
@@ -80,14 +80,10 @@ class Market < ActiveRecord::Base
   end
 
   def name
-    raw_name.upcase
-  end
-
-  def raw_name
-    if base == 'future' then 
-      return "#{ask_unit}#{expired_at&.strftime('%y%m')}"
+    if base == 'futures'
+      "#{ask_unit}#{expired_at&.strftime('%y%m')}".upcase
     else
-      return "#{ask_unit}/#{bid_unit}"
+      "#{ask_unit}/#{bid_unit}".upcase
     end
   end
 

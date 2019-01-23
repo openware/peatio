@@ -17,13 +17,13 @@ class OrderAsk < Order
 
   # @deprecated
   def hold_account
-    currency = base == 'future' ? bid : ask
-    member.get_account(currency) 
+    currency = base == 'futures' ? bid : ask
+    member.get_account(currency)
   end
 
   # @deprecated
   def hold_account!
-    currency = base == 'future' ? bid : ask
+    currency = base == 'futures' ? bid : ask
     Account.lock.find_by!(member_id: member_id, currency_id: currency)
   end
 
@@ -45,13 +45,13 @@ class OrderAsk < Order
   end
 
   def compute_locked
-    base == 'future'? compute_margin : compute_ask_locked
+    base == 'futures'? compute_margin : compute_ask_locked
   end
 
   def compute_margin
     _ = compute_bid_locked
-    hold_position.dmargin(_) + fee * _ 
-  end  
+    hold_position.dmargin(_) + fee * _
+  end
 end
 
 # == Schema Information

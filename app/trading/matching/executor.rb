@@ -54,11 +54,11 @@ module Matching
       if @market.base == 'spot'
         create_trade_and_strike_orders_for_spot
       else
-        create_trade_and_strike_orders_for_future
+        create_trade_and_strike_orders_for_futures
       end
     end
 
-    def create_trade_and_strike_orders_for_future
+    def create_trade_and_strike_orders_for_futures
       _trend = trend
 
       ActiveRecord::Base.transaction do
@@ -90,7 +90,7 @@ module Matching
           funds:         @funds,
           market:        @market,
           trend:         _trend
-    
+
         strike_contracts @trade, @ask, accounts_table["@ask.member_id"], positions_table["@ask.member_id"]
         strike_contracts @trade, @bid, accounts_table["@bid.member_id"], positions_table["@bid.member_id"]
 
@@ -121,13 +121,13 @@ module Matching
       end
     end
 
-    def strike_contracts(trade, order, account, position)      
-      if OrderAsk === order 
+    def strike_contracts(trade, order, account, position)
+      if OrderAsk === order
         position.volume -= trade.volume
         position.credit += trade.volume * trade.price
-      else 
+      else
         position.volume += trade.volume
-        position.credit -= trade.volume * trade.price        
+        position.credit -= trade.volume * trade.price
       end
 
       fee = trade.funds * order.fee
@@ -137,9 +137,9 @@ module Matching
 
       order.funds_received += dmargin * trade.price
       if dmargin + fee < 0
-        account.balance - dmargin - fee 
+        account.balance - dmargin - fee
       else
-        account.assign_attributes account.attributes_after_unlock_and_sub_funds! dmargin + fee         
+        account.assign_attributes account.attributes_after_unlock_and_sub_funds! dmargin + fee
       end
       position.margin += dmargin
       order.locked -= dmargin
@@ -150,7 +150,7 @@ module Matching
         if order.locked > 0
           account.assign_attributes account.attributes_after_unlock_funds!(order.locked)
         elsif  order.locked < 0
-          account.assign_attributes account.attributes_after_lock_funds!(-order.locked)          
+          account.assign_attributes account.attributes_after_lock_funds!(-order.locked)
         end
       elsif order.ord_type == 'market' && order.locked < 0
         # Partially filled market order has run out it's locked funds.
