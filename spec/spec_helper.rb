@@ -80,7 +80,7 @@ RSpec.configure do |config|
     %i[ usd btc dash eth xrp trst bch eur ltc ].each { |ccy| FactoryBot.create(:currency, ccy) }
     %i[ eth_deposit eth_hot eth_fee trst_deposit trst_hot btc_hot btc_deposit bch_deposit bch_hot dash_deposit dash_hot ltc_deposit ltc_hot xrp_deposit xrp_hot eth_warm ]
         .each { |ccy| FactoryBot.create(:wallet, ccy) }
-    %i[ btcusd dashbtc btceth btcxrp ].each { |market| FactoryBot.create(:market, market) }
+    %i[ btcusd dashbtc btceth btcxrp btcusd1903].each { |market| FactoryBot.create(:market, market) }
   end
 
   config.append_after :each do
@@ -91,7 +91,7 @@ RSpec.configure do |config|
   config.default_retry_count = 3
   config.display_try_failure_messages = true
   config.exceptions_to_retry = [Net::ReadTimeout]
-  
+
   if Bullet.enable?
     config.before(:each) { Bullet.start_request }
     config.after :each do

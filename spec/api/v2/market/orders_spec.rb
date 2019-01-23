@@ -113,7 +113,7 @@ describe API::V2::Market::Orders, type: :request do
     end
   end
 
-  
+
   describe 'POST /api/v2/market/orders' do
     it 'should create a sell order' do
       member.get_account(:btc).update_attributes(balance: 100)
@@ -133,6 +133,27 @@ describe API::V2::Market::Orders, type: :request do
         expect(response).to be_success
         expect(JSON.parse(response.body)['id']).to eq OrderBid.last.id
       end.to change(OrderBid, :count).by(1)
+    end
+
+    it 'should create a buy futures order' do
+      member.get_account(:usd).update_attributes(balance: 100_000)
+
+      expect do
+        api_post '/api/v2/market/orders', token: token, params: { market: 'btc_usd_1903', side: 'buy', volume: '12', price: '2014' }
+        expect(response).to be_success
+        expect(JSON.parse(response.body)['id']).to eq OrderBid.last.id
+        expect(member.get_account(:usd).balance).to be < 100_000
+      end.to change(OrderBid, :count).by(1)
+    end
+
+    it 'should return non-integer volume error for futures' do
+      member.get_account(:usd).update_attributes(balance: 100_000)
+      old_count = OrderAsk.count
+
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btc_usd_1903', side: 'sell', volume: '1.2', price: '2014' }
+      expect(response.code).to eq '422'
+      expect(response.body).to eq '{"error":{"code":2002,"message":"Failed to create order."}}'
+      expect(OrderAsk.count).to eq old_count
     end
 
     it 'should return cannot lock funds error' do

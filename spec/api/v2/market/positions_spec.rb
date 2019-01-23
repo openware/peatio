@@ -8,10 +8,6 @@ describe API::V2::Market::Positions, type: :request do
   let(:level_0_member_token) { jwt_for(level_0_member) }
 
   describe 'GET /api/v2/market/positions' do
-    before do
-      create(:market, :btcusd1903)
-    end
-
     it 'should require authentication' do
       get '/api/v2/market/positions'
       expect(response.code).to eq '401'

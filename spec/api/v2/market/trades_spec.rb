@@ -34,8 +34,30 @@ describe API::V2::Market::Trades, type: :request do
     )
   end
 
+  let(:ask_futures) do
+    create(
+      :order_ask,
+      market_id: 'btc_usd_1903',
+      price: '9.36'.to_d,
+      volume: 100.to_s,
+      member: member
+    )
+  end
+
+  let(:bid_futures) do
+    create(
+      :order_bid,
+      market_id: 'btc_usd_1903',
+      price: '9.36'.to_d,
+      volume: 100.to_s,
+      member: member
+    )
+  end
+
   let!(:ask_trade) { create(:trade, ask: ask, created_at: 2.days.ago) }
   let!(:bid_trade) { create(:trade, bid: bid, created_at: 1.day.ago) }
+  let!(:ask_futures_trade) { create(:trade, ask: ask_futures, market: ask_futures.market, created_at: 10.minutes.ago) }
+  let!(:bid_futures_trade) { create(:trade, bid: bid_futures, market: bid_futures.market, created_at: 2.minutes.ago) }
 
   describe 'GET /api/v2/market/trades' do
     it 'requires authentication' do
@@ -62,6 +84,14 @@ describe API::V2::Market::Trades, type: :request do
 
       expect(response).to be_success
       expect(JSON.parse(response.body).size).to eq 1
+    end
+
+    it 'returns 1 futures trades' do
+      api_get '/api/v2/market/trades', params: { market: 'btc_usd_1903', limit: 1 }, token: token
+
+      expect(response).to be_success
+      expect(JSON.parse(response.body).size).to eq 1
+      expect(JSON.parse(response.body)[0]['volume'].to_d).to eq bid_futures_trade.volume.to_d
     end
 
     it 'returns trades before timestamp' do

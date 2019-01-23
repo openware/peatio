@@ -63,19 +63,18 @@ FactoryBot.define do
     end
 
     trait :btcusd1903 do
-      id            { 'btcusd1903' }
+      id            { 'btc_usd_1903' }
       ask_unit      { 'btc' }
       bid_unit      { 'usd' }
-      ask_fee       { 0.0015 }
-      bid_fee       { 0.0015 }
       ask_precision { 4 }
       bid_precision { 4 }
-      min_ask       { 0.0 }
+      min_ask_amount { 0.0 }
+      min_bid_amount { 0.0 }
       position      { 1 }
       enabled       { true }
-      base          { 'future' }
+      base          { 'futures' }
       expired_at    { '20190315' }
       margin_rate   { 0.1 }
-    end    
+    end
   end
 end
