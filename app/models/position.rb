@@ -13,7 +13,7 @@ class Position < ActiveRecord::Base
 
   def dmargin(dcredit)
     _ = market.margin_rate * (credit + dcredit).abs - margin + lose
-    (_.abs - _) / 2
+    (_.abs + _) / 2
   end
 end
 

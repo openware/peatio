@@ -75,6 +75,7 @@ FactoryBot.define do
       base          { 'futures' }
       expired_at    { '20190315' }
       margin_rate   { 0.1 }
+      maintenance_rate { 0.75 }
     end
   end
 end

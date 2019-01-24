@@ -197,5 +197,13 @@ describe Matching::Executor do
         expect(trade.bid_id).to eq bid.id
       end.to change(Trade, :count).by(1)
     end
+
+    it 'should add futures position' do
+      subject.execute!
+      bob_pos = bob.positions.find_by(market_id: 'btc_usd_1903')
+      expect(bob_pos.volume).to eq volume
+      expect(bob_pos.credit).to eq -price * volume
+      expect(bob_pos.margin).to be >= 0.75 * bob_pos.credit.abs * bob_pos.market.margin_rate
+    end
   end
 end
