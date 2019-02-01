@@ -172,8 +172,8 @@ describe Matching::Executor do
   end
 
   context 'futures execution' do
-    let(:ask) { ::Matching::LimitOrder.new create(:order_ask, :btcusd, market_id: 'btc_usd_1903', price: price, volume: volume, member: alice).to_matching_attributes }
-    let(:bid) { ::Matching::LimitOrder.new create(:order_bid, :btcusd, market_id: 'btc_usd_1903', price: price, volume: volume, member: bob).to_matching_attributes }
+    let(:ask) { ::Matching::LimitOrder.new create(:order_ask, :btc_usd_1903, market_id: 'btc_usd_1903', price: price, volume: volume, member: alice).to_matching_attributes }
+    let(:bid) { ::Matching::LimitOrder.new create(:order_bid, :btc_usd_1903, market_id: 'btc_usd_1903', price: price, volume: volume, member: bob).to_matching_attributes }
 
     subject do
       Matching::Executor.new(

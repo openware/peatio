@@ -79,6 +79,20 @@ FactoryBot.define do
       origin_locked { locked.to_d }
       member { create(:member) }
     end
+
+    trait :btc_usd_1903 do
+      bid { :usd }
+      ask { :btc }
+      market { Market.find(:btc_usd_1903) }
+      state { :wait }
+      ord_type { 'limit' }
+      price { '1'.to_d }
+      volume { '1'.to_d }
+      origin_volume { volume.to_d }
+      locked { price.to_d *  volume.to_d }
+      origin_locked { locked.to_d }
+      member { create(:member) }
+    end
   end
 
   factory :order_ask do
@@ -155,6 +169,20 @@ FactoryBot.define do
       volume { '1'.to_d }
       origin_volume { volume.to_d }
       locked { volume.to_d }
+      origin_locked { locked.to_d }
+      member { create(:member) }
+    end
+
+    trait :btc_usd_1903 do
+      bid { :usd }
+      ask { :btc }
+      market { Market.find(:btc_usd_1903) }
+      state { :wait }
+      ord_type { 'limit' }
+      price { '1'.to_d }
+      volume { '1'.to_d }
+      origin_volume { volume.to_d }
+      locked { price.to_d *  volume.to_d }
       origin_locked { locked.to_d }
       member { create(:member) }
     end
