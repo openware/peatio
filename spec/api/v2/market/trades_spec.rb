@@ -57,6 +57,7 @@ describe API::V2::Market::Trades, type: :request do
   let(:ask_futures) do
     create(
       :order_ask,
+      :btcusd,
       market_id: 'btc_usd_1903',
       price: '9.36'.to_d,
       volume: 100.to_s,
@@ -67,6 +68,7 @@ describe API::V2::Market::Trades, type: :request do
   let(:bid_futures) do
     create(
       :order_bid,
+      :btcusd,
       market_id: 'btc_usd_1903',
       price: '9.36'.to_d,
       volume: 100.to_s,
