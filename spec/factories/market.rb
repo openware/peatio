@@ -62,7 +62,7 @@ FactoryBot.define do
       enabled        { true }
     end
 
-    trait :btcusd1903 do
+    trait :btc_usd_1903 do
       id            { 'btc_usd_1903' }
       ask_unit      { 'btc' }
       bid_unit      { 'usd' }
