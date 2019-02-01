@@ -22,6 +22,8 @@
 class Market < ActiveRecord::Base
 
   attr_readonly :ask_unit, :bid_unit, :ask_precision, :bid_precision
+  delegate :bids, :asks, :trades, :ticker, :h24_volume, :avg_h24_price,
+           to: :global
 
   scope :ordered, -> { order(position: :asc) }
   scope :enabled, -> { where(enabled: true) }
@@ -104,12 +106,6 @@ class Market < ActiveRecord::Base
   def fix_number_precision(type, d)
     d.round send("#{type}_precision"), BigDecimal::ROUND_DOWN
   end
-
-  # shortcut of global access
-  def bids;   global.bids   end
-  def asks;   global.asks   end
-  def trades; global.trades end
-  def ticker; global.ticker end
 
   def unit_info
     {name: name, base_unit: ask_unit, quote_unit: bid_unit}

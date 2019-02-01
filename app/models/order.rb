@@ -110,10 +110,12 @@ class Order < ActiveRecord::Base
       # Debit main fiat/crypto Liability account.
       # Credit locked fiat/crypto Liability account.
       Operations::Liability.transfer!(
-        reference: self,
-        amount: locked,
-        from_kind: :main,
-        to_kind:   :locked
+        amount:     locked,
+        currency:   currency,
+        reference:  self,
+        from_kind:  :main,
+        to_kind:    :locked,
+        member_id:  member_id
       )
     end
   end
@@ -123,10 +125,12 @@ class Order < ActiveRecord::Base
       # Debit locked fiat/crypto Liability account.
       # Credit main fiat/crypto Liability account.
       Operations::Liability.transfer!(
-        reference: self,
-        amount: locked,
-        from_kind: :locked,
-        to_kind:   :main
+        amount:     locked,
+        currency:   currency,
+        reference:  self,
+        from_kind:  :locked,
+        to_kind:    :main,
+        member_id:  member_id
       )
     end
   end
