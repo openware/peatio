@@ -76,8 +76,8 @@ describe API::V2::Market::Trades, type: :request do
     )
   end
 
-  let!(:ask_futures_trade) { create(:trade, ask: ask_futures, market: ask_futures.market, created_at: 10.minutes.ago) }
-  let!(:bid_futures_trade) { create(:trade, bid: bid_futures, market: bid_futures.market, created_at: 2.minutes.ago) }
+  let!(:ask_futures_trade) { create(:trade, :btcusd, ask: ask_futures, market: ask_futures.market, created_at: 10.minutes.ago) }
+  let!(:bid_futures_trade) { create(:trade, :btcusd, bid: bid_futures, market: bid_futures.market, created_at: 2.minutes.ago) }
   let!(:btcusd_ask_trade) { create(:trade, :btcusd, ask: btcusd_ask, created_at: 2.days.ago) }
   let!(:dashbtc_ask_trade) { create(:trade, :dashbtc, ask: dashbtc_ask, created_at: 2.days.ago) }
   let!(:btcusd_bid_trade) { create(:trade, :btcusd, bid: btcusd_bid, created_at: 1.day.ago) }
