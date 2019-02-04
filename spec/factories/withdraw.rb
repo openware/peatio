@@ -107,7 +107,22 @@ FactoryBot.define do
     end
   end
 
-  factory :xrp_withdraw, class: Withdraws::Coin do
+  factory :legacy_ring_withdraw, aliases: %i[ring_withdraw], class: Withdraws::Coin do
+    currency { Currency.find(:ring) }
+    member { create(:member, :level_3) }
+    rid { Faker::Bitcoin.address }
+    sum { 10.to_d }
+    type { 'Withdraws::Coin' }
+
+    account do
+      member.get_account(:ring).tap do |a|
+        a.balance = 50
+        a.save(validate: false)
+      end
+    end
+  end
+
+  factory :legacy_xrp_withdraw, aliases: %i[xrp_withdraw], class: Withdraws::Coin do
     currency { Currency.find(:xrp) }
     member { create(:member, :level_3) }
     rid { 'r4kpJtnx4goLYXoRdi7mbkRpZ9Xpx2RyPN' }

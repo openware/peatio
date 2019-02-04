@@ -93,6 +93,19 @@ FactoryBot.define do
       end
     end
 
+    trait :ring do
+      blockchain_key       { 'eth-kovan' }
+      code                 { 'ring' }
+      symbol               { 'Ξ' }
+      type                 { 'coin' }
+      base_factor          { 1_000_000 }
+      withdraw_limit_24h   { 100 }
+      withdraw_limit_72h   { 1000 }
+      withdraw_fee         { 0.025 }
+      options \
+        { { erc20_contract_address: '0xf8720eb6ad4a530cccb696043a0d10831e2ff60e' } }
+    end
+
     trait :bch do
       blockchain_key       { 'bch-testnet' }
       code                 { 'bch' }
