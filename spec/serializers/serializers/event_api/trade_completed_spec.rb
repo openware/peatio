@@ -91,6 +91,7 @@ describe Serializers::EventAPI::TradeCompleted, 'Event API' do
   end
 
   it 'publishes event' do
+    pending 'because of database_cleaner'
     subject
     expect(order_bid.reload.state).to eq 'done'
     expect(order_ask.reload.state).to eq 'wait'

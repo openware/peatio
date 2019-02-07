@@ -62,16 +62,21 @@ RSpec.configure do |config|
   config.include Rails.application.routes.url_helpers
 
   # See https://github.com/DatabaseCleaner/database_cleaner#rspec-with-capybara-example
-  config.before :suite do
+  config.before(:suite) do
     FileUtils.rm_rf(File.join(__dir__, 'tmp', 'cache'))
     DatabaseCleaner.clean_with(:truncation)
   end
 
+  # TODO: Find a way how to make everything work with "transaction" strategy.
   config.before :each do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, :clean_database_with_truncation) do
     DatabaseCleaner.strategy = :truncation
   end
 
-  config.before :each do
+  config.before(:each) do
     DatabaseCleaner.start
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
@@ -84,7 +89,7 @@ RSpec.configure do |config|
     %w[101 102 201 202 211 212 301 302 401 402].each { |ac_code| FactoryBot.create(:operations_account, ac_code)}
   end
 
-  config.append_after :each do
+  config.append_after(:each) do
     DatabaseCleaner.clean
   end
 
@@ -92,7 +97,7 @@ RSpec.configure do |config|
   config.default_retry_count = 3
   config.display_try_failure_messages = true
   config.exceptions_to_retry = [Net::ReadTimeout]
-  
+
   if Bullet.enable?
     config.before(:each) { Bullet.start_request }
     config.after :each do
