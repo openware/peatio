@@ -24,7 +24,8 @@ class Trade < ActiveRecord::Base
 
   class << self
     def latest_price(market)
-      with_market(market).order(id: :desc).pluck(:price).first.to_d
+      trade = with_market(market).order(id: :desc).first
+      trade ? trade.price : 0
     end
   end
 
