@@ -37,6 +37,7 @@ class BlockchainService
         "Skip synchronization. No new blocks detected height: "\
         "#{blockchain.height}, latest_block: #{latest_block_number}"
       end
+      fetch_unconfirmed_deposits
       return
     end
 
@@ -45,6 +46,13 @@ class BlockchainService
     from_block.upto(to_block, &method(:process_block))
 
     update_height
+
+    # process phased txns
+    pending_txns = Deposits::Coin
+                     .where(currency: blockchain.currencies)
+                     .pending
+
+    @adapter.process_pending_txns(pending_txns, &method(:approve_pending_txn))
   rescue => e
     report_exception(e)
     Rails.logger.info { "Exception was raised during block processing." }
@@ -56,7 +64,7 @@ class BlockchainService
   def process_block(block_number)
     @adapter.fetch_block!(block_number)
 
-    addresses = PaymentAddress.where(currency: blockchain.currencies).readonly
+    addresses = payment_addresses
     withdrawals = Withdraws::Coin
                     .confirming
                     .where(currency: blockchain.currencies)
@@ -84,12 +92,16 @@ class BlockchainService
         .submitted
         .where(currency: blockchain.currencies)
         .find_or_create_by!(deposit_hash.slice(:txid, :txout)) do |deposit|
-          deposit.assign_attributes(deposit_hash)
+          deposit.assign_attributes(deposit_hash.except(:options))
         end
 
     deposit.update_column(:block_number, deposit_hash.fetch(:block_number))
-    if deposit.confirmations >= blockchain.min_confirmations && deposit.accept!
-      deposit.collect!
+    if deposit.confirmations >= blockchain.min_confirmations
+      if deposit_hash[:options] && deposit_hash[:options][:phased]
+        deposit.pending!
+      else
+        deposit.collect! if deposit.accept!
+      end
     end
   end
 
@@ -123,5 +135,23 @@ class BlockchainService
     if @adapter.latest_block_number - @adapter.current_block_number >= blockchain.min_confirmations
       blockchain.update(height: @adapter.current_block_number)
     end
+  end
+
+  def fetch_unconfirmed_deposits
+    @adapter.filter_unconfirmed_txns(payment_addresses, &method(:update_or_create_deposit!))
+  end
+
+  def approve_pending_txn(deposit, approved)
+    # approved = true, false or nil
+    case approved
+    when true
+      deposit.collect! if deposit.accept!
+    when false
+      deposit.reject!
+    end
+  end
+
+  def payment_addresses
+    PaymentAddress.where(currency: blockchain.currencies).readonly
   end
 end

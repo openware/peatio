@@ -103,6 +103,14 @@ class BlockchainService::Ethereum < Peatio::BlockchainService::Abstract
     end
   end
 
+  def filter_unconfirmed_txns(payment_addresses, &block)
+    # method not implemented
+  end
+
+  def process_pending_txns(pending_txns, &block)
+    # method not implemented
+  end
+
   private
   def require_current_block!
     raise EmptyCurrentBlockError if @block_json.blank?

@@ -9,7 +9,7 @@ class Currency < ActiveRecord::Base
       type: 'string'
     }
   }
-  OPTIONS_ATTRIBUTES = %i[erc20_contract_address gas_limit gas_price].freeze
+  OPTIONS_ATTRIBUTES = %i[erc20_contract_address gas_limit gas_price token_asset_id token_currency_id].freeze
   store :options, accessors: OPTIONS_ATTRIBUTES, coder: JSON
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
@@ -118,6 +118,18 @@ class Currency < ActiveRecord::Base
 
   def is_erc20?
     erc20_contract_address.present?
+  end
+
+  def is_token_currency?
+    token_currency_id.present?
+  end
+
+  def is_token_asset?
+    token_asset_id.present?
+  end
+
+  def is_token?
+    is_erc20? || is_token_currency? || is_token_asset?
   end
 
   def dependent_markets
