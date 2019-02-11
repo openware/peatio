@@ -70,6 +70,7 @@ RSpec.configure do |config|
   # TODO: Find a way how to make everything work with "transaction" strategy.
   config.before :each do
     DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.start
   end
 
   config.before(:each, :clean_database_with_truncation) do
@@ -77,7 +78,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner.start
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
     I18n.locale = :en
