@@ -24,14 +24,19 @@ describe API::V2::Market::Orders, type: :request do
     it 'validates market param' do
       api_get '/api/v2/market/orders', params: { market: 'usdusd' }, token: token
       expect(response).to have_http_status 422
-      expect(JSON.parse(response.body)).to eq ({ 'error' => { 'code' => 1001, 'message' => 'market does not have a valid value' } })
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.market.doesnt_exist'])
     end
 
     it 'validates state param' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', state: 'test' }, token: token
-
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq ({ 'error' => { 'code' => 1001, 'message' => 'state does not have a valid value' } })
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.invalid_state'])
+    end
+
+    it 'validates limit param' do
+      api_get '/api/v2/market/orders', params: { market: 'btcusd', limit: -1 }, token: token
+      expect(response.code).to eq '422'
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.invalid_limit'])
     end
 
     it 'returns all order history' do
@@ -132,10 +137,10 @@ describe API::V2::Market::Orders, type: :request do
     it 'should get 404 error when order doesn\'t exist' do
       api_get '/api/v2/market/orders/1234', token: token
       expect(response.code).to eq '404'
+      expect(JSON.parse(response.body)).to eq('errors' => ['record.not_found'])
     end
   end
 
-  
   describe 'POST /api/v2/market/orders' do
     it 'should create a sell order' do
       member.get_account(:btc).update_attributes(balance: 100)
@@ -161,7 +166,7 @@ describe API::V2::Market::Orders, type: :request do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
       expect(response.code).to eq '422'
-      expect(response.body).to eq '{"error":{"code":2005,"message":"Not enough funds to create order."}}'
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.account.not_enough_funds'])
       expect(OrderAsk.count).to eq old_count
     end
 

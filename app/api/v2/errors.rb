@@ -64,11 +64,11 @@ module API
       end
     end
 
-    class CreateOrderAccountError < Error
-      def initialize(e)
-        super code: 2005, text: 'Not enough funds to create order.', status: 422
-      end
-    end
+    # class CreateOrderAccountError < Error
+    #   def initialize(e)
+    #     super code: 2005, text: 'Not enough funds to create order.', status: 422
+    #   end
+    # end
 
     class DepositByTxidNotFoundError < Error
       def initialize(txid)

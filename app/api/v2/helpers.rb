@@ -70,20 +70,21 @@ module API
         order
       rescue ::Account::AccountError => e
         report_exception_to_screen(e)
-        raise CreateOrderAccountError, e.inspect
+        error!({ errors: ['market.account.not_enough_funds']}, 422)
       rescue => e
         report_exception_to_screen(e)
-        raise CreateOrderError, e.inspect
+        error!({ errors: ['market.order.create_error']}, 422)
       end
 
-      def create_orders(multi_attrs)
-        orders = multi_attrs.map(&method(:build_order))
-        Ordering.new(orders).submit
-        orders
-      rescue => e
-        report_exception_to_screen(e)
-        raise CreateOrderError, e.inspect
-      end
+      # @deprecated
+      # def create_orders(multi_attrs)
+      #   orders = multi_attrs.map(&method(:build_order))
+      #   Ordering.new(orders).submit
+      #   orders
+      # rescue => e
+      #   report_exception_to_screen(e)
+      #   raise CreateOrderError, e.inspect
+      # end
 
       def order_param
         params[:order_by].downcase == 'asc' ? 'id asc' : 'id desc'
