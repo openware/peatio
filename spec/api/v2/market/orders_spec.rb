@@ -195,6 +195,22 @@ describe API::V2::Market::Orders, type: :request do
       expect(response.code).to eq '422'
       expect(response).to include_api_error('market.order.non_decimal_price')
     end
+
+    context 'market order' do
+      it 'validates that market has sufficient volume' do
+        api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', ord_type: 'market' }
+        expect(response.code).to eq '422'
+        expect(response).to include_api_error('market.order.insufficient_market_liquidity')
+      end
+
+      it 'validates that order has no price param' do
+        # Stub bids in order book so we can create order.
+        Global.any_instance.expects(:bids).once.returns([[10.to_d, 10.to_d]])
+        api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '0.5', price: '0.5', ord_type: 'market' }
+        expect(response.code).to eq '422'
+        expect(response).to include_api_error('market.order.insufficient_market_volume')
+      end
+    end
   end
 
   describe 'POST /api/v2/market/orders/:id/cancel' do

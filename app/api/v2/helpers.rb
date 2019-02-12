@@ -68,11 +68,16 @@ module API
         order = build_order(attrs)
         Ordering.new(order).submit
         order
+      # TODO: Rewrite this rescue.
       rescue ::Account::AccountError => e
         report_exception_to_screen(e)
         error!({ errors: ['market.account.not_enough_funds']}, 422)
+      rescue ::Order::InsufficientMarketLiquidity => e
+        report_exception_to_screen(e)
+        error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
       rescue => e
-        # TODO: Define error types.
+        # binding.pry
+        # TODO: Not sure if this error is possible.
         report_exception_to_screen(e)
         error!({ errors: ['market.order.create_error']}, 422)
       end

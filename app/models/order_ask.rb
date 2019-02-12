@@ -46,6 +46,7 @@ class OrderAsk < Order
     when 'limit'
       volume
     when 'market'
+      binding.pry
       estimate_required_funds(Global[market_id].bids) {|p, v| v}
     end
   end
