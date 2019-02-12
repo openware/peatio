@@ -59,6 +59,8 @@ module API
         post '/orders' do
           order = create_order params
           present order, with: API::V2::Entities::Order
+        rescue Order::InsufficientMarketVolume => e
+          error!({ errors: ['market.order.insufficient_market_volume'] }, 422)
         end
 
         desc 'Cancel an order.'

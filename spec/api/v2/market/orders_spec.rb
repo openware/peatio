@@ -100,7 +100,7 @@ describe API::V2::Market::Orders, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/market/orders', token: level_0_member_token
       expect(response.code).to eq '403'
-      expect(response).to include_api_error('member.trade.not_permitted')
+      expect(response).to include_api_error('market.trade.not_permitted')
     end
 
     it 'removes whitespace from query params and returns all orders' do
