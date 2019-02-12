@@ -15,13 +15,16 @@ module API
 
       params :market do
         requires :market,
-                type: String,
-                desc: -> { V2::Entities::Market.documentation[:id] },
-                values: -> { ::Market.enabled.ids }
+                 type: String,
+                 values: { value: -> { ::Market.enabled.ids }, message: 'market.market.doesnt_exist' },
+                 desc: -> { V2::Entities::Market.documentation[:id] }
       end
 
       params :order do
-        requires :side,     type: String, values: %w(sell buy), desc: -> { V2::Entities::Order.documentation[:side] }
+        requires :side,
+                 type: String,
+                 values: { value: %w(sell buy), message: 'market.order.invalid_side' },
+                 desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,   type: Float, desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type, type: String, values: -> { Order::TYPES }, default: 'limit', desc: -> { V2::Entities::Order.documentation[:type] }
         given ord_type: ->(val) { val == 'limit' } do

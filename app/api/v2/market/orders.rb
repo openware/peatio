@@ -6,17 +6,34 @@ module API
     module Market
       class Orders < Grape::API
         helpers ::API::V2::NamedParams
-
+        include NewExceptionsHandlers
 
         desc 'Get your orders, results is paginated.',
           is_array: true,
           success: API::V2::Entities::Order
         params do
-          optional :market, type: String, desc: -> { V2::Entities::Market.documentation[:id] }, values: -> { ::Market.enabled.ids }
-          optional :state, type: String, values: -> { Order.state.values }, desc: 'Filter order by state.'
-          optional :limit, type: Integer, default: 100, range: 1..1000, desc: 'Limit the number of returned orders, default to 100.'
-          optional :page,  type: Integer, default: 1, desc: 'Specify the page of paginated results.'
-          optional :order_by, type: String, values: %w(asc desc), default: 'desc', desc: 'If set, returned orders will be sorted in specific order, default to "desc".'
+          optional :market,
+                   type: String,
+                   values: { value: -> { ::Market.enabled.ids }, message: 'market.market.doesnt_exist' },
+                   desc: -> { V2::Entities::Market.documentation[:id] }
+          optional :state,
+                   type: String,
+                   values: { value: -> { Order.state.values } , message: 'market.order.invalid_state' },
+                   desc: 'Filter order by state.'
+          optional :limit,
+                   type: Integer,
+                   default: 100,
+                   values: { value: 0..1000, message: 'market.order.invalid_limit' },
+                   desc: 'Limit the number of returned orders, default to 100.'
+          optional :page,
+                   type: Integer,
+                   default: 1,
+                   desc: 'Specify the page of paginated results.'
+          optional :order_by,
+                   type: String,
+                   values: { value: %w(asc desc), message: 'market.order.invalid_order_by' },
+                   default: 'desc',
+                   desc: 'If set, returned orders will be sorted in specific order, default to "desc".'
         end
         get '/orders' do
           current_user.orders.order(updated_at: params[:order_by])
@@ -31,8 +48,7 @@ module API
           use :order_id
         end
         get '/orders/:id' do
-          order = current_user.orders.where(id: params[:id]).first
-          raise OrderNotFoundError, params[:id] unless order
+          order = current_user.orders.find_by!(id: params[:id])
           present order, with: API::V2::Entities::Order, type: :full
         end
 
