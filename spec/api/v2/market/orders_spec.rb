@@ -24,19 +24,19 @@ describe API::V2::Market::Orders, type: :request do
     it 'validates market param' do
       api_get '/api/v2/market/orders', params: { market: 'usdusd' }, token: token
       expect(response).to have_http_status 422
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.market.doesnt_exist'])
+      expect(response).to include_api_error('market.market.doesnt_exist')
     end
 
     it 'validates state param' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', state: 'test' }, token: token
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.invalid_state'])
+      expect(response).to include_api_error('market.order.invalid_state')
     end
 
     it 'validates limit param' do
       api_get '/api/v2/market/orders', params: { market: 'btcusd', limit: -1 }, token: token
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.invalid_limit'])
+      expect(response).to include_api_error('market.order.invalid_limit')
     end
 
     it 'returns all order history' do
@@ -100,7 +100,7 @@ describe API::V2::Market::Orders, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/market/orders', token: level_0_member_token
       expect(response.code).to eq '403'
-      expect(JSON.parse(response.body)['error']).to eq( {'code' => 2000, 'message' => 'Please, pass the corresponding verification steps to enable trading.'} )
+      expect(response).to include_api_error('member.trade.not_permitted')
     end
 
     it 'removes whitespace from query params and returns all orders' do
@@ -137,7 +137,7 @@ describe API::V2::Market::Orders, type: :request do
     it 'should get 404 error when order doesn\'t exist' do
       api_get '/api/v2/market/orders/1234', token: token
       expect(response.code).to eq '404'
-      expect(JSON.parse(response.body)).to eq('errors' => ['record.not_found'])
+      expect(response).to include_api_error('record.not_found')
     end
   end
 
@@ -166,21 +166,21 @@ describe API::V2::Market::Orders, type: :request do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '-1.1', price: '2014' }
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.negative_volume'])
+      expect(response).to include_api_error('market.order.negative_volume')
       expect(OrderAsk.count).to eq old_count
     end
 
     it 'validates volume to be a number' do
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: 'test', price: '2014' }
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.invalid_volume', 'market.order.negative_volume'])
+      expect(response).to include_api_error('market.order.invalid_volume')
     end
 
     it 'validates enough funds' do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.account.not_enough_funds'])
+      expect(response).to include_api_error('market.account.not_enough_funds')
       expect(OrderAsk.count).to eq old_count
     end
 
@@ -193,7 +193,7 @@ describe API::V2::Market::Orders, type: :request do
     it 'validates price to be a number' do
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: 'test' }
       expect(response.code).to eq '422'
-      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.negative_price'])
+      expect(response).to include_api_error('market.order.invalid_price')
     end
   end
 

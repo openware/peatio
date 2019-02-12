@@ -27,7 +27,7 @@ module API
                  desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,
                  type: { value: Float, message: 'market.order.invalid_volume' },
-                 values: { value: -> (v){ v.positive? }, message: 'market.order.negative_volume' },
+                 values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.negative_volume' },
                  desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type,
                  type: String,
@@ -37,7 +37,7 @@ module API
         given ord_type: ->(val) { val == 'limit' } do
           requires :price,
                    type: { value: Float, message: 'market.order.invalid_price' },
-                   values: { value: -> (p){ p.positive? }, message: 'market.order.negative_price' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'market.order.negative_price' },
                    desc: -> { V2::Entities::Order.documentation[:price] }
         end
       end
