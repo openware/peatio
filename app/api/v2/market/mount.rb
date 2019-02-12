@@ -3,6 +3,7 @@
 module API::V2
   module Market
     class Mount < Grape::API
+      include NewExceptionsHandlers
 
       before { authenticate! }
       before { trading_must_be_permitted! }

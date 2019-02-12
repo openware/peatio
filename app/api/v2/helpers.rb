@@ -12,25 +12,25 @@ module API
 
       def deposits_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i
-          raise Error.new(text: 'Please, pass the corresponding verification steps to deposit funds.', status: 403)
+          error!({ errors: ['account.deposit.not_permitted'] }, 403)
         end
       end
 
       def withdraws_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW').to_i
-          raise Error.new(text: 'Please, pass the corresponding verification steps to withdraw funds.', status: 403)
+          error!({ errors: ['account.withdraw.not_permitted'] }, 403)
         end
       end
 
       def trading_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_TRADING').to_i
-          raise Error.new(text: 'Please, pass the corresponding verification steps to enable trading.', status: 403)
+          error!({ errors: ['market.trade.not_permitted'] }, 403)
         end
       end
 
       def withdraw_api_must_be_enabled!
         if ENV.false?('ENABLE_ACCOUNT_WITHDRAWAL_API')
-          raise Error.new(text: 'Account withdrawal API is disabled', status: 422)
+          error!({ errors: ['withdraw.status.disabled'] }, 422)
         end
       end
 
@@ -68,22 +68,31 @@ module API
         order = build_order(attrs)
         Ordering.new(order).submit
         order
+      # TODO: Rewrite this rescue.
       rescue ::Account::AccountError => e
         report_exception_to_screen(e)
-        raise CreateOrderAccountError, e.inspect
+        error!({ errors: ['market.account.not_enough_funds']}, 422)
+      rescue ::Order::InsufficientMarketLiquidity => e
+        report_exception_to_screen(e)
+        error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
+      rescue ActiveRecord::RecordInvalid => e
+        # TODO: Find better solution for ActiveRecord::RecordInvalid.
+        report_exception_to_screen(e)
+        error!({ errors: ['market.order.invalid_volume_or_price'] }, 422)
       rescue => e
         report_exception_to_screen(e)
-        raise CreateOrderError, e.inspect
+        error!({ errors: ['market.order.create_error']}, 422)
       end
 
-      def create_orders(multi_attrs)
-        orders = multi_attrs.map(&method(:build_order))
-        Ordering.new(orders).submit
-        orders
-      rescue => e
-        report_exception_to_screen(e)
-        raise CreateOrderError, e.inspect
-      end
+      # @deprecated
+      # def create_orders(multi_attrs)
+      #   orders = multi_attrs.map(&method(:build_order))
+      #   Ordering.new(orders).submit
+      #   orders
+      # rescue => e
+      #   report_exception_to_screen(e)
+      #   raise CreateOrderError, e.inspect
+      # end
 
       def order_param
         params[:order_by].downcase == 'asc' ? 'id asc' : 'id desc'

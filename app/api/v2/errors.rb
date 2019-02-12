@@ -46,29 +46,29 @@ module API
       end
     end
 
-    class CreateOrderError < Error
-      def initialize(e)
-        super code: 2002, text: 'Failed to create order.', status: 422
-      end
-    end
+    # class CreateOrderError < Error
+    #   def initialize(e)
+    #     super code: 2002, text: 'Failed to create order.', status: 422
+    #   end
+    # end
 
-    class CancelOrderError < Error
-      def initialize(e)
-        super code: 2003, text: 'Failed to cancel order.', status: 422
-      end
-    end
+    # class CancelOrderError < Error
+    #   def initialize(e)
+    #     super code: 2003, text: 'Failed to cancel order.', status: 422
+    #   end
+    # end
 
-    class OrderNotFoundError < Error
-      def initialize(id)
-        super code: 2004, text: "Order##{id} doesn't exist.", status: 404
-      end
-    end
+    # class OrderNotFoundError < Error
+    #   def initialize(id)
+    #     super code: 2004, text: "Order##{id} doesn't exist.", status: 404
+    #   end
+    # end
 
-    class CreateOrderAccountError < Error
-      def initialize(e)
-        super code: 2005, text: 'Not enough funds to create order.', status: 422
-      end
-    end
+    # class CreateOrderAccountError < Error
+    #   def initialize(e)
+    #     super code: 2005, text: 'Not enough funds to create order.', status: 422
+    #   end
+    # end
 
     class DepositByTxidNotFoundError < Error
       def initialize(txid)
