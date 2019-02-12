@@ -25,10 +25,20 @@ module API
                  type: String,
                  values: { value: %w(sell buy), message: 'market.order.invalid_side' },
                  desc: -> { V2::Entities::Order.documentation[:side] }
-        requires :volume,   type: Float, desc: -> { V2::Entities::Order.documentation[:volume] }
-        optional :ord_type, type: String, values: -> { Order::TYPES }, default: 'limit', desc: -> { V2::Entities::Order.documentation[:type] }
+        requires :volume,
+                 type: { value: Float, message: 'market.order.invalid_volume' },
+                 values: { value: -> (v){ v.positive? }, message: 'market.order.negative_volume' },
+                 desc: -> { V2::Entities::Order.documentation[:volume] }
+        optional :ord_type,
+                 type: String,
+                 values: { value: -> { Order::TYPES}, message:  'market.order.invalid_type' },
+                 default: 'limit',
+                 desc: -> { V2::Entities::Order.documentation[:type] }
         given ord_type: ->(val) { val == 'limit' } do
-          requires :price, type: Float, desc: -> { V2::Entities::Order.documentation[:price] }
+          requires :price,
+                   type: { value: Float, message: 'market.order.invalid_price' },
+                   values: { value: -> (p){ p.positive? }, message: 'market.order.negative_price' },
+                   desc: -> { V2::Entities::Order.documentation[:price] }
         end
       end
 
