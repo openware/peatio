@@ -12,19 +12,19 @@ module API
 
       def deposits_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i
-          error!({ errors: ['member.deposit.not_permitted'] }, 403)
+          error!({ errors: ['account.deposit.not_permitted'] }, 403)
         end
       end
 
       def withdraws_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW').to_i
-          error!({ errors: ['member.withdraw.not_permitted'] }, 403)
+          error!({ errors: ['account.withdraw.not_permitted'] }, 403)
         end
       end
 
       def trading_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_TRADING').to_i
-          error!({ errors: ['member.trade.not_permitted'] }, 403)
+          error!({ errors: ['market.trade.not_permitted'] }, 403)
         end
       end
 

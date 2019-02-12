@@ -6,6 +6,7 @@ module API
     module Market
       class Orders < Grape::API
         helpers ::API::V2::NamedParams
+        # TODO: Move to Market::Mount.
         include NewExceptionsHandlers
 
         desc 'Get your orders, results is paginated.',
