@@ -85,7 +85,7 @@ describe API::V2::Account::Withdraws, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/account/withdraws', token: level_0_member_token
       expect(response.code).to eq '403'
-      expect(JSON.parse(response.body)['error']).to eq( {'code' => 2000, 'message' => 'Please, pass the corresponding verification steps to withdraw funds.'} )
+      expect(JSON.parse(response.body)).to eq('errors' => ["member.withdraw.must_be_permitted"])
     end
   end
 
@@ -120,7 +120,7 @@ describe API::V2::Account::Withdraws, type: :request do
         it 'doesn\'t allow account withdrawal API call' do
           api_post '/api/v2/account/withdraws', params: data, token: token
           expect(response).to have_http_status(422)
-          expect(response.body).to eq '{"error":{"code":2000,"message":"Account withdrawal API is disabled"}}'
+          expect(JSON.parse(response.body)).to eq('errors' => ["withdraw.status.disabled"])
         end
       end
 

@@ -12,25 +12,25 @@ module API
 
       def deposits_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i
-          raise Error.new(text: 'Please, pass the corresponding verification steps to deposit funds.', status: 403)
+          error!({ errors: ['member.deposit.must_be_permitted'] }, 403)
         end
       end
 
       def withdraws_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW').to_i
-          raise Error.new(text: 'Please, pass the corresponding verification steps to withdraw funds.', status: 403)
+          error!({ errors: ['member.withdraw.must_be_permitted'] }, 403)
         end
       end
 
       def trading_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_TRADING').to_i
-          raise Error.new(text: 'Please, pass the corresponding verification steps to enable trading.', status: 403)
+          error!({ errors: ['member.trade.must_be_permitted'] }, 403)
         end
       end
 
       def withdraw_api_must_be_enabled!
         if ENV.false?('ENABLE_ACCOUNT_WITHDRAWAL_API')
-          raise Error.new(text: 'Account withdrawal API is disabled', status: 422)
+          error!({ errors: ['withdraw.status.disabled'] }, 422)
         end
       end
 
