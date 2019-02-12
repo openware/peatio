@@ -15,35 +15,37 @@ module API
 
       params :market do
         requires :market,
-                 type: String,
+                 type: { value: String, message: 'market.market.non_string' },
                  values: { value: -> { ::Market.enabled.ids }, message: 'market.market.doesnt_exist' },
                  desc: -> { V2::Entities::Market.documentation[:id] }
       end
 
       params :order do
         requires :side,
-                 type: String,
+                 type: { value: String, message: 'market.order.non_string_side' },
                  values: { value: %w(sell buy), message: 'market.order.invalid_side' },
                  desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,
-                 type: { value: Float, message: 'market.order.invalid_volume' },
+                 type: { value: Float, message: 'market.order.non_decimal_volume' },
                  values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.negative_volume' },
                  desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type,
-                 type: String,
+                 type: { value: String, message: 'market.order.non_string_ord_type' },
                  values: { value: -> { Order::TYPES}, message:  'market.order.invalid_type' },
                  default: 'limit',
                  desc: -> { V2::Entities::Order.documentation[:type] }
         given ord_type: ->(val) { val == 'limit' } do
           requires :price,
-                   type: { value: Float, message: 'market.order.invalid_price' },
+                   type: { value: Float, message: 'market.order.non_decimal_price' },
                    values: { value: -> (p){ p.try(:positive?) }, message: 'market.order.negative_price' },
                    desc: -> { V2::Entities::Order.documentation[:price] }
         end
       end
 
       params :order_id do
-        requires :id, type: Integer, desc: -> { V2::Entities::Order.documentation[:id] }
+        requires :id,
+                 type: { value: String, message: 'market.order.non_integer_id' },
+                 desc: -> { V2::Entities::Order.documentation[:id] }
       end
 
       params :trade_filters do

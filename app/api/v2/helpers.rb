@@ -72,6 +72,7 @@ module API
         report_exception_to_screen(e)
         error!({ errors: ['market.account.not_enough_funds']}, 422)
       rescue => e
+        # TODO: Define error types.
         report_exception_to_screen(e)
         error!({ errors: ['market.order.create_error']}, 422)
       end
