@@ -72,16 +72,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each, clean_database_with_truncation: true) do
-    DatabaseCleaner.clean_with(:truncation)
-    # DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.strategy = :truncation, { only: %w[orders trades] }
   end
-
 
   config.before(:each) do
     DatabaseCleaner.start
-  end
-
-  config.before(:each) do
     AMQPQueue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
     I18n.locale = :en
@@ -93,7 +88,7 @@ RSpec.configure do |config|
     %w[101 102 201 202 211 212 301 302 401 402].each { |ac_code| FactoryBot.create(:operations_account, ac_code)}
   end
 
-  config.append_after(:each) do
+  config.after(:each) do
     DatabaseCleaner.clean
   end
 

@@ -483,26 +483,21 @@ describe API::V2::Public::Markets, type: :request do
       expect(JSON.parse(response.body).first['id']).to eq bid_trade.id
     end
 
-    it 'gets trades by page and limit', clean_database_with_truncation: true do
-      # pending 'because of database_cleaner'
-      # binding.pry
-
+    it 'gets trades by page and limit' do
       create(:trade, :btcusd, bid: bid, created_at: 6.hours.ago)
 
-      # binding.pry
-      get "/api/v2/public/markets/#{market}/trades", limit: 1, page: 1, order_by: 'asc'
+      get "/api/v2/public/markets/#{market}/trades", limit: 2, page: 1, order_by: 'asc'
 
       expect(response).to be_success
       expect(response.headers.fetch('Total')).to eq '3'
 
-      # binding.pry
-      expect(JSON.parse(response.body).first['id']).to eq 1
+      expect(JSON.parse(response.body).count).to eq 2
 
       get "/api/v2/public/markets/#{market}/trades", market: 'btcusd', limit: 1, page: 2, order_by: 'asc'
 
       expect(response).to be_success
       expect(response.headers.fetch('Total')).to eq '3'
-      expect(JSON.parse(response.body).first['id']).to eq 2
+      expect(JSON.parse(response.body).count).to eq 1
     end
 
     it 'validates market param' do
