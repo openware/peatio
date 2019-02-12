@@ -6,8 +6,6 @@ module API
     module Market
       class Trades < Grape::API
         helpers API::V2::NamedParams
-        # TODO: Move to Market::Mount.
-        include NewExceptionsHandlers
 
         desc 'Get your executed trades. Trades are sorted in reverse creation order.',
           is_array: true,

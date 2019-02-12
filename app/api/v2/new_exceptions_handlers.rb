@@ -1,8 +1,6 @@
 module API
   module V2
-
     module NewExceptionsHandlers
-
       def self.included(base)
         base.instance_eval do
           rescue_from Grape::Exceptions::ValidationErrors do |e|
