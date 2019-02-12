@@ -117,7 +117,7 @@ describe API::V2::Market::Trades, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/market/trades', params: { market: 'btcusd' }, token: level_0_member_token
       expect(response.code).to eq '403'
-      expect(JSON.parse(response.body)['error']).to eq( {'code' => 2000, 'message' => 'Please, pass the corresponding verification steps to enable trading.'} )
+      expect(JSON.parse(response.body)).to eq('errors' => ["member.trade.must_be_permitted"])
     end
 
   end
