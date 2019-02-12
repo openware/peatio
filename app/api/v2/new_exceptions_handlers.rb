@@ -6,7 +6,9 @@ module API
       def self.included(base)
         base.instance_eval do
           rescue_from Grape::Exceptions::ValidationErrors do |e|
-            errors_array = e.full_messages.map { |err| err.split.last }
+            errors_array = e.full_messages.map do |err|
+              err.split.last
+            end
             error!({ errors: errors_array }, 422)
           end
 

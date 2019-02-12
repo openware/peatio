@@ -149,7 +149,7 @@ describe API::V2::Market::Orders, type: :request do
   end
 
   describe 'POST /api/v2/market/orders' do
-    it 'should create a sell order' do
+    it 'creates a sell order' do
       member.get_account(:btc).update_attributes(balance: 100)
 
       expect do
@@ -159,7 +159,7 @@ describe API::V2::Market::Orders, type: :request do
       end.to change(OrderAsk, :count).by(1)
     end
 
-    it 'should create a buy order' do
+    it 'creates a buy order' do
       member.get_account(:usd).update_attributes(balance: 100_000)
 
       expect do
@@ -169,7 +169,21 @@ describe API::V2::Market::Orders, type: :request do
       end.to change(OrderBid, :count).by(1)
     end
 
-    it 'should return cannot lock funds error' do
+    it 'validates volume positiveness' do
+      old_count = OrderAsk.count
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '-1.1', price: '2014' }
+      expect(response.code).to eq '422'
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.negative_volume'])
+      expect(OrderAsk.count).to eq old_count
+    end
+
+    it 'validates volume to be a number' do
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: 'test', price: '2014' }
+      expect(response.code).to eq '422'
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.invalid_volume', 'market.order.negative_volume'])
+    end
+
+    it 'validates enough funds' do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
       expect(response.code).to eq '422'
@@ -177,16 +191,16 @@ describe API::V2::Market::Orders, type: :request do
       expect(OrderAsk.count).to eq old_count
     end
 
-    it 'should give a number as volume parameter' do
-      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: 'test', price: '2014' }
+    it 'validates price positiveness' do
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '-1.1' }
       expect(response.code).to eq '422'
-      expect(response.body).to eq '{"error":{"code":1001,"message":"volume is invalid"}}'
+      expect(response).to include_api_error('market.order.negative_price')
     end
 
-    it 'should give a number as price parameter' do
+    it 'validates price to be a number' do
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: 'test' }
       expect(response.code).to eq '422'
-      expect(response.body).to eq '{"error":{"code":1001,"message":"price is invalid"}}'
+      expect(JSON.parse(response.body)).to eq('errors' => ['market.order.negative_price'])
     end
   end
 
