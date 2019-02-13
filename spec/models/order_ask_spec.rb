@@ -38,7 +38,7 @@ describe OrderAsk do
 
       expect do
         OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked
-      end.to raise_error(RuntimeError, 'Market is not deep enough')
+      end.to raise_error(Order::InsufficientMarketLiquidity)
     end
 
     it 'should make sure price is greater than min_ask_price' do

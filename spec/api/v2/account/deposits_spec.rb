@@ -109,7 +109,7 @@ describe API::V2::Account::Deposits, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/account/deposits', token: level_0_member_token
       expect(response.code).to eq '403'
-      expect(JSON.parse(response.body)).to eq('errors' => ["member.deposit.must_be_permitted"])
+      expect(response).to include_api_error('account.deposit.not_permitted')
     end
   end
 

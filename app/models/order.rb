@@ -156,6 +156,7 @@ class Order < ActiveRecord::Base
       expected_volume -= v
     end
 
+    # TODO: Do we need the second validation.
     # Error is raised in case:
     #   * Market has not enough volume to fulfill Order.
     #   * Difference between final & start price of match greater than FUSE.
