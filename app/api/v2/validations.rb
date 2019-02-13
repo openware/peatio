@@ -50,7 +50,7 @@ module API
 
           fail Grape::Exceptions::Validation,
               params:  [@scope.full_name('currency')],
-              message: 'does not support cash address format.'
+              message: 'account.deposit.doesnt_support_cash_address_format.'
         end
       end
     end

@@ -120,19 +120,19 @@ describe API::V2::Account::Deposits, type: :request do
       it 'validates currency' do
         api_get "/api/v2/account/deposit_address/dildocoin", token: token
         expect(response).to have_http_status 422
-        expect(response.body).to eq '{"error":{"code":1001,"message":"currency does not have a valid value"}}'
+        expect(response).to include_api_error('account.deposit_address.currency_doesnt_exist')
       end
 
       it 'validates currency address format' do
         api_get '/api/v2/account/deposit_address/btc', params: { address_format: 'cash' }, token: token
         expect(response).to have_http_status 422
-        expect(response.body).to eq '{"error":{"code":1001,"message":"currency does not support cash address format."}}'
+        expect(response).to include_api_error('account.deposit.doesnt_support_cash_address_format.')
       end
 
       it 'validates currency with address_format param' do
         api_get '/api/v2/account/deposit_address/abc', params: { address_format: 'cash' }, token: token
         expect(response).to have_http_status 422
-        expect(response.body).to eq '{"error":{"code":1001,"message":"currency does not have a valid value, currency does not support cash address format."}}'
+        expect(response).to include_api_error('account.deposit_address.currency_doesnt_exist')
       end
     end
 
