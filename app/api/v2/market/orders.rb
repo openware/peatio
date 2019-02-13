@@ -57,6 +57,9 @@ module API
           use :market, :order
         end
         post '/orders' do
+          if params[:ord_type] == 'market' && params.key?(:price)
+            error!({ errors: ['market.order.market_order_price'] }, 422)
+          end
           order = create_order params
           present order, with: API::V2::Entities::Order
         end

@@ -204,11 +204,33 @@ describe API::V2::Market::Orders, type: :request do
       end
 
       it 'validates that order has no price param' do
-        # Stub bids in order book so we can create order.
-        Global.any_instance.expects(:bids).once.returns([[10.to_d, 10.to_d]])
         api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '0.5', price: '0.5', ord_type: 'market' }
         expect(response.code).to eq '422'
-        expect(response).to include_api_error('market.order.insufficient_market_volume')
+        expect(response).to include_api_error('market.order.market_order_price')
+      end
+
+      it 'validates that balance is sufficient' do
+        # Stub bids in order book so we can create ask market order.
+        Global.any_instance.expects(:bids).once.returns([[10.to_d, 10.to_d]])
+
+        api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '1.0', ord_type: 'market' }
+
+        expect(response.code).to eq '422'
+        expect(response).to include_api_error('market.account.not_enough_funds')
+      end
+
+      it 'creates sell order' do
+        # Stub bids in order book so we can create ask market order.
+        Global.any_instance.expects(:bids).once.returns([[10.to_d, 10.to_d]])
+
+        member.get_account(:btc).update_attributes(balance: 1)
+
+        expect do
+          api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '0.5', ord_type: 'market' }
+        end.to change(OrderAsk, :count).by(1)
+
+        expect(response).to be_success
+        expect(JSON.parse(response.body)['id']).to eq OrderAsk.last.id
       end
     end
   end

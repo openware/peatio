@@ -76,8 +76,7 @@ module API
         report_exception_to_screen(e)
         error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
       rescue => e
-        # binding.pry
-        # TODO: Not sure if this error is possible.
+        # TODO: Remove this rescue. We can't rescue all type of errors.
         report_exception_to_screen(e)
         error!({ errors: ['market.order.create_error']}, 422)
       end
