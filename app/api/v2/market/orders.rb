@@ -21,11 +21,13 @@ module API
                    desc: 'Filter order by state.'
           optional :limit,
                    type: { value: Integer, message: 'market.order.non_integer_limit' },
+                   allow_blank: { value: false, message: 'market.trade.empty_limit' },
                    default: 100,
                    values: { value: 0..1000, message: 'market.order.invalid_limit' },
                    desc: 'Limit the number of returned orders, default to 100.'
           optional :page,
                    type: { value: Integer, message: 'market.order.non_integer_page' },
+                   allow_blank: { value: false, message: 'market.trade.empty_page' },
                    default: 1,
                    desc: 'Specify the page of paginated results.'
           optional :order_by,

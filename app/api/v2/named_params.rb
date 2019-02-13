@@ -26,7 +26,7 @@ module API
                  values: { value: %w(sell buy), message: 'market.order.invalid_side' },
                  desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,
-                 type: { value: Float, message: 'market.order.non_decimal_volume' },
+                 type: { value: BigDecimal, message: 'market.order.non_decimal_volume' },
                  values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.negative_volume' },
                  desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type,
@@ -36,7 +36,7 @@ module API
                  desc: -> { V2::Entities::Order.documentation[:type] }
         given ord_type: ->(val) { val == 'limit' } do
           requires :price,
-                   type: { value: Float, message: 'market.order.non_decimal_price' },
+                   type: { value: BigDecimal, message: 'market.order.non_decimal_price' },
                    values: { value: -> (p){ p.try(:positive?) }, message: 'market.order.negative_price' },
                    desc: -> { V2::Entities::Order.documentation[:price] }
         end
@@ -45,6 +45,7 @@ module API
       params :order_id do
         requires :id,
                  type: { value: String, message: 'market.order.non_integer_id' },
+                 allow_blank: { value: false, message: 'market.order.empty_id' },
                  desc: -> { V2::Entities::Order.documentation[:id] }
       end
 
@@ -56,10 +57,12 @@ module API
                  desc: 'Limit the number of returned trades. Default to 100.'
         optional :page,
                  type: { value: Integer, message: 'market.trade.non_integer_page' },
+                 allow_blank: { value: false, message: 'market.trade.empty_page' },
                  default: 1,
                  desc: 'Specify the page of paginated results.'
         optional :timestamp,
                  type: { value: Integer, message: 'market.trade.non_integer_timestamp' },
+                 allow_blank: { value: false, message: 'market.trade.empty_timestamp' },
                  desc: "An integer represents the seconds elapsed since Unix epoch."\
                        "If set, only trades executed before the time will be returned."
         optional :order_by,
