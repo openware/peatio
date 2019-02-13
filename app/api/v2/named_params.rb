@@ -8,8 +8,8 @@ module API
 
       params :currency do
         requires :currency,
-                type: { value: String, message: 'account.balances.non_string_currency' },
-                values: { value: -> { Currency.enabled.pluck(:id) }, message: 'account.balance.currency_doesnt_exist' },
+                type: String,
+                values: { value: -> { Currency.enabled.pluck(:id) }, message: 'account.currency.doesnt_exist' },
                 desc: 'The currency code.'
       end
 

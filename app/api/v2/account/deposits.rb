@@ -17,20 +17,20 @@ module API
         params do
           optional :currency,
                    type: String,
-                   values: { value: -> { Currency.enabled.codes(bothcase: true) }, message: 'account.deposit.invalid_currency' },
+                   values: { value: -> { Currency.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist' },
                    desc: -> { "Currency value contains #{Currency.enabled.codes(bothcase: true).join(',')}" }
           optional :state,
                    type: String,
                    values: { value: -> { Deposit::STATES.map(&:to_s) }, message: 'account.deposit.invalid_state' }
           optional :limit,
                    type: { value: Integer, message: 'account.deposit.non_integer_limit' },
-                   default: 100,
                    values: { value: 1..100, message: 'account.deposit.invalid_limit' },
+                   default: 100,
                    desc: "Number of deposits per page (defaults to 100, maximum is 100)."
           optional :page,
                    type: { value: Integer, message: 'account.deposit.non_integer_page' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'account.deposit.non_positive_page'},
                    default: 1,
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'account.deposit.negative_page'},
                    desc: 'Page number (defaults to 1).'
         end
         get "/deposits" do
@@ -47,7 +47,8 @@ module API
         end
         params do
           requires :txid,
-                   type: { value: String, message: 'account.deposit.non_string_txid' },
+                   type: String,
+                   allow_blank: { value: false, message: 'account.deposit.empty_txid' },
                    desc: "Deposit transaction id"
         end
         get "/deposits/:txid" do
@@ -64,13 +65,13 @@ module API
         params do
           requires :currency,
                    type: String,
-                   values: { value: -> { Currency.coins.enabled.codes(bothcase: true) }, message: 'account.deposit_address.currency_doesnt_exist'},
+                   values: { value: -> { Currency.coins.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
                    desc: 'The account you want to deposit to.'
           given :currency do
             optional :address_format,
                      type: String,
                      values: { value: -> { %w[legacy cash] }, message: 'account.deposit_address.invalid_address_format' },
-                     validate_currency_address_format: true,
+                     validate_currency_address_format: { value: true, prefix: 'account.deposit_address' },
                      desc: 'Address format legacy/cash'
           end
         end

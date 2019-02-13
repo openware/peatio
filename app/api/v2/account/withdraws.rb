@@ -14,17 +14,17 @@ module API
         params do
           optional :currency,
                    type: String,
-                   values: { value: -> { Currency.coins.enabled.codes(bothcase: true) }, message: 'account.withdraw.currency_doesnt_exist'},
+                   values: { value: -> { Currency.coins.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
                    desc: -> { "Any supported currencies: #{Currency.enabled.codes(bothcase: true).join(',')}." }
           optional :limit,
                    type: { value: Integer, message: 'account.withdraw.non_integer_limit' },
-                   default: 100,
                    values: { value: 1..100, message: 'account.withdraw.invalid_limit' },
+                   default: 100,
                    desc: "Number of withdraws per page (defaults to 100, maximum is 100)."
           optional :page,
                    type: { value: Integer, message: 'account.withdraw.non_integer_page' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'account.withdraw.non_positive_page'},
                    default: 1,
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'account.withdraw.negative_page'},
                    desc: 'Page number (defaults to 1).'
         end
         get '/withdraws' do
@@ -39,11 +39,11 @@ module API
         params do
           requires :otp,
                    type: { value: Integer, message: 'account.withdraw.non_integer_otp' },
-                   allow_blank: { value: false, message: 'account.withdraw.empty_otp' }, message: 'account.withdraw.empty_otp',
+                   allow_blank: { value: false, message: 'account.withdraw.empty_otp' },
                    desc: 'OTP to perform action'
           requires :rid,
                    type: String,
-                   allow_blank: { value: false, message: 'account.withdraw.empty_rid' }, message: 'account.withdraw.empty_rid',
+                   allow_blank: { value: false, message: 'account.withdraw.empty_rid' },
                    desc: 'Wallet address on the Blockchain.'
           requires :currency,
                    type: String,
@@ -51,7 +51,7 @@ module API
                    desc: 'The currency code.'
           requires :amount,
                    type: { value: BigDecimal, message: 'account.withdraw.non_decimal_amount' },
-                   values: { value: ->(v) { v.to_d.positive? }, message: 'account.withdraw.negative_amount' },
+                   values: { value: ->(v) { v.try(:positive?) }, message: 'account.withdraw.non_positive_amount' },
                    desc: 'The amount to withdraw.'
         end
         post '/withdraws' do
@@ -60,7 +60,7 @@ module API
           unless Vault::TOTP.validate?(current_user.uid, params[:otp])
             error!({ errors: ['account.withdraw.invalid_otp'] }, 422)
           end
-          
+
           currency = Currency.find(params[:currency])
           withdraw = ::Withdraws::Coin.new \
             sum:            params[:amount],
@@ -71,9 +71,15 @@ module API
           withdraw.with_lock { withdraw.submit! }
           present withdraw, with: API::V2::Entities::Withdraw
 
+        rescue ::Account::AccountError => e
+          report_exception_to_screen(e)
+          error!({ errors: ['account.withdraw.not_enough_funds'] }, 422)
+        rescue ActiveRecord::RecordInvalid => e
+          report_exception_to_screen(e)
+          error!({ errors: ['account.withdraw.invalid_amount'] }, 422)
         rescue => e
           report_exception_to_screen(e)
-          error!({ errors: ['account.withdraw.create_error']}, 422)
+          error!({ errors: ['account.withdraw.create_error'] }, 422)
         end
       end
     end

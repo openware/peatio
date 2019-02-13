@@ -23,9 +23,9 @@ module API
         end
         params do
           requires :currency,
-          type: String,
-          values: { value: -> { Currency.enabled.pluck(:id) }, message: 'account.balance.currency_doesnt_exist' },
-          desc: 'The currency code.'
+                   type: String,
+                   values: { value: -> { Currency.enabled.pluck(:id) }, message: 'account.currency.doesnt_exist' },
+                   desc: 'The currency code.'
         end
 
         get '/balances/:currency' do

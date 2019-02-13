@@ -25,14 +25,14 @@ module API
                      values: { value: -> { ::Market.enabled.ids }, message: 'public.market.doesnt_exist' },
                      desc: -> { V2::Entities::Market.documentation[:id] }
             optional :asks_limit,
-                     type: { value: Integer, message: 'public.order-book.non_integer_ask_limit' },
-                     default: 20, 
-                     values: { value: 1..200, message: 'public.order-book.invalid_ask_limit' },
+                     type: { value: Integer, message: 'public.order_book.non_integer_ask_limit' },
+                     values: { value: 1..200, message: 'public.order_book.invalid_ask_limit' },
+                     default: 20,
                      desc: 'Limit the number of returned sell orders. Default to 20.'
             optional :bids_limit, 
-                     type: { value: Integer, message: 'public.order-book.non_integer_bid_limit' },
+                     type: { value: Integer, message: 'public.order_book.non_integer_bid_limit' },
+                     values: { value: 1..200, message: 'public.order_book.invalid_bid_limit' },
                      default: 20,
-                     values: { value: 1..200, message: 'public.order-book.invalid_bid_limit' },
                      desc: 'Limit the number of returned buy orders. Default to 20.'
           end
           get ":market/order-book" do
@@ -57,15 +57,15 @@ module API
                      desc: 'Limit the number of returned trades. Default to 100.'
             optional :page,
                      type: { value: Integer, message: 'public.trade.non_integer_page' },
+                     values: { value: -> (p){ p.try(:positive?) }, message: 'public.trade.non_positive_page'},
                      default: 1,
-                     values: { value: -> (p){ p.try(:positive?) }, message: 'public.trade.negative_page'},
                      desc: 'Specify the page of paginated results.'
             optional :timestamp,
                      type: { value: Integer, message: 'public.trade.non_integer_timestamp' },
                      desc: "An integer represents the seconds elapsed since Unix epoch."\
                        "If set, only trades executed before the time will be returned."
             optional :order_by,
-                     type: { value: String, message: 'public.trade.non_string_order_by' },
+                     type: String,
                      values: { value: %w(asc desc), message: 'public.trade.invalid_order_by' },
                      default: 'desc',
                      desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
@@ -84,8 +84,8 @@ module API
                      desc: -> { V2::Entities::Market.documentation[:id] }
             optional :limit,
                      type: { value: Integer, message: 'public.market_depth.non_integer_limit' },
-                     default: 300,
                      values: { value: 1..1000, message: 'public.market_depth.invalid_limit' },
+                     default: 300,
                      desc: 'Limit the number of returned price levels. Default to 300.'
           end
           get ":market/depth" do
@@ -102,22 +102,22 @@ module API
                      values: { value: -> { ::Market.enabled.ids }, message: 'public.market.doesnt_exist' },
                      desc: -> { V2::Entities::Market.documentation[:id] }
             optional :period,
-                     type: { value: Integer, message: 'public.k-line.non_integer_period' },
+                     type: { value: Integer, message: 'public.k_line.non_integer_period' },
+                     values: { value: KLineService::AVAILABLE_POINT_PERIODS, message: 'public.k_line.invalid_period' },
                      default: 1,
-                     values: { value: KLineService::AVAILABLE_POINT_LIMITS, message: 'public.k-line.invalid_limit' },
                      desc: "Time period of K line, default to 1. You can choose between #{KLineService::AVAILABLE_POINT_PERIODS.join(', ')}"
             optional :time_from,
-                     type: { value: Integer, message: 'public.k-line.non_integer_time_from' },
-                     allow_blank: { value: false, message: 'public.k-line.empty_time_from' },
+                     type: { value: Integer, message: 'public.k_line.non_integer_time_from' },
+                     allow_blank: { value: false, message: 'public.k_line.empty_time_from' },
                      desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data after that time will be returned."
             optional :time_to,
-                     type: { value: Integer, message: 'public.k-line.non_integer_time_to' },
-                     allow_blank: { value: false, message: 'public.k-line.empty_time_to' },
+                     type: { value: Integer, message: 'public.k_line.non_integer_time_to' },
+                     allow_blank: { value: false, message: 'public.k_line.empty_time_to' },
                      desc: "An integer represents the seconds elapsed since Unix epoch. If set, only k-line data till that time will be returned."
             optional :limit,
-                     type: { value: Integer, message: 'public.k-line.non_integer_limit' },
+                     type: { value: Integer, message: 'public.k_line.non_integer_limit' },
+                     values: { value: KLineService::AVAILABLE_POINT_LIMITS, message: 'public.k_line.invalid_limit' },
                      default: 30,
-                     values: { value: KLineService::AVAILABLE_POINT_LIMITS, message: 'public.k-line.invalid_limit' },
                      desc: "Limit the number of returned data points default to 30. Ignored if time_from and time_to are given."
           end
           get ":market/k-line" do

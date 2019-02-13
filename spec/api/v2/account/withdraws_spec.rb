@@ -20,14 +20,14 @@ describe API::V2::Account::Withdraws, type: :request do
       api_get '/api/v2/account/withdraws', params: { currency: 'FOO' }, token: token
 
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('account.withdraw.currency_doesnt_exist')
+      expect(response).to include_api_error('account.currency.doesnt_exist')
     end
 
     it 'validates page param' do
       api_get '/api/v2/account/withdraws', params: { page: -1 }, token: token
 
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('account.withdraw.negative_page')
+      expect(response).to include_api_error('account.withdraw.non_positive_page')
     end
 
     it 'validates limit param' do
@@ -161,21 +161,28 @@ describe API::V2::Account::Withdraws, type: :request do
         data[:amount] = nil
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.negative_amount')
+        expect(response).to include_api_error('account.withdraw.non_positive_amount')
       end
 
-      it 'validates negative balance' do
+      it 'validates negative amount' do
         data[:amount] = -1
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.negative_amount')
+        expect(response).to include_api_error('account.withdraw.non_positive_amount')
       end
 
       it 'validates enough balance' do
         data[:amount] = 100
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.create_error')
+        expect(response).to include_api_error('account.withdraw.not_enough_funds')
+      end
+
+      it 'validates type amount' do
+        data[:amount] = 'one'
+        api_post '/api/v2/account/withdraws', params: data, token: token
+        expect(response).to have_http_status(422)
+        expect(response).to include_api_error('account.withdraw.non_decimal_amount')
       end
 
       it 'requires rid' do

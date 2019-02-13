@@ -56,13 +56,13 @@ describe API::V2::Public::Markets, type: :request do
     it 'validates asks limit' do
       get "/api/v2/public/markets/somecoin/order-book", asks_limit: 201, bids_limit: 1
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('public.order-book.invalid_ask_limit')
+      expect(response).to include_api_error('public.order_book.invalid_ask_limit')
     end
 
     it 'validates bids limit' do
       get "/api/v2/public/markets/somecoin/order-book", asks_limit: 1, bids_limit: 201
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('public.order-book.invalid_bid_limit')
+      expect(response).to include_api_error('public.order_book.invalid_bid_limit')
     end
   end
 
@@ -88,7 +88,7 @@ describe API::V2::Public::Markets, type: :request do
     end
 
     context 'invalid market param' do
-      xit 'validates market param' do
+      it 'validates market param' do
         api_get "/api/v2/public/markets/usdusd/depth"
         expect(response).to have_http_status 422
         expect(response).to include_api_error('public.market.doesnt_exist')
@@ -517,7 +517,7 @@ describe API::V2::Public::Markets, type: :request do
       expect(JSON.parse(response.body).first['id']).to eq 2
     end
 
-    xit 'validates market param' do
+    it 'validates market param' do
       api_get "/api/v2/public/markets/usdusd/trades"
       expect(response).to have_http_status 422
       expect(response).to include_api_error('public.market.doesnt_exist')
@@ -532,7 +532,7 @@ describe API::V2::Public::Markets, type: :request do
     it 'validates page param' do
       get "/api/v2/public/markets/#{market}/trades", page: -1
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('public.trade.negative_page')
+      expect(response).to include_api_error('public.trade.non_positive_page')
     end
   end
 end

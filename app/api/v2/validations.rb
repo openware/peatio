@@ -4,6 +4,9 @@
 module API
   module V2
     module Validations
+      # TODO: Update params validation by overriding message method.
+      # New message structure is "#{PREFIX}.#{REASON}#{ATTRIBUTE}" e.g "account.withdraw.invalid_amount"
+
       class Range < Grape::Validations::Base
         def initialize(*)
           super
@@ -43,6 +46,8 @@ module API
       end
 
       class ValidateCurrencyAddressFormat < Grape::Validations::Base
+
+        REASON = 'doesnt_support_cash_address_format'
         def validate_param!(name, params)
           return unless params.key?(name)
           currency = Currency.find_by(id: params[:currency])
@@ -50,7 +55,7 @@ module API
 
           fail Grape::Exceptions::Validation,
               params:  [@scope.full_name('currency')],
-              message: 'account.deposit.doesnt_support_cash_address_format.'
+              message: "#{@option.fetch(:prefix)}.#{REASON}"
         end
       end
     end
