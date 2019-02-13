@@ -12,7 +12,7 @@ module API
           success: API::V2::Entities::Trade
         params do
           optional :market,
-                   type: { value: String, message: 'market.market.non_string' },
+                   type: String,
                    values: { value: -> { ::Market.enabled.ids }, message: 'market.market.doesnt_exist' },
                    desc: -> { V2::Entities::Market.documentation[:id] }
           use :trade_filters

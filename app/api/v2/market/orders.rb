@@ -12,11 +12,11 @@ module API
           success: API::V2::Entities::Order
         params do
           optional :market,
-                   type: { value: String, message: 'market.market.non_string' },
+                   type: String,
                    values: { value: -> { ::Market.enabled.ids }, message: 'market.market.doesnt_exist' },
                    desc: -> { V2::Entities::Market.documentation[:id] }
           optional :state,
-                   type: { value: String, message: 'market.order.non_string_state' },
+                   type: String,
                    values: { value: -> { Order.state.values } , message: 'market.order.invalid_state' },
                    desc: 'Filter order by state.'
           optional :limit,
@@ -31,7 +31,7 @@ module API
                    default: 1,
                    desc: 'Specify the page of paginated results.'
           optional :order_by,
-                   type: { value: String, message: 'market.order.non_string_order_by' },
+                   type: String,
                    values: { value: %w(asc desc), message: 'market.order.invalid_order_by' },
                    default: 'desc',
                    desc: 'If set, returned orders will be sorted in specific order, default to "desc".'

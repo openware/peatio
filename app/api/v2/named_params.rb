@@ -15,14 +15,14 @@ module API
 
       params :market do
         requires :market,
-                 type: { value: String, message: 'market.market.non_string' },
+                 type: String,
                  values: { value: -> { ::Market.enabled.ids }, message: 'market.market.doesnt_exist' },
                  desc: -> { V2::Entities::Market.documentation[:id] }
       end
 
       params :order do
         requires :side,
-                 type: { value: String, message: 'market.order.non_string_side' },
+                 type: String,
                  values: { value: %w(sell buy), message: 'market.order.invalid_side' },
                  desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,
@@ -30,7 +30,7 @@ module API
                  values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.negative_volume' },
                  desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type,
-                 type: { value: String, message: 'market.order.non_string_ord_type' },
+                 type: String,
                  values: { value: -> { Order::TYPES}, message:  'market.order.invalid_type' },
                  default: 'limit',
                  desc: -> { V2::Entities::Order.documentation[:type] }
@@ -44,7 +44,7 @@ module API
 
       params :order_id do
         requires :id,
-                 type: { value: String, message: 'market.order.non_integer_id' },
+                 type: Integer,
                  allow_blank: { value: false, message: 'market.order.empty_id' },
                  desc: -> { V2::Entities::Order.documentation[:id] }
       end
@@ -66,7 +66,7 @@ module API
                  desc: "An integer represents the seconds elapsed since Unix epoch."\
                        "If set, only trades executed before the time will be returned."
         optional :order_by,
-                 type: { value: String, message: 'market.trade.non_string_order_by' },
+                 type: String,
                  values: { value: %w(asc desc), message: 'market.trade.invalid_order_by' },
                  default: 'desc',
                  desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
