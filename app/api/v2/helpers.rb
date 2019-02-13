@@ -75,8 +75,11 @@ module API
       rescue ::Order::InsufficientMarketLiquidity => e
         report_exception_to_screen(e)
         error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
+      rescue ActiveRecord::RecordInvalid => e
+        # TODO: Find better solution for ActiveRecord::RecordInvalid.
+        report_exception_to_screen(e)
+        error!({ errors: ['market.order.invalid_volume_or_price'] }, 422)
       rescue => e
-        # TODO: Remove this rescue. We can't rescue all type of errors.
         report_exception_to_screen(e)
         error!({ errors: ['market.order.create_error']}, 422)
       end
