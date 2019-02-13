@@ -209,6 +209,7 @@ describe API::V2::Market::Orders, type: :request do
     it 'validates price to be a number' do
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: 'test' }
       expect(response.code).to eq '422'
+<<<<<<< HEAD
       expect(response).to include_api_error('market.order.non_decimal_price')
     end
 
@@ -248,6 +249,9 @@ describe API::V2::Market::Orders, type: :request do
         expect(response).to be_success
         expect(JSON.parse(response.body)['id']).to eq OrderAsk.last.id
       end
+=======
+      expect(response).to include_api_error('market.order.negative_price')
+>>>>>>> api/v2/public/ errors unify
     end
   end
 
