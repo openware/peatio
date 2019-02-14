@@ -12,19 +12,19 @@ module API
 
       def deposits_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i
-          error!({ errors: ['member.deposit.must_be_permitted'] }, 403)
+          error!({ errors: ['account.deposit.not_permitted'] }, 403)
         end
       end
 
       def withdraws_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_WITHDRAW').to_i
-          error!({ errors: ['member.withdraw.must_be_permitted'] }, 403)
+          error!({ errors: ['account.withdraw.not_permitted'] }, 403)
         end
       end
 
       def trading_must_be_permitted!
         if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_TRADING').to_i
-          error!({ errors: ['member.trade.must_be_permitted'] }, 403)
+          error!({ errors: ['market.trade.not_permitted'] }, 403)
         end
       end
 
@@ -68,9 +68,17 @@ module API
         order = build_order(attrs)
         Ordering.new(order).submit
         order
+      # TODO: Rewrite this rescue.
       rescue ::Account::AccountError => e
         report_exception_to_screen(e)
         error!({ errors: ['market.account.not_enough_funds']}, 422)
+      rescue ::Order::InsufficientMarketLiquidity => e
+        report_exception_to_screen(e)
+        error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
+      rescue ActiveRecord::RecordInvalid => e
+        # TODO: Find better solution for ActiveRecord::RecordInvalid.
+        report_exception_to_screen(e)
+        error!({ errors: ['market.order.invalid_volume_or_price'] }, 422)
       rescue => e
         report_exception_to_screen(e)
         error!({ errors: ['market.order.create_error']}, 422)

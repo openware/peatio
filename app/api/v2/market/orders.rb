@@ -6,7 +6,6 @@ module API
     module Market
       class Orders < Grape::API
         helpers ::API::V2::NamedParams
-        include NewExceptionsHandlers
 
         desc 'Get your orders, results is paginated.',
           is_array: true,
@@ -21,12 +20,13 @@ module API
                    values: { value: -> { Order.state.values } , message: 'market.order.invalid_state' },
                    desc: 'Filter order by state.'
           optional :limit,
-                   type: Integer,
-                   default: 100,
+                   type: { value: Integer, message: 'market.order.non_integer_limit' },
                    values: { value: 0..1000, message: 'market.order.invalid_limit' },
+                   default: 100,
                    desc: 'Limit the number of returned orders, default to 100.'
           optional :page,
-                   type: Integer,
+                   type: { value: Integer, message: 'market.order.non_integer_page' },
+                   allow_blank: { value: false, message: 'market.trade.empty_page' },
                    default: 1,
                    desc: 'Specify the page of paginated results.'
           optional :order_by,
@@ -58,6 +58,9 @@ module API
           use :market, :order
         end
         post '/orders' do
+          if params[:ord_type] == 'market' && params.key?(:price)
+            error!({ errors: ['market.order.market_order_price'] }, 422)
+          end
           order = create_order params
           present order, with: API::V2::Entities::Order
         end
@@ -71,8 +74,11 @@ module API
             order = current_user.orders.find(params[:id])
             Ordering.new(order).cancel
             present order, with: API::V2::Entities::Order
+          rescue ActiveRecord::RecordNotFound => e
+            # RecordNotFound in rescued by ExceptionsHandler.
+            raise(e)
           rescue
-            raise CancelOrderError, $!
+            error!({ errors: ['market.order.cancel_error'] }, 422)
           end
         end
 
@@ -91,7 +97,7 @@ module API
             orders.each {|o| Ordering.new(o).cancel }
             present orders, with: API::V2::Entities::Order
           rescue
-            raise CancelOrderError, $!
+            error!({ errors: ['market.order.cancel_error'] }, 422)
           end
         end
       end

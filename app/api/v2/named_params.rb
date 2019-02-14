@@ -26,8 +26,8 @@ module API
                  values: { value: %w(sell buy), message: 'market.order.invalid_side' },
                  desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,
-                 type: { value: Float, message: 'market.order.invalid_volume' },
-                 values: { value: -> (v){ v.positive? }, message: 'market.order.negative_volume' },
+                 type: { value: BigDecimal, message: 'market.order.non_decimal_volume' },
+                 values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.non_positive_volume' },
                  desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type,
                  type: String,
@@ -36,21 +36,40 @@ module API
                  desc: -> { V2::Entities::Order.documentation[:type] }
         given ord_type: ->(val) { val == 'limit' } do
           requires :price,
-                   type: { value: Float, message: 'market.order.invalid_price' },
-                   values: { value: -> (p){ p.positive? }, message: 'market.order.negative_price' },
+                   type: { value: BigDecimal, message: 'market.order.non_decimal_price' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'market.order.non_positive_price' },
                    desc: -> { V2::Entities::Order.documentation[:price] }
         end
       end
 
       params :order_id do
-        requires :id, type: Integer, desc: -> { V2::Entities::Order.documentation[:id] }
+        requires :id,
+                 type: { value: Integer, message: 'market.order.non_integer_id' },
+                 allow_blank: { value: false, message: 'market.order.empty_id' },
+                 desc: -> { V2::Entities::Order.documentation[:id] }
       end
 
       params :trade_filters do
-        optional :limit,     type: Integer, range: 1..1000, default: 100, desc: 'Limit the number of returned trades. Default to 100.'
-        optional :page,      type: Integer, default: 1, desc: 'Specify the page of paginated results.'
-        optional :timestamp, type: Integer, desc: "An integer represents the seconds elapsed since Unix epoch. If set, only trades executed before the time will be returned."
-        optional :order_by,  type: String, values: %w(asc desc), default: 'desc', desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
+        optional :limit,
+                 type: { value: Integer, message: 'market.trade.non_integer_limit' },
+                 values: { value: 1..1000, message: 'market.trade.invalid_limit' },
+                 default: 100,
+                 desc: 'Limit the number of returned trades. Default to 100.'
+        optional :page,
+                 type: { value: Integer, message: 'market.trade.non_integer_page' },
+                 allow_blank: { value: false, message: 'market.trade.empty_page' },
+                 default: 1,
+                 desc: 'Specify the page of paginated results.'
+        optional :timestamp,
+                 type: { value: Integer, message: 'market.trade.non_integer_timestamp' },
+                 allow_blank: { value: false, message: 'market.trade.empty_timestamp' },
+                 desc: "An integer represents the seconds elapsed since Unix epoch."\
+                       "If set, only trades executed before the time will be returned."
+        optional :order_by,
+                 type: String,
+                 values: { value: %w(asc desc), message: 'market.trade.invalid_order_by' },
+                 default: 'desc',
+                 desc: "If set, returned trades will be sorted in specific order, default to 'desc'."
       end
     end
   end
