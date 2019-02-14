@@ -11,7 +11,7 @@ class BlockchainService
     # @param key [String, Symbol]
     #   The blockchain key.
     def [](key)
-      blockchain = Blockchain.find_by_key(key)
+      blockchain = Blockchain.find_by(key: key)
       BlockchainService.new(blockchain)
     end
   end
@@ -89,7 +89,6 @@ class BlockchainService
     # If deposit doesn't exist create it and assign attributes.
     deposit =
       Deposits::Coin
-        .submitted
         .where(currency: blockchain.currencies)
         .find_or_create_by!(deposit_hash.slice(:txid, :txout)) do |deposit|
           deposit.assign_attributes(deposit_hash.except(:options))

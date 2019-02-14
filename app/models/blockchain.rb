@@ -21,7 +21,7 @@ class Blockchain < ActiveRecord::Base
   end
 
   def blockchain_api
-    return BlockchainService[key] if 'eth'.in?(key)
+    return BlockchainService[key] if ['eth','wcg'].any?{|s| s.in?(key)}
     BlockchainClient[key]
   end
 end

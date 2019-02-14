@@ -1,11 +1,7 @@
 GIT
-  remote: https://github.com/ysv/peatio-ethereum
-  revision: 8b8cfa43d7d4f530f19e9a851b001a83c2f7b98c
-  specs:
-    peatio-ethereum (0.1.0)
-
-PATH
-  remote: ../peatio-core
+  remote: https://github.com/rubykube/peatio-core
+  revision: ce5c21f081cad57e011e595f17ab5761efcfbc5b
+  branch: feature/plugable-currencies
   specs:
     peatio (0.4.5)
       amqp
@@ -13,10 +9,23 @@ PATH
       clamp
       em-websocket
       eventmachine
-      faraday (~> 0.14.0)
       jwt
       method-not-implemented
       mysql2
+
+GIT
+  remote: https://github.com/skyach/peatio-wcg
+  revision: 03ce6f649b4f32a6bb9fb97e5be31ab03dbb2d2c
+  branch: feature/v2
+  specs:
+    peatio-wcg (0.1.0)
+      peatio
+
+GIT
+  remote: https://github.com/ysv/peatio-ethereum
+  revision: 8b8cfa43d7d4f530f19e9a851b001a83c2f7b98c
+  specs:
+    peatio-ethereum (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -452,6 +461,7 @@ DEPENDENCIES
   passgen (~> 1.0.2)
   peatio!
   peatio-ethereum!
+  peatio-wcg!
   pry-byebug (~> 3.6)
   puma (~> 3.11.4)
   quiet_assets (~> 1.1)

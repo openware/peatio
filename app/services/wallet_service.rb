@@ -50,8 +50,8 @@ class WalletService
   end
 
   # TODO: Rename this method.
-  def create_address
-    @adapter.create_address!
+  def create_address(options = {})
+    @adapter.create_address!(options)
   end
 
 end

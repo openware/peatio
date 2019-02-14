@@ -50,6 +50,12 @@ defaults: &defaults
   # Set to "true" to disable cabinet UI (admins still have access).
   DISABLE_CABINET_UI: ~
 
+  # Configure wallet gateways
+  GATEWAYS: 'bitcoind,bitcoincashd,litecoind,geth,dashd,rippled,bitgo,wcg'
+
+  # Configure blockchain clients
+  BLOCKCHAIN_CLIENTS: 'bitcoin,bitcoincash,dash,ethereum,litecoin,ripple,wcg'
+
   # Configuration variables for JWT verification.
   # Get explanation at https://en.wikipedia.org/wiki/JSON_Web_Token.
   #

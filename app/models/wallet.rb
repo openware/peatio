@@ -12,7 +12,7 @@ class Wallet < ActiveRecord::Base
   ENUMERIZED_KINDS = { deposit: 100, fee: 200, hot: 310, warm: 320, cold: 330 }.freeze
   enumerize :kind, in: ENUMERIZED_KINDS, scope: true
 
-  GATEWAYS = %w[bitcoind bitcoincashd litecoind geth dashd rippled bitgo].freeze
+  GATEWAYS = ENV['GATEWAYS'].split(',').freeze
   SETTING_ATTRIBUTES = %i[ uri
                            secret
                            bitgo_test_net
