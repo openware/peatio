@@ -85,7 +85,7 @@ describe API::V2::Account::Withdraws, type: :request do
     it 'denies access to unverified member' do
       api_get '/api/v2/account/withdraws', token: level_0_member_token
       expect(response.code).to eq '403'
-      expect(JSON.parse(response.body)).to eq('errors' => ["member.withdraw.must_be_permitted"])
+      expect(response).to include_api_error('account.withdraw.not_permitted')
     end
   end
 

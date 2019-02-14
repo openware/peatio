@@ -1,8 +1,6 @@
 module API
   module V2
-
     module NewExceptionsHandlers
-
       def self.included(base)
         base.instance_eval do
           rescue_from Grape::Exceptions::ValidationErrors do |e|
@@ -14,7 +12,7 @@ module API
 
           rescue_from Peatio::Auth::Error do |e|
             report_exception(e)
-            error!({ error: { code: e.code, message: 'Authorization failed' } }, 401)
+            error!({ errors: ['jwt.decode_and_verify'] }, 401)
           end
 
           rescue_from ActiveRecord::RecordNotFound do |_e|

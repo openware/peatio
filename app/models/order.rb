@@ -5,6 +5,8 @@ class Order < ActiveRecord::Base
   include BelongsToMarket
   include BelongsToMember
 
+  InsufficientMarketLiquidity = Class.new(StandardError)
+
   extend Enumerize
   enumerize :state, in: { wait: 100, done: 200, cancel: 0 }, scope: true
 
@@ -154,8 +156,14 @@ class Order < ActiveRecord::Base
       expected_volume -= v
     end
 
-    raise "Market is not deep enough" unless expected_volume.zero?
-    raise "Volume too large" if (filled_at-start_from).abs/start_from > FUSE
+    # TODO: Do we need the second validation.
+    # Error is raised in case:
+    #   * Market has not enough volume to fulfill Order.
+    #   * Difference between final & start price of match greater than FUSE.
+    if expected_volume.nonzero? ||
+      (filled_at - start_from).abs / start_from > FUSE
+      raise InsufficientMarketLiquidity
+    end
 
     required_funds
   end
