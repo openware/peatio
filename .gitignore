@@ -22,6 +22,7 @@ tmp
 
 # Ignore all config files
 /config/application.yml
+/config/backend.yml
 /config/markets.yml
 /config/markets.old.yml
 /config/deposit_channels.old.yml
