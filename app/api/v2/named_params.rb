@@ -44,7 +44,7 @@ module API
 
       params :order_id do
         requires :id,
-                 type: Integer,
+                 type: { value: Integer, message: 'market.order.non_integer_id' },
                  allow_blank: { value: false, message: 'market.order.empty_id' },
                  desc: -> { V2::Entities::Order.documentation[:id] }
       end
