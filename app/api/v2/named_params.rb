@@ -27,7 +27,7 @@ module API
                  desc: -> { V2::Entities::Order.documentation[:side] }
         requires :volume,
                  type: { value: BigDecimal, message: 'market.order.non_decimal_volume' },
-                 values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.negative_volume' },
+                 values: { value: -> (v){ v.try(:positive?) }, message: 'market.order.non_positive_volume' },
                  desc: -> { V2::Entities::Order.documentation[:volume] }
         optional :ord_type,
                  type: String,
@@ -37,7 +37,7 @@ module API
         given ord_type: ->(val) { val == 'limit' } do
           requires :price,
                    type: { value: BigDecimal, message: 'market.order.non_decimal_price' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'market.order.negative_price' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'market.order.non_positive_price' },
                    desc: -> { V2::Entities::Order.documentation[:price] }
         end
       end

@@ -166,7 +166,7 @@ describe API::V2::Market::Orders, type: :request do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '-1.1', price: '2014' }
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.negative_volume')
+      expect(response).to include_api_error('market.order.non_positive_volume')
       expect(OrderAsk.count).to eq old_count
     end
 
@@ -203,7 +203,7 @@ describe API::V2::Market::Orders, type: :request do
     it 'validates price positiveness' do
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '-1.1' }
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.negative_price')
+      expect(response).to include_api_error('market.order.non_positive_price')
     end
 
     it 'validates price to be a number' do
