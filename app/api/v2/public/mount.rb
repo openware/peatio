@@ -4,6 +4,7 @@ module API
   module V2
     module Public
       class Mount < Grape::API
+        include NewExceptionsHandlers
 
         mount Public::Fees
         mount Public::Currencies

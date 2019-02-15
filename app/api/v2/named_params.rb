@@ -9,7 +9,7 @@ module API
       params :currency do
         requires :currency,
                 type: String,
-                values: -> { Currency.enabled.pluck(:id) },
+                values: { value: -> { Currency.enabled.pluck(:id) }, message: 'account.currency.doesnt_exist' },
                 desc: 'The currency code.'
       end
 
