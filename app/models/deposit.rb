@@ -94,7 +94,7 @@ class Deposit < ActiveRecord::Base
 
   def collect!(collect_fee = true)
     if coin?
-      if currency.is_token? && collect_fee
+      if currency.is_token && collect_fee
         AMQPQueue.enqueue(:deposit_collection_fees, id: id)
       else
         AMQPQueue.enqueue(:deposit_collection, id: id)

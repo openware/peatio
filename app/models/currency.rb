@@ -9,7 +9,7 @@ class Currency < ActiveRecord::Base
       type: 'string'
     }
   }
-  OPTIONS_ATTRIBUTES = %i[erc20_contract_address gas_limit gas_price token_asset_id token_currency_id].freeze
+  OPTIONS_ATTRIBUTES = %i[erc20_contract_address gas_limit gas_price].freeze
   store :options, accessors: OPTIONS_ATTRIBUTES, coder: JSON
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
@@ -120,18 +120,6 @@ class Currency < ActiveRecord::Base
     erc20_contract_address.present?
   end
 
-  def is_token_currency?
-    token_currency_id.present?
-  end
-
-  def is_token_asset?
-    token_asset_id.present?
-  end
-
-  def is_token?
-    is_erc20? || is_token_currency? || is_token_asset?
-  end
-
   def dependent_markets
     Market.where('ask_unit = ? OR bid_unit = ?', id, id)
   end
@@ -175,7 +163,7 @@ class Currency < ActiveRecord::Base
 end
 
 # == Schema Information
-# Schema version: 20190116140939
+# Schema version: 20190215041012
 #
 # Table name: currencies
 #
@@ -184,6 +172,7 @@ end
 #  blockchain_key        :string(32)
 #  symbol                :string(1)        not null
 #  type                  :string(30)       default("coin"), not null
+#  is_token              :boolean          default(FALSE)
 #  deposit_fee           :decimal(32, 16)  default(0.0), not null
 #  min_deposit_amount    :decimal(32, 16)  default(0.0), not null
 #  min_collection_amount :decimal(32, 16)  default(0.0), not null

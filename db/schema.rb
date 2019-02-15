@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190116140939) do
+ActiveRecord::Schema.define(version: 20190215041012) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer  "member_id",   limit: 4,                                          null: false
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20190116140939) do
     t.string   "blockchain_key",        limit: 32
     t.string   "symbol",                limit: 1,                                               null: false
     t.string   "type",                  limit: 30,                             default: "coin", null: false
+    t.boolean  "is_token",                                                     default: false
     t.decimal  "deposit_fee",                        precision: 32, scale: 16, default: 0.0,    null: false
     t.decimal  "min_deposit_amount",                 precision: 32, scale: 16, default: 0.0,    null: false
     t.decimal  "min_collection_amount",              precision: 32, scale: 16, default: 0.0,    null: false
@@ -140,8 +141,8 @@ ActiveRecord::Schema.define(version: 20190116140939) do
     t.string   "bid_unit",       limit: 10,                                          null: false
     t.decimal  "ask_fee",                   precision: 17, scale: 16, default: 0.0,  null: false
     t.decimal  "bid_fee",                   precision: 17, scale: 16, default: 0.0,  null: false
-    t.decimal  "min_ask_price",             precision: 17, scale: 16, default: 0.0,  null: false
-    t.decimal  "max_bid_price",             precision: 17, scale: 16, default: 0.0,  null: false
+    t.decimal  "min_ask_price",             precision: 32, scale: 16, default: 0.0,  null: false
+    t.decimal  "max_bid_price",             precision: 32, scale: 16, default: 0.0,  null: false
     t.decimal  "min_ask_amount",            precision: 32, scale: 16, default: 0.0,  null: false
     t.decimal  "min_bid_amount",            precision: 32, scale: 16, default: 0.0,  null: false
     t.integer  "ask_precision",  limit: 1,                            default: 8,    null: false

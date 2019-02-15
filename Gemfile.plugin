@@ -2,5 +2,4 @@ source 'https://rubygems.org'
 git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
 gem 'peatio-ethereum', github: 'ysv/peatio-ethereum'
-gem 'peatio-wcg', github: 'skyach/peatio-wcg', branch: 'feature/v2'
 # List your plugins here.
