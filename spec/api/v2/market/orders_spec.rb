@@ -203,7 +203,7 @@ describe API::V2::Market::Orders, type: :request do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.account.not_enough_funds')
+      expect(response).to include_api_error('market.account.insufficient_balance')
       expect(OrderAsk.count).to eq old_count
     end
 
@@ -239,7 +239,7 @@ describe API::V2::Market::Orders, type: :request do
         api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '1.0', ord_type: 'market' }
 
         expect(response.code).to eq '422'
-        expect(response).to include_api_error('market.account.not_enough_funds')
+        expect(response).to include_api_error('market.account.insufficient_balance')
       end
 
       it 'creates sell order' do

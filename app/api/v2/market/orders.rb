@@ -5,7 +5,7 @@ module API
   module V2
     module Market
       class Orders < Grape::API
-        helpers ::API::V2::NamedParams
+        helpers ::API::V2::Market::NamedParams
 
         desc 'Get your orders, results is paginated.',
           is_array: true,
@@ -17,7 +17,7 @@ module API
                    desc: -> { V2::Entities::Market.documentation[:id] }
           optional :state,
                    type: String,
-                   values: { value: -> { Order.state.values } , message: 'market.order.invalid_state' },
+                   values: { value: -> { Order.state.values }, message: 'market.order.invalid_state' },
                    desc: 'Filter order by state.'
           optional :limit,
                    type: { value: Integer, message: 'market.order.non_integer_limit' },

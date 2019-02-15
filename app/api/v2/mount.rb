@@ -1,9 +1,6 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-require_dependency 'v2/errors'
-require_dependency 'v2/validations'
-
 module API
   module V2
     class Mount < Grape::API

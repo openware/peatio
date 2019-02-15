@@ -5,6 +5,7 @@ class Order < ActiveRecord::Base
   include BelongsToMarket
   include BelongsToMember
 
+  # Error is raised in case market doesn't have enough volume to fulfill the Order.
   InsufficientMarketLiquidity = Class.new(StandardError)
 
   extend Enumerize
@@ -144,26 +145,15 @@ class Order < ActiveRecord::Base
     required_funds = Account::ZERO
     expected_volume = volume
 
-    start_from, _ = price_levels.first
-    filled_at     = start_from
-
     until expected_volume.zero? || price_levels.empty?
       level_price, level_volume = price_levels.shift
-      filled_at = level_price
 
       v = [expected_volume, level_volume].min
       required_funds += yield level_price, v
       expected_volume -= v
     end
 
-    # TODO: Do we need the second validation.
-    # Error is raised in case:
-    #   * Market has not enough volume to fulfill Order.
-    #   * Difference between final & start price of match greater than FUSE.
-    if expected_volume.nonzero? ||
-      (filled_at - start_from).abs / start_from > FUSE
-      raise InsufficientMarketLiquidity
-    end
+    raise InsufficientMarketLiquidity if expected_volume.nonzero?
 
     required_funds
   end

@@ -65,34 +65,20 @@ module API
       end
 
       def create_order(attrs)
+        create_order_errors = {
+          ::Account::AccountError => 'market.account.insufficient_balance',
+          ::Order::InsufficientMarketLiquidity => 'market.order.insufficient_market_liquidity',
+          ActiveRecord::RecordInvalid => 'market.order.invalid_volume_or_price'
+        }
+
         order = build_order(attrs)
         Ordering.new(order).submit
         order
-      # TODO: Rewrite this rescue.
-      rescue ::Account::AccountError => e
-        report_exception_to_screen(e)
-        error!({ errors: ['market.account.not_enough_funds']}, 422)
-      rescue ::Order::InsufficientMarketLiquidity => e
-        report_exception_to_screen(e)
-        error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
-      rescue ActiveRecord::RecordInvalid => e
-        # TODO: Find better solution for ActiveRecord::RecordInvalid.
-        report_exception_to_screen(e)
-        error!({ errors: ['market.order.invalid_volume_or_price'] }, 422)
       rescue => e
+        message = create_order_errors.fetch(e.class, 'market.order.create_error')
         report_exception_to_screen(e)
-        error!({ errors: ['market.order.create_error']}, 422)
+        error!({ errors: [message] }, 422)
       end
-
-      # @deprecated
-      # def create_orders(multi_attrs)
-      #   orders = multi_attrs.map(&method(:build_order))
-      #   Ordering.new(orders).submit
-      #   orders
-      # rescue => e
-      #   report_exception_to_screen(e)
-      #   raise CreateOrderError, e.inspect
-      # end
 
       def order_param
         params[:order_by].downcase == 'asc' ? 'id asc' : 'id desc'
