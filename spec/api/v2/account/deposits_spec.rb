@@ -83,11 +83,13 @@ describe API::V2::Account::Deposits, type: :request do
     it 'return 404 if txid not exist' do
       api_get '/api/v2/account/deposits/5', token: token
       expect(response.code).to eq '404'
+      expect(response).to include_api_error('record.not_found')
     end
 
     it 'returns 404 if txid not belongs_to you ' do
       api_get '/api/v2/account/deposits/10', token: token
       expect(response.code).to eq '404'
+      expect(response).to include_api_error('record.not_found')
     end
 
     it 'returns deposit txid if exist' do

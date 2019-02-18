@@ -18,7 +18,7 @@ module API
           optional :currency,
                    type: String,
                    values: { value: -> { Currency.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist' },
-                   desc: -> { "Currency value contains #{Currency.enabled.codes(bothcase: true).join(',')}" }
+                   desc: 'Currency code'
           optional :state,
                    type: String,
                    values: { value: -> { Deposit::STATES.map(&:to_s) }, message: 'account.deposit.invalid_state' }
@@ -52,9 +52,7 @@ module API
                    desc: "Deposit transaction id"
         end
         get "/deposits/:txid" do
-          deposit = current_user.deposits.find_by(txid: params[:txid])
-          raise DepositByTxidNotFoundError, params[:txid] unless deposit
-
+          deposit = current_user.deposits.find_by!(txid: params[:txid])
           present deposit, with: API::V2::Entities::Deposit
         end
 
