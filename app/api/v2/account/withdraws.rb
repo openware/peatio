@@ -73,7 +73,7 @@ module API
 
         rescue ::Account::AccountError => e
           report_exception_to_screen(e)
-          error!({ errors: ['account.withdraw.not_enough_funds'] }, 422)
+          error!({ errors: ['account.withdraw.insufficient_balance'] }, 422)
         rescue ActiveRecord::RecordInvalid => e
           report_exception_to_screen(e)
           error!({ errors: ['account.withdraw.invalid_amount'] }, 422)

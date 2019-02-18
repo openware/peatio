@@ -175,7 +175,7 @@ describe API::V2::Account::Withdraws, type: :request do
         data[:amount] = 100
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.not_enough_funds')
+        expect(response).to include_api_error('account.withdraw.insufficient_balance')
       end
 
       it 'validates type amount' do

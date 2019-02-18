@@ -71,7 +71,7 @@ module API
       # TODO: Rewrite this rescue.
       rescue ::Account::AccountError => e
         report_exception_to_screen(e)
-        error!({ errors: ['market.account.not_enough_funds']}, 422)
+        error!({ errors: ['market.account.insufficient_balance']}, 422)
       rescue ::Order::InsufficientMarketLiquidity => e
         report_exception_to_screen(e)
         error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)

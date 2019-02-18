@@ -1,7 +1,6 @@
 module API::V2
   module Account
     class Mount < Grape::API
-      include NewExceptionsHandlers
 
       before { authenticate! }
 

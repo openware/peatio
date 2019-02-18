@@ -5,7 +5,7 @@ module API
   module V2
     module Market
       class Trades < Grape::API
-        helpers API::V2::NamedParams
+        helpers API::V2::Market::NamedParams
 
         desc 'Get your executed trades. Trades are sorted in reverse creation order.',
           is_array: true,
