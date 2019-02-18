@@ -123,8 +123,19 @@ steps:
   - name: docker-cache
     path: /cache
   when:
+  when:
     event:
-    - push
+    - tag
+    branch:
+    - master
+
+- name: specify-docker-image-tags
+  image: alpine/git
+  commands:
+  - echo "latest,${DRONE_TAG}" > .tags
+  when:
+    event:
+    - tag
     branch:
     - master
 
@@ -141,7 +152,7 @@ steps:
     use_cache: true
   when:
     event:
-    - push
+    - tag
     branch:
     - master
 
@@ -159,7 +170,7 @@ steps:
     path: /cache
   when:
     event:
-    - push
+    - tag
     branch:
     - master
 

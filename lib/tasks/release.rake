@@ -33,6 +33,14 @@ namespace 'release' do
     sh %(git add -A)
     Bump::Bump.run('patch', commit_message: '[ci skip]', tag: false)
     sh %(git tag #{Bump::Bump.current})
-    sh %(git push --tags authenticated-origin HEAD:#{ENV.fetch('DRONE_BRANCH')})
+
+    remote_sha = %x(git ls-remote authenticated-origin -h refs/heads/master).split.first
+    local_sha  = %x(git rev-parse HEAD).split.first
+
+    if remote_sha == local_sha
+      sh %(git push --tags authenticated-origin HEAD:#{ENV.fetch('DRONE_BRANCH')})
+    else
+      puts "Git history was changed"
+    end
   end
 end
