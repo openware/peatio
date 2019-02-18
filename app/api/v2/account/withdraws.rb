@@ -15,7 +15,7 @@ module API
           optional :currency,
                    type: String,
                    values: { value: -> { Currency.coins.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
-                   desc: -> { "Any supported currencies: #{Currency.enabled.codes(bothcase: true).join(',')}." }
+                   desc: 'Currency code.'
           optional :limit,
                    type: { value: Integer, message: 'account.withdraw.non_integer_limit' },
                    values: { value: 1..100, message: 'account.withdraw.invalid_limit' },

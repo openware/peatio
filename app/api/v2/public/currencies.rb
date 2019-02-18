@@ -10,7 +10,7 @@ module API
           success Entities::Currency
         end
         params do
-          requires :id, 
+          requires :id,
                    type: String,
                    values: { value: -> { Currency.enabled.codes(bothcase: true) }, message: 'public.currency.doesnt_exist'},
                    desc: -> { API::V2::Entities::Currency.documentation[:id][:desc] }

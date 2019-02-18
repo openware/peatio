@@ -17,7 +17,7 @@ module API
                    desc: -> { V2::Entities::Market.documentation[:id] }
           optional :state,
                    type: String,
-                   values: { value: -> { Order.state.values } , message: 'market.order.invalid_state' },
+                   values: { value: -> { Order.state.values }, message: 'market.order.invalid_state' },
                    desc: 'Filter order by state.'
           optional :limit,
                    type: { value: Integer, message: 'market.order.non_integer_limit' },
