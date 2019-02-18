@@ -52,9 +52,7 @@ module API
                    desc: "Deposit transaction id"
         end
         get "/deposits/:txid" do
-          deposit = current_user.deposits.find_by(txid: params[:txid])
-          raise DepositByTxidNotFoundError, params[:txid] unless deposit
-
+          deposit = current_user.deposits.find_by!(txid: params[:txid])
           present deposit, with: API::V2::Entities::Deposit
         end
 
