@@ -71,7 +71,7 @@ module API
       # TODO: Rewrite this rescue.
       rescue ::Account::AccountError => e
         report_exception_to_screen(e)
-        error!({ errors: ['market.account.insufficient_balance']}, 422)
+        error!({ errors: ['market.account.insufficient_balance'] }, 422)
       rescue ::Order::InsufficientMarketLiquidity => e
         report_exception_to_screen(e)
         error!({ errors: ['market.order.insufficient_market_liquidity'] }, 422)
@@ -81,18 +81,8 @@ module API
         error!({ errors: ['market.order.invalid_volume_or_price'] }, 422)
       rescue => e
         report_exception_to_screen(e)
-        error!({ errors: ['market.order.create_error']}, 422)
+        error!({ errors: ['market.order.create_error'] }, 422)
       end
-
-      # @deprecated
-      # def create_orders(multi_attrs)
-      #   orders = multi_attrs.map(&method(:build_order))
-      #   Ordering.new(orders).submit
-      #   orders
-      # rescue => e
-      #   report_exception_to_screen(e)
-      #   raise CreateOrderError, e.inspect
-      # end
 
       def order_param
         params[:order_by].downcase == 'asc' ? 'id asc' : 'id desc'
