@@ -7,13 +7,6 @@ module API
       module NamedParams
         extend ::Grape::API::Helpers
 
-        params :currency do
-          requires :currency,
-                  type: String,
-                  values: { value: -> { Currency.enabled.pluck(:id) }, message: 'account.currency.doesnt_exist' },
-                  desc: 'The currency code.'
-        end
-
         params :market do
           requires :market,
                   type: String,

@@ -109,7 +109,7 @@ describe API::V2::Account::Withdraws, type: :request do
       it 'doesn\'t allow fiat' do
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.currency_doesnt_exist')
+        expect(response).to include_api_error('account.currency.doesnt_exist')
       end
     end
 
@@ -120,7 +120,7 @@ describe API::V2::Account::Withdraws, type: :request do
         it 'doesn\'t allow account withdrawal API call' do
           api_post '/api/v2/account/withdraws', params: data, token: token
           expect(response).to have_http_status(422)
-          expect(JSON.parse(response.body)).to eq('errors' => ["withdraw.status.disabled"])
+          expect(response).to include_api_error('account.withdraw.disabled_api')
         end
       end
 
@@ -196,7 +196,7 @@ describe API::V2::Account::Withdraws, type: :request do
         data[:currency] = nil
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.currency_doesnt_exist')
+        expect(response).to include_api_error('account.currency.doesnt_exist')
       end
 
       it 'creates new withdraw and immediately submits it' do

@@ -47,7 +47,7 @@ module API
                    desc: 'Wallet address on the Blockchain.'
           requires :currency,
                    type: String,
-                   values: { value: -> { Currency.coins.codes(bothcase: true) }, message: 'account.withdraw.currency_doesnt_exist'},
+                   values: { value: -> { Currency.coins.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
                    desc: 'The currency code.'
           requires :amount,
                    type: { value: BigDecimal, message: 'account.withdraw.non_decimal_amount' },
