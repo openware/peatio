@@ -120,7 +120,7 @@ describe API::V2::Account::Withdraws, type: :request do
         it 'doesn\'t allow account withdrawal API call' do
           api_post '/api/v2/account/withdraws', params: data, token: token
           expect(response).to have_http_status(422)
-          expect(JSON.parse(response.body)).to eq('errors' => ["account.withdraw.disabled_api"])
+          expect(response).to include_api_error('account.withdraw.disabled_api')
         end
       end
 
