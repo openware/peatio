@@ -1,12 +1,15 @@
-/account
+# Peatio Member API errors
+
+## Account module errors
 ```
-account.currency.doesnt_exist                                 Currency doesn't exist
+account.currency.doesnt_exist                                 Currency doesn't exist in database
 account.deposit.invalid_state                                 Deposit invalid state
-account.deposit.non_integer_limit                             Value you send could not be parsed into Integer type
-account.deposit.invalid_limit                                 Invalid limit
-account.deposit.non_positive_page                             Page value must be positive
-account.deposit.empty_txid                                    Txid is missing, txid is empty
-account.deposit_address.invalid_address_format                Invalid deposit address format
+account.deposit.non_integer_limit                             Limit you submitted could not be parsed into Integer
+account.deposit.invalid_limit                                 Limit has invalid value
+account.deposit.non_positive_page                             Page must be positive number
+account.deposit.empty_txid                                    TXID is empty
+account.deposit_address.invalid_address_format                Invalid param for deposit address format
+
 account.deposit_address.doesnt_support_cash_address_format    Currency doesn't support cash address format
 account.withdraw.non_integer_limit                            Limit Value you send could not be parsed into Integer type
 account.withdraw.invalid_limit                                Invalid limit
