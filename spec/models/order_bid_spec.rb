@@ -40,16 +40,6 @@ describe OrderBid do
       end.to raise_error(Order::InsufficientMarketLiquidity)
     end
 
-    it 'should raise error if volume is too large' do
-      expect do
-        OrderBid.new(volume: '30'.to_d, ord_type: 'market').compute_locked
-      end.not_to raise_error
-
-      expect do
-        OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked
-      end.to raise_error(Order::InsufficientMarketLiquidity)
-    end
-
     it 'should make sure price is less than max_bid_price' do
       bid = OrderBid.new(market_id: market.id, price: '10.0'.to_d, ord_type: 'limit')
       expect(bid).not_to be_valid
