@@ -10,6 +10,9 @@ env:
   - RAILS_ENV=test
     RAKE_ENV=test
     DISPLAY=:0.0
+    BOT_USERNAME=kite-bot
+    BOT_NAME="Kite Bot"
+    BOT_EMAIL=kite-bot@heliostech.fr
     BULLET="true"
 
 services:
@@ -42,7 +45,14 @@ before_script:
 
 # Execute all of the commands which should make the build pass or fail.
 script:
-  URL_HOST=peatio.tech LOG_LEVEL=warn bundle exec rspec
+  URL_HOST=peatio.tech LOG_LEVEL=warn bundle exec rspec &&
+  docker build --tag rubykube/peatio:latest --target base .
+
+# Execute all of the commands which need to be executed after the build passed.
+after_success: bundle exec rake release:travis
+
+# Execute all of the commands which need to be executed after the build failed.
+after_failure:
 
 notifications:
   slack:

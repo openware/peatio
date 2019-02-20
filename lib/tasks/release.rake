@@ -1,3 +1,4 @@
+
 require 'bump'
 
 def bot_username
@@ -11,17 +12,16 @@ end
 namespace 'release' do
 
   desc 'Bump the version of the application'
-
-  task :drone do
-    unless ENV['DRONE_BRANCH'] == 'master'
-      Kernel.abort 'Bumping version aborted: branch is not a master.'
-    end
-
-    unless ENV['DRONE_PULL_REQUEST'].to_s.empty?
+  task :travis do
+    unless ENV['TRAVIS_BRANCH'] == 'master'
       Kernel.abort 'Bumping version aborted: GitHub pull request detected.'
     end
 
-    unless ENV['DRONE_TAG'].to_s.empty?
+    if ENV['TRAVIS_PULL_REQUEST'] != 'false'
+      Kernel.abort 'Bumping version aborted: GitHub pull request detected.'
+    end
+
+    unless ENV['TRAVIS_TAG'].to_s.empty?
       Kernel.abort 'Bumping version aborted: the build has been triggered by Git tag.'
     end
 
@@ -31,16 +31,8 @@ namespace 'release' do
     next_version = Bump::Bump.send(:next_version, Bump::Bump.current, 'patch')
     sh %(V='#{next_version}' bin/gendocs)
     sh %(git add -A)
-    Bump::Bump.run('patch', commit_message: '[ci skip]', tag: false)
+    Bump::Bump.run('patch', commit_message: '[skip ci]', tag: false)
     sh %(git tag #{Bump::Bump.current})
-
-    remote_sha = %x(git ls-remote authenticated-origin -h refs/heads/master).split.first
-    local_sha  = %x(git rev-parse HEAD).split.first
-
-    if remote_sha == local_sha
-      sh %(git push --tags authenticated-origin HEAD:#{ENV.fetch('DRONE_BRANCH')})
-    else
-      puts "Git history was changed"
-    end
+    sh %(git push --tags authenticated-origin HEAD:#{ENV.fetch('TRAVIS_BRANCH')})
   end
 end
