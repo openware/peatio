@@ -136,11 +136,14 @@ describe API::V2::Account::Withdraws, type: :request do
         end
       end
 
-      it 'validates missing otp param' do
-        data.except!(:otp)
+      it 'validates missing params' do
+        data.except!(:otp, :rid, :amount, :currency)
         api_post '/api/v2/account/withdraws', params: data, token: token
         expect(response).to have_http_status(422)
-        expect(response).to include_api_error('account.withdraw.empty_otp')
+        expect(response).to include_api_error('account.withdraw.missing_otp')
+        expect(response).to include_api_error('account.withdraw.missing_rid')
+        expect(response).to include_api_error('account.withdraw.missing_amount')
+        expect(response).to include_api_error('account.withdraw.missing_currency')
       end
 
       it 'requires otp' do

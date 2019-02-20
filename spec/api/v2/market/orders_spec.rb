@@ -169,6 +169,16 @@ describe API::V2::Market::Orders, type: :request do
       end.to change(OrderBid, :count).by(1)
     end
 
+    it 'validates missing params' do
+      member.get_account(:usd).update_attributes(balance: 100_000)
+      api_post '/api/v2/market/orders', token: token
+      expect(response).to have_http_status(422)
+      expect(response).to include_api_error('market.order.missing_market')
+      expect(response).to include_api_error('market.order.missing_side')
+      expect(response).to include_api_error('market.order.missing_volume')
+      expect(response).to include_api_error('market.order.missing_price')
+    end
+
     it 'validates volume positiveness' do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '-1.1', price: '2014' }
