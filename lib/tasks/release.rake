@@ -1,4 +1,3 @@
-
 require 'bump'
 
 def bot_username
