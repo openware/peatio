@@ -1,6 +1,6 @@
 <h3>Blockchain info</h3>
 
-<% @blockchain_clients = ENV['BLOCKCHAIN_CLIENTS'].split(',').map{ |bc| [bc.titleize, bc] } %>
+<% @blockchain_clients = Peatio::BlockchainService.adapters.keys.map{ |bc| [bc.to_s.titleize, bc] } %>
 
 <%= form_for @blockchain, url: @blockchain.new_record? ? admin_blockchains_url : admin_blockchain_url(@blockchain.id) do |f| %>
   <div class="card-deck float-left col-lg-<%= @blockchain.new_record? ? '12' : '10' %>">
