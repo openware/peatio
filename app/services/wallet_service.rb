@@ -91,5 +91,15 @@ module WalletService
         .ordered
         .where(currency_id: deposit.currency_id)
     end
+
+    def update_or_create_deposit!(deposit_hash)
+      deposit = Deposits::Coin
+                  .where(currency: wallet.currency)
+                  .find_or_create_by!(deposit_hash.slice(:txid, :txout)) do |deposit|
+                    deposit.assign_attributes(deposit_hash)
+                  end
+
+      deposit.collect! if deposit.accept!
+    end
   end
 end

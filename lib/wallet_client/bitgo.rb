@@ -51,7 +51,59 @@ module WalletClient
       convert_from_base_unit(wallet_details(true).fetch('balanceString'))
     end
 
+    def fetch_deposits(raise = true)
+      next_batch_ref = nil
+      collected      = []
+      loop do
+        begin
+          batch_deposits = nil
+          query          = { limit: 100, prevId: next_batch_ref }
+          response       = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', query)
+          next_batch_ref = response['nextBatchPrevId']
+          batch_deposits = build_deposits(response.fetch('transfers'))
+        rescue => e
+          report_exception(e)
+          raise e if raise
+        end
+        collected += batch_deposits
+        break if next_batch_ref.blank?
+      end
+      collected
+    end
+
     protected
+
+    def build_deposits(transfers)
+      transfers.each_with_object([]) do |tx, deposits|
+        entries = build_deposit_entries(tx)
+        next if entries.blank? && tx.fetch('type') != 'recieve'
+        entries.each_with_index do |entry, i|
+          deposits << { txid:         normalize_txid(tx.fetch('txid')),
+                      address:       entry.fetch(:address),
+                      block_number:  tx.fetch('height').to_i,
+                      amount:        entry.fetch(:amount),
+                      member:        entry.fetch(:member),
+                      currency:      wallet.currency,
+                      txout:         i,
+                      created_at:   Time.parse(tx.fetch('date')) }
+        end
+      end
+    end
+
+    def build_deposit_entries(tx)
+      tx.fetch('entries').each_with_object([]) do |entry, entries|
+        next unless entry['wallet'] == wallet_id
+        next unless entry['valueString'].to_d > 0
+        next if entry.key?('outputs') && entry['outputs'] != 1
+        payment_address = PaymentAddress.find_by(currency_id: wallet.currency, address: entry['address'])
+        next unless payment_address
+        entries << {
+          address: payment_address.address,
+          member:  payment_address.account.member,
+          amount:  convert_from_base_unit(entry.fetch('valueString'))
+        }
+      end
+    end
 
     def rest_api(verb, path, data = nil, raise_error = true)
       args = [@endpoint + path]

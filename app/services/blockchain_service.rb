@@ -28,6 +28,12 @@ module BlockchainService
       @client     = BlockchainClient[blockchain.key]
     end
 
+    def process_blockchain(_a)
+      @blockchain.wallets.active.deposit.where(gateway: :bitgo).each do |w|
+        WalletService[w].process_blockchain!
+      end
+    end
+
     protected
 
     def save_block(block, latest_block_number)

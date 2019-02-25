@@ -11,6 +11,11 @@ services:
     ports:
       - "3306:3306"
 
+  coinhub:
+    image: rubykube/coinhub
+    ports:
+      - "3080:3080"
+  
   redis:
     image: redis:4.0
     volumes:
