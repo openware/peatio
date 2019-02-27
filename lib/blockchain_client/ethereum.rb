@@ -8,6 +8,7 @@ module BlockchainClient
     SUCCESS = '0x1'
 
     def initialize(*)
+      binding.pry
       super
       @json_rpc_call_id  = 0
       @json_rpc_endpoint = URI.parse(blockchain.server)

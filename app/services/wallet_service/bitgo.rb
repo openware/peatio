@@ -11,7 +11,6 @@ module WalletService
       client.fetch_deposits(options).each do |deposit|
         received_at = deposit[:created_at]
         Rails.logger.debug { "Processing deposit received at #{received_at.to_s('%Y-%m-%d %H:%M %Z')}." } if received_at
-        update_or_create_deposit!(deposit)
         processed += 1
         Rails.logger.info { "Processed #{processed} #{wallet.currency.code.upcase} #{'deposit'.pluralize(processed)}." }
         # break if processed >= 100 || (received_at && received_at <= 1.hour.ago)
