@@ -59,7 +59,7 @@ module WalletClient
       response = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', limit: 1)
       transfer = response.fetch('transfers').first
       confirmations = transfer.fetch('confirmations')
-      height = transfer.fetch('height').to_i
+      height = transfer.fetch('height')
       block_number = height + confirmations - 1
       Rails.cache.write("latest_offline_block_number", block_number)
       block_number

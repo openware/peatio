@@ -69,16 +69,19 @@ module WalletService
       loop do
         begin
           batch_deposits = nil
-          query          = { limit: 100, prevId: next_batch_ref }
+          query          = { limit: 2, type: 'receive', prevId: next_batch_ref }
           response       = client.get_transfers(query)
-          Rails.logger.info { "Get #{response.count} transfers for #{wallet.name}" }
+          Rails.logger.info { "Get #{response.fetch('transfers').count} transfers for #{wallet.name}" }
           next_batch_ref = response['nextBatchPrevId']
-          batch_deposits = client.build_deposits(response.fetch('transfers'))
+          confirmations = response.fetch('transfers').last.fetch('confirmations')
+          binding.pry
+          # break if confirmations > wallet.blockchain.min_confirmations
         rescue => e
           report_exception(e)
           raise e if raise
         end
-        collected += batch_deposits
+        binding.pry
+        # collected += batch_deposits
         break if next_batch_ref.blank?
       end
       Rails.logger.info { "Processed #{collected.count} #{wallet.currency.code.upcase} #{'deposit'.pluralize(collected.count)}." }
