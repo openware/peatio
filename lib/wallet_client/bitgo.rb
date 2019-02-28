@@ -51,26 +51,8 @@ module WalletClient
       convert_from_base_unit(wallet_details(true).fetch('balanceString'))
     end
 
-    def fetch_deposits(raise = true)
-      next_batch_ref = nil
-      collected = []
-      loop do
-        begin
-          batch_deposits = nil
-          query          = { limit: 100, prevId: next_batch_ref }
-          response       = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', query)
-          Rails.logger.info { "Get #{response.count} transfers for #{wallet.name}" }
-          next_batch_ref = response['nextBatchPrevId']
-          batch_deposits = build_deposits(response.fetch('transfers'))
-        rescue => e
-          report_exception(e)
-          raise e if raise
-        end
-        collected += batch_deposits
-        break if next_batch_ref.blank?
-      end
-      Rails.logger.info { "Processed #{collected.count} #{wallet.currency.code.upcase} #{'deposit'.pluralize(collected.count)}." }
-      collected
+    def get_transfers(query)
+      rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', query)
     end
 
     def latest_block_number
@@ -78,19 +60,18 @@ module WalletClient
       transfer = response.fetch('transfers').first
       confirmations = transfer.fetch('confirmations')
       height = transfer.fetch('height').to_i
-      block_number = height + confirmations -1
+      block_number = height + confirmations - 1
       Rails.cache.write("latest_offline_block_number", block_number)
       block_number
     end
-    protected
 
     def build_deposits(transfers)
       transfers.each_with_object([]) do |tx, deposits|
         entries = build_deposit_entries(tx)
-        next if entries.blank? && tx.fetch('type') != 'recieve'
+        next if entries.blank? && tx.fetch('type') != 'recieve' && tx.fetch('state') != 'confirmed'
         entries.each_with_index do |entry, i|
           Rails.logger.debug { "Processing deposit received at #{Time.parse(tx.fetch('date'))}." }
-          deposits << { txid:         normalize_txid(tx.fetch('txid')),
+          deposits << { txid:          normalize_txid(tx.fetch('txid')),
                         address:       entry.fetch(:address),
                         block_number:  tx.fetch('height').to_i,
                         amount:        entry.fetch(:amount),
@@ -102,20 +83,7 @@ module WalletClient
       end
     end
 
-    def build_deposit_entries(tx)
-      tx.fetch('entries').each_with_object([]) do |entry, entries|
-        next unless entry['wallet'] == wallet_id
-        next unless entry['valueString'].to_d > 0
-        next if entry.key?('outputs') && entry['outputs'] != 1
-        payment_address = PaymentAddress.find_by(currency_id: wallet.currency, address: entry['address'])
-        next unless payment_address
-        entries << {
-          address: payment_address.address,
-          member:  payment_address.account.member,
-          amount:  convert_from_base_unit(entry.fetch('valueString'))
-        }
-      end
-    end
+    protected
 
     def rest_api(verb, path, data = nil, raise_error = true)
       args = [@endpoint + path]
@@ -141,6 +109,22 @@ module WalletClient
       response.assert_success! if raise_error
       JSON.parse(response.body)
     end
+
+    def build_deposit_entries(tx)
+      tx.fetch('entries').each_with_object([]) do |entry, entries|
+        next unless entry['wallet'] == wallet.bitgo_wallet_id
+        next unless entry['valueString'].to_d > 0
+        next if entry.key?('outputs') && entry['outputs'] != 1
+        payment_address = PaymentAddress.find_by(currency_id: wallet.currency, address: entry['address'])
+        next unless payment_address
+        entries << {
+          address: payment_address.address,
+          member:  payment_address.account.member,
+          amount:  convert_from_base_unit(entry.fetch('valueString'))
+        }
+      end
+    end
+
 
     def wallet_details(_state)
       rest_api(:get, '/wallet/' + urlsafe_wallet_id)

@@ -8,7 +8,7 @@ module WalletService
       block = {}
       Rails.logger.info { "Processing Bitgo #{wallet.currency.code.upcase} deposits." }
       options   = client.is_a?(WalletClient::Ethereum) ? { transactions_limit: 100 } : { }
-      block[:deposits] = client.fetch_deposits(options)
+      block[:deposits] = fetch_deposits(options)
       latest_block_number = client.latest_block_number
       Rails.logger.info { "Finished processing #{wallet.currency.code.upcase} deposits." }
       return block, latest_block_number
@@ -61,6 +61,28 @@ module WalletService
 
     def load_balance(address, currency)
       client.load_balance!(address, currency)
+    end
+
+    def fetch_deposits(raise = true)
+      next_batch_ref = nil
+      collected = []
+      loop do
+        begin
+          batch_deposits = nil
+          query          = { limit: 100, prevId: next_batch_ref }
+          response       = client.get_transfers(query)
+          Rails.logger.info { "Get #{response.count} transfers for #{wallet.name}" }
+          next_batch_ref = response['nextBatchPrevId']
+          batch_deposits = client.build_deposits(response.fetch('transfers'))
+        rescue => e
+          report_exception(e)
+          raise e if raise
+        end
+        collected += batch_deposits
+        break if next_batch_ref.blank?
+      end
+      Rails.logger.info { "Processed #{collected.count} #{wallet.currency.code.upcase} #{'deposit'.pluralize(collected.count)}." }
+      collected
     end
   end
 end

@@ -8,8 +8,14 @@ module BlockchainService
 
       ActiveRecord::Base.transaction do
         update_or_create_deposits!(block[:deposits])
+        update_height(latest_block_number)
       end
       # save_block(block_data, latest_ledger)
     end
+
+    def update_height(latest_block)
+      blockchain.update(height: latest_block)
+    end
+
   end
 end
