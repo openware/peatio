@@ -4,9 +4,12 @@
 module BlockchainService
   class Offline < Base
     def process_blockchain(blocks_limit: 100, force: false)
-      return super
+      block, latest_block_number = super
 
-      save_block(block_data, latest_ledger)
+      ActiveRecord::Base.transaction do
+        update_or_create_deposits!(block[:deposits])
+      end
+      # save_block(block_data, latest_ledger)
     end
   end
 end

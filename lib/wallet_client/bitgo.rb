@@ -53,12 +53,13 @@ module WalletClient
 
     def fetch_deposits(raise = true)
       next_batch_ref = nil
-      collected      = []
+      collected = []
       loop do
         begin
           batch_deposits = nil
           query          = { limit: 100, prevId: next_batch_ref }
           response       = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', query)
+          Rails.logger.info { "Get #{response.count} transfers for #{wallet.name}" }
           next_batch_ref = response['nextBatchPrevId']
           batch_deposits = build_deposits(response.fetch('transfers'))
         rescue => e
@@ -68,9 +69,19 @@ module WalletClient
         collected += batch_deposits
         break if next_batch_ref.blank?
       end
+      Rails.logger.info { "Processed #{collected.count} #{wallet.currency.code.upcase} #{'deposit'.pluralize(collected.count)}." }
       collected
     end
 
+    def latest_block_number
+      response = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', limit: 1)
+      transfer = response.fetch('transfers').first
+      confirmations = transfer.fetch('confirmations')
+      height = transfer.fetch('height').to_i
+      block_number = height + confirmations -1
+      Rails.cache.write("latest_offline_block_number", block_number)
+      block_number
+    end
     protected
 
     def build_deposits(transfers)
@@ -78,14 +89,15 @@ module WalletClient
         entries = build_deposit_entries(tx)
         next if entries.blank? && tx.fetch('type') != 'recieve'
         entries.each_with_index do |entry, i|
+          Rails.logger.debug { "Processing deposit received at #{Time.parse(tx.fetch('date'))}." }
           deposits << { txid:         normalize_txid(tx.fetch('txid')),
-                      address:       entry.fetch(:address),
-                      block_number:  tx.fetch('height').to_i,
-                      amount:        entry.fetch(:amount),
-                      member:        entry.fetch(:member),
-                      currency:      wallet.currency,
-                      txout:         i,
-                      created_at:   Time.parse(tx.fetch('date')) }
+                        address:       entry.fetch(:address),
+                        block_number:  tx.fetch('height').to_i,
+                        amount:        entry.fetch(:amount),
+                        member:        entry.fetch(:member),
+                        currency:      wallet.currency,
+                        txout:         i,
+                        created_at:    Time.parse(tx.fetch('date')) }
         end
       end
     end

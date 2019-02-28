@@ -30,8 +30,9 @@ module BlockchainService
 
     def process_blockchain(_a)
       @blockchain.wallets.active.deposit.where(gateway: :bitgo).each do |w|
-        WalletService[w].process_blockchain!
+        @bitgo_block, @bitgo_latest_block_number = WalletService[w].process_blockchain!
       end
+      return @bitgo_block, @bitgo_latest_block_number
     end
 
     protected
@@ -60,7 +61,6 @@ module BlockchainService
                     .find_or_create_by!(deposit_hash.slice(:txid, :txout)) do |deposit|
                       deposit.assign_attributes(deposit_hash)
                     end
-
         deposit.update_column(:block_number, deposit_hash.fetch(:block_number))
         if deposit.confirmations >= blockchain.min_confirmations
           deposit.collect! if deposit.accept!

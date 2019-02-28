@@ -5,17 +5,13 @@ module WalletService
   class Bitgo < Base
 
     def process_blockchain!
+      block = {}
       Rails.logger.info { "Processing Bitgo #{wallet.currency.code.upcase} deposits." }
-      processed = 0
       options   = client.is_a?(WalletClient::Ethereum) ? { transactions_limit: 100 } : { }
-      client.fetch_deposits(options).each do |deposit|
-        received_at = deposit[:created_at]
-        Rails.logger.debug { "Processing deposit received at #{received_at.to_s('%Y-%m-%d %H:%M %Z')}." } if received_at
-        processed += 1
-        Rails.logger.info { "Processed #{processed} #{wallet.currency.code.upcase} #{'deposit'.pluralize(processed)}." }
-        # break if processed >= 100 || (received_at && received_at <= 1.hour.ago)
-      end
+      block[:deposits] = client.fetch_deposits(options)
+      latest_block_number = client.latest_block_number
       Rails.logger.info { "Finished processing #{wallet.currency.code.upcase} deposits." }
+      return block, latest_block_number
     rescue => e
       report_exception(e)
     end
