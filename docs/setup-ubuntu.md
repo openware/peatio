@@ -195,7 +195,7 @@ mkdir code
 cd code
 git clone https://github.com/rubykube/peatio.git
 cd peatio
-bundle config build.digest-sha3 --with-cflags="-Wno-format-security"
+(optional) bundle config build.digest-sha3 --with-cflags="-Wno-format-security"
 bundle install
 ```
 
