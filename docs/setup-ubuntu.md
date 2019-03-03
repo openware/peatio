@@ -135,13 +135,11 @@ testnet=1
 # You must set rpcuser and rpcpassword to secure the JSON-RPC api
 # Please make rpcpassword to something secure, `5gKAgrJv8CQr2CGUhjVbBFLSj29HnE6YGXvfykHJzS3k` for example.
 # Listen for JSON-RPC connections on <port> (default: 8332 or testnet: 18332)
+# Read an understand the implications of paramaters like rpcbind and rpcallowip before deploying any blockchain in mainnet
 rpcuser=USERNAME
 rpcpassword=PASSWORD
 rpcport=18332
 
-# Notify when receiving coins
-walletnotify=/usr/local/sbin/rabbitmqadmin publish routing_key=peatio.deposit.coin payload='{"txid":"%s", "currency":"btc"}'
-```
 
 Start bitcoin daemon:
 
