@@ -26,7 +26,6 @@ module HasOneBlockchainThroughCurrency
 
   def confirmations
     return 0 if block_number.blank?
-    # return 5 if Wallet.deposit.active.find_by(currency: currency).gateway == 'bitgo'
     return latest_block_number - block_number if (latest_block_number - block_number) >= 0
     'N/A'
   rescue Faraday::ConnectionFailed => e

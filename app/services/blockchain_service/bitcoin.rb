@@ -7,7 +7,6 @@ module BlockchainService
     def process_blockchain(blocks_limit: 6, force: false)
 
       super
-      return
       latest_block = client.latest_block_number
       # Don't start process if we didn't receive new blocks.
       if blockchain.height + blockchain.min_confirmations >= latest_block && !force
@@ -31,7 +30,6 @@ module BlockchainService
         block_data = { id: block_id }
         block_data[:deposits]    = build_deposits(block_json, block_id)
         block_data[:withdrawals] = build_withdrawals(block_json, block_id)
-
         save_block(block_data, latest_block)
 
         Rails.logger.info { "Finished processing #{blockchain.key} block number #{block_id}." }

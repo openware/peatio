@@ -1,18 +1,18 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 module WalletService
   class Bitgo < Base
-
     def process_blockchain!
       block = {}
-      Rails.logger.info { "Processing Bitgo #{wallet.currency.code.upcase} deposits." }
-      options   = client.is_a?(WalletClient::Ethereum) ? { transactions_limit: 100 } : { }
-      block[:deposits] = fetch_deposits(options)
+      Rails.logger.info { "Processing Bitgo #{wallet.currency.code.upcase} transfers." }
+      options = client.is_a?(WalletClient::Ethereum) ? { transactions_limit: 100 } : {}
+      block[:deposits] = fetch_deposits(options) if wallet.kind == 'deposit'
+      binding.pry
+      block[:withdrawals] = fetch_withdraws(options) if wallet.kind != 'deposit'
       latest_block_number = client.latest_block_number
       Rails.logger.info { "Finished processing #{wallet.currency.code.upcase} deposits." }
-      return block, latest_block_number
-    rescue => e
+      [block, latest_block_number]
+    rescue StandardError => e
       report_exception(e)
     end
 
@@ -20,24 +20,24 @@ module WalletService
       @client.create_address!(options)
     end
 
-    def collect_deposit!(deposit, options={})
+    def collect_deposit!(deposit, options = {})
       destination_address = destination_wallet(deposit).address
       pa = deposit.account.payment_address
 
       # This builds a transaction object, but does not sign or send it.
       fee = client.build_raw_transaction(
-          { address: destination_address },
-          deposit.amount
+        { address: destination_address },
+        deposit.amount
       )
 
       # We can't collect all funds we need to subtract txn fee.
       amount = deposit.amount - fee
 
       client.create_withdrawal!(
-          { address: pa.address },
-          { address: destination_address },
-          amount,
-          options
+        { address: pa.address },
+        { address: destination_address },
+        amount,
+        options
       )
     end
 
@@ -45,22 +45,46 @@ module WalletService
       # TODO: Dynamicly check wallet balance and select where to send funds.
       # For keeping it simple we will collect all funds to hot wallet.
       Wallet
-          .active
-          .withdraw
-          .find_by(currency_id: deposit.currency_id, kind: :hot)
+        .active
+        .withdraw
+        .find_by(currency_id: deposit.currency_id, kind: :hot)
     end
 
     def build_withdrawal!(withdraw, options = {})
       client.create_withdrawal!(
-          { address: wallet.address },
-          { address: withdraw.rid },
-          withdraw.amount,
-          options
+        { address: wallet.address },
+        { address: withdraw.rid },
+        withdraw.amount,
+        options
       )
     end
 
     def load_balance(address, currency)
       client.load_balance!(address, currency)
+    end
+
+    def fetch_withdraws(raise = true)
+      next_batch_ref = nil
+      collected = []
+      loop do
+        begin
+          batch_withdraws = nil
+          query          = { limit: 50, type: 'send', prevId: next_batch_ref }
+          response       = client.get_transfers(query)
+          transfers      = response.fetch('transfers')
+          Rails.logger.info { "Get #{transfers.count} outcome transfers for #{wallet.name}" }
+          next_batch_ref = response['nextBatchPrevId']
+          blockchain = wallet.blockchain
+        rescue StandardError => e
+          report_exception(e)
+          raise e if raise
+        end
+        collected += transfers
+        break if blockchain.height - transfers.last.fetch('height') > blockchain.min_confirmations
+        break if next_batch_ref.blank? 
+      end
+      Rails.logger.info { "Processed #{collected.count} #{wallet.currency.code.upcase} #{'withdraw'.pluralize(collected.count)}." }
+      return client.build_withdraws(collected)
     end
 
     def fetch_deposits(raise = true)
@@ -69,23 +93,22 @@ module WalletService
       loop do
         begin
           batch_deposits = nil
-          query          = { limit: 2, type: 'receive', prevId: next_batch_ref }
+          query          = { limit: 50, type: 'receive', prevId: next_batch_ref }
           response       = client.get_transfers(query)
-          Rails.logger.info { "Get #{response.fetch('transfers').count} transfers for #{wallet.name}" }
+          transfers      = response.fetch('transfers')
+          Rails.logger.info { "Get #{transfers.count} income transfers for #{wallet.name}" }
           next_batch_ref = response['nextBatchPrevId']
-          confirmations = response.fetch('transfers').last.fetch('confirmations')
-          binding.pry
-          # break if confirmations > wallet.blockchain.min_confirmations
-        rescue => e
+          blockchain = wallet.blockchain
+        rescue StandardError => e
           report_exception(e)
           raise e if raise
         end
-        binding.pry
-        # collected += batch_deposits
-        break if next_batch_ref.blank?
+        collected += transfers
+        break if blockchain.height - transfers.last.fetch('height') > blockchain.min_confirmations
+        break if next_batch_ref.blank? 
       end
       Rails.logger.info { "Processed #{collected.count} #{wallet.currency.code.upcase} #{'deposit'.pluralize(collected.count)}." }
-      collected
+      return client.build_deposits(collected)
     end
   end
 end

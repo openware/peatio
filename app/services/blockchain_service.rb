@@ -29,25 +29,26 @@ module BlockchainService
     end
 
     def process_blockchain(_a)
-      @blockchain.wallets.active.deposit.where(gateway: :bitgo).each do |w|
+      @blockchain.wallets.active.where(gateway: :bitgo).each do |w|
         @bitgo_block, @bitgo_latest_block_number = WalletService[w].process_blockchain!
       end
+      binding.pry
       return @bitgo_block, @bitgo_latest_block_number
     end
 
     protected
 
     def save_block(block, latest_block_number)
-      block[:deposits].map { |d| d[:txid] }.join(',').tap do |txids|
-        Rails.logger.info { "Deposit trancations in block #{block[:id]}: #{txids}" }
-      end
+      # block[:deposits].map { |d| d[:txid] }.join(',').tap do |txids|
+      #   Rails.logger.info { "Deposit trancations in block #{block[:id]}: #{txids}" }
+      # end
 
-      block[:withdrawals].map { |d| d[:txid] }.join(',').tap do |txids|
-        Rails.logger.info { "Withdraw trancations in block #{block[:id]}: #{txids}" }
-      end
-
+      # block[:withdrawals].map { |d| d[:txid] }.join(',').tap do |txids|
+      #   Rails.logger.info { "Withdraw trancations in block #{block[:id]}: #{txids}" }
+      # end
+      binding.pry
       ActiveRecord::Base.transaction do
-        update_or_create_deposits!(block[:deposits])
+        update_or_create_deposits!(block[:deposits]) if block[:deposits]
         update_withdrawals!(block[:withdrawals])
         update_height(block[:id], latest_block_number)
       end

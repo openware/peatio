@@ -56,19 +56,21 @@ module WalletClient
     end
 
     def latest_block_number
-      response = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', limit: 1)
+      response = rest_api(:get, '/wallet/' + urlsafe_wallet_id + '/transfer', limit: 1, state: 'confirmed')
       transfer = response.fetch('transfers').first
       confirmations = transfer.fetch('confirmations')
       height = transfer.fetch('height')
       block_number = height + confirmations - 1
-      Rails.cache.write("latest_offline_block_number", block_number)
+      Rails.cache.write("latest_#{wallet.blockchain_key}_block_number", block_number)
       block_number
     end
 
     def build_deposits(transfers)
       transfers.each_with_object([]) do |tx, deposits|
+        next if wallet.blockchain.height - tx.fetch('height') > wallet.blockchain.min_confirmations
+        next unless tx.fetch('type') == 'recieve' && tx.fetch('state') == 'confirmed' 
         entries = build_deposit_entries(tx)
-        next if entries.blank? && tx.fetch('type') != 'recieve' && tx.fetch('state') != 'confirmed'
+        next if entries.blank?
         entries.each_with_index do |entry, i|
           Rails.logger.debug { "Processing deposit received at #{Time.parse(tx.fetch('date'))}." }
           deposits << { txid:          normalize_txid(tx.fetch('txid')),
@@ -80,6 +82,28 @@ module WalletClient
                         txout:         i,
                         created_at:    Time.parse(tx.fetch('date')) }
         end
+      end
+    end
+
+    def build_withdraws(transfers)
+      transfers.each_with_object([]) do |tx, withdraws|
+        next if wallet.blockchain.height - tx.fetch('height') > wallet.blockchain.min_confirmations
+        next unless tx.fetch('type') == 'send' && tx.fetch('state') == 'confirmed'
+
+        Withdraws::Coin
+          .where(currency: wallet.currency)
+          .where(txid: normalize_txid(tx.fetch('txid')))
+          .each do |withdraw|
+            entries = build_withdraw_entries(tx, withdraw)
+            next if entries.blank?
+            entries.each_with_index do |entry, i|
+              Rails.logger.debug { "Processing deposit received at #{Time.parse(tx.fetch('date'))}." }
+              withdraws << { txid:          normalize_txid(tx.fetch('txid')),
+                            rid:            entry.fetch(:address),
+                            block_number:   tx.fetch('height').to_i,
+                            amount:         entry.fetch(:amount) }
+            end
+          end
       end
     end
 
@@ -114,12 +138,27 @@ module WalletClient
       tx.fetch('entries').each_with_object([]) do |entry, entries|
         next unless entry['wallet'] == wallet.bitgo_wallet_id
         next unless entry['valueString'].to_d > 0
-        next if entry.key?('outputs') && entry['outputs'] != 1
+        # next if entry.key?('outputs') && entry['outputs'] != 1
         payment_address = PaymentAddress.find_by(currency_id: wallet.currency, address: entry['address'])
         next unless payment_address
         entries << {
           address: payment_address.address,
           member:  payment_address.account.member,
+          amount:  convert_from_base_unit(entry.fetch('valueString'))
+        }
+      end
+    end
+
+    def build_withdraw_entries(tx, withdraw)
+      tx.fetch('entries').each_with_object([]) do |entry, entries|
+        # next unless entry['wallet'] == wallet.bitgo_wallet_id
+        next unless entry['valueString'].to_d > 0
+        next unless withdraw.rid == entry.fetch('address')
+        # next if entry.key?('outputs') && entry['outputs'] != 1
+        # payment_address = PaymentAddress.find_by(currency_id: wallet.currency, address: entry['address'])
+        # next unless payment_address
+        entries << {
+          address: entry.fetch('address'),
           amount:  convert_from_base_unit(entry.fetch('valueString'))
         }
       end
