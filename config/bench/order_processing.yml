@@ -5,7 +5,7 @@
     #
     # Generic config.
     injector:   dummy   # Order injector name.
-    number:     10000   # Number of orders to be created and published to RabbitMQ (at least 100_000).
+    number:     1200    # Number of orders to be created and published to RabbitMQ (at least 2000).
     markets:    usdeur  # Markets for performing trading.
     #
     # Dummy injector specific config.
@@ -21,7 +21,7 @@
     #
     # Generic config.
     injector:       bitfinex  # Order injector name.
-    number:         10000     # Number of orders to be created and published to RabbitMQ (at least 100_000).
+    number:         1200      # Number of orders to be created and published to RabbitMQ (at least 2000).
     markets:        usdeur    # Markets for performing trading.
     #
     # Bitfinex injector specific config.
