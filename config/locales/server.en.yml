@@ -396,11 +396,12 @@ en:
       fiats:
         show:
           alert: Recharge cannot be located.
-          notice: The recharge have been successful.
           deposit: Deposit Request
           accept: Accept
           target_deposit: Wire Transfer
           confirm: Confirm recharge?
+        update:
+          notice: The recharge have been successful
       coins:
         update:
           notice: The deposit was successful.

@@ -18,7 +18,6 @@ module Admin
 
       def show
         @deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
-        flash.now[:notice] = t('.notice') if @deposit.accepted?
       end
 
       def create
@@ -32,14 +31,16 @@ module Admin
       end
 
       def update
-        deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
+        @deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
         case params.fetch(:commit)
         when 'Accept'
-          deposit.charge!
+          @deposit.charge!
+          flash.keep[:notice] = t('.notice')
         when 'Reject'
-          deposit.reject!
+          @deposit.reject!
         end
-        redirect_to :back
+        @deposit.reload
+        render :show
       end
 
     private
