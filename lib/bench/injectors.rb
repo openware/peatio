@@ -32,7 +32,11 @@ module Bench
       end
 
       def pop
-        @queue.empty? ? nil : @queue.pop
+        # Use non_blocking pop.
+        @queue.pop(true)
+      rescue ThreadError
+        # Return nil in case of empty queue.
+        nil
       end
 
       def size

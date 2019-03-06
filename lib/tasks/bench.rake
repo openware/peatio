@@ -2,13 +2,20 @@
 
 namespace :bench do
   desc 'Matching'
-  task :matching, [:config_load_path] => [:environment] do |t, args|
+  task :matching, [:config_load_path] => [:environment] do |_t, args|
     args.with_defaults(:config_load_path => 'config/bench/matching.yml')
 
-    matching = Bench::Matching.new(args[:config_load_path])
-    matching.run!
+    benches =
+      YAML.load_file(Rails.root.join(args[:config_load_path]))
+        .map(&:deep_symbolize_keys)
+        .each_with_object([]) do |config, memo|
+          Kernel.pp config
 
-    # Temporary just print benchmark results.
-    Kernel.puts matching.result
+          matching = Bench::Matching.new(config)
+          matching.run!
+          memo << matching
+        end
+
+    benches.each {|b| Kernel.pp b.result}
   end
 end

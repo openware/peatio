@@ -5,8 +5,8 @@ require_relative 'injectors'
 module Bench
   class Matching
     # TODO: Custom config file support.
-    def initialize(config_file_path)
-      @config = YAML.load_file(Rails.root.join(config_file_path)).deep_symbolize_keys
+    def initialize(config)
+      @config = config
 
       # TODO: Use Faraday instead of RabbitMQ::HTTP::Client.
       @rmq_http_client = ::URI::HTTP.build(
@@ -80,9 +80,9 @@ module Bench
         matching_ops =  @orders_number / (@matching_finished_at - @publish_started_at)
 
         { config: @config,
-          publish_started_at: @publish_started_at,
-          publish_finished_at: @publish_finished_at,
-          matching_finished_at: @matching_finished_at,
+          publish_started_at: @publish_started_at.iso8601(6),
+          publish_finished_at: @publish_finished_at.iso8601(6),
+          matching_finished_at: @matching_finished_at.iso8601(6),
           publish_ops: publish_ops,
           matching_ops: matching_ops }
       end

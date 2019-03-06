@@ -1,9 +1,0 @@
-currencies: usd,eur
-traders:    2
-threads:    50
-orders:
-  injector:       bitfinex
-  number:         6200
-  markets:        usdeur
-  data_load_path: 'config/bench/neo-usd-data.csv'
-
