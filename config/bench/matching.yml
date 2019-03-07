@@ -1,6 +1,7 @@
-- currencies: usd,eur   # List of fiat currencies for creating deposits.
-  traders:    25        # Number of members who will trade.
-  threads:    50        # Number of simultaneous threads which will publish messages to RabbitMQ.
+- currencies:   usd,eur   # List of fiat currencies for creating deposits.
+  traders:      25        # Number of members who will trade.
+  threads:      50        # Number of simultaneous threads which will publish messages to RabbitMQ.
+  report_path:  reports   # Default path for test results file directory
   orders:
     #
     # Generic config.
@@ -14,9 +15,10 @@
     min_price:  0.5     # Order min price (default 0.5).
     max_price:  2.0     # Order max price (default 2.0).
 
-- currencies: usd,eur   # List of fiat currencies for creating deposits.
-  traders:    25        # Number of members who will trade.
-  threads:    50        # Number of simultaneous threads which will publish messages to RabbitMQ.
+- currencies:  usd,eur   # List of fiat currencies for creating deposits.
+  traders:     25        # Number of members who will trade.
+  threads:     50        # Number of simultaneous threads which will publish messages to RabbitMQ.
+  report_path: reports   # Default path for test results file directory
   orders:
     #
     # Generic config.

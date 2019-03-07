@@ -95,9 +95,12 @@ module Bench
       end
     end
 
-    # TODO: Implement method for saving report to file.
-    # File path should be configured from config.
     def save_report
+      report_name = "#{self.class.name.humanize.demodulize}_#{@config[:orders][:injector]}_\
+                     #{@config[:orders][:number]}_#{Time.now.iso8601}.yml"
+      File.open(Rails.root.join(@config[:report_path], report_name, 'w')) do |f|
+        f.puts YAML.dump(@result.deep_stringify_keys)
+      end
     end
 
     private
