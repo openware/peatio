@@ -23,12 +23,16 @@ module Bench
     def result
       @result ||=
         begin
-          trades_ops = trades_number / (@execution_finished_at - @publish_started_at)
+          trades_number = Trade.where('created_at >= ?', @publish_started_at).length
+          trades_ops = trades_number / (@execution_finished_at - @execution_started_at)
 
           super.merge(
-            execution_started_at: @execution_started_at.iso8601(6),
-            execution_finished_at: @execution_finished_at.iso8601(6),
-            trades_ops: trades_ops
+            trade_execution: {
+              started_at:  @execution_started_at.iso8601(6),
+              finished_at: @execution_finished_at.iso8601(6),
+              operations:  trades_number,
+              ops:         trades_ops
+            }
           )
         end
     end
@@ -36,10 +40,6 @@ module Bench
     private
     def trade_execution_queue_status
       @rmq_http_client.list_queues.find { |q| q[:name] == AMQPConfig.binding_queue(:trade_executor).first }
-    end
-
-    def trades_number
-      Trade.where('created_at >= ?', @publish_started_at).length
     end
   end
 end

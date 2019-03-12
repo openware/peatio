@@ -37,7 +37,7 @@ module Bench
       @orders_number = @injector.size
 
       Kernel.puts "Publishing messages to RabbitMQ..."
-      @publish_started_at = Time.now
+      @matching_started_at = @publish_started_at = Time.now
       # TODO: Add orders publishing progress bar.
       publish_messages
 
@@ -82,16 +82,23 @@ module Bench
       @result ||=
       begin
         publish_ops =  @orders_number / (@publish_finished_at - @publish_started_at)
-        matching_ops =  @orders_number / (@matching_finished_at - @publish_started_at)
+        matching_ops = @orders_number / (@matching_finished_at - @publish_started_at)
 
         # TODO: Deal with calling iso8601(6) everywhere.
         { config: @config,
-          publish_started_at: @publish_started_at.iso8601(6),
-          publish_finished_at: @publish_finished_at.iso8601(6),
-          matching_started_at: @publish_started_at.iso8601(6),
-          matching_finished_at: @matching_finished_at.iso8601(6),
-          publish_ops: publish_ops,
-          matching_ops: matching_ops }
+          submit_publish: {
+            started_at:  @publish_started_at.iso8601(6),
+            finished_at: @publish_started_at.iso8601(6),
+            operations:  @orders_number,
+            ops:         publish_ops
+          },
+          matching: {
+            started_at:  @matching_started_at.iso8601(6),
+            finished_at: @matching_finished_at.iso8601(6),
+            operations:  @orders_number,
+            ops:         matching_ops
+          }
+        }
       end
     end
 

@@ -50,12 +50,18 @@ module Bench
           order_processing_ops = @orders_for_cancel_number / (@order_processing_finished_at - @order_processing_started_at)
 
           super.merge(
-            cancel_publish_started_at: @cancel_publish_started_at.iso8601(6),
-            cancel_publish_finished_at: @cancel_publish_finished_at.iso8601(6),
-            order_processing_started_at: @order_processing_started_at.iso8601(6),
-            order_processing_finished_at: @order_processing_finished_at.iso8601(6),
-            cancel_publish_ops: cancel_publish_ops,
-            order_processing_ops: order_processing_ops
+            cancel_publish: {
+              started_at:  @cancel_publish_started_at.iso8601(6),
+              finished_at: @cancel_publish_finished_at.iso8601(6),
+              operations:  @orders_for_cancel_number,
+              ops:         cancel_publish_ops
+            },
+            order_processing: {
+              started_at:  @order_processing_started_at.iso8601(6),
+              finished_at: @order_processing_finished_at.iso8601(6),
+              operations:  @orders_for_cancel_number,
+              ops:         order_processing_ops
+            }
           )
         end
     end
