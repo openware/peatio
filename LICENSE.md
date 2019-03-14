@@ -1,7 +1,7 @@
 The MIT License (MIT)
 =====================
 
-Copyright © `2018` `Helios Technologies`
+Copyright © `2018 - 2019` `Helios Technologies`
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
