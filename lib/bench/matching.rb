@@ -1,5 +1,3 @@
-require 'rabbitmq/http/client'
-
 # TODO: Add Bench::Error and better errors processing.
 # TODO: Add Bench::Report and extract all metrics to it.
 # TODO: Add missing frozen_string literal to whole module.
@@ -8,13 +6,7 @@ module Bench
     def initialize(config)
       @config = config
 
-      # TODO: Use Faraday instead of RabbitMQ::HTTP::Client.
-      @rmq_http_client = ::URI::HTTP.build(
-        scheme:   :http,
-        host:     ENV.fetch('RABBITMQ_HOST', 'localhost'),
-        port:     15672,
-        userinfo: "#{ENV.fetch('RABBITMQ_USER', 'guest')}:#{ENV.fetch('RABBITMQ_PASSWORD', 'guest')}"
-      ).yield_self { |endpoint| RabbitMQ::HTTP::Client.new(endpoint.to_s) }
+      @rmq_http_client = RabbitMQHTTP.default_client
 
       @injector = Injectors.initialize_injector(@config[:orders])
       @currencies = Currency.where(id: @config[:currencies].split(',').map(&:squish).reject(&:blank?))
