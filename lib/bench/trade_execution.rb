@@ -10,12 +10,21 @@ module Bench
     end
 
     def wait_for_execution
+      last_log_time = Time.at(0)
+      queue_status_file = File.open(queue_status_file_path('trade-execution'), 'a')
+
       loop do
         queue_status = trade_execution_queue_status
         # NOTE: If no orders where matched idle_since would not change.
         break if queue_status[:messages].zero? &&
                  queue_status[:idle_since].present? &&
                  Time.parse("#{queue_status[:idle_since]} UTC") >= @execution_started_at
+
+        if last_log_time + 5 < Time.now
+          queue_status_file.puts(YAML.dump([queue_status.merge(timestamp: Time.now.iso8601).deep_stringify_keys]))
+          last_log_time = Time.now
+        end
+
         sleep 0.5
       end
     end

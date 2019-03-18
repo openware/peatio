@@ -33,12 +33,21 @@ module Bench
     end
 
     def wait_for_order_processing
+      last_log_time = Time.at(0)
+      queue_status_file = File.open(queue_status_file_path('order-processing'), 'a')
+
       loop do
         queue_status = order_processing_queue_status
         # NOTE: If no orders where cancelled idle_since would not change.
         break if queue_status[:messages].zero? &&
                  queue_status[:idle_since].present? &&
                  Time.parse("#{queue_status[:idle_since]} UTC") >= @order_processing_started_at
+
+        if last_log_time + 5 < Time.now
+          queue_status_file.puts(YAML.dump([queue_status.merge(timestamp: Time.now.iso8601).deep_stringify_keys]))
+          last_log_time = Time.now
+        end
+
         sleep 0.5
       end
     end

@@ -66,13 +66,21 @@ module Bench
 
     # TODO: Find better solution for getting message number in queue.
     # E.g there is rabbitmqctl list_queues.
-    # TODO: Write useful queue info stats into file.
     def wait_for_matching
+      last_log_time = Time.at(0)
+      queue_status_file = File.open(queue_status_file_path('matching'), 'a')
+
       loop do
         queue_status = matching_queue_status
         break if queue_status[:messages].zero? &&
                  queue_status[:idle_since].present? &&
                  Time.parse("#{queue_status[:idle_since]} UTC") >= @publish_started_at
+
+        if last_log_time + 5 < Time.now
+          queue_status_file.puts(YAML.dump([queue_status.merge(timestamp: Time.now.iso8601).deep_stringify_keys]))
+          last_log_time = Time.now
+        end
+
         sleep 0.5
       end
     end
@@ -104,7 +112,7 @@ module Bench
 
     def save_report
       report_name = "#{self.class.name.humanize.demodulize}-#{@config[:orders][:injector]}-"\
-                    "#{@config[:orders][:number]}-#{Time.now.iso8601}.yml"
+                    "#{@config[:orders][:number]}-#{@publish_started_at.iso8601}.yml"
       File.open(Rails.root.join(@config[:report_path], report_name), 'w') do |f|
         f.puts YAML.dump(result.deep_stringify_keys)
       end
@@ -122,6 +130,10 @@ module Bench
       @currencies.each do |c|
         Factories.create(:deposit, member_id: member.id, currency_id: c.id)
       end
+    end
+
+    def queue_status_file_path(name)
+      Rails.root.join(@config[:report_path], 'log', "#{name}-#{@publish_started_at.iso8601}.yml")
     end
   end
 end
