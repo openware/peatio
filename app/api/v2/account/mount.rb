@@ -7,6 +7,7 @@ module API::V2
       mount Account::Withdraws
       mount Account::Deposits
       mount Account::Balances
+      mount Account::Transactions
     end
   end
 end
