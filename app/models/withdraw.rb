@@ -79,7 +79,8 @@ class Withdraw < ActiveRecord::Base
     end
 
     event :reject do
-      transitions from: %i[submitted accepted confirming], to: :rejected
+      transitions from: %i[submitted accepted confirming], to: :rejected, guard: :fiat?
+      transitions from: %i[submitted accepted], to: :rejected, guard: :coin?
       after do
         unlock_funds
         record_cancel_operations!
