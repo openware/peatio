@@ -21,7 +21,10 @@ module API
                    values: { value: -> { Currency.enabled.codes(bothcase: true) }, message: 'account.currency.doesnt_exist' },
                    desc: 'Currency code'
 
-          # TODO: add params for sorting
+          optional :sort_by_date,
+                   type: String,
+                   values: { value: ['asc', 'desc'] , message: 'account.sort_by_date.invalid' },
+                   desc: 'Param for sorting by date'
         end
         get "/transactions" do
           currency = Currency.find(params[:currency]) if params[:currency].present?
@@ -29,7 +32,10 @@ module API
           deposits  = currency ? current_user.deposits.where(currency: currency) : current_user.deposits
           withdraws = currency ? current_user.withdraws.where(currency: currency) : current_user.withdraws
 
-          present (deposits + withdraws), with: API::V2::Entities::Transaction
+          transactions = (deposits + withdraws).sort_by { |t| t.created_at }
+          transactions.reverse! if params['sort_by_date'].blank? || params['sort_by_date'] == 'desc'
+
+          present transactions, with: API::V2::Entities::Transaction
         end
 
       end

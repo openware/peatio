@@ -42,6 +42,7 @@
 | `account.withdraw.not_permitted`        | Pass the corresponding verification steps to **withdraw funds** |
 | `account.deposit_address.invalid_address_format`             | Invalid parameter for deposit address format |
 | `account.deposit_address.doesnt_support_cash_address_format` | Currency doesn't support cash address format |
+| `account.sort_by_date.invalid`         | Invalid params for sorting         |
 
 ## Market module
 
