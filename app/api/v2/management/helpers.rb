@@ -101,6 +101,10 @@ module API
             member.ac(currency).unlock_and_sub_funds(amount)
           end
         end
+
+        def time_from
+          params[:timestamp].present? ? Time.at(params[:timestamp]) : nil
+        end
       end
     end
   end

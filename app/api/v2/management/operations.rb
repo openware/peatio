@@ -103,19 +103,18 @@ module API
             optional :uid,
                      type: String,
                      desc: 'The user ID for operations filtering.'
-            optional :page,
-                     type: Integer, default: 1,
-                     integer_gt_zero: true,
-                     desc: 'The page number (defaults to 1).'
-            optional :limit,
+            optional :reference_type,
+                     type: String,
+                     desc: "The reference type for operations filtering."
+            optional :timestamp,
                      type: Integer,
-                     default: 100,
-                     range: 1..1000,
-                     desc: 'The number of objects per page (defaults to 100, maximum is 1000).'
+                     desc: "An integer represents the seconds elapsed since Unix epoch."\
+                         "If set, only operations after the time will be returned."
           end
           post op_type_plural do
             currency_id = params.fetch(:currency, nil)
             member = Member.find_by!(uid: params[:uid]) if params[:uid].present?
+            reference_type = params.fetch(:reference_type, nil)
 
             "operations/#{op_type}"
               .camelize
@@ -123,8 +122,8 @@ module API
               .order(id: :desc)
               .tap { |q| q.where!(currency_id: currency_id) if currency_id }
               .tap { |q| q.where!(member: member) if member }
-              .page(params[:page])
-              .per(params[:limit])
+              .tap { |q| q.where!(reference_type: reference_type) if reference_type }
+              .tap { |q| q.where!('created_at >= ?', time_from) if time_from.present? }
               .tap { |q| present q, with: API::V2::Management::Entities::Operation }
             status 200
           end
