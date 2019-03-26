@@ -2,10 +2,11 @@
 
 # TODO: Add Bench::Error and better errors processing.
 # TODO: Add Bench::Report and extract all metrics to it.
-# TODO: Add missing frozen_string literal to whole module.
 module Bench
   module Matching
-    class Someclass
+    class AMQP
+      include Helpers
+
       def initialize(config)
         @config = config
 
@@ -121,13 +122,6 @@ module Bench
       # TODO: Use Faraday instead of RabbitMQ::HTTP::Client.
       def matching_queue_status
         @rmq_http_client.list_queues.find { |q| q[:name] == AMQPConfig.binding_queue(:matching).first }
-      end
-
-      # TODO: Move to Helpers.
-      def become_billionaire(member)
-        @currencies.each do |c|
-          Factories.create(:deposit, member_id: member.id, currency_id: c.id)
-        end
       end
 
       def queue_status_file_path(name)

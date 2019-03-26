@@ -2,7 +2,7 @@
 
 module Bench
   module TradeExecution
-    class Someclass < Matching::Someclass
+    class AMQP < Matching::AMQP
       def run!
         # TODO: Check if TradeExecutor daemon is running before start (use queue_info[:consumers]).
         super

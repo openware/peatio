@@ -2,21 +2,22 @@
 
 # TODO: Add Bench::Error and better errors processing.
 # TODO: Add Bench::Report and extract all metrics to it.
-# TODO: Add missing frozen_string literal to whole module.
 module Bench
   module OrderProcessing
     class Direct
+      include Helpers
+
       def initialize(config)
         @config = config
 
         @injector = Injectors.initialize_injector(@config[:orders])
         @currencies = Currency.where(id: @config[:currencies].split(',').map(&:squish).reject(&:blank?))
+        @order_processor = Worker::OrderProcessor.new
         # TODO: Print errors in the end of benchmark and include them into report.
         @errors = []
       end
 
       def run!
-        # TODO: Check if Matching daemon is running before start (use queue_info[:consumers]).
         Kernel.puts "Creating members ..."
         @members = Factories.create_list(:member, @config[:traders])
 
@@ -37,11 +38,10 @@ module Bench
       end
 
       def process_orders
-        order_processor = Worker::OrderProcessor.new
         loop do
           order = @injector.pop
           break unless order
-          order_processor.process({action: 'cancel', order: order.to_matching_attributes}.deep_stringify_keys!)
+          @order_processor.process({action: 'cancel', order: order.to_matching_attributes}.deep_stringify_keys!)
         rescue StandardError => e
           Kernel.puts e
           @errors << e
@@ -76,16 +76,6 @@ module Bench
           f.puts YAML.dump(result.deep_stringify_keys)
         end
       end
-
-      private
-
-      # TODO: Move to Helpers.
-      def become_billionaire(member)
-        @currencies.each do |c|
-          Factories.create(:deposit, member_id: member.id, currency_id: c.id)
-        end
-      end
-
     end
   end
 end

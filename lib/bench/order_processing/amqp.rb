@@ -2,7 +2,7 @@
 
 module Bench
   module OrderProcessing
-    class Someclass < TradeExecution::Someclass
+    class AMQP < TradeExecution::AMQP
       def run!
         # TODO: Check if OrderProcessing daemon is running before start (use queue_info[:consumers]).
         super
