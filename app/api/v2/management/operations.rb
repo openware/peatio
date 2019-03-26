@@ -105,16 +105,25 @@ module API
                      desc: 'The user ID for operations filtering.'
             optional :reference_type,
                      type: String,
-                     desc: "The reference type for operations filtering."
+                     desc: "The reference type for operations filtering"
             optional :timestamp,
                      type: Integer,
                      desc: "An integer represents the seconds elapsed since Unix epoch."\
                          "If set, only operations after the time will be returned."
+            optional :page,
+                     type: Integer,
+                     default: 1,
+                     integer_gt_zero: true,
+                     desc: 'The page number (defaults to 1).'
+            optional :limit,
+                     type: Integer,
+                     default: 100,
+                     range: 1..10000,
+                     desc: 'The number of objects per page (defaults to 100, maximum is 10000).'
           end
           post op_type_plural do
             currency_id = params.fetch(:currency, nil)
             member = Member.find_by!(uid: params[:uid]) if params[:uid].present?
-            reference_type = params.fetch(:reference_type, nil)
 
             "operations/#{op_type}"
               .camelize
@@ -122,9 +131,10 @@ module API
               .order(id: :desc)
               .tap { |q| q.where!(currency_id: currency_id) if currency_id }
               .tap { |q| q.where!(member: member) if member }
-              .tap { |q| q.where!(reference_type: reference_type) if reference_type }
-              .tap { |q| q.where!('created_at >= ?', time_from) if time_from.present? }
-              .tap { |q| present q, with: API::V2::Management::Entities::Operation }
+              .tap { |q| q.where!(reference_type: params[:reference_type]) if params[:reference_type].present? }
+              .tap { |q| q.where!('created_at >= ?', Time.at(params[:timestamp])) if params[:timestamp].present? }
+              .tap { |q| present paginate(q), with: API::V2::Management::Entities::Operation }
+              # .tap { |q| present q, with: API::V2::Management::Entities::Operation }
             status 200
           end
 

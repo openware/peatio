@@ -160,6 +160,24 @@ describe API::V2::Management::Operations, type: :request do
             expect(JSON.parse(response.body).count).to eq operations.count
           end
         end
+
+        context 'pagination' do
+          let(:data) { { page: 2, limit: 8 } }
+
+          it { expect(response).to have_http_status(200) }
+
+          it 'returns second page of operations' do
+            expect(JSON.parse(response.body).count).to eq 7
+            credits = "operations/#{op_type}"
+                        .camelize
+                        .constantize
+                        .order(id: :desc)
+                        .pluck(:credit)
+
+            # Consider that credit sequence is unique.
+            expect(JSON.parse(response.body).map{ |h| h['credit'].to_d }).to eq credits[8..15]
+          end
+        end
       end
     end
   end
