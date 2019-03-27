@@ -72,6 +72,7 @@ module Worker
     end
 
     def create_engine(market)
+      engines[market.id]&.finalize
       engines[market.id] = ::Matching::Engine.new(market, @options)
     end
 
