@@ -17,6 +17,10 @@ module Matching
       shift_gears(options[:mode] || :run)
     end
 
+    def finalize
+      @orderbook.finalize
+    end
+
     def submit(order)
       book, counter_book = orderbook.get_books order.type
       match(order, counter_book)
