@@ -107,7 +107,7 @@ class Deposit < ApplicationRecord
       )
 
       # Credit main fiat/crypto Revenue account.
-      Operations::Revenue.credit!(
+      revenue = Operations::Revenue.credit!(
         amount: fee,
         currency: currency,
         reference: self,
@@ -119,7 +119,8 @@ class Deposit < ApplicationRecord
         amount: amount,
         currency: currency,
         reference: self,
-        member_id: member_id
+        member_id: member_id,
+        revenue_id: revenue&.id
       )
     end
   end

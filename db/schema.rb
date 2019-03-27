@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_02_130148) do
+ActiveRecord::Schema.define(version: 2019_04_08_145517) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "code", null: false
     t.string "currency_id", null: false
     t.integer "member_id"
+    t.integer "revenue_id"
     t.string "reference_type"
     t.integer "reference_id"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
@@ -126,6 +127,31 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.index ["currency_id"], name: "index_liabilities_on_currency_id"
     t.index ["member_id"], name: "index_liabilities_on_member_id"
     t.index ["reference_type", "reference_id"], name: "index_liabilities_on_reference_type_and_reference_id"
+  end
+
+  create_table "liabilities_history", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "liability_id", null: false
+    t.integer "member_id"
+    t.string "currency_id", null: false
+    t.string "market_id"
+    t.string "operation_type", limit: 16
+    t.integer "operation_id"
+    t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
+    t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
+    t.decimal "fee", precision: 32, scale: 16
+    t.string "fee_currency_id"
+    t.decimal "price", precision: 32, scale: 16
+    t.string "side", limit: 16
+    t.string "rid"
+    t.string "txid"
+    t.string "state", limit: 16
+    t.string "note", limit: 256
+    t.datetime "operation_date"
+    t.decimal "balance", precision: 32, scale: 16
+    t.integer "tx_height"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id", "operation_date"], name: "index_liabilities_history_on_member_id_and_operation_date"
   end
 
   create_table "markets", id: :string, limit: 20, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

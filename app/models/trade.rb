@@ -58,9 +58,9 @@ class Trade < ApplicationRecord
   def record_complete_operations!
     transaction do
       record_liability_debit!
-      record_liability_credit!
+      revenues = record_revenues!
+      record_liability_credit!(revenues)
       record_liability_transfer!
-      record_revenues!
     end
   end
 
@@ -87,7 +87,7 @@ class Trade < ApplicationRecord
     )
   end
 
-  def record_liability_credit!
+  def record_liability_credit!(revenues)
     # We multiply ask outcome by bid fee.
     # Fees are related to side bid or ask (not currency).
     ask_currency_income = volume - volume * bid.fee
@@ -99,7 +99,8 @@ class Trade < ApplicationRecord
       currency:  bid.currency,
       reference: self,
       kind:      :main,
-      member_id: ask.member_id
+      member_id: ask.member_id,
+      revenue_id: revenues[:bid]&.id
     )
 
     # Credit main fiat/crypto Liability account for member who created bid.
@@ -108,7 +109,8 @@ class Trade < ApplicationRecord
       currency:  ask.currency,
       reference: self,
       kind:      :main,
-      member_id: bid.member_id
+      member_id: bid.member_id,
+      revenue_id: revenues[:ask]&.id
     )
   end
 
@@ -133,7 +135,7 @@ class Trade < ApplicationRecord
     bid_currency_fee = funds * ask.fee
 
     # Credit main fiat/crypto Revenue account.
-    Operations::Revenue.credit!(
+    revenue_ask = Operations::Revenue.credit!(
       amount:    ask_currency_fee,
       currency:  ask.currency,
       reference: self,
@@ -141,12 +143,14 @@ class Trade < ApplicationRecord
     )
 
     # Credit main fiat/crypto Revenue account.
-    Operations::Revenue.credit!(
+    revenue_bid = Operations::Revenue.credit!(
       amount:    bid_currency_fee,
       currency:  bid.currency,
       reference: self,
       member_id: ask.member_id
     )
+
+    { ask: revenue_ask, bid: revenue_bid }
   end
 end
 

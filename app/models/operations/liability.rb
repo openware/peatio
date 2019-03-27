@@ -16,7 +16,7 @@ module Operations
 end
 
 # == Schema Information
-# Schema version: 20190110164859
+# Schema version: 20190408145517
 #
 # Table name: liabilities
 #
@@ -24,12 +24,13 @@ end
 #  code           :integer          not null
 #  currency_id    :string(255)      not null
 #  member_id      :integer
-#  reference_id   :integer
 #  reference_type :string(255)
+#  reference_id   :integer
 #  debit          :decimal(32, 16)  default(0.0), not null
 #  credit         :decimal(32, 16)  default(0.0), not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  revenue_id     :integer
 #
 # Indexes
 #

@@ -22,6 +22,14 @@ services:
   - docker
   - docker-compose
 
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+      - mysql-client
+
 # Execute all of the commands which need to be executed before installing dependencies.
 before_install:
   - gem install bundler -v 1.17.3

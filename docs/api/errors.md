@@ -43,6 +43,15 @@
 | `account.withdraw.too_long_note`        | Parameter **note** is too long |
 | `account.deposit_address.invalid_address_format`             | Invalid parameter for deposit address format |
 | `account.deposit_address.doesnt_support_cash_address_format` | Currency doesn't support cash address format |
+| `account.history.non_integer_limit`     | Parameter **limit** should be integer          |
+| `account.history.filter_invalid`        | Parameter **filter** should be trade or deposit+withdraw |
+| `account.history.sort_invalid`          | Parameter **sort** should be operation_date   |
+| `account.history.order_by_invalid`         | Parameter **order_by** should be asc or desc             |
+| `account.history.invalid_limit`         | Parameter **limit** is  not valid            |
+| `account.history.non_integer_page`      | Parameter **page** should be integer          |
+| `account.history.non_positive_page`     | Parameter  **page**  is not valid            |
+| `account.history.non_integer_time_from`    | Parameter  **time_from**  is not integer            |
+| `account.history.non_integer_time_to`      | Parameter  **time_to**  is not integer            |
 
 ## Market module
 

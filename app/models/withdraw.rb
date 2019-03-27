@@ -223,22 +223,23 @@ private
 
   def record_complete_operations!
     transaction do
+      # Credit main fiat/crypto Revenue account.
+      # NOTE: Credit amount = fee.
+      revenue = Operations::Revenue.credit!(
+        amount:     fee,
+        currency:   currency,
+        reference:  self,
+        member_id:  member_id
+      )
+
       # Debit locked fiat/crypto Liability account.
       Operations::Liability.debit!(
         amount:     sum,
         currency:   currency,
         reference:  self,
         kind:       :locked,
-        member_id:  member_id
-      )
-
-      # Credit main fiat/crypto Revenue account.
-      # NOTE: Credit amount = fee.
-      Operations::Revenue.credit!(
-        amount:     fee,
-        currency:   currency,
-        reference:  self,
-        member_id:  member_id
+        member_id:  member_id,
+        revenue_id: revenue&.id
       )
 
       # Debit main fiat/crypto Asset account.
