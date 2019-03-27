@@ -1,52 +1,107 @@
 # encoding: UTF-8
 # frozen_string_literal: true
-
 require_relative 'constants'
 
 module Matching
   class OrderBook
-
-    attr :side
+    attr_reader :market,
+                :side
 
     def initialize(market, side, options={})
       @market = market
       @side   = side.to_sym
+
+      @updated = true
+      @mutex_updated = Mutex.new
+
       @limit_orders = RBTree.new
+      @mutex_limit_orders = Mutex.new
+
       @market_orders = RBTree.new
+      @mutex_market_orders = Mutex.new
+    end
 
-      @broadcast = options.has_key?(:broadcast) ? options[:broadcast] : true
-      broadcast(action: 'new', market: @market, side: @side)
+    def build_depth
+      depth = Hash.new { |h, k| h[k] = 0.to_d }
 
-      singleton = class<<self;self;end
-      singleton.send :define_method, :limit_top, self.class.instance_method("#{@side}_limit_top")
+      price_levels = limit_orders
+      price_levels = limit_orders.reverse_each.to_h if side == :bid
+
+      price_levels.each_with_index do |(price, orders), i|
+        break unless i < 200 # get only the first 200 price levels
+
+        depth[price] += orders.map(&:volume).sum
+      end
+
+      depth.to_a
+    end
+
+    def write_depth_to_cache
+      @mutex_updated.synchronize do
+        return unless @updated
+
+        @updated = false
+      end
+
+      market_id = market.is_a?(Market) ? market.id : market
+      Rails.cache.write("peatio:#{market_id}:depth:#{side}s", build_depth)
+      true
     end
 
     def best_limit_price
-      limit_top.try(:price)
+      limit_top&.price
+    end
+
+    def limit_top
+      @mutex_limit_orders.synchronize do
+        return if @limit_orders.empty?
+
+        # Lowest price wins.
+        if side == :ask
+          _price, level = @limit_orders.first
+        else
+          # Highest price wins.
+          _price, level = @limit_orders.last
+        end
+
+        level.top
+      end
+    end
+
+    def market_top
+      @mutex_market_orders.synchronize do
+        @market_orders.first[1] unless @market_orders.empty?
+      end
     end
 
     def top
-      @market_orders.empty? ? limit_top : @market_orders.first[1]
+      market_top || limit_top
     end
 
     def fill_top(trade_price, trade_volume, trade_funds)
       order = top
       raise "No top order in empty book." unless order
 
-      order.fill trade_price, trade_volume, trade_funds
+      order.fill(trade_price, trade_volume, trade_funds)
+
       if order.filled?
-        remove order
-      else
-        broadcast(action: 'update', order: order.attributes)
+        remove(order)
+        return
       end
+
+      touch_updated
     end
 
     def find(order)
       case order
       when LimitOrder
-        @limit_orders[order.price].find(order.id)
+        @mutex_limit_orders.synchronize do
+          @limit_orders[order.price].find(order.id)
+        end
       when MarketOrder
-        @market_orders[order.id]
+        @mutex_market_orders.synchronize do
+          @market_orders[order.id]
+        end
       end
     end
 
@@ -55,15 +110,19 @@ module Matching
 
       case order
       when LimitOrder
-        @limit_orders[order.price] ||= PriceLevel.new(order.price)
-        @limit_orders[order.price].add order
+        @mutex_limit_orders.synchronize do
+          @limit_orders[order.price] ||= PriceLevel.new(order.price)
+          @limit_orders[order.price].add(order)
+        end
       when MarketOrder
-        @market_orders[order.id] = order
+        @mutex_market_orders.synchronize do
+          @market_orders[order.id] = order
+        end
       else
         raise ArgumentError, "Unknown order type"
       end
 
-      broadcast(action: 'add', order: order.attributes)
+      touch_updated
     end
 
     def remove(order)
@@ -78,56 +137,50 @@ module Matching
     end
 
     def limit_orders
-      orders = {}
-      @limit_orders.keys.each {|k| orders[k] = @limit_orders[k].orders }
-      orders
+      @mutex_limit_orders.synchronize do
+        orders = {}
+        @limit_orders.keys.each { |k| orders[k] = @limit_orders[k].orders }
+        orders
+      end
     end
 
     def market_orders
-      @market_orders.values
+      @mutex_market_orders.synchronize do
+        @market_orders.values
+      end
     end
 
     private
 
     def remove_limit_order(order)
-      price_level = @limit_orders[order.price]
-      return unless price_level
+      @mutex_limit_orders.synchronize do
+        price_level = @limit_orders[order.price]
+        return unless price_level
 
-      order = price_level.find order.id # so we can return fresh order
-      return unless order
+        order = price_level.find(order.id) # so we can return fresh order
+        return unless order
 
-      price_level.remove order
-      @limit_orders.delete(order.price) if price_level.empty?
-
-      broadcast(action: 'remove', order: order.attributes)
+        price_level.remove(order)
+        @limit_orders.delete(order.price) if price_level.empty?
+      end
+      touch_updated
       order
     end
 
     def remove_market_order(order)
-      if order = @market_orders[order.id]
-        @market_orders.delete order.id
-        broadcast(action: 'remove', order: order.attributes)
-        order
+      @mutex_market_orders.synchronize do
+        return unless (order = @market_orders[order.id])
+
+        @market_orders.delete(order.id)
+      end
+      touch_updated
+      order
+    end
+
+    def touch_updated
+      @mutex_updated.synchronize do
+        @updated = true
       end
     end
-
-    def ask_limit_top # lowest price wins
-      return if @limit_orders.empty?
-      price, level = @limit_orders.first
-      level.top
-    end
-
-    def bid_limit_top # highest price wins
-      return if @limit_orders.empty?
-      price, level = @limit_orders.last
-      level.top
-    end
-
-    def broadcast(data)
-      return unless @broadcast
-      Rails.logger.debug { "orderbook broadcast: #{data.inspect}" }
-      AMQPQueue.enqueue(:slave_book, data, {persistent: false})
-    end
-
   end
 end
