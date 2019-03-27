@@ -54,21 +54,6 @@ describe Matching::OrderBook do
       expect(subject.limit_orders.keys.size).to eq 1
       expect(subject.limit_orders.values.first).to eq [o1, o2]
     end
-
-    it 'should broadcast add event' do
-      order = Matching.mock_limit_order(type: :ask)
-
-      AMQPQueue.expects(:enqueue).with(:slave_book, { action: 'new', market: 'btcusd', side: :ask }, persistent: false)
-      AMQPQueue.expects(:enqueue).with(:slave_book, { action: 'add', order: order.attributes }, persistent: false)
-      subject.add order
-    end
-
-    it 'should not broadcast add event' do
-      order = Matching.mock_limit_order(type: :ask)
-
-      AMQPQueue.expects(:enqueue).with(:slave_book, { action: 'add', order: order.attributes }, persistent: false).never
-      Matching::OrderBook.new('btcusd', :ask, broadcast: false).add order
-    end
   end
 
   context '#remove' do

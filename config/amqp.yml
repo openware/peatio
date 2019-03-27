@@ -11,16 +11,10 @@ exchange:
   notification:
     name: peatio.notification
     type: direct
-  orderbook:
-    name: peatio.orderbook
-    type: fanout
 
 queue:
   matching:
     name: peatio.matching
-    durable: true
-  slave_book:
-    name: peatio.orderbook.slave
     durable: true
   new_trade:
     name: peatio.trade.new
@@ -50,9 +44,6 @@ binding:
   matching:
     queue: matching
     clean_start: true
-  slave_book:
-    queue: slave_book
-    exchange: orderbook
   trade_executor:
     queue: new_trade
   order_processor:

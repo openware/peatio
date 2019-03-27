@@ -32,10 +32,6 @@ This daemon delivers new trade to Ranger.
 
 This daemon delivers events to private member Ranger channel.
 
-## amqp:slave_book
-
-This daemon keeps copy of in-memory orderbook from amqp:matching and updates various data stored in Redis which is needed for trading UI.
-
 ## amqp:withdraw_coin
 
 This daemon performs withdraw.
