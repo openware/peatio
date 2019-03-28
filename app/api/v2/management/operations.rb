@@ -106,10 +106,14 @@ module API
             optional :reference_type,
                      type: String,
                      desc: "The reference type for operations filtering"
-            optional :timestamp,
+            optional :time_from,
                      type: Integer,
                      desc: "An integer represents the seconds elapsed since Unix epoch."\
                          "If set, only operations after the time will be returned."
+            optional :time_to,
+                     type: Integer,
+                     desc: "An integer represents the seconds elapsed since Unix epoch."\
+                        "If set, only operations before the time will be returned."
             optional :page,
                      type: Integer,
                      default: 1,
@@ -132,9 +136,9 @@ module API
               .tap { |q| q.where!(currency_id: currency_id) if currency_id }
               .tap { |q| q.where!(member: member) if member }
               .tap { |q| q.where!(reference_type: params[:reference_type]) if params[:reference_type].present? }
-              .tap { |q| q.where!('created_at >= ?', Time.at(params[:timestamp])) if params[:timestamp].present? }
+              .tap { |q| q.where!('created_at >= ?', Time.at(params[:time_from])) if params[:time_from].present? }
+              .tap { |q| q.where!('created_at < ?', Time.at(params[:time_to])) if params[:time_to].present? }
               .tap { |q| present paginate(q), with: API::V2::Management::Entities::Operation }
-              # .tap { |q| present q, with: API::V2::Management::Entities::Operation }
             status 200
           end
 

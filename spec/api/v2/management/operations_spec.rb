@@ -146,17 +146,18 @@ describe API::V2::Management::Operations, type: :request do
           end
         end
 
-        context 'timestamp' do
-          let(:data) { { timestamp: 1.day.ago.to_i } }
+        context 'time range' do
+          let(:data) { { time_from: 2.days.ago.to_i, time_to: 1.day.ago.to_i } }
 
           it { expect(response).to have_http_status(200) }
 
-          it 'returns operations for last 24h' do
+          it 'returns operations between 48h and 24h ago' do
             request(op_type.to_s.pluralize)
             operations = "operations/#{op_type}"
                            .camelize
                            .constantize
-                           .where('created_at >= ?', 1.day.ago.to_s)
+                           .where('created_at >= ?', 2.days.ago.to_s)
+                           .where('created_at < ?', 1.day.ago.to_s)
             expect(JSON.parse(response.body).count).to eq operations.count
           end
         end
