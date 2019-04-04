@@ -1050,7 +1050,8 @@
                             }
                         ],
                         "TransactionIndex": 0,
-                        "TransactionResult": "tesSUCCESS"
+                        "TransactionResult": "tesSUCCESS",
+                        "delivered_amount": "1481213099"
                     }
                 },
                 {
@@ -1684,7 +1685,8 @@
                             }
                         ],
                         "TransactionIndex": 8,
-                        "TransactionResult": "tesSUCCESS"
+                        "TransactionResult": "tesSUCCESS",
+                        "delivered_amount": "131650600"
                     }
                 },
                 {
