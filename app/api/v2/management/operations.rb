@@ -129,6 +129,31 @@ module API
             status 200
           end
 
+          desc 'Compute user balances at the given time based on operations' do
+            @settings[:scope] = :read_operations
+          end
+          params do
+            requires :uid,
+                     type: String,
+                     desc: 'The user ID for operations filtering.'
+            requires :timestamp,
+                     type: Integer,
+                     desc: "An integer represents the seconds elapsed since Unix epoch."\
+                       "If set, only operations executed before the time will be computed."
+          end
+          post "/#{op_type_plural}/balances/compute" do
+            member = Member.find_by!(uid: params[:uid])
+            time = Time.at(params[:timestamp])
+
+            balances = ::Operations::Liability
+                       .where('member_id = ? AND created_at <= ?', member.id, time)
+                       .select('(sum(debit) - sum(credit)) AS balance')
+                       .balance
+
+            present balances
+            status 200
+          end
+
           desc "Creates new #{op_type} operation." do
             @settings[:scope] = :write_operations
             success API::V2::Management::Entities::Operation

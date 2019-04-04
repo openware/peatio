@@ -11,6 +11,38 @@ describe API::V2::Management::Operations, type: :request do
     }
   end
 
+  describe 'compute user balance' do
+    def request(op_type)
+      post_json "/api/v2/management/#{op_type}/balances/compute", multisig_jwt_management_api_v1({ data: data }, *signers)
+    end
+
+    Operations::Account::MEMBER_TYPES.each do |op_type|
+      context op_type do
+        let(:signers) { %i[alex] }
+        let(:operations_number) { 15 }
+        let(:member) { create(:member, :barong) }
+        let!(:member_operations) do
+          create_list(op_type, operations_number, member_id: member.id)
+        end
+        let(:data) { { uid: member.uid, currency: 'btc', timestamp: Time.now.to_i } }
+
+        it 'computes user balance at the given time' do
+          request(op_type.to_s.pluralize)
+          expect(response).to have_http_status(200)
+          Currency.pluck(:id).each do |ccy|
+            balance = "operations/#{op_type}"
+                      .camelize
+                      .constantize
+                      .where('member_id = ? AND currency_id = ? AND created_at <= ?',
+                             member.id, ccy, Time.at(data[:timestamp]))
+                      .sum('credit-debit')
+            expect(JSON.parse(response.body)[ccy].to_f).to eq(balance)
+          end
+        end
+      end
+    end
+  end
+
   describe 'list operations' do
     def request(op_type)
       post_json "/api/v2/management/#{op_type}", multisig_jwt_management_api_v1({ data: data }, *signers)
