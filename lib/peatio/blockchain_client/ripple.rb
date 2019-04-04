@@ -43,7 +43,7 @@ module BlockchainClient
     def build_entries(tx, currency)
       [
         {
-          amount:  convert_from_base_unit(tx.fetch('Amount'), currency)
+          amount: convert_from_base_unit(tx.fetch('metaData').fetch('delivered_amount'), currency)
         }
       ]
     end
