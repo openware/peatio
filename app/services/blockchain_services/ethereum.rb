@@ -52,21 +52,21 @@ module BlockchainServices
         payment_addresses
           .where(address: client.to_address(txn))
           .each do |payment_address|
-          deposit_txs = client.build_transaction(txn, @block_json,
-                                                 payment_address.address,
-                                                 payment_address.currency)
-          deposit_txs.fetch(:entries).each do |entry|
-            deposit = { txid:           deposit_txs[:id],
-                        address:        entry[:address],
-                        amount:         entry[:amount],
-                        member:         payment_address.account.member,
-                        currency:       payment_address.currency,
-                        txout:          entry[:txout],
-                        block_number:   deposit_txs[:block_number] }
+            deposit_txs = client.build_transaction(txn, @block_json,
+                                                   payment_address.address,
+                                                   payment_address.currency)
+            deposit_txs.fetch(:entries).each do |entry|
+              deposit = { txid:           deposit_txs[:id],
+                          address:        entry[:address],
+                          amount:         entry[:amount],
+                          member:         payment_address.account.member,
+                          currency:       payment_address.currency,
+                          txout:          entry[:txout],
+                          block_number:   deposit_txs[:block_number] }
 
-            block.call(deposit) if block_given?
-            deposits << deposit
-          end
+              block.call(deposit) if block_given?
+              deposits << deposit
+            end
         end
       end
     end

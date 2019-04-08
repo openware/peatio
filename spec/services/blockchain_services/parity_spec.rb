@@ -30,7 +30,7 @@ describe BlockchainServices::Parity do
         .tap { |b| b.update(height: start_block) }
     end
 
-    let(:client) { BlockchainClient[blockchain.key] }
+    let(:client) { BlockchainClient::Ethereum.new(blockchain) }
 
     def request_receipt_body(txid)
       { jsonrpc: '2.0',

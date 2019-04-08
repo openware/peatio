@@ -44,9 +44,10 @@ class BlockchainService
 
     update_height!
 
-  rescue => e
-    report_exception(e)
-    Rails.logger.info { "Exception was raised during block processing." }
+    # TODO: Deal with errors better!!!
+  # rescue => e
+  #   report_exception(e)
+  #   Rails.logger.info { "Exception was raised during block processing." }
   end
 
   protected
@@ -68,7 +69,7 @@ class BlockchainService
       # Currently we just skip tiny deposits.
       Rails.logger.info do
         "Skipped deposit with txid: #{deposit_hash[:txid]} with amount: #{deposit_hash[:amount]}"\
-      " from #{deposit_hash[:address]} in block number #{deposit_hash[:block_number]}"
+        " from #{deposit_hash[:address]} in block number #{deposit_hash[:block_number]}"
       end
       return
     end
@@ -76,11 +77,10 @@ class BlockchainService
     # If deposit doesn't exist create it and assign attributes.
     deposit =
       Deposits::Coin
-        .submitted
         .where(currency: blockchain.currencies)
         .find_or_create_by!(deposit_hash.slice(:txid, :txout)) do |deposit|
-        deposit.assign_attributes(deposit_hash)
-      end
+          deposit.assign_attributes(deposit_hash)
+        end
 
     deposit.update_column(:block_number, deposit_hash.fetch(:block_number))
     if deposit.confirmations >= blockchain.min_confirmations && deposit.accept!
@@ -94,8 +94,8 @@ class BlockchainService
         .confirming
         .where(currency: blockchain.currencies)
         .find_by(withdrawal_hash.slice(:txid)) do |withdrawal|
-        withdrawal.assign_attributes(withdrawal_hash)
-      end
+          withdrawal.assign_attributes(withdrawal_hash)
+        end
 
     # Skip non-existing in database withdrawals.
     if withdrawal.blank?

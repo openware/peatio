@@ -21,7 +21,10 @@ class Blockchain < ApplicationRecord
   end
 
   def blockchain_api
-    BlockchainClient[key]
+    # TEMPORARY SOLUTION!!!
+    BlockchainService.new(self).adapter
+  rescue => e
+    puts e
   end
 end
 
