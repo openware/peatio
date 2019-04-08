@@ -2,22 +2,6 @@
 # frozen_string_literal: true
 
 class BlockchainService
-  Error                  = Class.new(StandardError) # TODO: Rename to Exception.
-  ConnectionRefusedError = Class.new(StandardError) # TODO: Remove this.
-
-  class << self
-    #
-    # Returns Service for given blockchain key.
-    #
-    # @param key [String, Symbol]
-    #   The blockchain key.
-    def [](key)
-      blockchain = Blockchain.find_by_key(key)
-      BlockchainService.new(blockchain)
-    end
-  end
-
-
   attr_reader :blockchain, :adapter
 
   def initialize(blockchain)
