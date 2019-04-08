@@ -28,7 +28,6 @@ class BlockchainService
   end
 
   def process_blockchain(block_limit: 250, force: false)
-    binding.pry
     latest_block_number = @adapter.latest_block_number
 
     if !force && blockchain.height + blockchain.min_confirmations >= latest_block_number

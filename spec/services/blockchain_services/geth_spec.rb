@@ -30,7 +30,7 @@ describe BlockchainServices::Geth do
         .tap { |b| b.update(height: start_block) }
     end
 
-    let(:client) { BlockchainClient[blockchain.key] }
+    let(:client) { BlockchainClient::Ethereum.new(blockchain) }
 
     def request_receipt_body(txid, index)
       { jsonrpc: '2.0',
@@ -319,16 +319,6 @@ describe BlockchainServices::Geth do
 
       it 'doesn\'t create new withdrawals' do
         expect(subject.count).to eq expected_withdrawals.count
-      end
-
-      it 'changes withdraw confirmations amount' do
-        subject.each do |withdrawal|
-          
-          expect(withdrawal.confirmations).to_not eq 0
-          if withdrawal.confirmations >= blockchain.min_confirmations
-            expect(withdrawal.aasm_state).to eq 'succeed'
-          end
-        end
       end
 
       it 'changes withdraw state if it has enough confirmations' do

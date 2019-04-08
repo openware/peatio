@@ -75,6 +75,10 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation, { only: %w[orders trades] }
   end
 
+  config.before :each do
+    clear_redis
+  end
+
   config.before(:each) do
     DatabaseCleaner.start
     AMQPQueue.stubs(:publish)
