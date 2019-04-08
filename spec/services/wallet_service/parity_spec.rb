@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Parity do
+describe WalletServices::Parity do
   around do |example|
     WebMock.disable_net_connect!
     example.run
@@ -15,7 +15,7 @@ describe WalletService::Parity do
   let(:eth_options) { { gas_limit: 21_000, gas_price: 1_000_000_000 } }
 
   describe '#create_address' do
-    subject { WalletService[deposit_wallet].create_address }
+    subject { WalletService[deposit_wallet].create_address! }
 
     let :personal_newAccount_request do
       { jsonrpc: '2.0',

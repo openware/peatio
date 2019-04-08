@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Bitgo do
+describe WalletServices::Bitgo do
   around do |example|
     WebMock.disable_net_connect!
     example.run

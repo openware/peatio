@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Dashd do
+describe WalletServices::Dashd do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,7 +9,7 @@ describe WalletService::Dashd do
     WebMock.allow_net_connect!
   end
 
-  describe 'WalletService::Dashd' do
+  describe 'WalletServices::Dashd' do
 
     let(:deposit) { create(:deposit, :deposit_dash, amount: 10) }
     let(:withdraw) { create(:dash_withdraw) }
@@ -17,7 +17,7 @@ describe WalletService::Dashd do
     let(:hot_wallet) { Wallet.find_by(gateway: :dashd, kind: :hot) }
 
     context '#create_address' do
-      subject { WalletService[deposit_wallet].create_address }
+      subject { WalletService[deposit_wallet].create_address! }
 
       let(:new_adrress) { 'yborj44WhothaX6vwoMhRMjkq1xELhAWQp' }
 

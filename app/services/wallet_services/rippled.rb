@@ -1,12 +1,19 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module WalletService
-  class Rippled < Base
-    def create_address(options = {})
+module WalletServices
+  class Rippled < Peatio::WalletService::Abstract
+
+    include Peatio::WalletService::Helpers
+
+    def client
+      @client ||= WalletClient::Rippled.new(@wallet)
+    end
+
+    def create_address!(options = {})
       client.create_address!(options.merge(
-        address: "#{wallet.address}?dt=#{generate_destination_tag}",
-        secret: wallet.settings['secret']
+        address: "#{@wallet.address}?dt=#{generate_destination_tag}",
+        secret: @wallet.settings['secret']
       ))
     end
 
@@ -25,7 +32,7 @@ module WalletService
 
     def build_withdrawal!(withdraw, options = {})
       client.create_withdrawal!(
-        { address: wallet.address, secret: wallet.secret },
+        { address: @wallet.address, secret: @wallet.secret },
         { address: withdraw.rid },
         withdraw.amount,
         options

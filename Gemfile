@@ -4,11 +4,11 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
-ruby '2.5.3'
+ruby '2.6.2'
 
 gem 'rails', '~> 5.2.3'
 gem 'puma', '~> 3.12.0'
-gem 'mysql2', '~> 0.4.10'
+gem 'mysql2', '~> 0.5.2'
 gem 'redis-rails', '~> 5.0.2'
 gem 'jbuilder', '~> 2.7.0'
 gem 'figaro', '~> 1.1.1'
@@ -51,7 +51,7 @@ gem 'jwt-multisig', '~> 1.0.0'
 gem 'cash-addr', '~> 0.2.0', require: 'cash_addr'
 gem 'digest-sha3', '~> 1.1.0'
 gem 'scout_apm', '~> 2.4', require: false
-gem 'peatio', path: '../peatio-core'
+gem 'peatio', :git => 'https://github.com/rubykube/peatio-core.git',  :branch => 'feature/pluggable-wallets'
 gem 'rack-cors', '~> 1.0.2', require: false
 gem 'env-tweaks', '~> 1.0.0'
 gem 'vault', '~> 0.12', require: false

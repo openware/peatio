@@ -1,0 +1,8 @@
+Peatio::WalletService.register_adapter(:geth, WalletServices::Ethereum)
+Peatio::WalletService.register_adapter(:parity, WalletServices::Ethereum)
+Peatio::WalletService.register_adapter(:bitcoind, WalletServices::Bitcoind)
+Peatio::WalletService.register_adapter(:litecoind, WalletServices::Litecoind)
+Peatio::WalletService.register_adapter(:bitcoincashd, WalletServices::Bitcoincashd)
+Peatio::WalletService.register_adapter(:dashd, WalletServices::Dashd)
+Peatio::WalletService.register_adapter(:rippled, WalletServices::Rippled)
+Peatio::WalletService.register_adapter(:bitgo, WalletServices::Bitgo)

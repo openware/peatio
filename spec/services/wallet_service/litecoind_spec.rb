@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Litecoind do
+describe WalletServices::Litecoind do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,7 +9,7 @@ describe WalletService::Litecoind do
     WebMock.allow_net_connect!
   end
 
-  describe 'WalletService::Litecoind' do
+  describe 'WalletServices::Litecoind' do
 
     let(:deposit) { create(:deposit, :deposit_ltc, amount: 10) }
     let(:withdraw) { create(:ltc_withdraw) }
@@ -17,7 +17,7 @@ describe WalletService::Litecoind do
     let(:hot_wallet) { Wallet.find_by(gateway: :litecoind, kind: :hot) }
 
     context '#create_address' do
-      subject { WalletService[deposit_wallet].create_address }
+      subject { WalletService[deposit_wallet].create_address! }
 
       let(:new_adrress) { 'QcM2zjgbaXbH26utxnNFge24A1BnDgSgcU' }
 

@@ -1,11 +1,15 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module WalletService
-  class Bitgo < Base
+module WalletServices
+  class Bitgo < Peatio::WalletService::Abstract
+
+    def client
+      @client ||= WalletClient::Bitgo.new(@wallet)
+    end
 
     def create_address(options = {})
-      @client.create_address!(options)
+      client.create_address!(options)
     end
 
     def collect_deposit!(deposit, options={})
@@ -40,7 +44,7 @@ module WalletService
 
     def build_withdrawal!(withdraw, options = {})
       client.create_withdrawal!(
-          { address: wallet.address },
+          { address: @wallet.address },
           { address: withdraw.rid },
           withdraw.amount,
           options

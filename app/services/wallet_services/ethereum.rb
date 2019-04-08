@@ -1,14 +1,21 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module WalletService
-  class Ethereum < Base
+# module WalletService
+module WalletServices
+  class Ethereum < Peatio::WalletService::Abstract
+
+    include Peatio::WalletService::Helpers
 
     DEFAULT_ETH_FEE = { gas_limit: 21_000, gas_price: 1_000_000_000 }.freeze
 
     DEFAULT_ERC20_FEE = { gas_limit: 90_000, gas_price: 1_000_000_000 }.freeze
 
-    def create_address(options = {})
+    def client
+      @client ||= WalletClient::Geth.new(@wallet)
+    end
+
+    def create_address!(options = {})
       client.create_address!(options)
     end
 
@@ -131,7 +138,7 @@ module WalletService
                   .merge(options)
 
       client.create_eth_withdrawal!(
-        { address: wallet.address, secret: wallet.secret },
+        { address: @wallet.address, secret: @wallet.secret },
         { address: withdraw.rid },
         withdraw.amount_to_base_unit!,
         options
@@ -150,7 +157,7 @@ module WalletService
                   .merge(options)
 
       client.create_erc20_withdrawal!(
-        { address: wallet.address, secret: wallet.secret },
+        { address: @wallet.address, secret: @wallet.secret },
         { address: withdraw.rid },
         withdraw.amount_to_base_unit!,
         options.merge(contract_address: withdraw.currency.erc20_contract_address)

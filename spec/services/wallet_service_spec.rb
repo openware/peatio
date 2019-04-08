@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService do
+describe Peatio::WalletService::Helpers do
 
   around do |example|
     WebMock.disable_net_connect!

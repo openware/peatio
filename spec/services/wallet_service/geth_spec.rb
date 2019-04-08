@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Geth do
+describe WalletServices::Geth do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -14,11 +14,11 @@ describe WalletService::Geth do
   let(:warm_wallet) { Wallet.find_by(currency: :eth, kind: :warm) }
   let(:fee_wallet) { Wallet.find_by(currency: 'eth', kind: 'fee') }
 
-  let(:eth_options) { WalletService::Geth::DEFAULT_ETH_FEE }
-  let(:erc20_options) { WalletService::Geth::DEFAULT_ERC20_FEE }
+  let(:eth_options) { WalletServices::Geth::DEFAULT_ETH_FEE }
+  let(:erc20_options) { WalletServices::Geth::DEFAULT_ERC20_FEE }
 
   describe '#create_address' do
-    subject { WalletService[deposit_wallet].create_address }
+    subject { WalletService[deposit_wallet].create_address! }
 
     let :personal_newAccount_request do
       { jsonrpc: '2.0',

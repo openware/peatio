@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Rippled do
+describe WalletServices::Rippled do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,7 +9,7 @@ describe WalletService::Rippled do
     WebMock.allow_net_connect!
   end
 
-  describe 'WalletService::Rippled' do
+  describe 'WalletServices::Rippled' do
 
     let(:sign_data) do
       Rails.root.join('spec', 'resources', 'ripple-data', 'sign-transaction.json')
@@ -33,7 +33,7 @@ describe WalletService::Rippled do
     context '#create_address!' do
       let(:service) {WalletService[wallet]}
       let(:wallet) {Wallet.find_by(gateway: :rippled, kind: :deposit)}
-      let(:create_address) {service.create_address}
+      let(:create_address) {service.create_address!}
 
       it 'create valid address with destination_tag' do
         address = create_address[:address]

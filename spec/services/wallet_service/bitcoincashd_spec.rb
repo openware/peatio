@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe WalletService::Bitcoincashd do
+describe WalletServices::Bitcoincashd do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,7 +9,7 @@ describe WalletService::Bitcoincashd do
     WebMock.allow_net_connect!
   end
 
-  describe 'WalletService::Bitcoincashd' do
+  describe 'WalletServices::Bitcoincashd' do
 
     let(:deposit) { create(:deposit, :deposit_bch, amount: 10) }
     let(:withdraw) { create(:bch_withdraw) }
@@ -17,7 +17,7 @@ describe WalletService::Bitcoincashd do
     let(:hot_wallet) { Wallet.find_by(gateway: :bitcoincashd, kind: :hot) }
 
     context '#create_address' do
-      subject { WalletService[deposit_wallet].create_address }
+      subject { WalletService[deposit_wallet].create_address! }
 
       let(:new_address) { 'bchtest:pzsze7ety982w764sh9nq2ztknz0988w9cp7sv0zpj' }
 

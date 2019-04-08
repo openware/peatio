@@ -1,11 +1,17 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module WalletService
-  class Bitcoind < Base
+module WalletServices
+  class Bitcoind < Peatio::WalletService::Abstract
 
-    def create_address(options = {})
-      @client.create_address!(options)
+    include Peatio::WalletService::Helpers
+
+    def client
+      @client ||= WalletClient::Bitcoind.new(@wallet)
+    end
+
+    def create_address!(options = {})
+      client.create_address!(options)
     end
 
     def collect_deposit!(deposit, options={})
@@ -26,7 +32,7 @@ module WalletService
 
     def build_withdrawal!(withdraw, options = {})
       client.create_withdrawal!(
-        { address: wallet.address },
+        { address: @wallet.address },
         { address: withdraw.rid },
         withdraw.amount,
         options

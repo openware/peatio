@@ -125,7 +125,7 @@ describe Withdraw do
     end
 
     it 'transitions to :failed after calling WalletService but getting Exception' do
-      WalletService.stubs(:[]).raises(WalletService::Error)
+      WalletService.stubs(:[]).raises(Peatio::WalletService::NotRegisteredAdapterError)
       Worker::WithdrawCoin.new.process({ id: subject.id })
 
       expect(subject.reload.failed?).to be true
@@ -144,7 +144,7 @@ describe Withdraw do
     it 'does not send coins again if previous attempt failed' do
       WalletService.stubs(:[]).raises(NameError)
       begin Worker::WithdrawCoin.new.process({ id: subject.id }); rescue; end
-      WalletService.stubs(:[]).returns(WalletService::Bitcoind)
+      WalletService.stubs(:[]).returns(WalletServices::Bitcoind)
 
       expect { Worker::WithdrawCoin.new.process({ id: subject.id }) }.to_not change { subject.account.reload.amount }
       expect(subject.reload.failed?).to be true
