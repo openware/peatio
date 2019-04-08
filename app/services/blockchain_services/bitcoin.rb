@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module BlockchainServices
-  class Bitcoin < Base
+  class Bitcoin < Peatio::BlockchainService::Abstract
     # Rough number of blocks per hour for Bitcoin is 6.
     def process_blockchain(blocks_limit: 6, force: false)
       latest_block = client.latest_block_number

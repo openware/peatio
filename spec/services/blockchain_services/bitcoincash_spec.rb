@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe BlockchainService::Bitcoincash do
+describe BlockchainServices::Bitcoincash do
 
   around do |example|
     WebMock.disable_net_connect!

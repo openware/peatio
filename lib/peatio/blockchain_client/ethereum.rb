@@ -2,13 +2,14 @@
 # frozen_string_literal: true
 
 module BlockchainClient
-  class Ethereum < Base
+  class Ethereum
+
+    include Peatio::BlockchainClient::Helpers
 
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
 
-    def initialize(*)
-      super
+    def initialize(blockchain)
       @json_rpc_call_id  = 0
       @json_rpc_endpoint = URI.parse(blockchain.server)
     end
@@ -18,7 +19,7 @@ module BlockchainClient
     end
 
     def get_block(height)
-      current_block   = height || 0
+      current_block = height || 0
       json_rpc(:eth_getBlockByNumber, ["0x#{current_block.to_s(16)}", true]).fetch('result')
     end
 
@@ -71,9 +72,7 @@ module BlockchainClient
     end
 
     def latest_block_number
-      Rails.cache.fetch :latest_ethereum_block_number, expires_in: 5.seconds do
-        json_rpc(:eth_blockNumber).fetch('result').hex
-      end
+      json_rpc(:eth_blockNumber).fetch('result').hex
     end
 
     def invalid_eth_transaction?(block_txn)
@@ -91,25 +90,24 @@ module BlockchainClient
       json_rpc(:eth_getTransactionReceipt, [normalize_txid(txid)]).fetch('result')
     end
 
-    # IMPORTANT: Be sure to set the correct value!
+    def supports_cash_addr_format?
+      false
+    end
+
     def case_sensitive?
       false
     end
 
-    def convert_from_base_unit(value, currency)
-      value.to_d / currency.base_factor
-    end
-
-  protected
+    protected
 
     def connection
-      Faraday.new(@json_rpc_endpoint).tap do |connection|
-        unless @json_rpc_endpoint.user.blank?
-          connection.basic_auth(@json_rpc_endpoint.user, @json_rpc_endpoint.password)
+      @connection ||=
+        Faraday.new(@json_rpc_endpoint).tap do |connection|
+          unless @json_rpc_endpoint.user.blank?
+            connection.basic_auth(@json_rpc_endpoint.user, @json_rpc_endpoint.password)
+          end
         end
-      end
     end
-    memoize :connection
 
     def json_rpc(method, params = [])
       response = connection.post \
@@ -129,6 +127,15 @@ module BlockchainClient
 
     def block_information(number)
       json_rpc(:eth_getBlockByNumber, [number, false]).fetch('result')
+    end
+
+    def permit_transaction(issuer, recipient)
+      json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
+        unless response['result']
+          raise BlockchainClient::Error, \
+            "#{currency.code.upcase} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} is not permitted."
+        end
+      end
     end
 
     def abi_encode(method, *args)
@@ -191,5 +198,14 @@ module BlockchainClient
     def contract_address(currency)
       normalize_address(currency.erc20_contract_address)
     end
+
+    def normalize_address(address)
+      case_sensitive? ? address : address.try(:downcase)
+    end
+
+    def normalize_txid(txid)
+      case_sensitive? ? txid : txid.try(:downcase)
+    end
   end
 end
+

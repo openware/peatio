@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe BlockchainService::Litecoin do
+describe BlockchainServices::Dash do
 
   around do |example|
     WebMock.disable_net_connect!
@@ -9,9 +9,15 @@ describe BlockchainService::Litecoin do
     WebMock.allow_net_connect!
   end
 
-  describe 'BlockchainClient::Litecoin' do
+  describe 'BlockchainClient::Dash' do
     let(:block_data) do
-      Rails.root.join('spec', 'resources', 'litecoin-data', block_file_name)
+      Rails.root.join('spec', 'resources', 'dash-data', block_file_name)
+        .yield_self { |file_path| File.open(file_path) }
+        .yield_self { |file| JSON.load(file) }
+    end
+
+    let(:transaction_data) do
+      Rails.root.join('spec', 'resources', 'dash-data', transaction_file_name)
         .yield_self { |file_path| File.open(file_path) }
         .yield_self { |file| JSON.load(file) }
     end
@@ -20,7 +26,7 @@ describe BlockchainService::Litecoin do
     let(:latest_block)  { block_data.last['result']['height'] }
 
     let(:blockchain) do
-      Blockchain.find_by_key('ltc-testnet')
+      Blockchain.find_by_key('dash-testnet')
         .tap { |b| b.update(height: start_block) }
     end
 
@@ -36,28 +42,36 @@ describe BlockchainService::Litecoin do
     def request_block_body(block_hash)
       { jsonrpc: '1.0',
         method:  :getblock,
-        params:  [block_hash, 2]
+        params:  [block_hash, true]
       }.to_json
     end
 
-    context 'One LTC deposit was created during blockchain proccessing' do
+    def request_raw_transaction_body(txid)
+      { jsonrpc: '1.0',
+        method:  :getrawtransaction,
+        params:  [txid, true]
+      }.to_json
+    end
+
+    context 'one DASH deposit was created during blockchain proccessing' do
       # File with real json rpc data for two blocks.
-      let(:block_file_name) { '678768-678769.json' }
+      let(:block_file_name) { '193257-193258.json' }
+      let(:transaction_file_name) { 'raw_transactions/193257-193258.json' }
 
       let(:expected_deposits) do
         [
           {
-            amount:   10.00000000,
-            address:  'QaXKfMcHj86a9AQh2YTAkkhMEJuN6dfuyu',
-            txid:     '72bdd063443f991cf949cb7a8061791ebde7d707b76ee8f28a4eab2158d88166'
+            amount:   1026.14160000,
+            address:  'yeFUTeA4FzS5UhvDNDCSN4vsy98edjSHq4',
+            txid:     'd14317728566e012f18bc9e691639cbe425b181c4339eae2773e0e0c0bc83afd'
           }
         ]
       end
 
-      let(:currency) { Currency.find_by_id(:ltc) }
+      let(:currency) { Currency.find_by_id(:dash) }
 
       let!(:payment_address) do
-        create(:ltc_payment_address, address: 'QaXKfMcHj86a9AQh2YTAkkhMEJuN6dfuyu')
+        create(:dash_payment_address, address: 'yeFUTeA4FzS5UhvDNDCSN4vsy98edjSHq4')
       end
 
       before do
@@ -75,6 +89,13 @@ describe BlockchainService::Litecoin do
           stub_request(:post, client.endpoint)
             .with(body: request_block_body(blk['result']['hash']))
             .to_return(body: blk.to_json)
+        end
+
+        transaction_data.each_with_index do |tx, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+            .with(body: request_raw_transaction_body(tx['result']['txid']))
+            .to_return(body: tx.to_json)
         end
 
         # Process blockchain data.
@@ -105,41 +126,37 @@ describe BlockchainService::Litecoin do
       end
     end
 
-    context 'two LTC withdrawals were processed' do
+    context 'one DASH withdrawal is processed' do
       # File with real json rpc data for bunch of blocks.
-      let(:block_file_name) { '678947-678948.json' }
+      let(:block_file_name) { '193265-193267.json' }
+      let(:transaction_file_name) { 'raw_transactions/193265-193267.json' }
 
       # Use rinkeby.etherscan.io to fetch transactions data.
       let(:expected_withdrawals) do
         [
           {
-            sum:  3.00000000 + currency.withdraw_fee,
-            rid:  'QUwDTFe1H7EAChVqm6FXexC8YpLPxc2U6n',
-            txid: 'bd75341b46132bba6805f6494871db4b42db972ac4643c1c2cf249797a114035'
-          },
-          {
-            sum:  5.00000000 + currency.withdraw_fee,
-            rid:  'QUwDTFe1H7EAChVqm6FXexC8YpLPxc2U6n',
-            txid: '77aea3faa3c5d97fe75736a4171e88bd1519893b45f39490d25d7b0c932c356c'
+            sum:  20.00000000 + currency.withdraw_fee,
+            rid:  'yQu2mY8WuXFQmjPBuzkEQ9z1DrhGBSrLL4',
+            txid: 'f974214f2bfc6e601dc070970ec4bdbf2ed552bd5ec7fa9f5f8a56d3efbd0ec0'
           }
         ]
       end
 
       let(:member) { create(:member, :level_3, :barong) }
-      let!(:ltc_account) { member.get_account(:ltc).tap { |a| a.update!(locked: 10, balance: 50) } }
+      let!(:dash_account) { member.get_account(:dash).tap { |a| a.update!(locked: 30, balance: 70) } }
 
       let!(:withdrawals) do
         expected_withdrawals.each_with_object([]) do |withdrawal_hash, withdrawals|
           withdrawal_hash.merge!\
             member: member,
-            account: ltc_account,
+            account: dash_account,
             aasm_state: :confirming,
             currency: currency
-          withdrawals << create(:ltc_withdraw, withdrawal_hash)
+          withdrawals << create(:dash_withdraw, withdrawal_hash)
         end
       end
 
-      let(:currency) { Currency.find_by_id(:ltc) }
+      let(:currency) { Currency.find_by_id(:dash) }
 
       before do
         # Mock requests and methods.
@@ -156,6 +173,13 @@ describe BlockchainService::Litecoin do
           stub_request(:post, client.endpoint)
             .with(body: request_block_body(blk['result']['hash']))
             .to_return(body: blk.to_json)
+        end
+
+        transaction_data.each_with_index do |tx, index|
+          # stub get_block_hash
+          stub_request(:post, client.endpoint)
+            .with(body: request_raw_transaction_body(tx['result']['txid']))
+            .to_return(body: tx.to_json)
         end
 
         BlockchainService[blockchain.key].process_blockchain(force: true)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe BlockchainService::Ripple do
+describe BlockchainServices::Ripple do
   around do |example|
     WebMock.disable_net_connect!
     example.run
