@@ -313,8 +313,6 @@ describe API::V2::Public::Markets, type: :request do
   end
 
   describe 'GET /api/v2/markets/tickers' do
-    before { clear_redis }
-    after { clear_redis }
 
     context 'no trades executed yet' do
       let(:expected_ticker) do
@@ -382,8 +380,6 @@ describe API::V2::Public::Markets, type: :request do
   end
 
   describe 'GET /api/v2/public/markets/:market/tickers' do
-    before { clear_redis }
-    after { clear_redis }
     context 'no trades executed yet' do
       let(:expected_ticker) do
         { 'buy' => '0.0', 'sell' => '0.0',
