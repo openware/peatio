@@ -19,7 +19,7 @@ module BlockchainServices
       raise FetchBlockError if block_hash.blank?
 
       @block_json = client.get_block(block_hash)
-      if @block_json.blank? || @block_json['tx'].blank?
+      if @block_json.blank? || !@block_json.key?('tx')
         raise FetchBlockError
       end
     end

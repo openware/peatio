@@ -15,7 +15,7 @@ module BlockchainServices
       raise BlockGreaterThanLatestError if block_number > latest_block_number
 
       @block_json = client.get_block(block_number)
-      if @block_json.blank? || @block_json['transactions'].blank?
+      if @block_json.blank? || !@block_json.key?('transactions')
         raise FetchBlockError
       end
     end
