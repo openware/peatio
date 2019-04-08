@@ -1,6 +1,6 @@
 # encoding: UTF-8
 # frozen_string_literal: true
-module BlockchainService
+module BlockchainServices
   class Ripple < Base
     def process_blockchain(blocks_limit: 300, force: false)
       if blockchain.height > 0

@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module BlockchainService
+module BlockchainServices
   class Geth < Ethereum
 
   end

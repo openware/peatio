@@ -1,15 +1,15 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module BlockchainService
-  class Bitcoincash < Bitcoin
+module BlockchainServices
+  class Dash < Bitcoin
 
     private
 
     def build_deposits(block_json, block_id)
       block_json
-          .fetch('tx')
-          .each_with_object([]) do |tx, deposits|
+        .fetch('tx')
+        .each_with_object([]) do |tx, deposits|
 
         # get raw transaction
         txn = client.get_raw_transaction(tx)
@@ -41,26 +41,26 @@ module BlockchainService
 
     def build_withdrawals(block_json, block_id)
       block_json
-          .fetch('tx')
-          .each_with_object([]) do |tx, withdrawals|
+        .fetch('tx')
+        .each_with_object([]) do |tx, withdrawals|
 
-        Withdraws::Coin
-          .where(currency: currencies)
-          .where(txid: client.normalize_txid(tx))
-          .each do |withdraw|
-          # If wallet currency doesn't match with blockchain transaction
+          Withdraws::Coin
+            .where(currency: currencies)
+            .where(txid: client.normalize_txid(tx))
+            .each do |withdraw|
+            # If wallet currency doesn't match with blockchain transaction
 
-          # get raw transaction
-          txn = client.get_raw_transaction(tx)
+            # get raw transaction
+            txn = client.get_raw_transaction(tx)
 
-          withdraw_txs = client.build_transaction(txn, block_id, withdraw.rid)
-          withdraw_txs.fetch(:entries).each do |entry|
-            withdrawals << {  txid:           withdraw_txs[:id],
-                              rid:            entry[:address],
-                              amount:         entry[:amount],
-                              block_number:   withdraw_txs[:block_number] }
+            withdraw_txs = client.build_transaction(txn, block_id, withdraw.rid)
+            withdraw_txs.fetch(:entries).each do |entry|
+              withdrawals << {  txid:           withdraw_txs[:id],
+                                rid:            entry[:address],
+                                amount:         entry[:amount],
+                                block_number:   withdraw_txs[:block_number] }
+            end
           end
-        end
       end
     end
 

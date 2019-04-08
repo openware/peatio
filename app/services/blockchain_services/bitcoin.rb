@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module BlockchainService
+module BlockchainServices
   class Bitcoin < Base
     # Rough number of blocks per hour for Bitcoin is 6.
     def process_blockchain(blocks_limit: 6, force: false)
