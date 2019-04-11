@@ -6,16 +6,6 @@ module Peatio
       def fetch_block!(block_number)
         abstract_method
       end
-      #
-      # # TODO: Doc
-      # def filtered_deposits(payment_addresses, &block)
-      #   abstract_method
-      # end
-      #
-      # # TODO: Doc
-      # def filtered_withdrawals(withdrawals, &block)
-      #   abstract_method
-      # end
 
       # TODO: Doc
       def current_block_number
@@ -38,6 +28,7 @@ module Peatio
       end
 
       private
+
       def abstract_method
         method_not_implemented
       end
