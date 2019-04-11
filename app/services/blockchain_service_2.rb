@@ -48,26 +48,28 @@ class BlockchainService2
         currency_id: transaction.currency_id,
         txid: transaction.hash,
         txout: transaction.txout
-      ) do |deposit|
-        deposit.address = transaction.to_address
-        deposit.amount = transaction.amount
-        deposit.member = PaymentAddress.find_by(currency_id: transaction.currency_id, address: transaction.to_address).account.member
-        deposit.block_number = transaction.block_number
+      ) do |d|
+        d.address = transaction.to_address
+        d.amount = transaction.amount
+        d.member = PaymentAddress.find_by(currency_id: transaction.currency_id, address: transaction.to_address).account.member
+        d.block_number = transaction.block_number
       end
 
     deposit.update_column(:block_number, transaction.block_number)
-    if deposit.confirmations >= blockchain.min_confirmations && deposit.accept!
+    if deposit.confirmations >= @blockchain.min_confirmations && deposit.accept!
       deposit.collect!
     end
   end
 
   def update_withdrawal(transaction)
-    withdrawal = Withdraws::Coin.confirming
-                   .find_by(currency_id: transaction.currency_id, txid: transaction.hash) do |withdrawal|
-                      withdrawal.rid = transaction.from_address
-                      withdrawal.amount = transaction.amount
-                      withdrawal.block_number = transaction.block_number
-    end
+    withdrawal =
+      Withdraws::Coin.confirming
+        .find_by(currency_id: transaction.currency_id, txid: transaction.hash) do |w|
+          # TODO: Do we need to set this attributes here???
+          w.rid = transaction.from_address
+          w.amount = transaction.amount
+          w.block_number = transaction.block_number
+        end
 
     # Skip non-existing in database withdrawals.
     if withdrawal.blank?
@@ -76,6 +78,6 @@ class BlockchainService2
     end
 
     withdrawal.update_column(:block_number, transaction.block_number)
-    withdrawal.success! if withdrawal.min_confirmations >= blockchain.min_confirmations
+    withdrawal.success! if withdrawal.min_confirmations >= @blockchain.min_confirmations
   end
 end
