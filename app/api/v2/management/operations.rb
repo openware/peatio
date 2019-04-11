@@ -34,7 +34,15 @@ module API
                      default: 100,
                      range: 1..1000,
                      desc: 'The number of objects per page (defaults to 100, maximum is 1000).'
-           optional :reference_type,
+            optional :time_from,
+                    type: Integer,
+                    desc: "An integer represents the seconds elapsed since Unix epoch."\
+                        "If set, only operations after the time will be returned."
+            optional :time_to,
+                    type: Integer,
+                    desc: "An integer represents the seconds elapsed since Unix epoch."\
+                       "If set, only operations before the time will be returned."
+            optional :reference_type,
                     type: String,
                     desc: "The reference type for operations filtering"
           end
@@ -47,6 +55,8 @@ module API
               .order(id: :desc)
               .tap { |q| q.where!(currency_id: currency_id) if currency_id }
               .tap { |q| q.where!(reference_type: params[:reference_type]) if params[:reference_type].present? }
+              .tap { |q| q.where!('created_at >= ?', Time.at(params[:time_from])) if params[:time_from].present? }
+              .tap { |q| q.where!('created_at < ?', Time.at(params[:time_to])) if params[:time_to].present? }
               .page(params[:page])
               .per(params[:limit])
               .tap { |q| present q, with: API::V2::Management::Entities::Operation }
