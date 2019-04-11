@@ -1,8 +1,16 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-FakeBlockchain = Peatio::Blockchain::Abstract.new
-Peatio::BlockchainAPI.register(:fake, FakeBlockchain)
+class FakeBlockchain < Peatio::Blockchain::Abstract
+  def supports_cash_addr_format?
+    false
+  end
+
+  def case_sensitive?
+    true
+  end
+end
+
 
 describe BlockchainService2 do
   let!(:blockchain) { Blockchain.create!(key: 'fake', name: 'fake', client: 'fake', status: 'active', height: 1) }
@@ -19,16 +27,18 @@ describe BlockchainService2 do
       Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address', to_address: 'fake_address', amount: 3, block_number: 2, currency_id: 'fake', txout: 3)
     ]
   end
+  let(:fake_blockchain_service) { FakeBlockchain.new }
+  before do
+    Peatio::BlockchainAPI.register(:fake, fake_blockchain_service)
+
+    fake_blockchain_service.stubs(:latest_block_number).returns(4)
+    Blockchain.any_instance.stubs(:blockchain_api).returns(fake_blockchain_service)
+  end
   it do
     service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+    # Probably we can create payment_address now.
     PaymentAddress.stubs(:where).returns([{ address: 'fake_address' }])
     PaymentAddress.stubs(:find_by).returns(member.accounts.first.payment_address)
-    Deposits::Coin.any_instance.stubs(:blockchain_api).returns(FakeBlockchain)
-    FakeBlockchain.class.any_instance.stubs(:case_sensitive?).returns(true)
-    FakeBlockchain.class.any_instance.stubs(:supports_cash_addr_format?).returns(false)
-    Blockchain.any_instance.stubs(:blockchain_api).returns(FakeBlockchain)
-    FakeBlockchain.class.any_instance.stubs(:latest_block_number).returns(4)
-    # allow(BlockchainClient::Fake).to recieve(:case_sensetive).and_return(false)
     service.process_block(1)
     expect(Deposit.count).to eq 3
   end
