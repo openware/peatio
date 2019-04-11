@@ -21,7 +21,6 @@ module Admin
 
       def show
         @deposit = ::Deposits::Fiat.where(currency: currency).find(params[:id])
-        flash.now[:notice] = 'The recharge have been successful.' if @deposit.accepted?
       end
 
       def create
@@ -39,7 +38,7 @@ module Admin
         case params.fetch(:commit)
         when 'Accept'
           @deposit.charge!
-          flash.keep[:notice] = t('.notice')
+          flash.keep[:notice] = "The recharge have been successful."
         when 'Reject'
           @deposit.reject!
         end
