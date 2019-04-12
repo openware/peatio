@@ -34,6 +34,30 @@ module Peatio #:nodoc:
       # @return [Hash] current blockchain settings.
       attr_reader :settings
 
+
+      # Abstract constructor.
+      #
+      # @example
+      #   class MyBlockchain < Peatio::Abstract::Blockchain
+      #
+      #     # You could pass settings which could be calculated on blockchain register.
+      #     def initialize(my_custom_settings = {})
+      #       @settings = my_custom_settings
+      #     end
+      #     ...
+      #   end
+      #
+      #   # Register MyBlockchain as peatio plugable blockchain.
+      #   settings = {custom_setting: 'foo', custom_setting2: :bar}
+      #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(settings))
+      #
+      # @abstract
+      #
+      # @return [Peatio::Blockchain::Abstract]
+      def initialize(*)
+        abstract_method
+      end
+
       # Merges given configuration parameters with defined during initialization
       # and returns the result.
       #
