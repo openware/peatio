@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 
 class FakeBlockchain < Peatio::Blockchain::Abstract
+  def initialize; end
+
   def supports_cash_addr_format?
     false
   end
@@ -25,7 +27,13 @@ describe BlockchainService2 do
 
   let(:transaction) {  Peatio::Transaction.new(hash: 'fake_txid', from_address: 'fake_address', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake1', txout: 4) }
 
-  before(:each) { }
+  let(:expected_transactions) do
+    [
+      { hash: 'fake_hash1', from_address: 'fake_address2', to_address: 'fake_address', amount: 1, block_number: 2, currency_id: 'fake1', txout: 1 },
+      { hash: 'fake_hash2', from_address: 'fake_address', to_address: 'fake_address1', amount: 2, block_number: 2, currency_id: 'fake1', txout: 2 },
+      { hash: 'fake_hash3', from_address: 'fake_address1', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake2', txout: 3 }
+    ].map { |t| Peatio::Transaction.new(t) }
+  end
 
   before do
     Peatio::BlockchainAPI.expects(:adapter_for).with('fake').returns(fake_adapter)
@@ -40,16 +48,9 @@ describe BlockchainService2 do
   #   * Multiple deposits for 2 currencies in single block.
   #   * Multiple deposits in single transaction (different txout).
   describe 'Filter Deposits' do
-    # For each hash create transaction.
-    let(:expected_transactions) do
-      [
-        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address2', to_address: 'fake_address', amount: 1, block_number: 2, currency_id: 'fake1', txout: 1),
-        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address', to_address: 'fake_address1', amount: 2, block_number: 2, currency_id: 'fake1', txout: 2),
-        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address1', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake2', txout: 3)
-      ]
-    end
 
     context 'single fake deposit was created during block processing' do
+
       before do
         PaymentAddress.create!(currency: fake_currency1,
                                account: member.accounts.find_by(currency: fake_currency1),
@@ -146,7 +147,59 @@ describe BlockchainService2 do
   #   * Single withdrawal.
   #   * Multiple withdrawals for single currency.
   #   * Multiple withdrawals for 2 currencies.
-  describe 'Filter Deposits' do
-    
+  describe 'Filter Withdrawals' do
+
+    context 'single fake withdrawal was updated during block processing' do
+
+      let!(:fake_account) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
+      let!(:withdrawal) do
+        Withdraw.create!(member: member,
+                         account: fake_account,
+                         currency: fake_currency1,
+                         amount: 1,
+                         txid: 'fake_hash1',
+                         rid: 'fake_address',
+                         sum: 1,
+                         type: Withdraws::Coin,
+                         aasm_state: :confirming)
+      end
+
+      before do
+        fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.process_block(block_number)
+      end
+
+      subject { Withdraws::Coin.where(account: fake_account) }
+
+      it { expect(subject.first.block_number).to eq(expected_transactions.first.block_number) }
+    end
+  end
+
+  context 'two fake withdrawals was updated during block processing' do
+
+    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
+    let!(:withdrawals) do
+      2.times do |i|
+        Withdraw.create!(member: member,
+                         account: fake_account1,
+                         currency: fake_currency1,
+                         amount: 1,
+                         txid: "fake_hash#{i+1}",
+                         rid: 'fake_address',
+                         sum: 1,
+                         type: Withdraws::Coin,
+                         aasm_state: :confirming)
+      end
+    end
+
+    before do
+      fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+      service.process_block(block_number)
+    end
+
+    it do
+      expect(Withdraw.find_by(txid: expected_transactions.first.hash).block_number).to eq(expected_transactions.first.block_number)
+      expect(Withdraw.find_by(txid: expected_transactions.second.hash).block_number).to eq(expected_transactions.second.block_number)
+    end
   end
 end
