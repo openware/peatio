@@ -11,48 +11,56 @@ class FakeBlockchain < Peatio::Blockchain::Abstract
   end
 end
 
-Peatio::BlockchainAPI.register(:fake, FakeBlockchain.new)
-
 describe BlockchainService2 do
-  let!(:blockchain) { Blockchain.create!(key: 'fake', name: 'fake', client: 'fake', status: 'active', height: 1) }
-  let(:service) { BlockchainService2.new(blockchain) }
-  let!(:fake_currency) { Currency.create!(id: 'fake', name: 'fake', blockchain: blockchain, symbol: 'F') }
-  let!(:fake_currency1) { Currency.create!(id: 'fake1', name: 'fake1', blockchain: blockchain, symbol: 'G') }
-  let!(:member) { create(:member) }
-  let(:block_number) { 1 }
-  let(:transaction) {  Peatio::Transaction.new(hash: 'fake_txid', from_address: 'fake_address', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake', txout: 4) }
 
-  let(:fake_blockchain_service) { FakeBlockchain.new }
+  let!(:blockchain) { Blockchain.create!(key: 'fake', name: 'fake', client: 'fake', status: 'active', height: 1) }
+  let(:block_number) { 1 }
+  let(:fake_adapter) { FakeBlockchain.new }
+  let(:service) { BlockchainService2.new(blockchain) }
+
+  let!(:fake_currency1) { Currency.create!(id: 'fake1', name: 'fake1', blockchain: blockchain, symbol: 'F') }
+  let!(:fake_currency2) { Currency.create!(id: 'fake2', name: 'fake2', blockchain: blockchain, symbol: 'G') }
+
+  let!(:member) { create(:member) }
+
+  let(:transaction) {  Peatio::Transaction.new(hash: 'fake_txid', from_address: 'fake_address', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake1', txout: 4) }
+
+  before(:each) { }
+
   before do
-    fake_blockchain_service.stubs(:latest_block_number).returns(4)
-    Blockchain.any_instance.stubs(:blockchain_api).returns(fake_blockchain_service)
+    Peatio::BlockchainAPI.expects(:adapter_for).with('fake').returns(fake_adapter)
+    fake_adapter.stubs(:latest_block_number).returns(4)
+    # TODO: Remove me.
+    Blockchain.any_instance.stubs(:blockchain_api).returns(fake_adapter)
   end
+
   describe 'Filter Deposits' do
+    # For each hash create transaction.
     let(:expected_transactions) do
       [
-        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address2', to_address: 'fake_address', amount: 1, block_number: 2, currency_id: 'fake', txout: 1),
-        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address', to_address: 'fake_address1', amount: 2, block_number: 2, currency_id: 'fake', txout: 2),
-        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address1', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake1', txout: 3)
+        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address2', to_address: 'fake_address', amount: 1, block_number: 2, currency_id: 'fake1', txout: 1),
+        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address', to_address: 'fake_address1', amount: 2, block_number: 2, currency_id: 'fake1', txout: 2),
+        Peatio::Transaction.new(hash: 'fake_hash', from_address: 'fake_address1', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake2', txout: 3)
       ]
     end
 
     context 'single fake deposit was created during block processing' do
       before do
-        PaymentAddress.create!(currency: fake_currency,
-                               account: member.accounts.find_by(currency: fake_currency),
+        PaymentAddress.create!(currency: fake_currency1,
+                               account: member.accounts.find_by(currency: fake_currency1),
                                address: 'fake_address')
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
-        service.process_block(1)
+        fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.process_block(block_number)
       end
 
-      subject { Deposits::Coin.where(currency: fake_currency) }
+      subject { Deposits::Coin.where(currency: fake_currency1) }
 
       it { expect(subject.count).to eq 1 }
 
       context 'creates deposit with correct attributes' do
         before do
-          service.adapter.stubs(:fetch_block!).returns([transaction])
-          service.process_block(1)
+          fake_adapter.stubs(:fetch_block!).returns([transaction])
+          service.process_block(block_number)
         end
 
         it { expect(subject.where(txid: transaction.hash,
@@ -64,32 +72,32 @@ describe BlockchainService2 do
 
       context 'process data one more time' do
         before do
-          service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+          fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
         end
 
-        it { expect { service.process_block(1) }.not_to change { subject } }
+        it { expect { service.process_block(block_number) }.not_to change { subject } }
       end
     end
 
     context 'two fake deposits for one currency was created during block processing' do
       before do
-        PaymentAddress.create!(currency: fake_currency,
-          account: member.accounts.find_by(currency: fake_currency),
+        PaymentAddress.create!(currency: fake_currency1,
+          account: member.accounts.find_by(currency: fake_currency1),
           address: 'fake_address')
-        PaymentAddress.create!(currency: fake_currency,
-          account: member.accounts.find_by(currency: fake_currency),
+        PaymentAddress.create!(currency: fake_currency1,
+          account: member.accounts.find_by(currency: fake_currency1),
           address: 'fake_address1')
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
-        service.process_block(1)
+        fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.process_block(block_number)
       end
 
-      subject { Deposits::Coin.where(currency: fake_currency) }
+      subject { Deposits::Coin.where(currency: fake_currency1) }
 
       it { expect(subject.count).to eq 2 }
 
       context 'one deposit was updated' do
         let!(:deposit) do
-          Deposit.create!(currency: fake_currency,
+          Deposit.create!(currency: fake_currency1,
                           member: member,
                           amount: 5,
                           address: 'fake_address',
@@ -99,8 +107,8 @@ describe BlockchainService2 do
                           type: Deposits::Coin)
         end
         before do
-          service.adapter.stubs(:fetch_block!).returns([transaction])
-          service.process_block(1)
+          fake_adapter.stubs(:fetch_block!).returns([transaction])
+          service.process_block(block_number)
         end
         it { expect(Deposits::Coin.find_by(txid: transaction.hash).block_number).to eq(transaction.block_number) }
       end
@@ -108,23 +116,23 @@ describe BlockchainService2 do
 
     context 'two fake deposits for two currency was created during block processing' do
       before do
-        PaymentAddress.create!(currency: fake_currency,
-          account: member.accounts.find_by(currency: fake_currency),
-          address: 'fake_address')
         PaymentAddress.create!(currency: fake_currency1,
           account: member.accounts.find_by(currency: fake_currency1),
+          address: 'fake_address')
+        PaymentAddress.create!(currency: fake_currency2,
+          account: member.accounts.find_by(currency: fake_currency2),
           address: 'fake_address2')
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
-        service.process_block(1)
+        fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.process_block(block_number)
       end
 
-      subject { Deposits::Coin.where(currency: [fake_currency, fake_currency1]) }
+      subject { Deposits::Coin.where(currency: [fake_currency1, fake_currency2]) }
 
       it { expect(subject.count).to eq 2 }
 
       it 'create for two currency' do
-        expect(Deposits::Coin.where(currency: fake_currency).count).to eq 1
-        expect(Deposits::Coin.where(currency: fake_currency1).count).to eq 1 
+        expect(Deposits::Coin.where(currency: fake_currency1).count).to eq 1
+        expect(Deposits::Coin.where(currency: fake_currency2).count).to eq 1
       end
     end
   end

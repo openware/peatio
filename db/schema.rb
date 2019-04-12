@@ -26,8 +26,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
   create_table "assets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
-    t.string "reference_type"
     t.integer "reference_id"
+    t.string "reference_type"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
@@ -73,7 +73,6 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["enabled"], name: "index_currencies_on_enabled"
-    t.index ["enabled"], name: "index_currencies_on_enabled_and_code"
     t.index ["position"], name: "index_currencies_on_position"
   end
 
@@ -103,8 +102,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
   create_table "expenses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
-    t.string "reference_type"
     t.integer "reference_id"
+    t.string "reference_type"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
@@ -117,8 +116,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "code", null: false
     t.string "currency_id", null: false
     t.integer "member_id"
-    t.string "reference_type"
     t.integer "reference_id"
+    t.string "reference_type"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
@@ -219,8 +218,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "code", null: false
     t.string "currency_id", null: false
     t.integer "member_id"
-    t.string "reference_type"
     t.integer "reference_id"
+    t.string "reference_type"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
