@@ -78,6 +78,6 @@ class BlockchainService2
     end
 
     withdrawal.update_column(:block_number, transaction.block_number)
-    withdrawal.success! if withdrawal.min_confirmations >= @blockchain.min_confirmations
+    withdrawal.success! if withdrawal.confirmations >= @blockchain.min_confirmations
   end
 end
