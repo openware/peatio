@@ -23,7 +23,7 @@ module Bitcoin
     end
 
     def latest_block_number
-
+      client.json_rpc(:getblockcount)
     end
 
     # @deprecated
