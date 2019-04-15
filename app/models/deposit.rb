@@ -85,13 +85,7 @@ class Deposit < ApplicationRecord
   end
 
   def collect!(collect_fee = true)
-    if coin?
-      if currency.is_erc20? && collect_fee
-        AMQPQueue.enqueue(:deposit_collection_fees, id: id)
-      else
-        AMQPQueue.enqueue(:deposit_collection, id: id)
-      end
-    end
+    AMQPQueue.enqueue(:deposit_collection_fees, id: id) if coin? && collect_fee
   end
 
   private
