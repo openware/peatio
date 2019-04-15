@@ -44,6 +44,10 @@ module WalletService
       method_not_implemented
     end
 
+    def deposit_collection_fees(deposit)
+      return
+    end
+
     protected
 
     def spread_deposit(deposit)
