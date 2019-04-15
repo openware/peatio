@@ -61,7 +61,7 @@ describe BlockchainService2 do
 
       subject { Deposits::Coin.where(currency: fake_currency1) }
 
-      it { expect(subject.count).to eq 1 }
+      it { expect(subject.exists?).to be true }
 
       context 'creates deposit with correct attributes' do
         before do
@@ -73,7 +73,17 @@ describe BlockchainService2 do
                         amount: transaction.amount,
                         address: transaction.to_address,
                         block_number: transaction.block_number,
-                        txout: transaction.txout).count).to eq 1 }
+                        txout: transaction.txout).exists?).to be true }
+      end
+
+      context 'collect deposit after processing block' do
+        before do
+          fake_adapter.stubs(:latest_block_number).returns(10)
+          fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+          AMQPQueue.expects(:enqueue).with(:deposit_collection_fees, id: subject.first.id)
+        end
+
+        it { service.process_block(block_number) }
       end
 
       context 'process data one more time' do
@@ -136,10 +146,9 @@ describe BlockchainService2 do
 
       it { expect(subject.count).to eq 2 }
 
-      it 'create for two currency' do
-        expect(Deposits::Coin.where(currency: fake_currency1).count).to eq 1
-        expect(Deposits::Coin.where(currency: fake_currency2).count).to eq 1
-      end
+      it { expect(Deposits::Coin.where(currency: fake_currency1).exists?).to be true }
+
+      it { expect(Deposits::Coin.where(currency: fake_currency2).exists?).to be true }
     end
   end
 
@@ -151,7 +160,7 @@ describe BlockchainService2 do
 
     context 'single fake withdrawal was updated during block processing' do
 
-      let!(:fake_account) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
+      let!(:fake_account) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 5) } }
       let!(:withdrawal) do
         Withdraw.create!(member: member,
                          account: fake_account,
@@ -171,6 +180,16 @@ describe BlockchainService2 do
 
       it { expect(withdrawal.reload.block_number).to eq(expected_transactions.first.block_number) }
 
+      context 'single withdrawal was succeed during block processing' do
+
+        before do
+          fake_adapter.stubs(:latest_block_number).returns(10)
+          fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+          service.process_block(block_number)
+        end
+
+        it { expect(withdrawal.reload.succeed?).to be true }
+      end
     end
   end
 
@@ -239,28 +258,5 @@ describe BlockchainService2 do
     it { expect(subject.find_by(txid: expected_transactions.first.hash).block_number).to eq(expected_transactions.first.block_number) }
 
     it { expect(subject.find_by(txid: expected_transactions.third.hash).block_number).to eq(expected_transactions.third.block_number) }
-  end
-
-  context 'single withdrawal was succed during block processing' do
-    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 1) } }
-    let!(:withdrawal) do
-      Withdraw.create!(member: member,
-                       account: fake_account1,
-                       currency: fake_currency1,
-                       amount: 1,
-                       txid: 'fake_hash1',
-                       rid: 'fake_address',
-                       sum: 1,
-                       type: Withdraws::Coin,
-                       aasm_state: :confirming)
-    end
-
-    before do
-      fake_adapter.stubs(:latest_block_number).returns(10)
-      fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
-      service.process_block(block_number)
-    end
-
-    it { expect(withdrawal.reload.succeed?).to eq(true) }
   end
 end
