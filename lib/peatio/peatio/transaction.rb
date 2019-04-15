@@ -3,7 +3,7 @@ module Peatio
     include ActiveModel::Model
 
     attr_accessor :hash, :txout,
-                  :from_address, :to_address,
+                  :to_address,
                   :amount,
                   :block_number,
                   :currency_id

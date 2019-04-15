@@ -70,4 +70,138 @@ describe Bitcoin::Blockchain do
       expect{ blockchain.latest_block_number }.to raise_error(Bitcoin::Client::ResponseError)
     end
   end
+
+  context :fetch_block! do
+    around do |example|
+      WebMock.disable_net_connect!
+      example.run
+      WebMock.allow_net_connect!
+    end
+
+    let(:block_file_name) { '1354419-1354420.json' }
+    let(:block_data) do
+      Rails.root.join('spec', 'resources', 'bitcoin-data', block_file_name)
+        .yield_self { |file_path| File.open(file_path) }
+        .yield_self { |file| JSON.load(file) }
+    end
+
+    let(:start_block)   { block_data.first['result']['height'] }
+    let(:latest_block)  { block_data.last['result']['height'] }
+
+    def request_block_hash_body(block_height)
+      { jsonrpc: '1.0',
+        method: :getblockhash,
+        params:  [block_height]
+      }.to_json
+    end
+
+    def request_block_body(block_hash)
+      { jsonrpc: '1.0',
+        method:  :getblock,
+        params:  [block_hash, 2]
+      }.to_json
+    end
+
+    before do
+      block_data.each do |blk|
+        # stub get_block_hash
+        stub_request(:post, endpoint)
+          .with(body: request_block_hash_body(blk['result']['height']))
+          .to_return(body: {result: blk['result']['hash']}.to_json)
+
+        # stub get_block
+        stub_request(:post, endpoint)
+          .with(body: request_block_body(blk['result']['hash']))
+          .to_return(body: blk.to_json)
+      end
+    end
+
+    let(:server) { 'http://user:password@127.0.0.1:18332' }
+    let(:endpoint) { 'http://127.0.0.1:18332' }
+    let(:blockchain) do
+      Bitcoin::Blockchain.new.tap { |b| b.configure(server: server) }
+    end
+
+    xit 'ii' do
+      blockchain.fetch_block!(start_block)
+    end
+  end
+
+  context :build_transaction do
+
+    let(:tx_file_name) { '1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22.json' }
+
+    let(:tx_hash) do
+      Rails.root.join('spec', 'resources', 'bitcoin-data', tx_file_name)
+        .yield_self { |file_path| File.open(file_path) }
+        .yield_self { |file| JSON.load(file) }
+    end
+    let(:expected_transactions) do
+      [{:hash=>"1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22",
+        :txout=>0,
+        :to_address=>"mg4KVGerD3rYricWC8CoBaayDp1YCKMfvL",
+        :amount=>0.325e0,
+        :currency_id=>currency.id},
+       {:hash=>"1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22",
+        :txout=>1,
+        :to_address=>"mqaBwWDjJCE2Egsf6pfysgD5ZBrfsP7NkA",
+        :amount=>0.1964466932e2,
+        :currency_id=>currency.id}]
+    end
+
+    let(:currency) do
+      Currency.find_by(id: :btc)
+    end
+
+    let(:blockchain) do
+      Bitcoin::Blockchain.new.tap { |b| b.configure(currencies: [currency.to_blockchain_api_settings]) }
+    end
+
+    it 'builds formatted transactions for passed transaction' do
+      expect(blockchain.send(:build_transaction, tx_hash)).to contain_exactly(*expected_transactions)
+    end
+
+    context 'multiple currencies' do
+      let(:expected_transactions) do
+        [{:hash=>"1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22",
+          :txout=>0,
+          :to_address=>"mg4KVGerD3rYricWC8CoBaayDp1YCKMfvL",
+          :amount=>0.325e0,
+          :currency_id=>currency1.id},
+         {:hash=>"1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22",
+          :txout=>1,
+          :to_address=>"mqaBwWDjJCE2Egsf6pfysgD5ZBrfsP7NkA",
+          :amount=>0.1964466932e2,
+          :currency_id=>currency1.id},
+         {:hash=>"1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22",
+          :txout=>0,
+          :to_address=>"mg4KVGerD3rYricWC8CoBaayDp1YCKMfvL",
+          :amount=>0.325e0,
+          :currency_id=>currency2.id},
+         {:hash=>"1858591d8ce638c37d5fcd92b9b33ee96be1b950e593cf0cbf45e6bfb1ad8a22",
+          :txout=>1,
+          :to_address=>"mqaBwWDjJCE2Egsf6pfysgD5ZBrfsP7NkA",
+          :amount=>0.1964466932e2,
+          :currency_id=>currency2.id}]
+      end
+
+      let(:currency1) do
+        Currency.find_by(id: :btc)
+      end
+
+      let(:currency2) do
+        Currency.find_by(id: :btc)
+      end
+
+      let(:blockchain) do
+        Bitcoin::Blockchain.new.tap do |b|
+          b.configure(currencies: [currency1.to_blockchain_api_settings, currency2.to_blockchain_api_settings])
+        end
+      end
+
+      it 'builds formatted transactions for passed transaction per each currency' do
+        expect(blockchain.send(:build_transaction, tx_hash)).to contain_exactly(*expected_transactions)
+      end
+    end
+  end
 end
