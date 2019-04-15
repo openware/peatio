@@ -64,12 +64,7 @@ class BlockchainService2
   def update_withdrawal(transaction)
     withdrawal =
       Withdraws::Coin.confirming
-        .find_by(currency_id: transaction.currency_id, txid: transaction.hash) do |w|
-          # TODO: Do we need to set this attributes here???
-          w.rid = transaction.from_address
-          w.amount = transaction.amount
-          w.block_number = transaction.block_number
-        end
+        .find_by(currency_id: transaction.currency_id, txid: transaction.hash)
 
     # Skip non-existing in database withdrawals.
     if withdrawal.blank?
