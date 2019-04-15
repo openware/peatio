@@ -34,6 +34,14 @@ module Peatio #:nodoc:
       # @return [Hash] current blockchain settings.
       attr_reader :settings
 
+      # Features supported by blockchain.
+      #
+      # @abstract
+      #
+      # @!attribute [r] features
+      # @return [Hash] list of features supported by blockchain.
+      attr_reader :features
+
 
       # Abstract constructor.
       #
@@ -95,6 +103,7 @@ module Peatio #:nodoc:
       # Defines if blockchain supports cash address format.
       #
       # @abstract
+      # @deprecated Moved to features.
       #
       # @return [Boolean] is cash address format supported by blockchain.
       def supports_cash_addr_format?
@@ -104,6 +113,7 @@ module Peatio #:nodoc:
       # Defines if blockchain transactions and addresses are case sensitive.
       #
       # @abstract
+      # @deprecated Moved to features.
       #
       # @return [Boolean] blockchain transactions and addresses are case sensitive.
       def case_sensitive?
