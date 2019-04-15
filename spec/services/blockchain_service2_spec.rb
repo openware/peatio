@@ -85,7 +85,7 @@ describe BlockchainService2 do
       end
     end
 
-    context 'two fake deposits for one currency was created during block processing' do
+    context 'two fake deposits for one currency were created during block processing' do
       before do
         PaymentAddress.create!(currency: fake_currency1,
           account: member.accounts.find_by(currency: fake_currency1),
@@ -120,7 +120,7 @@ describe BlockchainService2 do
       end
     end
 
-    context 'two fake deposits for two currency was created during block processing' do
+    context 'two fake deposits for two currency were created during block processing' do
       before do
         PaymentAddress.create!(currency: fake_currency1,
           account: member.accounts.find_by(currency: fake_currency1),
@@ -169,13 +169,12 @@ describe BlockchainService2 do
         service.process_block(block_number)
       end
 
-      subject { Withdraws::Coin.where(account: fake_account) }
+      it { expect(withdrawal.reload.block_number).to eq(expected_transactions.first.block_number) }
 
-      it { expect(subject.first.block_number).to eq(expected_transactions.first.block_number) }
     end
   end
 
-  context 'two fake withdrawals was updated during block processing' do
+  context 'two fake withdrawals were updated during block processing' do
 
     let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
     let!(:withdrawals) do
@@ -197,9 +196,71 @@ describe BlockchainService2 do
       service.process_block(block_number)
     end
 
-    it do
-      expect(Withdraw.find_by(txid: expected_transactions.first.hash).block_number).to eq(expected_transactions.first.block_number)
-      expect(Withdraw.find_by(txid: expected_transactions.second.hash).block_number).to eq(expected_transactions.second.block_number)
+    subject { Withdraws::Coin.where(currency: fake_currency1) }
+
+    it { expect(subject.find_by(txid: expected_transactions.first.hash).block_number).to eq(expected_transactions.first.block_number) }
+
+    it { expect(subject.find_by(txid: expected_transactions.second.hash).block_number).to eq(expected_transactions.second.block_number) }
+  end
+
+  context 'two fake withdrawals for two currency were updated during block processing' do
+    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
+    let!(:fake_account2) { member.get_account(:fake2).tap { |ac| ac.update!(balance: 50) } }
+    let!(:withdrawal1) do 
+      Withdraw.create!(member: member,
+                       account: fake_account1,
+                       currency: fake_currency1,
+                       amount: 1,
+                       txid: "fake_hash1",
+                       rid: 'fake_address',
+                       sum: 1,
+                       type: Withdraws::Coin,
+                       aasm_state: :confirming)
     end
+    let!(:withdrawal2) do 
+      Withdraw.create!(member: member,
+                        account: fake_account2,
+                        currency: fake_currency2,
+                        amount: 1,
+                        txid: "fake_hash3",
+                        rid: 'fake_address',
+                        sum: 1,
+                        type: Withdraws::Coin,
+                        aasm_state: :confirming)
+    end
+
+    before do
+      fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+      service.process_block(block_number)
+    end
+
+    subject { Withdraws::Coin.where(currency: [fake_currency1, fake_currency2]) }
+
+    it { expect(subject.find_by(txid: expected_transactions.first.hash).block_number).to eq(expected_transactions.first.block_number) }
+
+    it { expect(subject.find_by(txid: expected_transactions.third.hash).block_number).to eq(expected_transactions.third.block_number) }
+  end
+
+  context 'single withdrawal was succed during block processing' do
+    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 1) } }
+    let!(:withdrawal) do
+      Withdraw.create!(member: member,
+                       account: fake_account1,
+                       currency: fake_currency1,
+                       amount: 1,
+                       txid: 'fake_hash1',
+                       rid: 'fake_address',
+                       sum: 1,
+                       type: Withdraws::Coin,
+                       aasm_state: :confirming)
+    end
+
+    before do
+      fake_adapter.stubs(:latest_block_number).returns(10)
+      fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
+      service.process_block(block_number)
+    end
+
+    it { expect(withdrawal.reload.succeed?).to eq(true) }
   end
 end
