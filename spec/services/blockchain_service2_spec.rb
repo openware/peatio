@@ -259,4 +259,55 @@ describe BlockchainService2 do
 
     it { expect(subject.find_by(txid: expected_transactions.third.hash).block_number).to eq(expected_transactions.third.block_number) }
   end
+
+  describe 'Several blocks' do
+    let(:expected_transactions1) do
+      [
+        { hash: 'fake_hash4', from_address: 'fake_address', to_address: 'fake_address4', amount: 1, block_number: 3, currency_id: 'fake1', txout: 1 },
+        { hash: 'fake_hash5', from_address: 'fake_address1', to_address: 'fake_address4', amount: 2, block_number: 3, currency_id: 'fake1', txout: 2 },
+        { hash: 'fake_hash6', from_address: 'fake_address2', to_address: 'fake_address4', amount: 3, block_number: 3, currency_id: 'fake2', txout: 1 }
+      ].map { |t| Peatio::Transaction.new(t) }
+    end
+
+    let!(:fake_account1) { member.get_account(:fake1) }
+    let!(:fake_account2) { member.get_account(:fake2) }
+
+    before do
+      fake_adapter.stubs(:latest_block_number).returns(10)
+      PaymentAddress.create!(currency: fake_currency1,
+        account: fake_account1,
+        address: 'fake_address')
+      PaymentAddress.create!(currency: fake_currency2,
+        account: fake_account2,
+        address: 'fake_address2')
+      fake_adapter.stubs(:fetch_block!).returns(expected_transactions, expected_transactions1)
+    end
+
+    it 'creates deposits and updates withdrawals' do
+      service.process_block(block_number)
+
+      expect(Deposits::Coin.where(currency: fake_currency1).exists?).to be true
+      expect(Deposits::Coin.where(currency: fake_currency2).exists?).to be true
+
+      [fake_account1, fake_account2].map { |a| a.reload }
+      withdraw1 = Withdraw.create!(member: member, account: fake_account1, currency: fake_currency1, amount: 1, txid: "fake_hash5",
+        rid: 'fake_address4', sum: 1, type: Withdraws::Coin)
+      withdraw1.submit!
+      withdraw1.accept!
+      withdraw1.process!
+      withdraw1.dispatch!
+
+      withdraw2 = Withdraw.create!(member: member, account: fake_account2, currency: fake_currency2, amount: 3, txid: "fake_hash6",
+        rid: 'fake_address4', sum: 3, type: Withdraws::Coin)
+      withdraw2.submit!
+      withdraw2.accept!
+      withdraw2.process!
+      withdraw2.dispatch!
+
+      service.process_block(block_number)
+
+      expect(withdraw1.reload.succeed?).to be true
+      expect(withdraw2.reload.succeed?).to be true
+    end
+  end
 end
