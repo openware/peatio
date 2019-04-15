@@ -48,16 +48,18 @@ module Peatio #:nodoc:
       # @example
       #   class MyBlockchain < Peatio::Abstract::Blockchain
       #
-      #     # You could pass settings which could be calculated on blockchain register.
-      #     def initialize(my_custom_settings = {})
-      #       @settings = my_custom_settings
+      #     DEFAULT_FEATURES = {case_sensitive: true, supports_cash_addr_format: false}.freeze
+      #
+      #     # You could override default features by passing them to initializer.
+      #     def initialize(my_custom_features = {})
+      #       @features = DEFAULT_FEATURES.merge(my_custom_features)
       #     end
       #     ...
       #   end
       #
       #   # Register MyBlockchain as peatio plugable blockchain.
-      #   settings = {custom_setting: 'foo', custom_setting2: :bar}
-      #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(settings))
+      #   custom_features = {supports_cash_addr_format: true}
+      #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(custom_features))
       #
       # @abstract
       #
