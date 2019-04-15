@@ -7,15 +7,15 @@ module Bitcoin
       end
     end
 
-    DEFAULT_SETTINGS = {case_sensitive: true, supports_cash_addr_format: false}.freeze
+    DEFAULT_FEATURES = {case_sensitive: true, supports_cash_addr_format: false}.freeze
 
-    def initialize(settings = {})
-      @settings = settings.slice(:case_sensitive, :supports_cash_addr_format)
-                    .reverse_merge(DEFAULT_SETTINGS)
+    def initialize(custom_features = {})
+      @features = DEFAULT_FEATURES.merge(custom_features).slice(*SUPPORTED_FEATURES)
+      @settings = {}
     end
 
     def configure(settings = {})
-      @settings.merge!(settings.slice(:server, :currencies))
+      @settings.merge!(settings.slice(*SUPPORTED_SETTINGS))
     end
 
     def fetch_block!(block_number)
@@ -26,12 +26,14 @@ module Bitcoin
 
     end
 
+    # @deprecated
     def case_sensitive?
-      settings_fetch(:case_sensitive)
+      @features[:case_sensitive]
     end
 
+    # @deprecated
     def supports_cash_addr_format?
-      settings_fetch(:supports_cash_addr_format)
+      @features[:supports_cash_addr_format]
     end
 
     private

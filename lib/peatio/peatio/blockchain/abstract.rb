@@ -43,6 +43,19 @@ module Peatio #:nodoc:
       attr_reader :features
 
 
+      # List of all features supported by peatio.
+      #
+      # @todo
+      #   Rename supports_cash_addr_format -> cash_addr_format.
+      SUPPORTED_FEATURES = %i[case_sensitive supports_cash_addr_format].freeze
+
+      # List of settings which should be configurable.
+      #
+      # @see #configure
+      #
+      # @todo checkme.
+      SUPPORTED_SETTINGS = %i[server currencies].freeze
+
       # Abstract constructor.
       #
       # @example

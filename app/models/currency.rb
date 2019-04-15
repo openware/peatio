@@ -101,6 +101,12 @@ class Currency < ApplicationRecord
       fiat: fiat? }
   end
 
+  def to_blockchain_api_settings
+    { id: id,
+      base_factor: base_factor,
+      options:     options.deep_symbolize_keys }
+  end
+
   def summary
     locked  = Account.with_currency(code).sum(:locked)
     balance = Account.with_currency(code).sum(:balance)
