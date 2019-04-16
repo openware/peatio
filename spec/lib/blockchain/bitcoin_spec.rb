@@ -116,14 +116,38 @@ describe Bitcoin::Blockchain do
       end
     end
 
+    let(:currency) do
+      Currency.find_by(id: :btc)
+    end
+
     let(:server) { 'http://user:password@127.0.0.1:18332' }
     let(:endpoint) { 'http://127.0.0.1:18332' }
     let(:blockchain) do
-      Bitcoin::Blockchain.new.tap { |b| b.configure(server: server) }
+      Bitcoin::Blockchain.new.tap { |b| b.configure(server: server, currencies: [currency]) }
     end
 
-    xit 'ii' do
-      blockchain.fetch_block!(start_block)
+    context 'first block' do
+      subject { blockchain.fetch_block!(start_block) }
+
+      it 'builds expected number of transactions' do
+        expect(subject.count).to eq(14)
+      end
+
+      it 'all transactions are valid' do
+        expect(subject.all?(&:valid?)).to be_truthy
+      end
+    end
+
+    context 'last block' do
+      subject { blockchain.fetch_block!(latest_block) }
+
+      it 'builds expected number of transactions' do
+        expect(subject.count).to eq(20)
+      end
+
+      it 'all transactions are valid' do
+        expect(subject.all?(&:valid?)).to be_truthy
+      end
     end
   end
 
@@ -200,6 +224,32 @@ describe Bitcoin::Blockchain do
       end
 
       it 'builds formatted transactions for passed transaction per each currency' do
+        expect(blockchain.send(:build_transaction, tx_hash)).to contain_exactly(*expected_transactions)
+      end
+    end
+
+    context 'three vout transaction' do
+      let(:tx_file_name) { '1da5cd163a9aaf830093115ac3ac44355e0bcd15afb59af78f84ad4084973ad0.json' }
+
+      let(:expected_transactions) do
+        [{:hash=>"1da5cd163a9aaf830093115ac3ac44355e0bcd15afb59af78f84ad4084973ad0",
+          :txout=>0,
+          :to_address=>"2N5WyM3QT1Kb6fvkSZj3Xvcx2at7Ydm5VmL",
+          :amount=>0.1e0,
+          :currency_id=>"btc"},
+         {:hash=>"1da5cd163a9aaf830093115ac3ac44355e0bcd15afb59af78f84ad4084973ad0",
+          :txout=>1,
+          :to_address=>"2MzDFuDK9ZEEiRsuCDFkPdeHQLGvwbC9ufG",
+          :amount=>0.2e0,
+          :currency_id=>"btc"},
+         {:hash=>"1da5cd163a9aaf830093115ac3ac44355e0bcd15afb59af78f84ad4084973ad0",
+          :txout=>2,
+          :to_address=>"2MuvCKKi1MzGtvZqvcbqn5twjA2v5XLaTWe",
+          :amount=>0.11749604e0,
+          :currency_id=>"btc"}]
+      end
+
+      it 'builds formatted transactions for each vout' do
         expect(blockchain.send(:build_transaction, tx_hash)).to contain_exactly(*expected_transactions)
       end
     end

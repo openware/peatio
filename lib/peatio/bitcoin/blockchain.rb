@@ -20,12 +20,14 @@ module Bitcoin
 
     def fetch_block!(block_number)
       block_hash = client.json_rpc(:getblockhash, [block_number])
-      binding.pry
+
       client.json_rpc(:getblock, [block_hash, 2])
-        .fetch('tx').each_with_object([]) do |tx, block|
-          normalized_tx = build_transaction(tx).merge(block_number: block_number)
-          block << Peatio::Transaction.new(normalized_tx)
-        end.yield_self { |block_arr| Peatio::Block.new(block_number, block_arr) }
+        .fetch('tx').each_with_object([]) do |tx, txs_array|
+          txs = build_transaction(tx).map do |ntx|
+            Peatio::Transaction.new(ntx.merge(block_number: block_number))
+          end
+          txs_array.append(*txs)
+        end.yield_self { |txs_array| Peatio::Block.new(block_number, txs_array) }
     end
 
     def latest_block_number

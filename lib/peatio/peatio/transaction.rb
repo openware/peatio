@@ -9,7 +9,7 @@ module Peatio
                   :currency_id
 
     validates :hash, :txout,
-              :from_address, :to_address,
+              :to_address,
               :amount,
               :block_number,
               :currency_id,
