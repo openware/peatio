@@ -38,6 +38,8 @@ module Peatio #:nodoc:
       #
       # @abstract
       #
+      # @see Abstract::SUPPORTED_FEATURES for list of supported features.
+      #
       # @!attribute [r] features
       # @return [Hash] list of features supported by blockchain.
       attr_reader :features
@@ -47,7 +49,7 @@ module Peatio #:nodoc:
       #
       # @todo
       #   Rename supports_cash_addr_format -> cash_addr_format.
-      SUPPORTED_FEATURES = %i[case_sensitive supports_cash_addr_format].freeze
+      SUPPORTED_FEATURES = %i[case_sensitive cash_addr_format].freeze
 
       # List of settings which should be configurable.
       #
@@ -61,7 +63,7 @@ module Peatio #:nodoc:
       # @example
       #   class MyBlockchain < Peatio::Abstract::Blockchain
       #
-      #     DEFAULT_FEATURES = {case_sensitive: true, supports_cash_addr_format: false}.freeze
+      #     DEFAULT_FEATURES = {case_sensitive: true, cash_addr_format: false}.freeze
       #
       #     # You could override default features by passing them to initializer.
       #     def initialize(my_custom_features = {})
@@ -71,7 +73,7 @@ module Peatio #:nodoc:
       #   end
       #
       #   # Register MyBlockchain as peatio plugable blockchain.
-      #   custom_features = {supports_cash_addr_format: true}
+      #   custom_features = {cash_addr_format: true}
       #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(custom_features))
       #
       # @abstract
@@ -112,26 +114,6 @@ module Peatio #:nodoc:
       #
       # @return [Integer] the current blockchain height.
       def latest_block_number
-        abstract_method
-      end
-
-      # Defines if blockchain supports cash address format.
-      #
-      # @abstract
-      # @deprecated Moved to features.
-      #
-      # @return [Boolean] is cash address format supported by blockchain.
-      def supports_cash_addr_format?
-        abstract_method
-      end
-
-      # Defines if blockchain transactions and addresses are case sensitive.
-      #
-      # @abstract
-      # @deprecated Moved to features.
-      #
-      # @return [Boolean] blockchain transactions and addresses are case sensitive.
-      def case_sensitive?
         abstract_method
       end
 

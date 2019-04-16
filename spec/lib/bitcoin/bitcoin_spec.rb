@@ -6,13 +6,13 @@ describe Bitcoin::Blockchain do
     end
 
     it 'override defaults' do
-      blockchain2 = Bitcoin::Blockchain.new(supports_cash_addr_format: true)
-      expect(blockchain2.features[:supports_cash_addr_format]).to be_truthy
+      blockchain2 = Bitcoin::Blockchain.new(cash_addr_format: true)
+      expect(blockchain2.features[:cash_addr_format]).to be_truthy
     end
 
     it 'custom feautures' do
       blockchain3 = Bitcoin::Blockchain.new(custom_feature: :custom)
-      expect(blockchain3.features.keys).to contain_exactly(:supports_cash_addr_format, :case_sensitive)
+      expect(blockchain3.features.keys).to contain_exactly(*Bitcoin::Blockchain::SUPPORTED_FEATURES)
     end
   end
 
