@@ -3,7 +3,7 @@
 
 class FakeBlockchain < Peatio::Blockchain::Abstract
   def initialize; end
-
+  # TODO: delete this methods after rewrite blockchain_api
   def supports_cash_addr_format?
     false
   end
@@ -25,7 +25,7 @@ describe BlockchainService2 do
 
   let!(:member) { create(:member) }
 
-  let(:transaction) {  Peatio::Transaction.new(hash: 'fake_txid', from_address: 'fake_address', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake1', txout: 4) }
+  let(:transaction) { Peatio::Transaction.new(hash: 'fake_txid', from_address: 'fake_address', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake1', txout: 4) }
 
   let(:expected_transactions) do
     [
@@ -197,12 +197,12 @@ describe BlockchainService2 do
 
     let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
     let!(:withdrawals) do
-      2.times do |i|
+      %w[fake_hash1 fake_hash2].each do |t|
         Withdraw.create!(member: member,
                          account: fake_account1,
                          currency: fake_currency1,
                          amount: 1,
-                         txid: "fake_hash#{i+1}",
+                         txid: t,
                          rid: 'fake_address',
                          sum: 1,
                          type: Withdraws::Coin,
