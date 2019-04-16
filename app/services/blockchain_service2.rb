@@ -3,7 +3,23 @@ class BlockchainService2
 
   def initialize(blockchian)
     @blockchain = blockchian
-    @adapter = Peatio::BlockchainAPI.adapter_for(blockchian.name)
+    @adapter = Peatio::BlockchainAPI.adapter_for(blockchian.client)
+  end
+
+  def latest_block_number
+    Rails.cache.fetch("latest_#{@blockchain.client}_block_number", expires_in: 5.seconds) do
+      @adapter.latest_block_number
+    end
+  end
+
+  # @deprecated
+  def case_sensitive?
+    @adapter.features.fetch(:case_sensitive) { @adapter.case_sensitive? }
+  end
+
+  # @deprecated
+  def supports_cash_addr_format?
+    @adapter.features.fetch(:supports_cash_addr_format) { @adapter.supports_cash_addr_format? }
   end
 
   def process_block(block_number)
