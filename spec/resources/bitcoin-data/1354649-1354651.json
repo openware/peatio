@@ -1,4 +1,4 @@
-[
+[ // Could be removed once we drop support for blockchain_service v1.
   {
     "result": {
       "hash": "0000000000000032438aa9cd34b36207aa84d18433c787c002e33b09339fe731",
