@@ -8,7 +8,7 @@ module Bitcoin
       end
     end
 
-    DEFAULT_FEATURES = {case_sensitive: true, supports_cash_addr_format: false}.freeze
+    DEFAULT_FEATURES = {case_sensitive: true, cash_addr_format: false}.freeze
 
     def initialize(custom_features = {})
       @features = DEFAULT_FEATURES.merge(custom_features).slice(*SUPPORTED_FEATURES)
@@ -33,16 +33,6 @@ module Bitcoin
 
     def latest_block_number
       client.json_rpc(:getblockcount)
-    end
-
-    # @deprecated
-    def case_sensitive?
-      @features[:case_sensitive]
-    end
-
-    # @deprecated
-    def supports_cash_addr_format?
-      @features[:supports_cash_addr_format]
     end
 
     private

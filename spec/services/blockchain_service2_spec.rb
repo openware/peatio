@@ -2,14 +2,8 @@
 # frozen_string_literal: true
 
 class FakeBlockchain < Peatio::Blockchain::Abstract
-  def initialize; end
-  # TODO: delete this methods after rewrite blockchain_api
-  def supports_cash_addr_format?
-    false
-  end
-
-  def case_sensitive?
-    true
+  def initialize
+    @features = {cash_addr_format: false, case_sensitive: true}
   end
 end
 
@@ -37,9 +31,11 @@ describe BlockchainService2 do
 
   before do
     Peatio::BlockchainAPI.expects(:adapter_for).with('fake').returns(fake_adapter)
+    Peatio::BlockchainAPI.expects(:adapter_for).with(:fake).returns(fake_adapter)
+
     fake_adapter.stubs(:latest_block_number).returns(4)
-    # TODO: Remove me.
-    Blockchain.any_instance.stubs(:blockchain_api).returns(fake_adapter)
+    # TODO: Remove me once we replace Blockchain#blokchain_api with Blockchain#blockchain_apiv2.
+    Blockchain.any_instance.stubs(:blockchain_api).returns(BlockchainService2.new(OpenStruct.new(client: :fake)))
   end
 
   # Deposit context: (mock fetch_block)
@@ -82,6 +78,9 @@ describe BlockchainService2 do
           fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
           AMQPQueue.expects(:enqueue).with(:deposit_collection_fees, id: subject.first.id)
         end
+
+        # TODO: Deal with redis cleaning.
+        before { clear_redis }
 
         it { service.process_block(block_number) }
       end
@@ -187,6 +186,9 @@ describe BlockchainService2 do
           fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
           service.process_block(block_number)
         end
+
+        # TODO: Deal with redis cleaning.
+        before { clear_redis }
 
         it { expect(withdrawal.reload.succeed?).to be true }
       end
