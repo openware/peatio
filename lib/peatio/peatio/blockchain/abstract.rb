@@ -34,22 +34,45 @@ module Peatio #:nodoc:
       # @return [Hash] current blockchain settings.
       attr_reader :settings
 
+      # Features supported by blockchain.
+      #
+      # @abstract
+      #
+      # @!attribute [r] features
+      # @return [Hash] list of features supported by blockchain.
+      attr_reader :features
+
+
+      # List of all features supported by peatio.
+      #
+      # @todo
+      #   Rename supports_cash_addr_format -> cash_addr_format.
+      SUPPORTED_FEATURES = %i[case_sensitive supports_cash_addr_format].freeze
+
+      # List of settings which should be configurable.
+      #
+      # @see #configure
+      #
+      # @todo checkme.
+      SUPPORTED_SETTINGS = %i[server currencies].freeze
 
       # Abstract constructor.
       #
       # @example
       #   class MyBlockchain < Peatio::Abstract::Blockchain
       #
-      #     # You could pass settings which could be calculated on blockchain register.
-      #     def initialize(my_custom_settings = {})
-      #       @settings = my_custom_settings
+      #     DEFAULT_FEATURES = {case_sensitive: true, supports_cash_addr_format: false}.freeze
+      #
+      #     # You could override default features by passing them to initializer.
+      #     def initialize(my_custom_features = {})
+      #       @features = DEFAULT_FEATURES.merge(my_custom_features)
       #     end
       #     ...
       #   end
       #
       #   # Register MyBlockchain as peatio plugable blockchain.
-      #   settings = {custom_setting: 'foo', custom_setting2: :bar}
-      #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(settings))
+      #   custom_features = {supports_cash_addr_format: true}
+      #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(custom_features))
       #
       # @abstract
       #
@@ -95,6 +118,7 @@ module Peatio #:nodoc:
       # Defines if blockchain supports cash address format.
       #
       # @abstract
+      # @deprecated Moved to features.
       #
       # @return [Boolean] is cash address format supported by blockchain.
       def supports_cash_addr_format?
@@ -104,6 +128,7 @@ module Peatio #:nodoc:
       # Defines if blockchain transactions and addresses are case sensitive.
       #
       # @abstract
+      # @deprecated Moved to features.
       #
       # @return [Boolean] blockchain transactions and addresses are case sensitive.
       def case_sensitive?
