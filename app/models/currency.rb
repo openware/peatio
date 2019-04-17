@@ -102,7 +102,7 @@ class Currency < ApplicationRecord
   end
 
   def to_blockchain_api_settings
-    { id: id,
+    { id:          id,
       base_factor: base_factor,
       options:     options.deep_symbolize_keys }
   end
