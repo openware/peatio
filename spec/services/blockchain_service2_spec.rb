@@ -28,6 +28,7 @@ describe BlockchainService2 do
       { hash: 'fake_hash3', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake2', txout: 3 }
     ].map { |t| Peatio::Transaction.new(t) }
   end
+  # after(:each) { clear_redis }
 
   before do
     Peatio::BlockchainAPI.expects(:adapter_for).with('fake').returns(fake_adapter)
@@ -48,6 +49,7 @@ describe BlockchainService2 do
     context 'single fake deposit was created during block processing' do
 
       before do
+        clear_redis
         PaymentAddress.create!(currency: fake_currency1,
                                account: member.accounts.find_by(currency: fake_currency1),
                                address: 'fake_address')
@@ -74,13 +76,11 @@ describe BlockchainService2 do
 
       context 'collect deposit after processing block' do
         before do
+          clear_redis
           fake_adapter.stubs(:latest_block_number).returns(10)
           fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
           AMQPQueue.expects(:enqueue).with(:deposit_collection_fees, id: subject.first.id)
         end
-
-        # TODO: Deal with redis cleaning.
-        before { clear_redis }
 
         it { service.process_block(block_number) }
       end
@@ -182,13 +182,11 @@ describe BlockchainService2 do
       context 'single withdrawal was succeed during block processing' do
 
         before do
+          clear_redis
           fake_adapter.stubs(:latest_block_number).returns(10)
           fake_adapter.stubs(:fetch_block!).returns(expected_transactions)
           service.process_block(block_number)
         end
-
-        # TODO: Deal with redis cleaning.
-        before { clear_redis }
 
         it { expect(withdrawal.reload.succeed?).to be true }
       end
@@ -197,7 +195,7 @@ describe BlockchainService2 do
 
   context 'two fake withdrawals were updated during block processing' do
 
-    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
+    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 10) } }
     let!(:withdrawals) do
       %w[fake_hash1 fake_hash2].each do |t|
         Withdraw.create!(member: member,
@@ -225,8 +223,8 @@ describe BlockchainService2 do
   end
 
   context 'two fake withdrawals for two currency were updated during block processing' do
-    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50) } }
-    let!(:fake_account2) { member.get_account(:fake2).tap { |ac| ac.update!(balance: 50) } }
+    let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 10) } }
+    let!(:fake_account2) { member.get_account(:fake2).tap { |ac| ac.update!(balance: 50, locked: 10) } }
     let!(:withdrawal1) do 
       Withdraw.create!(member: member,
                        account: fake_account1,
@@ -275,6 +273,7 @@ describe BlockchainService2 do
     let!(:fake_account2) { member.get_account(:fake2) }
 
     before do
+      clear_redis
       fake_adapter.stubs(:latest_block_number).returns(10)
       PaymentAddress.create!(currency: fake_currency1,
         account: fake_account1,
