@@ -75,6 +75,11 @@ class Wallet < ApplicationRecord
     end
   end
 
+  def to_wallet_api_settings
+    { address: address,
+      settings: settings.deep_symbolize_keys }
+  end
+
   def wallet_url
     blockchain.explorer_address.gsub('#{address}', address) if blockchain
   end
