@@ -5,6 +5,8 @@ class FakeBlockchain < Peatio::Blockchain::Abstract
   def initialize
     @features = {cash_addr_format: false, case_sensitive: true}
   end
+
+  def configure(settings = {}); end
 end
 
 describe BlockchainService2 do
@@ -36,7 +38,7 @@ describe BlockchainService2 do
 
     fake_adapter.stubs(:latest_block_number).returns(4)
     # TODO: Remove me once we replace Blockchain#blokchain_api with Blockchain#blockchain_apiv2.
-    Blockchain.any_instance.stubs(:blockchain_api).returns(BlockchainService2.new(OpenStruct.new(client: :fake)))
+    Blockchain.any_instance.stubs(:blockchain_api).returns(BlockchainService2.new(OpenStruct.new(client: :fake, currencies: [])))
   end
 
   # Deposit context: (mock fetch_block)
