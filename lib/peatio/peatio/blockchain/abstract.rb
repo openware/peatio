@@ -4,11 +4,13 @@
 module Peatio #:nodoc:
   module Blockchain #:nodoc:
 
-    # @abstract Represent basic blockchain interface.
+    # @abstract Represents basic blockchain interface.
     #
     # Subclass and override abstract methods to implement
     # a peatio plugable blockchain.
     # Than you need to register your blockchain implementation.
+    #
+    # @see Bitcoin::Blockchain Bitcoin as example of Abstract imlementation.
     #
     # @example
     #
@@ -26,37 +28,43 @@ module Peatio #:nodoc:
     #   Yaroslav Savchuk <savchukyarpolk@gmail.com> (https://github.com/ysv)
     class Abstract
 
-      # Current blockchain settings for performing API calls and building blocks.
+      # Hash of features supported by blockchain.
       #
       # @abstract
       #
-      # @!attribute [r] settings
-      # @return [Hash] current blockchain settings.
-      attr_reader :settings
-
-      # Features supported by blockchain.
-      #
-      # @abstract
-      #
-      # @see Abstract::SUPPORTED_FEATURES for list of supported features.
+      # @see Abstract::SUPPORTED_FEATURES for list of features supported by peatio.
       #
       # @!attribute [r] features
       # @return [Hash] list of features supported by blockchain.
       attr_reader :features
 
-
-      # List of all features supported by peatio.
+      # List of features supported by peatio.
       #
-      # @todo
-      #   Rename supports_cash_addr_format -> cash_addr_format.
+      # @note Features list:
+      #
+      #   case_sensitive - defines if transactions and addresses of current
+      #   blockchain are case_sensitive.
+      #
+      #   cash_addr_format - defines if blockchain supports Cash Address format
+      #   for more info see (https://support.exodus.io/article/664-bitcoin-cash-address-format)
       SUPPORTED_FEATURES = %i[case_sensitive cash_addr_format].freeze
 
-      # List of settings which should be configurable.
+
+      # Current blockchain settings for performing API calls and building blocks.
+      #
+      # @abstract
+      #
+      # @see Abstract::SUPPORTED_SETTINGS for list of settings required by blockchain.
+      #
+      # @!attribute [r] settings
+      # @return [Hash] current blockchain settings.
+      attr_reader :settings
+
+      # List of configurable settings.
       #
       # @see #configure
-      #
-      # @todo checkme.
       SUPPORTED_SETTINGS = %i[server currencies].freeze
+
 
       # Abstract constructor.
       #
