@@ -75,8 +75,12 @@ class Wallet < ApplicationRecord
     end
   end
 
+  def current_balance
+    BlockchainService2.new(blockchain).load_balance(address, currency_id)
+  end
+
   def to_wallet_api_settings
-    { address: address,
+    { address:  address,
       settings: settings.deep_symbolize_keys }
   end
 
