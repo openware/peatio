@@ -80,8 +80,7 @@ class Wallet < ApplicationRecord
   end
 
   def to_wallet_api_settings
-    { address:  address,
-      settings: settings.deep_symbolize_keys }
+    settings.deep_symbolize_keys.merge(address: address)
   end
 
   def wallet_url
