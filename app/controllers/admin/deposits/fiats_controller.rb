@@ -35,7 +35,7 @@ module Admin
         case params.fetch(:commit)
         when 'Accept'
           @deposit.charge!
-          flash.keep[:notice] = t('.notice')
+          flash.keep[:notice] = "The recharge have been successful."
         when 'Reject'
           @deposit.reject!
         end
