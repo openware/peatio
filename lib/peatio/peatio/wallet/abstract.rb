@@ -9,12 +9,16 @@ module Peatio
         abstract_method
       end
 
-      def create_address(options = {})
+      def create_address!(options = {})
         abstract_method
       end
 
-      def create_transaction(withdrawal)
+      def create_transaction!(withdrawal)
         abstract_method
+      end
+
+      def deposit_collection_fees!(deposit)
+        # Do nothing by default.
       end
 
       private

@@ -8,45 +8,48 @@ class WalletService2
                        currency: @wallet.currency.to_blockchain_api_settings)
   end
 
-  # @return Peatio::BlockchainAccount
   def create_address!(account)
-    @adapter.create_address({ uid: account.member.uid })
+    @adapter.create_address!({ uid: account.member.uid })
   end
 
 
   def build_withdrawal!(withdrawal)
-    @adapter.create_transaction({ address: withdrawal.rid ,
-                                  amount: withdrawal.amount })
+    @adapter.create_transaction!({ address: withdrawal.rid,
+                                   amount: withdrawal.amount })
   end
 
-  def collect_deposit!(deposit)
+  def spread_deposit(deposit)
     destination_wallets =
       Wallet.active.withdraw.ordered
         .where(currency_id: deposit.currency_id)
         .map do |w|
-          # TODO: What if we can't load current_balance ?
-          # NOTE: Consider min_collection_amount is defined per wallet.
-          #       For now min_collection_amount is currency config.
-          { address:     w.address,
-            balance:     w.current_balance,
-            max_balance: w.max_balance,
-            min_collection_amount: @wallet.currency.min_collection_amount }
-        end
+        # TODO: What if we can't load current_balance ?
+        # NOTE: Consider min_collection_amount is defined per wallet.
+        #       For now min_collection_amount is currency config.
+        { address:     w.address,
+          balance:     w.current_balance,
+          max_balance: w.max_balance,
+          min_collection_amount: @wallet.currency.min_collection_amount }
+      end
 
-    deposit_spread = spread_deposit(deposit.amount, destination_wallets)
+    spread_between_wallets(deposit.amount, destination_wallets)
+  end
 
+  def collect_deposit!(deposit, deposit_spread)
+    pa = deposit.account.payment_address
+    @adapter.configure(wallet: @wallet.to_wallet_api_settings.merge(address: pa.address, secret: pa.secret))
     deposit_spread.map do |t|
-      @adapter.create_transaction(t)
+      @adapter.create_transaction!(t)
     end
   end
 
-  def deposit_collection_fees!(deposit)
-
+  def deposit_collection_fees!(deposit, deposit_spread)
+    @adapter.deposit_collection_fees(deposit.address, deposit_spread)
   end
 
   private
 
-  def spread_deposit(original_amount, destination_wallets)
+  def spread_between_wallets(original_amount, destination_wallets)
     left_amount = original_amount
 
     destination_wallets.map do |dw|

@@ -18,15 +18,17 @@ module Worker
           return
         end
 
+        # TODO: This should be fees wallet in WalletService2.
+        #       Fees wallet may not exist.
         wallet = Wallet.active.deposit.find_by(blockchain_key: deposit.currency.blockchain_key)
         unless wallet
           Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
           return
         end
 
-        txid = WalletService[wallet].deposit_collection_fees(deposit)
+        txid = WalletService[wallet].deposit_collection_fees(deposit.address)
         Rails.logger.warn { "The API accepted deposit collection fees transfer and assigned transaction ID: #{txid}." } if txid?
-        AMQPQueue.enqueue(:deposit_collection, id: deposit.id)
+        AMQPQueue.enqueue(:deposit_collection, id: deposit.id, spread: spread)
         Rails.logger.warn { "Deposit collection job enqueue." }
       rescue Exception => e
         begin
