@@ -15,14 +15,72 @@ class WalletService2
 
 
   def build_withdrawal!(withdrawal)
-    @adapter.create_transaction(withdrawal.for_wallet_api)
+    @adapter.create_transaction({ address: withdrawal.rid ,
+                                  amount: withdrawal.amount })
   end
 
   def collect_deposit!(deposit)
+    destination_wallets =
+      Wallet.active.withdraw.ordered
+        .where(currency_id: deposit.currency_id)
+        .map do |w|
+          # TODO: What if we can't load current_balance ?
+          # NOTE: Consider min_collection_amount is defined per wallet.
+          #       For now min_collection_amount is currency config.
+          { address:     w.address,
+            balance:     w.current_balance,
+            max_balance: w.max_balance,
+            min_collection_amount: @wallet.currency.min_collection_amount }
+        end
+
+    deposit_spread = spread_deposit(deposit.amount, destination_wallets)
+
+    deposit_spread.map do |t|
+      @adapter.create_transaction(t)
+    end
+  end
+
+  def deposit_collection_fees!(deposit)
 
   end
 
-  def deposit_collection_fees(deposit)
+  private
 
+  def spread_deposit(original_amount, destination_wallets)
+    left_amount = original_amount
+
+    destination_wallets.map do |dw|
+      break if left_amount == 0
+
+      amount_for_wallet = [dw[:max_balance] - dw[:balance], left_amount].min
+
+      # If free amount for current wallet too small we will not able to collect it.
+      # So we try to collect it to next wallets.
+      next if amount_for_wallet < dw[:min_collection_amount]
+      left_amount -= amount_for_wallet
+
+      # If amount left is too small we will not able to collect it.
+      # So we collect everything to current wallet.
+      if left_amount < dw[:min_collection_amount]
+        amount_for_wallet += left_amount
+        left_amount = 0
+      end
+
+      { address: dw[:address], amount: amount_for_wallet }
+    rescue => e
+      # If have exception skip wallet.
+      report_exception(e)
+    end.tap do |spread|
+      if left_amount > 0
+        # If deposit doesn't fit to any wallet collect it to last wallet.
+        # Since the last wallet is considered to be the most secure.
+        spread.last[:amount] += left_amount
+        left_amount += 0
+      end
+
+      unless spread.pluck(:amount).sum == original_amount
+        raise Error, "Deposit spread failed deposit.amount != collection_spread.values.sum"
+      end
+    end
   end
 end
