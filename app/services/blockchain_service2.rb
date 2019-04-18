@@ -14,6 +14,11 @@ class BlockchainService2
     end
   end
 
+  def load_balance(address, currency_id)
+    123
+    # TODO: Add load_balance to Blockchain::Abstract.
+  end
+
   # @deprecated
   # TODO: Update me once we replace Blockchain#blokchain_api with Blockchain#blockchain_apiv2.
   def case_sensitive?
