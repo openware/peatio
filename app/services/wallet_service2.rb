@@ -9,13 +9,12 @@ class WalletService2
   end
 
   def create_address!(account)
-    @adapter.create_address!({ uid: account.member.uid })
+    @adapter.create_address!(uid: account.member.uid)
   end
 
-
   def build_withdrawal!(withdrawal)
-    @adapter.create_transaction!({ address: withdrawal.rid,
-                                   amount: withdrawal.amount })
+    @adapter.create_transaction!(address: withdrawal.rid,
+                                 amount: withdrawal.amount)
   end
 
   def spread_deposit(deposit)
@@ -37,7 +36,11 @@ class WalletService2
 
   def collect_deposit!(deposit, deposit_spread)
     pa = deposit.account.payment_address
-    @adapter.configure(wallet: @wallet.to_wallet_api_settings.merge(address: pa.address, secret: pa.secret))
+    # NOTE: Deposit wallet configuration is tricky because wallet UIR
+    #       is saved on Wallet model but wallet address and secret
+    #       are saved in PaymentAddress.
+    @adapter.configure(wallet: @wallet.to_wallet_api_settings
+                                 .merge(address: pa.address, secret: pa.secret))
     deposit_spread.map do |t|
       @adapter.create_transaction!(t)
     end
@@ -60,6 +63,7 @@ class WalletService2
       # If free amount for current wallet too small we will not able to collect it.
       # So we try to collect it to next wallets.
       next if amount_for_wallet < dw[:min_collection_amount]
+
       left_amount -= amount_for_wallet
 
       # If amount left is too small we will not able to collect it.
