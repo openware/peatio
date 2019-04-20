@@ -11,9 +11,9 @@ module Private
 
     def index
       @currencies        = Currency.enabled.sort
-      @deposits          = current_user.deposits.includes(:currency, :blockchain)
+      @deposits          = current_user.deposits.includes(:currency, :blockchain).where("currency_id in (select c.id from currencies c,blockchains b where c.blockchain_key=b.key and c.enabled=1 and b.status='active')")
       @accounts          = current_user.accounts.enabled.includes(:currency)
-      @withdraws         = current_user.withdraws
+      @withdraws         = current_user.withdraws.where("currency_id in (select c.id from currencies c,blockchains b where c.blockchain_key=b.key and c.enabled=1 and b.status='active')")
 
       gon.jbuilder
     end
