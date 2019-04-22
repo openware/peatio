@@ -77,6 +77,7 @@ class Wallet < ApplicationRecord
   end
 
   def current_balance
+    # TODO: If there is exception raised on API call.
     BlockchainService2.new(blockchain).load_balance(address, currency_id)
   end
 
