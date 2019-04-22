@@ -27,16 +27,9 @@ module Peatio
       #
       # @abstract
       #
-      # @see Abstract::SUPPORTED_SETTINGS for list of settings required by wallet.
-      #
       # @!attribute [r] settings
       # @return [Hash] current wallet settings.
       attr_reader :settings
-
-      # List of configurable settings.
-      #
-      # @see #configure
-      SUPPORTED_SETTINGS = %i[server wallet].freeze
 
       # Abstract constructor.
       #
@@ -61,19 +54,54 @@ module Peatio
         abstract_method
       end
 
+      # Merges given configuration parameters with defined during initialization
+      # and returns the result.
+      #
+      # @param [Hash] settings configurations to use.
+      # @option settings [Hash] :wallet Wallet settings for performing API calls.
+      # With :address required key other settings could be customized
+      # using Wallet#settings.
+      # @option settings [Hash] :currency Currency settings with
+      # :id,:base_factor,:options keys.
+      #
+      # @return [Hash] merged settings.
       def configure(settings = {})
         abstract_method
       end
 
+      # Performs API call for address creation and returns it.
+      #
+      # @param [Hash] options
+      #
+      # @options options [String] :uid User UID which requested address creation.
+      #
+      # @return [Peatio::BlockchainAddress] newly created blockchain address.
       def create_address!(options = {})
         abstract_method
       end
 
-      def create_transaction!(withdrawal)
+      # Performs API call for creating transaction and returns updated transaction.
+      #
+      # @param [Peatio::Transaction] transaction transaction with defined
+      # to_address, amount & currency_id.
+      #
+      # @return [Peatio::Transaction] transaction with updated hash.
+      def create_transaction!(transaction)
         abstract_method
       end
 
-      def deposit_collection_fees!(deposit)
+      # Performs API call(s) for preparing for deposit collection.
+      # E.g deposits ETH for collecting ERC20 tokens in case of Ethereum blockchain.
+      #
+      # @param [Peatio::Transaction] deposit_transaction transaction which
+      # describes received deposit.
+      #
+      # @param [Array<Peatio::Transaction>] spread_transactions result of deposit
+      # spread between wallets.
+      #
+      # @return [Array<Peatio::Transaction>] transaction created for
+      # deposit collection preparing.
+      def prepare_deposit_collection!(deposit_transaction, spread_transactions)
         # This method is mostly used for coins which needs additional fees
         # to be deposited before deposit collection.
       end
