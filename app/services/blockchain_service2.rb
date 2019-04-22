@@ -3,7 +3,7 @@ class BlockchainService2
 
   def initialize(blockchian)
     @blockchain = blockchian
-    @adapter = Peatio::BlockchainAPI.adapter_for(blockchian.client)
+    @adapter = Peatio::BlockchainAPI.adapter_for(blockchian.client.to_sym)
     @adapter.configure(server: @blockchain.server,
                        currencies: @blockchain.currencies.map(&:to_blockchain_api_settings))
   end
