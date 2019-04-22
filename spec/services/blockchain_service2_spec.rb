@@ -11,13 +11,13 @@ end
 
 describe BlockchainService2 do
 
-  let!(:blockchain) { Blockchain.create!(key: 'fake', name: 'fake', client: 'fake', status: 'active', height: 1) }
+  let!(:blockchain) { create(:blockchain, 'fake-testnet') }
   let(:block_number) { 1 }
   let(:fake_adapter) { FakeBlockchain.new }
   let(:service) { BlockchainService2.new(blockchain) }
 
-  let!(:fake_currency1) { Currency.create!(id: 'fake1', name: 'fake1', blockchain: blockchain, symbol: 'F') }
-  let!(:fake_currency2) { Currency.create!(id: 'fake2', name: 'fake2', blockchain: blockchain, symbol: 'G') }
+  let!(:fake_currency1) { create(:currency, :fake, id: 'fake1', symbol: 'F') }
+  let!(:fake_currency2) { create(:currency, :fake, id: 'fake2', symbol: 'G') }
 
   let!(:member) { create(:member) }
 

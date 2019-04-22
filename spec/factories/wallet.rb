@@ -323,5 +323,17 @@ FactoryBot.define do
       gateway           { 'litecoind' }
       uri               { 'http://127.0.0.1:17732' }
     end
+
+    trait :fake_hot do
+      currency_id       { 'fake' }
+      blockchain_key    { 'fake-testnet' }
+      name              { 'Fake Currency Hot Wallet' }
+      address           { 'fake' }
+      kind              { 'hot' }
+      max_balance       { 100.0 }
+      nsig              { 1 }
+      status            { 'active' }
+      gateway           { 'fake' }
+    end
   end
 end
