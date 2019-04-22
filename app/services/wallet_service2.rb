@@ -13,8 +13,8 @@ class WalletService2
   end
 
   def build_withdrawal!(withdrawal)
-    transaction = Peatio::Transaction.new(address: withdrawal.rid,
-                                          amount: withdrawal.amount)
+    transaction = Peatio::Transaction.new(to_address: withdrawal.rid,
+                                          amount:     withdrawal.amount)
     @adapter.create_transaction!(transaction)
   end
 

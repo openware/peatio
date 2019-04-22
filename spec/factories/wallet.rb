@@ -334,6 +334,7 @@ FactoryBot.define do
       nsig              { 1 }
       status            { 'active' }
       gateway           { 'fake' }
+      uri               { 'http://127.0.0.1:18881' }
     end
   end
 end

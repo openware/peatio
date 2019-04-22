@@ -11,7 +11,6 @@ class Wallet < ApplicationRecord
   ENUMERIZED_KINDS = { deposit: 100, fee: 200, hot: 310, warm: 320, cold: 330 }.freeze
   enumerize :kind, in: ENUMERIZED_KINDS, scope: true
 
-  GATEWAYS = %w[bitcoind bitcoincashd litecoind parity geth dashd rippled bitgo].freeze
   SETTING_ATTRIBUTES = %i[ uri
                            secret
                            bitgo_test_net
@@ -30,7 +29,9 @@ class Wallet < ApplicationRecord
   validates :address, presence: true
 
   validates :status,  inclusion: { in: %w[active disabled] }
-  validates :gateway, inclusion: { in: GATEWAYS }
+
+  # TODO: Validate inclusion in WalletAPI.adapters
+  # validates :gateway, inclusion: { in: GATEWAYS }
 
   validates :nsig,        numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
