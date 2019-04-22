@@ -17,7 +17,7 @@ end
 
 describe WalletService2 do
   let!(:blockchain) { create(:blockchain, 'fake-testnet') }
-  let(:currency) { create(:currency, :fake) }
+  let!(:currency) { create(:currency, :fake) }
   let(:wallet) { create(:wallet, :fake_hot) }
 
   let(:fake_wallet_adapter) { FakeWallet.new }
@@ -72,6 +72,45 @@ describe WalletService2 do
 
     it 'sends withdrawal' do
       expect(service.build_withdrawal!(withdrawal)).to eq transaction
+    end
+  end
+
+  context :spread_between_wallets do
+    subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+    # Single wallet:
+    #   * Deposit fits exactly.
+    #   * Deposit doesn't fit.
+    # Two wallets:
+    #   * Deposit fits to first wallet.
+    #   * Deposit fits to second wallet.
+    #   * Partial spread between first and second.
+    #   * Deposit doesn't fit to both wallets.
+    # Three wallets:
+    #   * Partial spread between first and second.
+    #   * Partial spread between first and third.
+    #   * Partial spread between first, second and third.
+    #   * Deposit doesn't fit to all wallets.
+    context 'single wallet available' do
+      let(:amount) { 1.2 }
+
+      let(:destination_wallets) do
+        [{ address: 'destination-wallet-1',
+           balance: 8.8,
+           max_balance: 10,
+           min_collection_amount: 1 }]
+      end
+
+      let(:expected_spread) do
+        [{ to_address: 'destination-wallet-1',
+           amount: amount,
+           currency_id: currency.id }]
+      end
+      it 'spreads everything to single wallet' do
+        subject.each do |t|
+          expect(t).to be_instance_of(Peatio::Transaction)
+          expect(expected_spread).to include(t.as_json.symbolize_keys)
+        end
+      end
     end
   end
 end
