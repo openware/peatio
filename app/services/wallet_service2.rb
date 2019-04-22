@@ -13,8 +13,9 @@ class WalletService2
   end
 
   def build_withdrawal!(withdrawal)
-    @adapter.create_transaction!(address: withdrawal.rid,
-                                 amount: withdrawal.amount)
+    transaction = Peatio::Transaction.new(address: withdrawal.rid,
+                                          amount: withdrawal.amount)
+    @adapter.create_transaction!(transaction)
   end
 
   def spread_deposit(deposit)
@@ -41,17 +42,21 @@ class WalletService2
     #       are saved in PaymentAddress.
     @adapter.configure(wallet: @wallet.to_wallet_api_settings
                                  .merge(address: pa.address, secret: pa.secret))
-    deposit_spread.map do |t|
-      @adapter.create_transaction!(t)
-    end
+
+    deposit_spread.map { |t| @adapter.create_transaction!(t) }
   end
 
   def deposit_collection_fees!(deposit, deposit_spread)
-    @adapter.deposit_collection_fees(deposit.address, deposit_spread)
+    deposit_transaction = Peatio::Transaction.new(to_address:  deposit.address,
+                                                  amount:      deposit.amount,
+                                                  currency_id: deposit.currency_id)
+    @adapter.prepare_deposit_collection!(deposit_transaction, deposit_spread)
   end
 
   private
 
+  # @return [Array<Peatio::Transaction>] result of spread in form of
+  # transactions array with amount and to_address defined.
   def spread_between_wallets(original_amount, destination_wallets)
     left_amount = original_amount
 
@@ -73,7 +78,9 @@ class WalletService2
         left_amount = 0
       end
 
-      { address: dw[:address], amount: amount_for_wallet }
+      Peatio::Transaction.new(to_address:   dw[:address],
+                              amount:       amount_for_wallet,
+                              currency_id:  @wallet.currency_id)
     rescue => e
       # If have exception skip wallet.
       report_exception(e)
@@ -81,11 +88,11 @@ class WalletService2
       if left_amount > 0
         # If deposit doesn't fit to any wallet collect it to last wallet.
         # Since the last wallet is considered to be the most secure.
-        spread.last[:amount] += left_amount
+        spread.last.amount += left_amount
         left_amount += 0
       end
 
-      unless spread.pluck(:amount).sum == original_amount
+      unless spread.map(&:amount).sum == original_amount
         raise Error, "Deposit spread failed deposit.amount != collection_spread.values.sum"
       end
     end

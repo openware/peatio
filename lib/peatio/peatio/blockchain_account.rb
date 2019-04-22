@@ -1,5 +1,5 @@
 module Peatio
-  class BlockchainAccount
+  class BlockchainAddress
     include ActiveModel::Model
 
     attr_accessor :address, :secret, :details
