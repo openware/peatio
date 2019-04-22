@@ -21,13 +21,13 @@ module Ethereum1
     def configure(settings = {})
       @erc20 = []; @eth = []
       supported_settings = settings.slice(*SUPPORTED_SETTINGS)
-      supported_settings[:currencies].each do |c|
+      supported_settings[:currencies]&.each do |c|
         if c.dig(:options, :erc20_contract_address).present?
           @erc20 << c
         else
           @eth << c
         end
-      end if supported_settings[:currencies]
+      end
       @settings.merge!(supported_settings)
     end
 
@@ -84,20 +84,20 @@ module Ethereum1
       end
     end
 
-    def build_eth_transactions(tx)
+    def build_eth_transactions(block_txn)
       @eth.map do |currency|
-        { hash:          normalize_txid(tx.fetch('hash')),
-          amount:        convert_from_base_unit(tx.fetch('value').hex, currency), 
-          to_address:    normalize_address(tx['to']),
-          txout:         tx.fetch('transactionIndex').to_i(16),
-          block_number:  tx.fetch('blockNumber').to_i(16),
+        { hash:          normalize_txid(block_txn.fetch('hash')),
+          amount:        convert_from_base_unit(block_txn.fetch('value').hex, currency),
+          to_address:    normalize_address(block_txn['to']),
+          txout:         block_txn.fetch('transactionIndex').to_i(16),
+          block_number:  block_txn.fetch('blockNumber').to_i(16),
           currency_id:   currency.fetch(:id),
-          status:        transaction_status(tx) }
+          status:        transaction_status(block_txn) }
       end
     end
 
-    def build_erc20_transactions(tx)
-      tx.fetch('logs').each_with_object([]) do |log, formatted_txs|
+    def build_erc20_transactions(txn_receipt)
+      txn_receipt.fetch('logs').each_with_object([]) do |log, formatted_txs|
 
         next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_EVENT_IDENTIFIER
 
@@ -108,19 +108,20 @@ module Ethereum1
         destination_address = normalize_address('0x' + log.fetch('topics').last[-40..-1])
 
         currencies.each do |currency|
-          formatted_txs << { hash:         normalize_txid(tx.fetch('transactionHash')),
+          formatted_txs << { hash:         normalize_txid(txn_receipt.fetch('transactionHash')),
                              amount:       convert_from_base_unit(log.fetch('data').hex, currency),
                              to_address:   destination_address,
                              txout:        log['logIndex'].to_i(16),
-                             block_number: tx.fetch('blockNumber').to_i(16),
+                             block_number: txn_receipt.fetch('blockNumber').to_i(16),
                              currency_id:  currency.fetch(:id),
-                             status:        transaction_status(tx) }
+                             status:       transaction_status(txn_receipt) }
         end
       end
     end
 
-    def transaction_status(tx)
-      tx.fetch('status', '0x1').to_i(16) == 1 ? 'success' : 'fail'
+    def transaction_status(block_txn)
+      # TODO: Add fetching status for eth transaction
+      block_txn.fetch('status', '0x1').to_i(16) == 1 ? 'success' : 'fail'
     end
 
     def invalid_eth_transaction?(block_txn)
