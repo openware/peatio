@@ -139,5 +139,18 @@ FactoryBot.define do
       position             { 9 }
       options              { {} }
     end
+
+    trait :fake do
+      blockchain_key      { 'fake-testnet' }
+      code                { 'fake' }
+      symbol              { 'F' }
+      type                { 'coin' }
+      base_factor         { 1_000_000 }
+      withdraw_limit_24h  { 100 }
+      withdraw_limit_72h  { 1000 }
+      withdraw_fee        { 0.02 }
+      position            { 10 }
+      options             { {} }
+    end
   end
 end

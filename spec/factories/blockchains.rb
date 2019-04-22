@@ -110,5 +110,13 @@ FactoryBot.define do
       explorer_transaction    { 'https://bithomp.com/explorer/#{txid}' }
       status                  { 'active' }
     end
+
+    trait 'fake-testnet' do
+      key                     { 'fake-testnet' }
+      name                    { 'Fake Testnet' }
+      client                  { 'fake' }
+      height                  { 1 }
+      status                  { 'active' }
+    end
   end
 end
