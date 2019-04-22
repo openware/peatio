@@ -47,7 +47,8 @@ module Bitcoin
           no_currency_tx =
             { hash: tx_hash['txid'], txout: entry['n'],
               to_address: entry['scriptPubKey']['addresses'][0],
-              amount: entry.fetch('value').to_d }
+              amount: entry.fetch('value').to_d,
+              status: 'success' }
 
             # Build transaction for each currency belonging to blockchain.
             settings_fetch(:currencies).pluck(:id).each do |currency_id|
