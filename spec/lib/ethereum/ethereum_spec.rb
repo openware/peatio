@@ -160,6 +160,7 @@ describe Ethereum1::Blockchain do
           :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
           :txout=>26,
           :block_number=>2621840,
+          :status=>"success",
           :currency_id=>eth.id}]
       end
 
@@ -185,24 +186,28 @@ describe Ethereum1::Blockchain do
           :to_address=>"0xc4d276bf32b71cdddb18f3b4d258f057a5ffda03",
           :txout=>13,
           :block_number=>2621842,
+          :status=>"success",
           :currency_id=>eth.id},
          {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
           :amount=>2.to_d,
           :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
           :txout=>8,
           :block_number=>2621842,
+          :status=>"success",
           :currency_id=>trst.id},
          {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
           :amount=>2.to_d,
           :to_address=>"0x4b6a630ff1f66604d31952bdce2e4950efc99821",
           :txout=>9,
           :block_number=>2621842,
+          :status=>"success",
           :currency_id=>ring.id},
          {:hash=>"0xd5cc0d1d5dd35f4b57572b440fb4ef39a4ab8035657a21692d1871353bfbceea",
           :amount=>2.to_d,
           :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6dac",
           :txout=>9,
           :block_number=>2621842,
+          :status=>"success",
           :currency_id=>trst.id}]
       end
 
@@ -235,6 +240,7 @@ describe Ethereum1::Blockchain do
           :txout=>26,
           :amount=>1.to_d,
           :block_number=>2621840,
+          :status=>"success",
           :currency_id=>eth.id}]
       end
 
@@ -259,12 +265,14 @@ describe Ethereum1::Blockchain do
           :amount=>2.to_d,
           :currency_id=>trst.id,
           :block_number=>2621842,
+          :status=>"success",
           :txout=>8},
          {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
           :to_address=>"0x4b6a630ff1f66604d31952bdce2e4950efc99821",
           :amount=>2.to_d,
           :currency_id=>ring.id,
           :block_number=>2621842,
+          :status=>"success",
           :txout=>9}]
       end
 

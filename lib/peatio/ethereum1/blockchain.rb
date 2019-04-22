@@ -10,6 +10,7 @@ module Ethereum1
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
 
+
     DEFAULT_FEATURES = { case_sensitive: false, cash_addr_format: false }.freeze
 
     def initialize(custom_features = {})
@@ -90,7 +91,8 @@ module Ethereum1
           to_address:    normalize_address(tx['to']),
           txout:         tx.fetch('transactionIndex').to_i(16),
           block_number:  tx.fetch('blockNumber').to_i(16),
-          currency_id:   currency.fetch(:id) }
+          currency_id:   currency.fetch(:id),
+          status:        transaction_status(tx) }
       end
     end
 
@@ -106,25 +108,28 @@ module Ethereum1
         destination_address = normalize_address('0x' + log.fetch('topics').last[-40..-1])
 
         currencies.each do |currency|
-          formatted_txs << { hash:        normalize_txid(tx.fetch('transactionHash')),
-                             amount:      convert_from_base_unit(log.fetch('data').hex, currency),
-                             to_address:  destination_address,
-                             txout:       log['logIndex'].to_i(16),
+          formatted_txs << { hash:         normalize_txid(tx.fetch('transactionHash')),
+                             amount:       convert_from_base_unit(log.fetch('data').hex, currency),
+                             to_address:   destination_address,
+                             txout:        log['logIndex'].to_i(16),
                              block_number: tx.fetch('blockNumber').to_i(16),
-                             currency_id: currency.fetch(:id) }
+                             currency_id:  currency.fetch(:id),
+                             status:        transaction_status(tx) }
         end
       end
     end
 
+    def transaction_status(tx)
+      tx.fetch('status', '0x1').to_i(16) == 1 ? 'success' : 'fail'
+    end
+
     def invalid_eth_transaction?(block_txn)
       block_txn.fetch('to').blank? \
-      || block_txn.fetch('value').hex.to_d <= 0 && block_txn.fetch('input').hex <= 0 \
+      || block_txn.fetch('value').hex.to_d <= 0 && block_txn.fetch('input').hex <= 0
     end
 
     def invalid_erc20_transaction?(txn_receipt)
-      txn_receipt.fetch('status') != SUCCESS \
-      || txn_receipt.fetch('to').blank? \
-      || txn_receipt.fetch('logs').blank?
+      txn_receipt.fetch('to').blank? || txn_receipt.fetch('logs').blank?
     end
 
     def convert_from_base_unit(value, currency)

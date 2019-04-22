@@ -6,13 +6,15 @@ module Peatio
                   :to_address,
                   :amount,
                   :block_number,
-                  :currency_id
+                  :currency_id,
+                  :status
 
     validates :hash, :txout,
               :to_address,
               :amount,
               :block_number,
               :currency_id,
+              :status,
               presence: true
 
     validates :block_number,
