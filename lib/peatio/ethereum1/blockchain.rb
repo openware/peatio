@@ -34,8 +34,7 @@ module Ethereum1
       block_json = client.json_rpc(:eth_getBlockByNumber, ["0x#{block_number.to_s(16)}", true])
 
       if block_json.blank? || block_json['transactions'].blank?
-        Rails.logger.info { "Skipped processing #{block_number}" }
-        return
+        return Peatio::Block.new(block_number, [])
       end
 
       block_json.fetch('transactions').each_with_object([]) do |tx, block_arr|
@@ -47,7 +46,7 @@ module Ethereum1
         end
 
         txs = build_transactions(tx).map do |ntx|
-          Peatio::Transaction.new(ntx.merge(block_number: block_number))
+          Peatio::Transaction.new(ntx)
         end
 
         block_arr.append(*txs)
@@ -55,12 +54,7 @@ module Ethereum1
     end
 
     def latest_block_number
-      client.json_rpc(:eth_blockNumber)
-    end
-
-    # @deprecated
-    def supports_cash_addr_format?
-      @features[:supports_cash_addr_format]
+      client.json_rpc(:eth_blockNumber).to_i(16)
     end
 
     private
@@ -90,12 +84,13 @@ module Ethereum1
     end
 
     def build_eth_transactions(tx)
-      @eth.each_with_object([]) do |currency, formatted_txs|
-        formatted_txs << { hash:        normalize_txid(tx.fetch('hash')),
-                           amount:      convert_from_base_unit(tx.fetch('value').hex, currency), 
-                           to_address:  normalize_address(tx['to']),
-                           txout:       (tx.fetch('transactionIndex').to_i 16),
-                           currency_id: currency.fetch(:id) }
+      @eth.map do |currency|
+        { hash:          normalize_txid(tx.fetch('hash')),
+          amount:        convert_from_base_unit(tx.fetch('value').hex, currency), 
+          to_address:    normalize_address(tx['to']),
+          txout:         tx.fetch('transactionIndex').to_i(16),
+          block_number:  tx.fetch('blockNumber').to_i(16),
+          currency_id:   currency.fetch(:id) }
       end
     end
 
@@ -106,7 +101,7 @@ module Ethereum1
 
         # Skip if ERC20 contract address doesn't match.
         currencies = @erc20.select { |c| c.dig(:options, :erc20_contract_address) == log.fetch('address') }
-        next unless currencies.present?
+        next if currencies.blank?
 
         destination_address = normalize_address('0x' + log.fetch('topics').last[-40..-1])
 
@@ -115,6 +110,7 @@ module Ethereum1
                              amount:      convert_from_base_unit(log.fetch('data').hex, currency),
                              to_address:  destination_address,
                              txout:       log['logIndex'].to_i(16),
+                             block_number: tx.fetch('blockNumber').to_i(16),
                              currency_id: currency.fetch(:id) }
         end
       end

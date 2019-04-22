@@ -1,4 +1,24 @@
 describe Ethereum1::Blockchain do
+
+  let(:eth) do
+    Currency.find_by(id: :eth)
+  end
+
+  let(:trst) do
+    Currency.find_by(id: :trst)
+  end
+
+  let(:ring) do
+    Currency.find_by(id: :ring)
+  end
+
+  let(:blockchain) do
+    Ethereum1::Blockchain.new.tap { |b| b.configure(server: server, currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings, ring.to_blockchain_api_settings]) }
+  end
+
+  let(:server) { 'http://127.0.0.1:8545' }
+  let(:endpoint) { 'http://127.0.0.1:8545' }
+
   context :features do
     it 'defaults' do
       blockchain1 = Ethereum1::Blockchain.new
@@ -24,7 +44,7 @@ describe Ethereum1::Blockchain do
 
     it 'currencies and server configuration' do
       currencies = Currency.where(type: :coin).first(2).map(&:to_blockchain_api_settings)
-      settings = { server: 'http://127.0.0.1:8545',
+      settings = { server: server,
                    currencies: currencies,
                    something: :custom }
       blockchain.configure(settings)
@@ -39,13 +59,14 @@ describe Ethereum1::Blockchain do
       WebMock.allow_net_connect!
     end
 
-    let(:server) { 'http://127.0.0.1:8545' }
     let(:blockchain) do
       Ethereum1::Blockchain.new.tap { |b| b.configure(server: server) }
     end
 
+    let(:method) { :eth_blockNumber }
+
     it 'returns latest block number' do
-      block_number = 1489174
+      block_number = '0x16b916'
 
       stub_request(:post, 'http://127.0.0.1:8545')
         .with(body: { jsonrpc: '2.0',
@@ -56,18 +77,19 @@ describe Ethereum1::Blockchain do
                            error:  nil,
                            id:     1 }.to_json)
 
-      expect(blockchain.latest_block_number).to eq(block_number)
+      expect(blockchain.latest_block_number).to eq(block_number.to_i(16))
     end
 
     it 'raises error if there is error in response body' do
       stub_request(:post, 'http://127.0.0.1:8545')
         .with(body: { jsonrpc: '2.0',
                       id: 1,
-                      method: :eth_blockNumber,
+                      method: method,
                       params:  [] }.to_json)
-        .to_return(body: { result: nil,
-                           error:  { code: -32601, message: 'Method not found' },
-                           id:     nil }.to_json)
+        .to_return(body: { jsonrpc: '2.0',
+                           id: 1,
+                           error:  { code: -32601, message: "The method #{method} does not exist/is not available" },
+                           id:     1 }.to_json)
 
       expect{ blockchain.latest_block_number }.to raise_error(Ethereum1::Client::ResponseError)
     end
@@ -130,25 +152,23 @@ describe Ethereum1::Blockchain do
       end
     end
 
-    let(:eth) do
-      Currency.find_by(id: :eth)
-    end
-
-    let(:trst) do
-      Currency.find_by(id: :trst)
-    end
-
-    let(:server) { 'http://127.0.0.1:8545' }
-    let(:endpoint) { 'http://127.0.0.1:8545' }
-    let(:blockchain) do
-      Ethereum1::Blockchain.new.tap { |b| b.configure(server: server, currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings]) }
-    end
-
     context 'first block' do
+
+      let(:expected_transactions) do
+        [{:hash=>"0xb60e22c6eed3dc8cd7bc5c7e38c50aa355c55debddbff5c1c4837b995b8ee96d",
+          :amount=>1.to_d,
+          :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
+          :txout=>26,
+          :block_number=>2621840,
+          :currency_id=>eth.id}]
+      end
+
       subject { blockchain.fetch_block!(start_block) }
 
       it 'builds expected number of transactions' do
-        expect(subject.count).to eq(1)
+        subject.transactions.each_with_index do |t, i|
+          expect(t.as_json).to eq(expected_transactions[i].as_json)
+        end
       end
 
       it 'all transactions are valid' do
@@ -159,8 +179,37 @@ describe Ethereum1::Blockchain do
     context 'last block' do
       subject { blockchain.fetch_block!(latest_block) }
 
+      let(:expected_transactions) do
+        [{:hash=>"0x0338e2a59db18596afff8b7a0db3669cc231c7333064640bedf3a73c1c1c31ed",
+          :amount=>18.75.to_d,
+          :to_address=>"0xc4d276bf32b71cdddb18f3b4d258f057a5ffda03",
+          :txout=>13,
+          :block_number=>2621842,
+          :currency_id=>eth.id},
+         {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
+          :amount=>2.to_d,
+          :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
+          :txout=>8,
+          :block_number=>2621842,
+          :currency_id=>trst.id},
+         {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
+          :amount=>2.to_d,
+          :to_address=>"0x4b6a630ff1f66604d31952bdce2e4950efc99821",
+          :txout=>9,
+          :block_number=>2621842,
+          :currency_id=>ring.id},
+         {:hash=>"0xd5cc0d1d5dd35f4b57572b440fb4ef39a4ab8035657a21692d1871353bfbceea",
+          :amount=>2.to_d,
+          :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6dac",
+          :txout=>9,
+          :block_number=>2621842,
+          :currency_id=>trst.id}]
+      end
+
       it 'builds expected number of transactions' do
-        expect(subject.count).to eq(3)
+        subject.transactions.each_with_index do |t, i|
+          expect(t.as_json).to eq(expected_transactions[i].as_json)
+        end
       end
 
       it 'all transactions are valid' do
@@ -185,23 +234,8 @@ describe Ethereum1::Blockchain do
           :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
           :txout=>26,
           :amount=>1.to_d,
+          :block_number=>2621840,
           :currency_id=>eth.id}]
-      end
-
-      let(:eth) do
-        Currency.find_by(id: :eth)
-      end
-
-      let(:trst) do
-        Currency.find_by(id: :trst)
-      end
-
-      let(:ring) do
-        Currency.find_by(id: :ring)
-      end
-
-      let(:blockchain) do
-        Ethereum1::Blockchain.new.tap { |b| b.configure(currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings,  ring.to_blockchain_api_settings]) }
       end
 
       it 'builds formatted transactions for passed transaction' do
@@ -218,92 +252,23 @@ describe Ethereum1::Blockchain do
           .yield_self { |file_path| File.open(file_path) }
           .yield_self { |file| JSON.load(file) }
       end
+
       let(:expected_transactions) do
         [{:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
           :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
           :amount=>2.to_d,
           :currency_id=>trst.id,
+          :block_number=>2621842,
           :txout=>8},
          {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
           :to_address=>"0x4b6a630ff1f66604d31952bdce2e4950efc99821",
           :amount=>2.to_d,
-          :currency_id=>trst.id,
+          :currency_id=>ring.id,
+          :block_number=>2621842,
           :txout=>9}]
-      end
-
-      let(:eth) do
-        Currency.find_by(id: :eth)
-      end
-
-      let(:trst) do
-        Currency.find_by(id: :trst)
-      end
-
-      let(:ring) do
-        Currency.find_by(id: :ring)
-      end
-
-      let(:blockchain) do
-        Ethereum1::Blockchain.new.tap { |b| b.configure(currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings,  ring.to_blockchain_api_settings]) }
-      end
-
-      let(:blockchain) do
-        Ethereum1::Blockchain.new.tap { |b| b.configure(currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings,  ring.to_blockchain_api_settings]) }
       end
 
       it 'builds formatted transactions for passed transaction' do
-        expect(blockchain.send(:build_transactions, tx_hash)).to contain_exactly(*expected_transactions)
-      end
-    end
-
-    context 'multiple currencies' do
-
-      let(:tx_file_name) { '0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d.json' }
-
-      let(:tx_hash) do
-        Rails.root.join('spec', 'resources', 'ethereum-data', 'rinkeby', 'transactions', tx_file_name)
-          .yield_self { |file_path| File.open(file_path) }
-          .yield_self { |file| JSON.load(file) }
-      end
-
-      let(:expected_transactions) do
-        [{:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
-          :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
-          :amount=>2.to_d,
-          :currency_id=>currency1.id,
-          :txout=>8},
-         {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
-          :to_address=>"0xe3cb6897d83691a8eb8458140a1941ce1d6e6daa",
-          :amount=>2.to_d,
-          :currency_id=>currency1.id,
-          :txout=>8},
-         {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
-          :to_address=>"0x4b6a630ff1f66604d31952bdce2e4950efc99821",
-          :amount=>2.to_d,
-          :currency_id=>currency2.id,
-          :txout=>9},
-         {:hash=>"0x826555325cec51c4d39b327e563ce3e8ee87e27be5911383f528724a62f0da5d",
-          :to_address=>"0x4b6a630ff1f66604d31952bdce2e4950efc99821",
-          :amount=>2.to_d,
-          :currency_id=>currency2.id,
-          :txout=>9}]
-      end
-
-      let(:currency1) do
-        Currency.find_by(id: :trst)
-      end
-
-      let(:currency2) do
-        Currency.find_by(id: :trst)
-      end
-
-      let(:blockchain) do
-        Ethereum1::Blockchain.new.tap do |b|
-          b.configure(currencies: [currency1.to_blockchain_api_settings, currency2.to_blockchain_api_settings])
-        end
-      end
-
-      it 'builds formatted transactions for passed transaction per each currency' do
         expect(blockchain.send(:build_transactions, tx_hash)).to contain_exactly(*expected_transactions)
       end
     end
