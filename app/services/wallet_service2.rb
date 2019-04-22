@@ -47,9 +47,12 @@ class WalletService2
   end
 
   def deposit_collection_fees!(deposit, deposit_spread)
-    deposit_transaction = Peatio::Transaction.new(to_address:  deposit.address,
-                                                  amount:      deposit.amount,
-                                                  currency_id: deposit.currency_id)
+    deposit_transaction = Peatio::Transaction.new(hash:         deposit.txid,
+                                                  txout:        deposit.txout,
+                                                  to_address:   deposit.address,
+                                                  block_number: deposit.block_number,
+                                                  amount:       deposit.amount,
+                                                  currency_id:  deposit.currency_id)
     @adapter.prepare_deposit_collection!(deposit_transaction, deposit_spread)
   end
 

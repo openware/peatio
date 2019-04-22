@@ -169,11 +169,6 @@ class Withdraw < ApplicationRecord
       blockchain_txid: txid }
   end
 
-  def for_wallet_api
-    { amount: amount,
-      to_address: rid }
-  end
-
 private
 
   # @deprecated
