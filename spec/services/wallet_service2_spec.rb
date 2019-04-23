@@ -76,7 +76,7 @@ describe WalletService2 do
   end
 
   context :spread_between_wallets do
-    subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
     # Single wallet:
     #   * Deposit fits exactly.
     #   * Deposit doesn't fit.
@@ -91,53 +91,335 @@ describe WalletService2 do
     #   * Partial spread between first and third.
     #   * Partial spread between first, second and third.
     #   * Deposit doesn't fit to all wallets.
-    #   * Deposit fits into first and seconds but amount is less than min_collection.
-    context 'single wallet available' do
-      let(:amount) { 1.2 }
 
-      let(:destination_wallets) do
-        [{ address: 'destination-wallet-1',
-           balance: 8.8,
-           max_balance: 10,
-           min_collection_amount: 1 }]
+    let(:amount) { 1.2 }
+
+    context 'Single wallet' do
+
+      context 'single wallet available' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 8.8,
+            max_balance: 10,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: amount,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to single wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
       end
 
-      let(:expected_spread) do
-        [{ to_address: 'destination-wallet-1',
-           amount: amount,
-           currency_id: currency.id }]
-      end
-      it 'spreads everything to single wallet' do
-        expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
-        expect(subject).to all(be_a(Peatio::Transaction))
+      context 'Single wallet is full' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 10,
+            max_balance: 10,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: amount,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
       end
     end
 
-    context 'three wallets available' do
-      let(:amount) { 1.2 }
+    context 'Two wallets' do
 
-      let(:destination_wallets) do
-        [{ address: 'destination-wallet-1',
-           balance: 10.1,
-           max_balance: 10,
-           min_collection_amount: 1 },
-         { address: 'destination-wallet-2',
-           balance: 100.0,
-           max_balance: 100,
-           min_collection_amount: 1 },
-         { address: 'destination-wallet-3',
-           balance: 1001.0,
-           max_balance: 1000,
-           min_collection_amount: 1 }]
+      context 'Deposit fits to first wallet' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 5,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 100.0,
+            max_balance: 100,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: amount,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
       end
-      let(:expected_spread) do
-        [{ to_address: 'destination-wallet-3',
-           amount: amount,
-           currency_id: currency.id }]
+
+      context 'Deposit fits to second wallet' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 10,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 95,
+            max_balance: 100,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-2',
+            amount: amount,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
       end
-      it 'spreads everything to last wallet' do
-        expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
-        expect(subject).to all(be_a(Peatio::Transaction))
+
+      context 'Partial spread between first and second' do
+
+        let(:amount) { 10 }
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 5,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 90,
+            max_balance: 100,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: 5,
+            currency_id: currency.id },
+           { to_address: 'destination-wallet-2',
+            amount: 5,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
+      end
+
+      context 'Two wallets are full' do
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 10,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 100,
+            max_balance: 100,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-2',
+            amount: 1.2,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
+      end
+
+      context 'different min_collection_amount' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 10,
+            max_balance: 10,
+            min_collection_amount: 1 },
+           { address: 'destination-wallet-2',
+            balance: 100,
+            max_balance: 100,
+            min_collection_amount: 2 }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to single wallet' do
+          expect(subject.nil?).to be true
+        end
+      end
+    end
+
+    context 'Three wallets' do
+
+      context 'Partial spread between first and second' do
+
+        let(:amount) { 10 }
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 5,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 95,
+            max_balance: 100,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-3',
+            balance: 1001.0,
+            max_balance: 1000,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: 5,
+            currency_id: currency.id },
+           { to_address: 'destination-wallet-2',
+            amount: 5,
+            currency_id: currency.id}]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
+      end
+
+      context 'Partial spread between first and third' do
+
+        let(:amount) { 10 }
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 5,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 100,
+            max_balance: 100,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-3',
+            balance: 995.0,
+            max_balance: 1000,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: 5,
+            currency_id: currency.id },
+           { to_address: 'destination-wallet-3',
+            amount: 5,
+            currency_id: currency.id}]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
+      end
+
+      context 'Three wallets are full' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 10.1,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 100.0,
+            max_balance: 100,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-3',
+            balance: 1001.0,
+            max_balance: 1000,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-3',
+            amount: amount,
+            currency_id: currency.id }]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
+      end
+
+      context 'Partial spread between first, second and third' do
+
+        let(:amount) { 10 }
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+            balance: 7,
+            max_balance: 10,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-2',
+            balance: 97,
+            max_balance: 100,
+            min_collection_amount: 1 },
+          { address: 'destination-wallet-3',
+            balance: 995.0,
+            max_balance: 1000,
+            min_collection_amount: 1 }]
+        end
+
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-1',
+            amount: 3,
+            currency_id: currency.id },
+           { to_address: 'destination-wallet-2',
+             amount: 3,
+             currency_id: currency.id },
+           { to_address: 'destination-wallet-3',
+            amount: 4,
+            currency_id: currency.id}]
+        end
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to last wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
       end
     end
   end
