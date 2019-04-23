@@ -100,7 +100,7 @@ describe Bitcoin::Wallet do
       result = wallet.create_transaction!(transaction)
       expect(result.as_json.symbolize_keys).to eq(amount: 1.1,
                                                   to_address: '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf',
-                                                  hash: 'ab6ada9608f4cebf799ee8be20fe3fb84b0d08efcdb0d962df45d6fce70cb017')
+                                                  hash: txid)
     end
   end
 end
