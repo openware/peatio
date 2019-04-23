@@ -40,8 +40,11 @@ class WalletService2
     # NOTE: Deposit wallet configuration is tricky because wallet UIR
     #       is saved on Wallet model but wallet address and secret
     #       are saved in PaymentAddress.
-    @adapter.configure(wallet: @wallet.to_wallet_api_settings
-                                 .merge(address: pa.address, secret: pa.secret))
+    @adapter.configure(
+      wallet: @wallet.to_wallet_api_settings
+                     .merge(address: pa.address, secret: pa.secret)
+                     .compact
+    )
 
     deposit_spread.map { |t| @adapter.create_transaction!(t) }
   end

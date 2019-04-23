@@ -16,7 +16,7 @@ module Bitcoin
 
       @wallet = settings.fetch(:wallet) do
         raise MissingSettingError, :wallet
-      end.slice(:uri)
+      end.slice(:uri, :address)
 
       @currency = settings.fetch(:currency) do
         raise MissingSettingError, :wallet
