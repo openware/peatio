@@ -85,11 +85,13 @@ describe WalletService2 do
     #   * Deposit fits to second wallet.
     #   * Partial spread between first and second.
     #   * Deposit doesn't fit to both wallets.
+    #   * Negative min_collection_amount.
     # Three wallets:
     #   * Partial spread between first and second.
     #   * Partial spread between first and third.
     #   * Partial spread between first, second and third.
     #   * Deposit doesn't fit to all wallets.
+    #   * Deposit fits into first and seconds but amount is less than min_collection.
     context 'single wallet available' do
       let(:amount) { 1.2 }
 
@@ -106,10 +108,36 @@ describe WalletService2 do
            currency_id: currency.id }]
       end
       it 'spreads everything to single wallet' do
-        subject.each do |t|
-          expect(t).to be_instance_of(Peatio::Transaction)
-          expect(expected_spread).to include(t.as_json.symbolize_keys)
-        end
+        expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+        expect(subject).to all(be_a(Peatio::Transaction))
+      end
+    end
+
+    context 'three wallets available' do
+      let(:amount) { 1.2 }
+
+      let(:destination_wallets) do
+        [{ address: 'destination-wallet-1',
+           balance: 10.1,
+           max_balance: 10,
+           min_collection_amount: 1 },
+         { address: 'destination-wallet-2',
+           balance: 100.0,
+           max_balance: 100,
+           min_collection_amount: 1 },
+         { address: 'destination-wallet-3',
+           balance: 1001.0,
+           max_balance: 1000,
+           min_collection_amount: 1 }]
+      end
+      let(:expected_spread) do
+        [{ to_address: 'destination-wallet-3',
+           amount: amount,
+           currency_id: currency.id }]
+      end
+      it 'spreads everything to last wallet' do
+        expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+        expect(subject).to all(be_a(Peatio::Transaction))
       end
     end
   end
