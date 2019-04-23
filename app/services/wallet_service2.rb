@@ -66,14 +66,17 @@ class WalletService2
   def spread_between_wallets(original_amount, destination_wallets)
     left_amount = original_amount
 
-    destination_wallets.map do |dw|
+    spread = destination_wallets.map do |dw|
       break if left_amount == 0
 
       amount_for_wallet = [dw[:max_balance] - dw[:balance], left_amount].min
 
-      # If free amount for current wallet too small we will not able to collect it.
-      # So we try to collect it to next wallets.
-      next if amount_for_wallet < dw[:min_collection_amount]
+      # If free amount in current wallet is too small,
+      # we will not able to collect it.
+      # Put 0 for this wallet.
+      if amount_for_wallet < [dw[:min_collection_amount], 0].max
+        amount_for_wallet = 0
+      end
 
       left_amount -= amount_for_wallet
 
@@ -90,15 +93,18 @@ class WalletService2
     rescue => e
       # If have exception skip wallet.
       report_exception(e)
-    end.tap do |spread|
-      if left_amount > 0
-        # If deposit doesn't fit to any wallet collect it to last wallet.
-        # Since the last wallet is considered to be the most secure.
-        spread.last.amount += left_amount
-        left_amount += 0
-      end
+    end
 
-      unless spread.map(&:amount).sum == original_amount
+    if left_amount > 0
+      # If deposit doesn't fit to any wallet, collect it to the last one.
+      # Since the last wallet is considered to be the most secure.
+      spread.last.amount += left_amount
+      left_amount = 0
+    end
+
+    # Remove zero transactions from spread.
+    spread.filter { |t| t.amount > 0 }.tap do |sp|
+      unless sp.map(&:amount).sum == original_amount
         raise Error, "Deposit spread failed deposit.amount != collection_spread.values.sum"
       end
     end
