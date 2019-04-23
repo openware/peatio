@@ -31,6 +31,12 @@ module Peatio
       # @return [Hash] current wallet settings.
       attr_reader :settings
 
+      # List of configurable settings.
+      #
+      # @see #configure
+      SUPPORTED_SETTINGS = %i[wallet currency].freeze
+
+
       # Abstract constructor.
       #
       # @example
@@ -84,6 +90,12 @@ module Peatio
       #
       # @param [Peatio::Transaction] transaction transaction with defined
       # to_address, amount & currency_id.
+      #
+      # @note You need to subtract fee from amount you send.
+      #       It means that you need to deduct fee from the declared in
+      #       transaction.
+      #       If transaction amount is 1.0 and estimated fee is 0.01
+      #       you need to send 0.09.
       #
       # @return [Peatio::Transaction] transaction with updated hash.
       def create_transaction!(transaction)
