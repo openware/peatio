@@ -67,7 +67,7 @@ class WalletService2
     left_amount = original_amount
 
     spread = destination_wallets.map do |dw|
-      break if left_amount == 0
+      return if original_amount < dw[:min_collection_amount]
 
       amount_for_wallet = [dw[:max_balance] - dw[:balance], left_amount].min
 
