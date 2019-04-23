@@ -21,13 +21,13 @@ describe BlockchainService2 do
 
   let!(:member) { create(:member) }
 
-  let(:transaction) { Peatio::Transaction.new(hash: 'fake_txid', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake1', txout: 4) }
+  let(:transaction) { Peatio::Transaction.new(hash: 'fake_txid', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: 'fake1', txout: 4, status: 'success') }
 
   let(:expected_transactions) do
     [
-      { hash: 'fake_hash1', to_address: 'fake_address', amount: 1, block_number: 2, currency_id: 'fake1', txout: 1 },
-      { hash: 'fake_hash2', to_address: 'fake_address1', amount: 2, block_number: 2, currency_id: 'fake1', txout: 2 },
-      { hash: 'fake_hash3', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake2', txout: 3 }
+      { hash: 'fake_hash1', to_address: 'fake_address', amount: 1, block_number: 2, currency_id: 'fake1', txout: 1, status: 'success' },
+      { hash: 'fake_hash2', to_address: 'fake_address1', amount: 2, block_number: 2, currency_id: 'fake1', txout: 2, status: 'success' },
+      { hash: 'fake_hash3', to_address: 'fake_address2', amount: 3, block_number: 2, currency_id: 'fake2', txout: 3, status: 'success' }
     ].map { |t| Peatio::Transaction.new(t) }
   end
   # after(:each) { clear_redis }
@@ -260,14 +260,32 @@ describe BlockchainService2 do
     it { expect(subject.find_by(txid: expected_transactions.first.hash).block_number).to eq(expected_transactions.first.block_number) }
 
     it { expect(subject.find_by(txid: expected_transactions.third.hash).block_number).to eq(expected_transactions.third.block_number) }
+
+    context 'fail withdrawal if transaction has status :fail' do
+
+      let(:transaction) do
+        Peatio::Transaction.new(hash: 'fake_hash1', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: fake_currency1, txout: 4, status: 'fail')
+      end
+
+      before do
+        fake_adapter.stubs(:fetch_block!).returns([transaction])
+        service.process_block(block_number)
+      end
+
+      subject { Withdraws::Coin.find_by(currency: fake_currency1, txid: transaction.hash) }
+
+      it do
+        expect(subject.failed?).to be true
+      end
+    end
   end
 
   describe 'Several blocks' do
     let(:expected_transactions1) do
       [
-        { hash: 'fake_hash4', to_address: 'fake_address4', amount: 1, block_number: 3, currency_id: 'fake1', txout: 1 },
-        { hash: 'fake_hash5', to_address: 'fake_address4', amount: 2, block_number: 3, currency_id: 'fake1', txout: 2 },
-        { hash: 'fake_hash6', to_address: 'fake_address4', amount: 3, block_number: 3, currency_id: 'fake2', txout: 1 }
+        { hash: 'fake_hash4', to_address: 'fake_address4', amount: 1, block_number: 3, currency_id: 'fake1', txout: 1, status: 'success' },
+        { hash: 'fake_hash5', to_address: 'fake_address4', amount: 2, block_number: 3, currency_id: 'fake1', txout: 2, status: 'success' },
+        { hash: 'fake_hash6', to_address: 'fake_address4', amount: 3, block_number: 3, currency_id: 'fake2', txout: 1, status: 'success' }
       ].map { |t| Peatio::Transaction.new(t) }
     end
 
