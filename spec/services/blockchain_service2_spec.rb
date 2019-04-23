@@ -263,8 +263,22 @@ describe BlockchainService2 do
 
     context 'fail withdrawal if transaction has status :fail' do
 
-      let(:transaction) do
-        Peatio::Transaction.new(hash: 'fake_hash1', to_address: 'fake_address', amount: 5, block_number: 3, currency_id: fake_currency1, txout: 4, status: 'fail')
+      let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 10) } }
+
+      let!(:withdrawal) do
+        Withdraw.create!(member: member,
+                         account: fake_account1,
+                         currency: fake_currency1,
+                         amount: 1,
+                         txid: "fake_hash",
+                         rid: 'fake_address',
+                         sum: 1,
+                         type: Withdraws::Coin,
+                         aasm_state: :confirming)
+      end
+
+      let!(:transaction) do
+        Peatio::Transaction.new(hash: 'fake_hash', to_address: 'fake_address', amount: 1, block_number: 3, currency_id: fake_currency1.id, txout: 10, status: 'fail')
       end
 
       before do
