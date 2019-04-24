@@ -26,15 +26,17 @@ class WalletService2
         # TODO: What if we can't load current_balance ?
         # NOTE: Consider min_collection_amount is defined per wallet.
         #       For now min_collection_amount is currency config.
-        { address:     w.address,
-          balance:     w.current_balance,
-          max_balance: w.max_balance,
+        { address:               w.address,
+          balance:               w.current_balance,
+          max_balance:           w.max_balance,
           min_collection_amount: @wallet.currency.min_collection_amount }
       end
     raise StandardError, "destination wallets don't exist" if destination_wallets.blank?
 
-    # Since last wallet is considered to be the most secure we need not always
-    # have it in spread even if we can't load balance of one.
+    # Since last wallet is considered to be the most secure we need always
+    # have it in spread even if we don't know the balance.
+    # All money which doesn't fit to other wallets will be collected to cold.
+    # That is why cold wallet balance is considered to be 0 because there is no
     destination_wallets.last[:balance] = 0
 
     # Remove all wallets not available current balance

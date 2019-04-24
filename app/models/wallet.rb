@@ -19,7 +19,7 @@ class Wallet < ApplicationRecord
                            bitgo_rest_api_root
                            bitgo_rest_api_access_token ].freeze
 
-  NOT_AVAILABLE = 'N/A'.free
+  NOT_AVAILABLE = 'N/A'.freeze
 
   include BelongsToCurrency
 

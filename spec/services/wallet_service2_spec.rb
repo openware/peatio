@@ -454,5 +454,67 @@ describe WalletService2 do
     end
   end
 
+  context :spread_deposit do
+    let!(:deposit_wallet) { create(:wallet, :fake_deposit) }
+    let!(:hot_wallet) { create(:wallet, :fake_hot) }
+    let!(:cold_wallet) { create(:wallet, :fake_cold) }
 
+    let(:service) { WalletService2.new(deposit_wallet) }
+
+    let(:amount) { 2 }
+    let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
+
+    let(:expected_spread) do
+      [{ to_address: 'fake-cold',
+         amount: '2.0',
+         currency_id: currency.id }]
+    end
+
+    subject { service.spread_deposit(deposit) }
+
+    context 'hot wallet is full and cold wallet balance is not available' do
+      before do
+        # Hot wallet balance is full and cold wallet balance is not available.
+        Wallet.any_instance.stubs(:current_balance).returns(hot_wallet.max_balance, 'N/A')
+      end
+
+      it 'spreads everything to cold wallet' do
+        expect(Wallet.active.withdraw.where(currency_id: deposit.currency_id).count).to eq 2
+
+        expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+        expect(subject).to all(be_a(Peatio::Transaction))
+      end
+    end
+
+    context 'hot wallet is full, warm and cold wallet balances are not available' do
+      let!(:warm_wallet) { create(:wallet, :fake_warm) }
+      before do
+        # Hot wallet is full, warm and cold wallet balances are not available.
+        Wallet.any_instance.stubs(:current_balance).returns(hot_wallet.max_balance, 'N/A', 'N/A')
+      end
+
+      it 'skips warm wallet and spreads everything to cold wallet' do
+        expect(Wallet.active.withdraw.where(currency_id: deposit.currency_id).count).to eq 3
+
+        expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+        expect(subject).to all(be_a(Peatio::Transaction))
+      end
+    end
+
+    context 'there is no active wallets' do
+      before { Wallet.stubs(:active).returns(Wallet.none) }
+
+      it 'raises an error' do
+        expect{ subject }.to raise_error(StandardError)
+      end
+    end
+  end
+
+  context :collect_deposit do
+    # TODO
+  end
+
+  context :deposit_collection_fees do
+    # TODO
+  end
 end
