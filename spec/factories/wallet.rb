@@ -324,13 +324,52 @@ FactoryBot.define do
       uri               { 'http://127.0.0.1:17732' }
     end
 
+    trait :fake_deposit do
+      currency_id       { 'fake' }
+      blockchain_key    { 'fake-testnet' }
+      name              { 'Fake Currency Deposit Wallet' }
+      address           { 'fake-deposit' }
+      kind              { 'deposit' }
+      max_balance       { 0.0 }
+      nsig              { 1 }
+      status            { 'active' }
+      gateway           { 'fake' }
+      uri               { 'http://127.0.0.1:18881' }
+    end
+
     trait :fake_hot do
       currency_id       { 'fake' }
       blockchain_key    { 'fake-testnet' }
       name              { 'Fake Currency Hot Wallet' }
-      address           { 'fake' }
+      address           { 'fake-hot' }
       kind              { 'hot' }
+      max_balance       { 10.0 }
+      nsig              { 1 }
+      status            { 'active' }
+      gateway           { 'fake' }
+      uri               { 'http://127.0.0.1:18881' }
+    end
+
+    trait :fake_warm do
+      currency_id       { 'fake' }
+      blockchain_key    { 'fake-testnet' }
+      name              { 'Fake Currency Warm Wallet' }
+      address           { 'fake-warm' }
+      kind              { 'warm' }
       max_balance       { 100.0 }
+      nsig              { 1 }
+      status            { 'active' }
+      gateway           { 'fake' }
+      uri               { 'http://127.0.0.1:18881' }
+    end
+
+    trait :fake_cold do
+      currency_id       { 'fake' }
+      blockchain_key    { 'fake-testnet' }
+      name              { 'Fake Currency Cold Wallet' }
+      address           { 'fake-cold' }
+      kind              { 'cold' }
+      max_balance       { 1000.0 }
       nsig              { 1 }
       status            { 'active' }
       gateway           { 'fake' }
