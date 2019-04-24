@@ -270,10 +270,40 @@ describe WalletService2 do
             min_collection_amount: 2 }]
         end
 
+        let(:expected_spread) do
+          [{ to_address: 'destination-wallet-2',
+             amount: 1.2,
+             currency_id: currency.id }]
+        end
+
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
 
         it 'spreads everything to single wallet' do
-          expect(subject.nil?).to be true
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
+        end
+      end
+
+      context 'tiny min_collection_amount' do
+
+        let(:destination_wallets) do
+          [{ address: 'destination-wallet-1',
+             balance: 10,
+             max_balance: 10,
+             min_collection_amount: 2 },
+           { address: 'destination-wallet-2',
+             balance: 100,
+             max_balance: 100,
+             min_collection_amount: 3 }]
+        end
+
+        let(:expected_spread) { [] }
+
+        subject { service.send(:spread_between_wallets, amount, destination_wallets) }
+
+        it 'spreads everything to single wallet' do
+          expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
+          expect(subject).to all(be_a(Peatio::Transaction))
         end
       end
     end
