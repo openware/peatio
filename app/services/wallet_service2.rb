@@ -64,11 +64,13 @@ class WalletService2
   # @return [Array<Peatio::Transaction>] result of spread in form of
   # transactions array with amount and to_address defined.
   def spread_between_wallets(original_amount, destination_wallets)
+    if original_amount < destination_wallets.pluck(:min_collection_amount).min
+      return []
+    end
+
     left_amount = original_amount
 
     spread = destination_wallets.map do |dw|
-      return if original_amount < dw[:min_collection_amount]
-
       amount_for_wallet = [dw[:max_balance] - dw[:balance], left_amount].min
 
       # If free amount in current wallet is too small,
