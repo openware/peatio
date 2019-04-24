@@ -19,6 +19,8 @@ class Wallet < ApplicationRecord
                            bitgo_rest_api_root
                            bitgo_rest_api_access_token ].freeze
 
+  NOT_AVAILABLE = 'N/A'.free
+
   include BelongsToCurrency
 
   store :settings, accessors: SETTING_ATTRIBUTES, coder: JSON
@@ -77,8 +79,10 @@ class Wallet < ApplicationRecord
   end
 
   def current_balance
-    # TODO: If there is exception raised on API call.
     BlockchainService2.new(blockchain).load_balance(address, currency_id)
+  rescue => e
+    report_exception(e)
+    NOT_AVAILABLE
   end
 
   def to_wallet_api_settings
