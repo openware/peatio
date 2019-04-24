@@ -31,6 +31,15 @@ class WalletService2
           max_balance: w.max_balance,
           min_collection_amount: @wallet.currency.min_collection_amount }
       end
+    raise StandardError, "destination wallets don't exist" if destination_wallets.blank?
+
+    # Since last wallet is considered to be the most secure we need not always
+    # have it in spread even if we can't load balance of one.
+    destination_wallets.last[:balance] = 0
+
+    # Remove all wallets not available current balance
+    # (except the last one see previous comment).
+    destination_wallets.reject! { |dw| dw[:balance] == Wallet::NOT_AVAILABLE }
 
     spread_between_wallets(deposit.amount, destination_wallets)
   end
