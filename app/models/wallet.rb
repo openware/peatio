@@ -32,8 +32,8 @@ class Wallet < ApplicationRecord
 
   validates :status,  inclusion: { in: %w[active disabled] }
 
-  # TODO: Validate inclusion in WalletAPI.adapters
-  # validates :gateway, inclusion: { in: GATEWAYS }
+  # TODO: Uncomment in the finale stage
+  # validates :gateway, inclusion: { in: gateways }
 
   validates :nsig,        numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
@@ -51,6 +51,10 @@ class Wallet < ApplicationRecord
   end
 
   class << self
+    def gateways
+      Peatio::WalletAPI.adapters.keys
+    end
+
     def kinds(options={})
       ENUMERIZED_KINDS
         .yield_self do |kinds|
