@@ -14,7 +14,7 @@ module Bitcoin
 
       @currency = settings.fetch(:currency) do
         raise Peatio::Wallet::MissingSettingError, :wallet
-      end.slice(:id, :base_factor, :options)
+      end.slice(:uri, :address)
     end
 
     def create_address!(_options = {})
