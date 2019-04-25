@@ -9,11 +9,11 @@ module Bitcoin
       @settings.merge!(settings.slice(*SUPPORTED_SETTINGS))
 
       @wallet = settings.fetch(:wallet) do
-        raise Peatio::Blockchain::MissingSettingError, :wallet
+        raise Peatio::Wallet::MissingSettingError, :wallet
       end.slice(:uri, :address)
 
       @currency = settings.fetch(:currency) do
-        raise Peatio::Blockchain::MissingSettingError, :wallet
+        raise Peatio::Wallet::MissingSettingError, :wallet
       end.slice(:id, :base_factor, :options)
     end
 
@@ -21,7 +21,7 @@ module Bitcoin
       address = client.json_rpc(:getnewaddress)
       Peatio::BlockchainAddress.new(address: address)
     rescue Bitcoin::Client::Error => e
-      raise Peatio::Blockchain::ClientError, e
+      raise Peatio::Wallet::ClientError, e
     end
 
     def create_transaction!(transaction)
@@ -36,13 +36,13 @@ module Bitcoin
       transaction.hash = txid
       transaction
     rescue Bitcoin::Client::Error => e
-      raise Peatio::Blockchain::ClientError, e
+      raise Peatio::Wallet::ClientError, e
     end
 
     private
 
     def client
-      uri = @wallet.fetch(:uri) { raise Peatio::Blockchain::MissingSettingError, :uri }
+      uri = @wallet.fetch(:uri) { raise Peatio::Wallet::MissingSettingError, :uri }
       @client ||= Client.new(uri)
     end
   end
