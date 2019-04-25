@@ -23,7 +23,6 @@ class WalletService2
       Wallet.active.withdraw.ordered
         .where(currency_id: deposit.currency_id)
         .map do |w|
-        # TODO: What if we can't load current_balance ?
         # NOTE: Consider min_collection_amount is defined per wallet.
         #       For now min_collection_amount is currency config.
         { address:               w.address,
