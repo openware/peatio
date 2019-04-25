@@ -2,12 +2,6 @@ module Bitcoin
   # TODO: Processing of unconfirmed transactions from mempool isn't supported now.
   class Blockchain < Peatio::Blockchain::Abstract
 
-    class MissingSettingError < StandardError
-      def initialize(key = '')
-        super "#{key.capitalize} setting is missing"
-      end
-    end
-
     DEFAULT_FEATURES = {case_sensitive: true, cash_addr_format: false}.freeze
 
     def initialize(custom_features = {})
@@ -29,10 +23,14 @@ module Bitcoin
           end
           txs_array.append(*txs)
         end.yield_self { |txs_array| Peatio::Block.new(block_number, txs_array) }
+    rescue Bitcoin::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
     end
 
     def latest_block_number
       client.json_rpc(:getblockcount)
+    rescue Bitcoin::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
     end
 
     private
@@ -62,7 +60,7 @@ module Bitcoin
     end
 
     def settings_fetch(key)
-      @settings.fetch(key) { raise MissingSettingError(key.to_s) }
+      @settings.fetch(key) { raise Peatio::Blockchain::MissingSettingError, key.to_s }
     end
   end
 end

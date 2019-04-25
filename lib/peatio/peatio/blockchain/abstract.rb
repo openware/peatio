@@ -1,6 +1,9 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+# TODO: Require in gem loading.
+require_relative 'error'
+
 module Peatio #:nodoc:
   module Blockchain #:nodoc:
 
@@ -85,8 +88,6 @@ module Peatio #:nodoc:
       #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(custom_features))
       #
       # @abstract
-      #
-      # @return [Peatio::Blockchain::Abstract]
       def initialize(*)
         abstract_method
       end
@@ -112,6 +113,8 @@ module Peatio #:nodoc:
       #
       # @param block_number [Integer] the block number.
       # @return [Peatio::Block] the block object.
+      # @raise [Peatio::Blockchain::ClientError] if error was raised
+      #   on blockchain API call.
       def fetch_block!(block_number)
         abstract_method
       end
@@ -121,7 +124,22 @@ module Peatio #:nodoc:
       # @abstract
       #
       # @return [Integer] the current blockchain height.
+      # @raise [Peatio::Blockchain::ClientError] if error was raised
+      #   on blockchain API call.
       def latest_block_number
+        abstract_method
+      end
+
+      # Fetches address balance of specific currency.
+      #
+      # @abstract
+      #
+      # @param address [String] the address for requesting balance.
+      # @param currency_id [String] which currency balance we need to request.
+      # @return [BigDecimal] the current address balance.
+      # @raise [Peatio::Blockchain::ClientError] if error was raised
+      #   on blockchain API call.
+      def load_balance(address, currency_id)
         abstract_method
       end
 
