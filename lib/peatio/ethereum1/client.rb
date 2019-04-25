@@ -1,6 +1,8 @@
 module Ethereum1
   class Client
-    class ResponseError < StandardError
+    Error = Class.new(StandardError)
+
+    class ResponseError < Error
       def initialize(code, msg)
         @code = code
         @msg = msg

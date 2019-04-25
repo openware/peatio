@@ -1,6 +1,9 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+# TODO: Require in gem loading.
+require_relative 'error'
+
 module Peatio #:nodoc:
   module Blockchain #:nodoc:
 
