@@ -42,9 +42,9 @@ describe WalletService2 do
   context :create_address! do
     let(:account) { create(:member, :level_3, :barong).ac(currency)  }
     let(:blockchain_address) do
-      Peatio::BlockchainAddress.new(address: :fake_address,
-                                    secret: :changeme,
-                                    details: { uid: account.member.uid })
+      { address: :fake_address,
+        secret: :changeme,
+        details: { uid: account.member.uid } }
     end
 
     before do

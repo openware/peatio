@@ -82,7 +82,7 @@ module Peatio
       #
       # @options options [String] :uid User UID which requested address creation.
       #
-      # @return [Peatio::BlockchainAddress] newly created blockchain address.
+      # @return [Hash] newly created blockchain address.
       # @raise [Peatio::Blockchain::ClientError] if error was raised
       #   on wallet API call.
       def create_address!(options = {})
