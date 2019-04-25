@@ -15,8 +15,7 @@ class BlockchainService2
   end
 
   def load_balance(address, currency_id)
-    123
-    # TODO: Add load_balance to Blockchain::Abstract.
+    'N/A'
   end
 
   # @deprecated

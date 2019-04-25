@@ -40,6 +40,7 @@ module Worker
 
         wallet_service = WalletService[wallet]
 
+        # TODO: Skip withdrawal if load_balance raise error.
         balance = wallet_service.load_balance(wallet.address, currency)
 
         if balance < withdraw.sum
