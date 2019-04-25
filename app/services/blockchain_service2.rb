@@ -15,7 +15,7 @@ class BlockchainService2
   end
 
   def load_balance(address, currency_id)
-    'N/A'
+    @adapter.load_balance(address, currency_id)
   end
 
   # @deprecated

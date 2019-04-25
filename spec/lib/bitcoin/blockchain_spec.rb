@@ -67,7 +67,7 @@ describe Bitcoin::Blockchain do
                            error:  { code: -32601, message: 'Method not found' },
                            id:     nil }.to_json)
 
-      expect{ blockchain.latest_block_number }.to raise_error(Bitcoin::Client::ResponseError)
+      expect{ blockchain.latest_block_number }.to raise_error(Peatio::Blockchain::ClientError)
     end
   end
 

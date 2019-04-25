@@ -91,7 +91,7 @@ describe Ethereum1::Blockchain do
                            error:  { code: -32601, message: "The method #{method} does not exist/is not available" },
                            id:     1 }.to_json)
 
-      expect{ blockchain.latest_block_number }.to raise_error(Ethereum1::Client::ResponseError)
+      expect{ blockchain.latest_block_number }.to raise_error(Peatio::Blockchain::ClientError)
     end
   end
 

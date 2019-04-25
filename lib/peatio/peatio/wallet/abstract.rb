@@ -1,3 +1,6 @@
+# TODO: Require in gem loading.
+require_relative 'error'
+
 module Peatio
   module Wallet
     # @abstract Represents basic blockchain wallet interface.
@@ -54,8 +57,6 @@ module Peatio
       #   Peatio::BlockchainAPI.register(:my_wallet, MyWallet.new(custom_features))
       #
       # @abstract
-      #
-      # @return [Peatio::Wallet::Abstract]
       def initialize(*)
         abstract_method
       end
@@ -82,6 +83,8 @@ module Peatio
       # @options options [String] :uid User UID which requested address creation.
       #
       # @return [Peatio::BlockchainAddress] newly created blockchain address.
+      # @raise [Peatio::Blockchain::ClientError] if error was raised
+      #   on wallet API call.
       def create_address!(options = {})
         abstract_method
       end
@@ -98,6 +101,8 @@ module Peatio
       #       you need to send 0.09.
       #
       # @return [Peatio::Transaction] transaction with updated hash.
+      # @raise [Peatio::Blockchain::ClientError] if error was raised
+      #   on wallet API call.
       def create_transaction!(transaction)
         abstract_method
       end

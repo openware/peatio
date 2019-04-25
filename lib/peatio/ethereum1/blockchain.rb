@@ -1,15 +1,8 @@
 module Ethereum1
   class Blockchain < Peatio::Blockchain::Abstract
 
-    class MissingSettingError < StandardError
-      def initialize(key = '')
-        super "#{key.capitalize} setting is missing"
-      end
-    end
-
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
-
 
     DEFAULT_FEATURES = { case_sensitive: false, cash_addr_format: false }.freeze
 
@@ -52,10 +45,14 @@ module Ethereum1
 
         block_arr.append(*txs)
       end.yield_self { |block_arr| Peatio::Block.new(block_number, block_arr) }
+    rescue Ethereum1::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
     end
 
     def latest_block_number
       client.json_rpc(:eth_blockNumber).to_i(16)
+    rescue Ethereum1::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
     end
 
     private
@@ -65,7 +62,7 @@ module Ethereum1
     end
 
     def settings_fetch(key)
-      @settings.fetch(key) { raise MissingSettingError(key.to_s) }
+      @settings.fetch(key) { raise Peatio::Blockchain::MissingSettingError, key.to_s }
     end
 
     def normalize_txid(txid)
