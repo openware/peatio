@@ -111,7 +111,7 @@ describe API::V2::Market::Trades, type: :request do
       api_get '/api/v2/market/trades', params: { time_from: 1.day.ago.to_i }, token: token
       result = JSON.parse(response.body)
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(result.size).to eq 3
       expect(response.headers.fetch('Total')).to eq '3'
     end
@@ -120,7 +120,7 @@ describe API::V2::Market::Trades, type: :request do
       api_get '/api/v2/market/trades', params: { time_to: 1.day.ago.to_i }, token: token
       result = JSON.parse(response.body)
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(result.size).to eq 2
       expect(response.headers.fetch('Total')).to eq '2'
     end
@@ -130,7 +130,7 @@ describe API::V2::Market::Trades, type: :request do
       api_get '/api/v2/market/trades', params: { time_from: 7.hours.ago.to_i, time_to: 5.hours.ago.to_i }, token: token
       result = JSON.parse(response.body)
 
-      expect(response).to be_success
+      expect(response).to be_successful
       expect(result.size).to eq 1
       expect(response.headers.fetch('Total')).to eq '1'
     end
