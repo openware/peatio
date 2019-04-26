@@ -375,5 +375,19 @@ FactoryBot.define do
       gateway           { 'fake' }
       uri               { 'http://127.0.0.1:18881' }
     end
+
+    trait :fake_fee do
+      currency_id        { 'fake' }
+      blockchain_key     { 'fake-testnet' }
+      name               { 'Fake Currency Fee Wallet' }
+      address            { 'fake-fee' }
+      kind               { 'fee' }
+      max_balance        { 1000.0 }
+      nsig               { 2 }
+      status             { 'active' }
+      gateway            { 'fake' }
+      uri                { 'http://127.0.0.1:8545' }
+      secret             { 'changeme' }
+    end
   end
 end

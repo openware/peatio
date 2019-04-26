@@ -82,9 +82,15 @@ module Peatio
       #
       # @options options [String] :uid User UID which requested address creation.
       #
-      # @return [Peatio::BlockchainAddress] newly created blockchain address.
+      # @return [Hash] newly created blockchain address.
+      #
       # @raise [Peatio::Blockchain::ClientError] if error was raised
       #   on wallet API call.
+      #
+      # @example
+      #   { address: :fake_address,
+      #     secret:  :changeme,
+      #     details: { uid: account.member.uid } }
       def create_address!(options = {})
         abstract_method
       end
@@ -118,9 +124,11 @@ module Peatio
       #
       # @return [Array<Peatio::Transaction>] transaction created for
       # deposit collection preparing.
+      # By default return empty [Array]
       def prepare_deposit_collection!(deposit_transaction, spread_transactions)
         # This method is mostly used for coins which needs additional fees
         # to be deposited before deposit collection.
+        []
       end
 
       private
