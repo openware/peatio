@@ -71,6 +71,8 @@ module Peatio #:nodoc:
 
       # Abstract constructor.
       #
+      # @abstract
+      #
       # @example
       #   class MyBlockchain < Peatio::Abstract::Blockchain
       #
@@ -86,14 +88,14 @@ module Peatio #:nodoc:
       #   # Register MyBlockchain as peatio plugable blockchain.
       #   custom_features = {cash_addr_format: true}
       #   Peatio::BlockchainAPI.register(:my_blockchain, MyBlockchain.new(custom_features))
-      #
-      # @abstract
       def initialize(*)
         abstract_method
       end
 
       # Merges given configuration parameters with defined during initialization
       # and returns the result.
+      #
+      # @abstract
       #
       # @param [Hash] settings parameters to use.
       #
@@ -132,15 +134,18 @@ module Peatio #:nodoc:
 
       # Fetches address balance of specific currency.
       #
-      # @abstract
+      # @note Optional. Don't override this method if your blockchain
+      # doesn't provide functionality to get balance by address.
       #
       # @param address [String] the address for requesting balance.
       # @param currency_id [String] which currency balance we need to request.
       # @return [BigDecimal] the current address balance.
-      # @raise [Peatio::Blockchain::ClientError] if error was raised
-      #   on blockchain API call.
-      def load_balance(address, currency_id)
-        abstract_method
+      # @raise [Peatio::Blockchain::ClientError,Peatio::Blockchain::UnavailableAddressBalanceError]
+      # if error was raised on blockchain API call ClientError is raised.
+      # if blockchain API call was successful but we can't detect balance
+      # for address Error is raised.
+      def load_balance_of_address!(address, currency_id)
+        raise Peatio::Blockchain::UnavailableAddressBalanceError
       end
 
       private

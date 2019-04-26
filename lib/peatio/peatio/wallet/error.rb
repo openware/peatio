@@ -15,5 +15,15 @@ module Peatio
         super "#{key.capitalize} setting is missing"
       end
     end
+
+    class UnavailableAddressBalanceError < Error
+      def initialize(address)
+        @address = address
+      end
+
+      def message
+        "Unable to load #{@address} balance"
+      end
+    end
   end
 end
