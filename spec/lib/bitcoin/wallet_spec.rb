@@ -103,4 +103,43 @@ describe Bitcoin::Wallet do
                                                   hash: txid)
     end
   end
+
+  context :load_balance! do
+    around do |example|
+      WebMock.disable_net_connect!
+      example.run
+      WebMock.allow_net_connect!
+    end
+
+    let(:uri) { 'http://user:password@127.0.0.1:18332' }
+    let(:uri_without_authority) { 'http://127.0.0.1:18332' }
+
+    let(:settings) do
+      {
+        wallet:
+          { address: 'something',
+            uri:     uri },
+        currency: {}
+      }
+    end
+
+    before do
+      wallet.configure(settings)
+    end
+
+    it 'requests rpc with getbalance call' do
+      balance = '6.72201169'
+      stub_request(:post, uri_without_authority)
+        .with(body: { jsonrpc: '1.0',
+                      method: :getbalance,
+                      params: [] }.to_json)
+        .to_return(body: { result: balance,
+                           error:  nil,
+                           id:     nil }.to_json)
+
+      result = wallet.load_balance!
+      expect(result).to be_a(BigDecimal)
+      expect(result).to eq(balance.to_d)
+    end
+  end
 end

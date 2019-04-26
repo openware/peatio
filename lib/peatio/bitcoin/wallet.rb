@@ -38,6 +38,13 @@ module Bitcoin
       raise Peatio::Wallet::ClientError, e
     end
 
+    def load_balance!
+      client.json_rpc(:getbalance).yield_self { |b| BigDecimal(b) }
+
+    rescue Bitcoin::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
+    end
+
     private
 
     def client
