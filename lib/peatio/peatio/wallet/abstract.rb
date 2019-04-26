@@ -42,6 +42,8 @@ module Peatio
 
       # Abstract constructor.
       #
+      # @abstract
+      #
       # @example
       #   class MyWallet< Peatio::Abstract::Wallet
       #
@@ -54,15 +56,15 @@ module Peatio
       #
       #   # Register MyWallet as peatio plugable wallet.
       #   custom_features = {cash_addr_format: true}
-      #   Peatio::BlockchainAPI.register(:my_wallet, MyWallet.new(custom_features))
-      #
-      # @abstract
+      #   Peatio::BlockchainAPI.register(:my_wallet, MyWallet.new(custom_features)) #
       def initialize(*)
         abstract_method
       end
 
       # Merges given configuration parameters with defined during initialization
       # and returns the result.
+      #
+      # @abstract
       #
       # @param [Hash] settings configurations to use.
       # @option settings [Hash] :wallet Wallet settings for performing API calls.
@@ -77,6 +79,8 @@ module Peatio
       end
 
       # Performs API call for address creation and returns it.
+      #
+      # @abstract
       #
       # @param [Hash] options
       #
@@ -97,6 +101,8 @@ module Peatio
 
       # Performs API call for creating transaction and returns updated transaction.
       #
+      # @abstract
+      #
       # @param [Peatio::Transaction] transaction transaction with defined
       # to_address, amount & currency_id.
       #
@@ -107,14 +113,33 @@ module Peatio
       #       you need to send 0.09.
       #
       # @return [Peatio::Transaction] transaction with updated hash.
+      #
       # @raise [Peatio::Blockchain::ClientError] if error was raised
       #   on wallet API call.
       def create_transaction!(transaction)
         abstract_method
       end
 
+      # Fetches address balance of specific currency.
+      #
+      # @note Optional. Don't override this method if your blockchain
+      # doesn't provide functionality to get balance by address.
+      #
+      # @return [BigDecimal] the current address balance.
+      #
+      # @raise [Peatio::Blockchain::ClientError,Peatio::Blockchain::UnavailableAddressBalanceError]
+      # if error was raised on wallet API call ClientError is raised.
+      # if wallet API call was successful but we can't detect balance
+      # for address Error is raised.
+      def load_balance!
+        raise Peatio::Wallet::UnavailableAddressBalanceError
+      end
+
       # Performs API call(s) for preparing for deposit collection.
       # E.g deposits ETH for collecting ERC20 tokens in case of Ethereum blockchain.
+      #
+      # @note Optional. Override this method only if you need additional step
+      # before deposit collection.
       #
       # @param [Peatio::Transaction] deposit_transaction transaction which
       # describes received deposit.
