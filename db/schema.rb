@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_02_130148) do
+ActiveRecord::Schema.define(version: 2019_04_26_145506) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "block_number"
     t.string "type", limit: 30, null: false
     t.string "tid", limit: 64, null: false, collation: "utf8_bin"
+    t.string "spread", limit: 1000, default: "{}"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "completed_at"

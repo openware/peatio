@@ -4,6 +4,8 @@
 class Deposit < ApplicationRecord
   STATES = %i[submitted canceled rejected accepted collected].freeze
 
+  serialize :spread, Array
+
   include AASM
   include AASM::Locking
   include BelongsToCurrency
@@ -126,7 +128,7 @@ class Deposit < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20180925123806
+# Schema version: 20190426145506
 #
 # Table name: deposits
 #
@@ -142,6 +144,7 @@ end
 #  block_number :integer
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
+#  spread       :string(1000)     default("{}")
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime
