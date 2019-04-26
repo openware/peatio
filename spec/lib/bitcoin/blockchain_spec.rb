@@ -263,4 +263,93 @@ describe Bitcoin::Blockchain do
       end
     end
   end
+
+  context :load_balance_of_address! do
+    around do |example|
+      WebMock.disable_net_connect!
+      example.run
+      WebMock.allow_net_connect!
+    end
+
+    let(:server) { 'http://user:password@127.0.0.1:18332' }
+    let(:blockchain) do
+      Bitcoin::Blockchain.new.tap {|b| b.configure(server: server)}
+    end
+
+
+    let(:response) do
+      [
+        [
+          [
+            "mh2e7YHio7fTjLXHZ3KRXDfU52RbwQbhtK",
+            0,
+            ""
+          ]
+        ],
+        [
+          [
+            "mkuYucVhRQDiSHszbZ9M7d7vygKymyZ549",
+            0.14458097,
+            "my_imported_address_from_electrum"
+          ],
+          [
+            "mpD544rTPbRNDr9yzK9MTGS4ckfVxUNY42",
+            0.24997197,
+            "imported_address_from_bitgo"
+          ]
+        ]
+      ]
+    end
+
+    before do
+      stub_request(:post, 'http://127.0.0.1:18332')
+        .with(body: { jsonrpc: '1.0',
+                      method: :listaddressgroupings,
+                      params: [] }.to_json)
+        .to_return(body: { result: response,
+                           error:  nil,
+                           id:     nil }.to_json)
+    end
+
+    context 'address with balance is defined' do
+      it 'requests rpc listaddressgroupings and finds address balance' do
+        address = 'mpD544rTPbRNDr9yzK9MTGS4ckfVxUNY42'
+
+        result = blockchain.load_balance_of_address!(address, :btc)
+        expect(result).to be_a(BigDecimal)
+        expect(result).to eq('0.24997197'.to_d)
+      end
+
+      it 'requests rpc listaddressgroupings and finds address with zero balance' do
+        address = 'mh2e7YHio7fTjLXHZ3KRXDfU52RbwQbhtK'
+
+        result = blockchain.load_balance_of_address!(address, :btc)
+        expect(result).to be_a(BigDecimal)
+        expect(result).to eq('0'.to_d)
+      end
+    end
+
+    context 'address is not defined' do
+      it 'requests rpc listaddressgroupings and do not find address' do
+        address = '1PoxQx6Pk5NwWN1yyBx2jifFvS9eJAksdf'
+        expect{ blockchain.load_balance_of_address!(address, :btc)}.to raise_error(Peatio::Blockchain::UnavailableAddressBalanceError)
+      end
+    end
+
+    context 'client error is raised' do
+      before do
+        stub_request(:post, 'http://127.0.0.1:18332')
+          .with(body: { jsonrpc: '1.0',
+                        method: :listaddressgroupings,
+                        params: [] }.to_json)
+          .to_return(body: { result: nil,
+                             error:  { code: -32601, message: 'Method not found' },
+                             id:     nil }.to_json)
+      end
+
+      it 'raise wrapped client error' do
+        expect{ blockchain.load_balance_of_address!('anything', :btc)}.to raise_error(Peatio::Blockchain::ClientError)
+      end
+    end
+  end
 end
