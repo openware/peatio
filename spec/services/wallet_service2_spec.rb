@@ -590,7 +590,7 @@ describe WalletService2 do
     let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
 
     let(:fake_wallet_adapter) { FakeWallet.new }
-    let(:service) { WalletService2.new(deposit_wallet) }
+    let(:service) { WalletService2.new(fee_wallet) }
 
     let(:spread_deposit) do [{ to_address: 'fake-cold',
       amount: '2.0',
@@ -618,9 +618,6 @@ describe WalletService2 do
     end
 
     context "Adapter doesn't perform any actions before collect deposit" do
-      before do 
-        fake_wallet_adapter.expects(:prepare_deposit_collection!).returns([])
-      end
 
       it 'retunrs empty array' do
         expect(subject.blank?).to be true
