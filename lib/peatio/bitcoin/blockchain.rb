@@ -33,6 +33,20 @@ module Bitcoin
       raise Peatio::Blockchain::ClientError, e
     end
 
+    def load_balance_of_address!(address, _currency_id)
+      address_with_balance = client.json_rpc(:listaddressgroupings)
+                                   .flatten(1)
+                                   .find { |addr| addr[0] == address }
+
+      if address_with_balance.blank?
+        raise Peatio::Blockchain::UnavailableAddressBalanceError, address
+      end
+
+      address_with_balance[1].to_d
+    rescue Bitcoin::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
+    end
+
     private
 
     def build_transaction(tx_hash)
