@@ -585,12 +585,12 @@ describe Withdraw do
 
     context 'valid CashAddr address' do
       let(:address) { 'bitcoincash:qqkv9wr69ry2p9l53lxp635va4h86wv435995w8p2h' }
-      it { expect(record.save).to eq true }
+      xit { expect(record.save).to eq true }
     end
 
     context 'invalid CashAddr address' do
       let(:address) { 'bitcoincash::qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a' }
-      it do
+      xit do
         expect(record.save).to eq false
         expect(record.errors.full_messages).to include 'Rid is invalid'
       end
@@ -598,12 +598,12 @@ describe Withdraw do
 
     context 'valid legacy address' do
       let(:address) { '155fzsEBHy9Ri2bMQ8uuuR3tv1YzcDywd4' }
-      it { expect(record.save).to eq true }
+      xit { expect(record.save).to eq true }
     end
 
     context 'invalid legacy address' do
       let(:address) { '155fzsEBHy9Ri2bMQ8uuuR3tv1YzcDywd400' }
-      it do
+      xit do
         expect(record.save).to eq false
         expect(record.errors.full_messages).to include 'Rid is invalid'
       end
@@ -629,12 +629,12 @@ describe Withdraw do
 
   context 'validate note length' do
     let(:member)    { create(:member) }
-    let(:account)   { member.ac(:bch).tap { |x| x.update!(balance: 1.0.to_d) } }
+    let(:account)   { member.ac(:btc).tap { |x| x.update!(balance: 1.0.to_d) } }
     let(:address)   { 'bitcoincash:qqkv9wr69ry2p9l53lxp635va4h86wv435995w8p2h' }
 
     let :record do
       Withdraws::Coin.new \
-        currency: Currency.find(:bch),
+        currency: Currency.find(:btc),
         member:   member,
         rid:      address,
         sum:      1.0.to_d,
