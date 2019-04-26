@@ -18,8 +18,7 @@ module Bitcoin
     end
 
     def create_address!(_options = {})
-      address = client.json_rpc(:getnewaddress)
-      Peatio::BlockchainAddress.new(address: address)
+      { address: client.json_rpc(:getnewaddress) }
     rescue Bitcoin::Client::Error => e
       raise Peatio::Wallet::ClientError, e
     end

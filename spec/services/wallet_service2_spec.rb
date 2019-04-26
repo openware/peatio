@@ -42,9 +42,9 @@ describe WalletService2 do
   context :create_address! do
     let(:account) { create(:member, :level_3, :barong).ac(currency)  }
     let(:blockchain_address) do
-      Peatio::BlockchainAddress.new(address: :fake_address,
-                                    secret: :changeme,
-                                    details: { uid: account.member.uid })
+      { address: :fake_address,
+        secret: :changeme,
+        details: { uid: account.member.uid } }
     end
 
     before do
@@ -511,10 +511,117 @@ describe WalletService2 do
   end
 
   context :collect_deposit do
-    # TODO
+    let!(:deposit_wallet) { create(:wallet, :fake_deposit) }
+    let!(:hot_wallet) { create(:wallet, :fake_hot) }
+    let!(:cold_wallet) { create(:wallet, :fake_cold) }
+
+    let(:amount) { 2 }
+    let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
+
+    let(:fake_wallet_adapter) { FakeWallet.new }
+    let(:service) { WalletService2.new(deposit_wallet) }
+
+    context 'Spread deposit with single entry' do
+
+      let(:spread_deposit) do [{ to_address: 'fake-cold',
+                              amount: '2.0',
+                              currency_id: currency.id }]
+      end
+
+      let(:transaction) do
+        [Peatio::Transaction.new(hash:        '0xfake',
+                                to_address:  cold_wallet.address,
+                                amount:      deposit.amount,
+                                currency_id: currency.id)]
+      end
+
+      subject { service.collect_deposit!(deposit, spread_deposit) }
+
+      before do
+        fake_wallet_adapter.expects(:create_transaction!).returns(transaction.first)
+      end
+
+      it 'creates single transaction' do
+        expect(subject).to contain_exactly(*transaction)
+        expect(subject).to all(be_a(Peatio::Transaction))
+      end
+    end
+
+    context 'Spread deposit with two entry' do
+
+      let(:spread_deposit) do [{ to_address: 'fake-hot',
+                                 amount: '2.0',
+                                 currency_id: currency.id },
+                               { to_address: 'fake-hot',
+                                 amount: '2.0',
+                                 currency_id: currency.id }]
+      end
+
+      let(:transaction) do
+        [{ hash:        '0xfake',
+           to_address:  hot_wallet.address,
+           amount:      deposit.amount,
+           currency_id: currency.id },
+         { hash:        '0xfake',
+           to_address:  cold_wallet.address,
+           amount:      deposit.amount,
+           currency_id: currency.id }].map { |t| Peatio::Transaction.new(t)}
+      end
+
+      subject { service.collect_deposit!(deposit, spread_deposit) }
+
+      before do
+        fake_wallet_adapter.expects(:create_transaction!).with(spread_deposit.first).returns(transaction.first)
+        fake_wallet_adapter.expects(:create_transaction!).with(spread_deposit.second).returns(transaction.second)
+      end
+
+      it 'creates two transactions' do
+        expect(subject).to contain_exactly(*transaction)
+        expect(subject).to all(be_a(Peatio::Transaction))
+      end
+    end
   end
 
   context :deposit_collection_fees do
-    # TODO
+    let!(:fee_wallet) { create(:wallet, :fake_fee) }
+    let!(:deposit_wallet) { create(:wallet, :fake_deposit) }
+
+    let(:amount) { 2 }
+    let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
+
+    let(:fake_wallet_adapter) { FakeWallet.new }
+    let(:service) { WalletService2.new(fee_wallet) }
+
+    let(:spread_deposit) do [{ to_address: 'fake-cold',
+      amount: '2.0',
+      currency_id: currency.id }]
+    end
+
+    let(:transactions) do
+      [Peatio::Transaction.new( hash:        '0xfake',
+                                to_address:  deposit.address,
+                                amount:      '0.01',
+                                currency_id: currency.id)]
+    end
+
+    subject { service.deposit_collection_fees!(deposit, spread_deposit) }
+
+    context 'Adapter collect fees for transaction' do
+      before do
+        fake_wallet_adapter.expects(:prepare_deposit_collection!).returns(transactions)
+      end
+
+      it 'returns transaction' do
+        expect(subject).to contain_exactly(*transactions)
+        expect(subject).to all(be_a(Peatio::Transaction))
+      end
+    end
+
+    context "Adapter doesn't perform any actions before collect deposit" do
+
+      it 'retunrs empty array' do
+        expect(subject.blank?).to be true
+      end
+    end
   end
 end
