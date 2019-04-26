@@ -83,9 +83,8 @@ class Wallet < ApplicationRecord
   end
 
   def current_balance
-    BlockchainService2.new(blockchain).load_balance(address, currency_id)
-  rescue Peatio::Blockchain::Error => e
-    report_exception(e)
+    WalletService2.new(self).load_balance!
+  rescue WalletService2::BalanceLoadError
     NOT_AVAILABLE
   end
 

@@ -1,6 +1,8 @@
 class WalletService2
   attr_reader :wallet, :adapter
 
+  BalanceLoadError = Class.new(StandardError)
+
   def initialize(wallet)
     @wallet = wallet
     @adapter = Peatio::WalletAPI.adapter_for(wallet.gateway.to_sym)
@@ -67,6 +69,16 @@ class WalletService2
                                                   amount:       deposit.amount,
                                                   currency_id:  deposit.currency_id)
     @adapter.prepare_deposit_collection!(deposit_transaction, deposit_spread)
+  end
+
+  def load_balance(address)
+    @adapter.load_balance
+  rescue Peatio::Wallet::Error => e
+    report_exception(e)
+    BlockchainService2.new(blockchain).load_balance_of_address!(address, currency_id)
+  rescue Peatio::Blockchain::Error => e
+    report_exception(e)
+    raise BalanceLoadError
   end
 
   private
