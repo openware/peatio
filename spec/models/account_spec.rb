@@ -93,8 +93,8 @@ describe Account do
     it 'returns the accounts with currency enabled' do
       currency = Currency.find(:eth)
       currency.transaction do
-        currency.update_columns(enabled: false)
-        expect(Account.enabled.count).to eq 24
+        # We have created 3 members so each of them has account for each currency.
+        expect{ currency.update_columns(enabled: false) }.to change { Account.enabled.count }.by(-3)
         currency.update_columns(enabled: true)
       end
     end
