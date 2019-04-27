@@ -315,8 +315,7 @@ describe Ethereum1::Blockchain do
                           '0x1c077de4aa6fa6fa023a9e31b8bdddeb0b44c774',
                           'latest'
                         ] }.to_json)
-        .to_return(body: { result: response1,
-                           id:     1 }.to_json)
+        .to_return(body: response1.to_json)
 
       stub_request(:post, 'http://127.0.0.1:8545')
         .with(body: { jsonrpc: '2.0',
@@ -330,8 +329,7 @@ describe Ethereum1::Blockchain do
                           },
                           'latest'
                         ] }.to_json)
-        .to_return(body: { result: response2,
-                           id:     1 }.to_json)
+        .to_return(body: response2.to_json)
     end
 
     context 'get balance of eth/erc20 address' do

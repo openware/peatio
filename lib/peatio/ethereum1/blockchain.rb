@@ -58,10 +58,9 @@ module Ethereum1
     def load_balance_of_address!(address, currency_id)
       currency = settings[:currencies].select { |c| c[:id] == currency_id.to_s }.first
       if currency.dig(:options, :erc20_contract_address)
-        load_balance_of_address_for_token(address, currency)
+        load_balance_for_token(address, currency)
       else
         client.json_rpc(:eth_getBalance, [normalize_address(address), 'latest'])
-        .fetch('result')
         .hex
         .to_d
         .yield_self { |amount| convert_from_base_unit(amount, currency) }
@@ -72,10 +71,9 @@ module Ethereum1
 
     private
 
-    def load_balance_of_address_for_token(address, currency)
+    def load_balance_for_token(address, currency)
       data = abi_encode('balanceOf(address)', normalize_address(address))
       client.json_rpc(:eth_call, [{ to: contract_address(currency), data: data }, 'latest'])
-        .fetch('result')
         .hex
         .to_d
         .yield_self { |amount| convert_from_base_unit(amount, currency) }
