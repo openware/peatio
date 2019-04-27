@@ -106,6 +106,8 @@ module Peatio
       # @param [Peatio::Transaction] transaction transaction with defined
       # to_address, amount & currency_id.
       #
+      # @options options [String] custon options for wallet client.
+      #
       # @note You need to subtract fee from amount you send.
       #       It means that you need to deduct fee from the declared in
       #       transaction.
@@ -116,7 +118,7 @@ module Peatio
       #
       # @raise [Peatio::Blockchain::ClientError] if error was raised
       #   on wallet API call.
-      def create_transaction!(transaction)
+      def create_transaction!(transaction, options = {})
         abstract_method
       end
 
