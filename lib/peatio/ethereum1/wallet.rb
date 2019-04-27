@@ -32,7 +32,7 @@ module Ethereum1
     end
 
     def create_transaction!(transaction, options = {})
-      if @currency.dig(:options, :erc20_contract_address)
+      if @currency.dig(:options, :erc20_contract_address).present?
         create_erc20_transaction!(transaction)
       else
         create_eth_transaction!(transaction, options)
