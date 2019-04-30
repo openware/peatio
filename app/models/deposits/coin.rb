@@ -48,7 +48,7 @@ end
 #  block_number :integer
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
-#  spread       :string(1000)     default("{}")
+#  spread       :string(1000)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime

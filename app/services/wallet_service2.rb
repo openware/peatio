@@ -47,6 +47,7 @@ class WalletService2
     spread_between_wallets(deposit.amount, destination_wallets)
   end
 
+  # TODO: We don't need deposit_spread anymore.
   def collect_deposit!(deposit, deposit_spread)
     pa = deposit.account.payment_address
     # NOTE: Deposit wallet configuration is tricky because wallet UIR
@@ -61,6 +62,7 @@ class WalletService2
     deposit_spread.map { |t| @adapter.create_transaction!(t, substract_fee: true) }
   end
 
+  # TODO: We don't need deposit_spread anymore.
   def deposit_collection_fees!(deposit, deposit_spread)
     deposit_transaction = Peatio::Transaction.new(hash:         deposit.txid,
                                                   txout:        deposit.txout,
