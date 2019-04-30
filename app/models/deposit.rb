@@ -53,7 +53,7 @@ class Deposit < ApplicationRecord
   end
 
   def spread_to_transactions
-    spread.map { |s| Peatio.transaction.new(s) }
+    spread.map { |s| Peatio::Transaction.new(s) }
   end
 
   def spread_between_wallets!
