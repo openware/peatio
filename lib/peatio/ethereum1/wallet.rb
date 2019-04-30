@@ -83,8 +83,8 @@ module Ethereum1
 
       amount = convert_to_base_unit(transaction.amount)
 
-      # Substract fees from initial deposit amount in case of deposit collection
-      amount -= options.fetch(:gas_limit).to_i * options.fetch(:gas_price).to_i if options.dig(:substract_fee)
+      # Subtract fees from initial deposit amount in case of deposit collection
+      amount -= options.fetch(:gas_limit).to_i * options.fetch(:gas_price).to_i if options.dig(:subtract_fee)
 
       txid = client.json_rpc(:personal_sendTransaction,
                   [{

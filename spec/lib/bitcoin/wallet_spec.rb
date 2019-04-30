@@ -81,7 +81,29 @@ describe Bitcoin::Wallet do
       wallet.configure(settings)
     end
 
-    it 'requests rpc and sends transaction' do
+    it 'requests rpc and sends transaction without subtract fees' do
+      txid = 'ab6ada9608f4cebf799ee8be20fe3fb84b0d08efcdb0d962df45d6fce70cb017'
+      stub_request(:post, uri_without_authority)
+        .with(body: { jsonrpc: '1.0',
+                      method: :sendtoaddress,
+                      params: [
+                        transaction.to_address,
+                        transaction.amount,
+                        '',
+                        '',
+                        false
+                      ] }.to_json)
+        .to_return(body: { result: txid,
+                           error:  nil,
+                           id:     nil }.to_json)
+
+      result = wallet.create_transaction!(transaction)
+      expect(result.as_json.symbolize_keys).to eq(amount: 1.1,
+                                                  to_address: '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf',
+                                                  hash: txid)
+    end
+
+    it 'requests rpc and sends transaction with subtract fees' do
       txid = 'ab6ada9608f4cebf799ee8be20fe3fb84b0d08efcdb0d962df45d6fce70cb017'
       stub_request(:post, uri_without_authority)
         .with(body: { jsonrpc: '1.0',
@@ -97,7 +119,7 @@ describe Bitcoin::Wallet do
                            error:  nil,
                            id:     nil }.to_json)
 
-      result = wallet.create_transaction!(transaction)
+      result = wallet.create_transaction!(transaction, subtract_fee: true)
       expect(result.as_json.symbolize_keys).to eq(amount: 1.1,
                                                   to_address: '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf',
                                                   hash: txid)
