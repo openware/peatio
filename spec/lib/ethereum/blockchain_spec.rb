@@ -300,7 +300,7 @@ describe Ethereum1::Blockchain do
     let(:response2) do
       {
         jsonrpc: '2.0',
-        result: "7a120",
+        result: "0x7a120",
         id: 1
       }
     end
@@ -348,6 +348,10 @@ describe Ethereum1::Blockchain do
         expect(result).to be_a(BigDecimal)
         expect(result).to eq('0.5'.to_d)
       end
+
+      it 'raise undefined currency error' do
+        expect { blockchain.load_balance_of_address!('something', :usdt).to raise(Ethereum1::Blockchain::UndefinedCurrencyError) }
+      end
     end
 
     context 'client error is raised' do
@@ -367,7 +371,7 @@ describe Ethereum1::Blockchain do
       end
 
       it 'raise wrapped client error' do
-        expect{ blockchain.load_balance_of_address!('anything', :eth)}.to raise_error(Peatio::Blockchain::ClientError)
+        expect { blockchain.load_balance_of_address!('anything', :eth) }.to raise_error(Peatio::Blockchain::ClientError)
       end
     end
   end

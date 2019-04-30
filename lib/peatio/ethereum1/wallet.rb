@@ -42,12 +42,12 @@ module Ethereum1
     end
 
     def prepare_deposit_collection!(transaction, deposit_spread)
-      spread_size = deposit_spread.size
-
       options = DEFAULT_ETH_FEE.merge(@currency.fetch(:options).slice(:gas_limit, :gas_price))
 
+      # We collect fees depending on the number of spread deposit size
+      # Example: if deposit spreads on three wallets need to collect eth fee for 3 transactions
       fees = convert_from_base_unit(options.fetch(:gas_limit) * options.fetch(:gas_price))
-      transaction.amount = fees * spread_size
+      transaction.amount = fees * deposit_spread.size
 
       create_eth_transaction!(transaction)
     rescue Ethereum1::Client::Error => e
@@ -55,10 +55,10 @@ module Ethereum1
     end
 
     def load_balance!
-      if @currency.dig(:options, :erc20_contract_address)
-        load_balance_of_address(wallet.fetch(:address))
+      if @currency.dig(:options, :erc20_contract_address).present?
+        load_erc20_balance(@wallet.fetch(:address))
       else
-        client.json_rpc(:eth_getBalance, [normalize_address(wallet.fetch(:address)), 'latest'])
+        client.json_rpc(:eth_getBalance, [normalize_address(@wallet.fetch(:address)), 'latest'])
         .hex
         .to_d
         .yield_self { |amount| convert_from_base_unit(amount) }
@@ -69,9 +69,9 @@ module Ethereum1
 
     private
 
-    def load_balance_of_address(address)
+    def load_erc20_balance(address)
       data = abi_encode('balanceOf(address)', normalize_address(address))
-      client.json_rpc(:eth_call, [{ to: contract_address(@currency), data: data }, 'latest'])
+      client.json_rpc(:eth_call, [{ to: contract_address, data: data }, 'latest'])
         .hex
         .to_d
         .yield_self { |amount| convert_from_base_unit(amount) }
@@ -82,6 +82,8 @@ module Ethereum1
       options.merge!(DEFAULT_ETH_FEE, currency_options)
 
       amount = convert_to_base_unit(transaction.amount)
+
+      # Substract fees from initial deposit amount in case of deposit collection
       amount -= options.fetch(:gas_limit).to_i * options.fetch(:gas_price).to_i if options.dig(:substract_fee)
 
       txid = client.json_rpc(:personal_sendTransaction,
@@ -110,7 +112,7 @@ module Ethereum1
       data = abi_encode('transfer(address,uint256)',
                         normalize_address(transaction.to_address),
                         '0x' + amount.to_s(16))
-                        1.099979
+
       txid = client.json_rpc(:personal_sendTransaction,
                 [{
                     from:     normalize_address(@wallet.fetch(:address)),

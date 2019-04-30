@@ -1,6 +1,8 @@
 module Ethereum1
   class Blockchain < Peatio::Blockchain::Abstract
 
+    UndefinedCurrencyError = Class.new(StandardError)
+
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
 
@@ -56,9 +58,11 @@ module Ethereum1
     end
 
     def load_balance_of_address!(address, currency_id)
-      currency = settings[:currencies].select { |c| c[:id] == currency_id.to_s }.first
-      if currency.dig(:options, :erc20_contract_address)
-        load_balance_for_token(address, currency)
+      currency = settings[:currencies].find { |c| c[:id] == currency_id.to_s }
+      raise UndefinedCurrencyError unless currency
+
+      if currency.dig(:options, :erc20_contract_address).present?
+        load_erc20_balance(address, currency)
       else
         client.json_rpc(:eth_getBalance, [normalize_address(address), 'latest'])
         .hex
@@ -71,7 +75,7 @@ module Ethereum1
 
     private
 
-    def load_balance_for_token(address, currency)
+    def load_erc20_balance(address, currency)
       data = abi_encode('balanceOf(address)', normalize_address(address))
       client.json_rpc(:eth_call, [{ to: contract_address(currency), data: data }, 'latest'])
         .hex
