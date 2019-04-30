@@ -1,6 +1,8 @@
 module Ethereum1
   class Blockchain < Peatio::Blockchain::Abstract
 
+    UndefinedCurrencyError = Class.new(StandardError)
+
     TOKEN_EVENT_IDENTIFIER = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     SUCCESS = '0x1'
 
@@ -55,7 +57,31 @@ module Ethereum1
       raise Peatio::Blockchain::ClientError, e
     end
 
+    def load_balance_of_address!(address, currency_id)
+      currency = settings[:currencies].find { |c| c[:id] == currency_id.to_s }
+      raise UndefinedCurrencyError unless currency
+
+      if currency.dig(:options, :erc20_contract_address).present?
+        load_erc20_balance(address, currency)
+      else
+        client.json_rpc(:eth_getBalance, [normalize_address(address), 'latest'])
+        .hex
+        .to_d
+        .yield_self { |amount| convert_from_base_unit(amount, currency) }
+      end
+    rescue Ethereum1::Client::Error => e
+      raise Peatio::Blockchain::ClientError, e
+    end
+
     private
+
+    def load_erc20_balance(address, currency)
+      data = abi_encode('balanceOf(address)', normalize_address(address))
+      client.json_rpc(:eth_call, [{ to: contract_address(currency), data: data }, 'latest'])
+        .hex
+        .to_d
+        .yield_self { |amount| convert_from_base_unit(amount, currency) }
+    end
 
     def client
       @client ||= Ethereum1::Client.new(settings_fetch(:server))
@@ -128,6 +154,16 @@ module Ethereum1
 
     def invalid_erc20_transaction?(txn_receipt)
       txn_receipt.fetch('to').blank? || txn_receipt.fetch('logs').blank?
+    end
+
+    def contract_address(currency)
+      normalize_address(currency.dig(:options, :erc20_contract_address))
+    end
+
+    def abi_encode(method, *args)
+      '0x' + args.each_with_object(Digest::SHA3.hexdigest(method, 256)[0...8]) do |arg, data|
+        data.concat(arg.gsub(/\A0x/, '').rjust(64, '0'))
+      end
     end
 
     def convert_from_base_unit(value, currency)

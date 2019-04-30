@@ -281,4 +281,98 @@ describe Ethereum1::Blockchain do
       end
     end
   end
+
+  context :load_balance_of_address! do
+    around do |example|
+      WebMock.disable_net_connect!
+      example.run
+      WebMock.allow_net_connect!
+    end
+
+    let(:response1) do
+      {
+        jsonrpc: '2.0',
+        result: "0x71a5c4e9fe8a100",
+        id: 1
+      }
+    end
+
+    let(:response2) do
+      {
+        jsonrpc: '2.0',
+        result: "0x7a120",
+        id: 1
+      }
+    end
+
+    before do
+      stub_request(:post, 'http://127.0.0.1:8545')
+        .with(body: { jsonrpc: '2.0',
+                      id: 1,
+                      method: :eth_getBalance,
+                      params:
+                        [
+                          '0x1c077de4aa6fa6fa023a9e31b8bdddeb0b44c774',
+                          'latest'
+                        ] }.to_json)
+        .to_return(body: response1.to_json)
+
+      stub_request(:post, 'http://127.0.0.1:8545')
+        .with(body: { jsonrpc: '2.0',
+                      id: 1,
+                      method: :eth_call,
+                      params:
+                        [
+                          {
+                            to:   "0x87099add3bcc0821b5b151307c147215f839a110",
+                            data: "0x70a082310000000000000000000000001c077de4aa6fa6fa023a9e31b8bdddeb0b44c774"
+                          },
+                          'latest'
+                        ] }.to_json)
+        .to_return(body: response2.to_json)
+    end
+
+    context 'get balance of eth/erc20 address' do
+      it 'requests rpc eth_getBalance and get balance' do
+        address = '0x1c077de4aa6fa6fa023a9e31b8bdddeb0b44c774'
+
+        result = blockchain.load_balance_of_address!(address, :eth)
+        expect(result).to be_a(BigDecimal)
+        expect(result).to eq('0.51182300042'.to_d)
+      end
+
+      it 'requests rpc eth_call and get token balance' do
+        address = '0x1c077de4aa6fa6fa023a9e31b8bdddeb0b44c774'
+
+        result = blockchain.load_balance_of_address!(address, :trst)
+        expect(result).to be_a(BigDecimal)
+        expect(result).to eq('0.5'.to_d)
+      end
+
+      it 'raise undefined currency error' do
+        expect { blockchain.load_balance_of_address!('something', :usdt).to raise(Ethereum1::Blockchain::UndefinedCurrencyError) }
+      end
+    end
+
+    context 'client error is raised' do
+      before do
+        stub_request(:post, 'http://127.0.0.1:8545')
+          .with(body: { jsonrpc: '2.0',
+                        id: 1,
+                        method: :eth_getBalance,
+                        params:
+                        [
+                          'anything',
+                          'latest'
+                        ] }.to_json)
+          .to_return(body: { jsonrpc: '2.0',
+                             error:  { code: -32601, message: 'Method not found' },
+                             id:     1 }.to_json)
+      end
+
+      it 'raise wrapped client error' do
+        expect { blockchain.load_balance_of_address!('anything', :eth) }.to raise_error(Peatio::Blockchain::ClientError)
+      end
+    end
+  end
 end

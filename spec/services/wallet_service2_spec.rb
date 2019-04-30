@@ -571,8 +571,8 @@ describe WalletService2 do
       subject { service.collect_deposit!(deposit, spread_deposit) }
 
       before do
-        fake_wallet_adapter.expects(:create_transaction!).with(spread_deposit.first).returns(transaction.first)
-        fake_wallet_adapter.expects(:create_transaction!).with(spread_deposit.second).returns(transaction.second)
+        fake_wallet_adapter.expects(:create_transaction!).with(spread_deposit.first, substract_fee: true).returns(transaction.first)
+        fake_wallet_adapter.expects(:create_transaction!).with(spread_deposit.second, substract_fee: true).returns(transaction.second)
       end
 
       it 'creates two transactions' do
