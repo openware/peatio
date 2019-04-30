@@ -23,7 +23,7 @@ module Bitcoin
       raise Peatio::Wallet::ClientError, e
     end
 
-    def create_transaction!(transaction)
+    def create_transaction!(transaction, _options = {})
       txid = client.json_rpc(:sendtoaddress,
                              [
                                transaction.to_address,
