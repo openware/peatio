@@ -36,7 +36,7 @@ module Worker
         transactions = WalletService2.new(wallet).collect_deposit!(deposit, deposit.spread_to_transactions)
 
         # Save txids in deposit spread.
-        deposit.update(spread: transactions.map(&:as_json))
+        deposit.update!(spread: transactions.map(&:as_json))
 
         Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{transactions}." }
 

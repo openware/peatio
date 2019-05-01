@@ -64,6 +64,10 @@ class Deposit < ApplicationRecord
     update!(spread: spread.map(&:as_json))
   end
 
+  def spread
+    super.map(&:symbolize_keys)
+  end
+
   def account
     member&.ac(currency)
   end

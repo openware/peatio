@@ -14,19 +14,25 @@ describe Worker::DepositCollection do
     [{ to_address: 'to-address', amount: 0.1 }]
   end
 
-  before do
-    collect_deposit_transactions = spread.each_with_index.map do |t, i|
-      Peatio::Transaction.new(t.merge(hash: "hash-#{i}"))
+  let(:collected_spread) do
+    spread.each_with_index.map do |s, i|
+      s.merge(hash: "hash-#{i}")
     end
+  end
+
+  before do
+    transactions = collected_spread.map { |s| Peatio::Transaction.new(s) }
     WalletService2.any_instance
                   .expects(:collect_deposit!)
                   .with(deposit, anything)
-                  .returns(collect_deposit_transactions)
+                  .returns(transactions)
   end
 
   it 'collect deposit and update spread' do
+    expect(deposit.spread).to eq(spread)
     expect(deposit.collected?).to be_falsey
     expect{ Worker::DepositCollection.new.process(deposit) }.to change{ deposit.reload.spread }
+    expect(deposit.spread).to eq(collected_spread)
     expect(deposit.collected?).to be_truthy
   end
 end
