@@ -18,26 +18,20 @@ module Worker
           return
         end
 
-        binding.pry
 
         if deposit.spread.blank?
           deposit.spread_between_wallets!
           Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
         end
 
-
         wallet = Wallet.active.fee.find_by(blockchain_key: deposit.currency.blockchain_key)
         unless wallet
           Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
           return
         end
-        binding.pry
 
+        transactions = WalletService2.new(wallet).deposit_collection_fees!(deposit, deposit.spread_to_transactions)
 
-        transactions = WalletService2.new(wallet)
-                                     .deposit_collection_fees!(deposit, deposit.spread_to_transactions)
-
-        binding.pry
         if transactions.present?
           Rails.logger.warn { "The API accepted deposit collection fees transfer and assigned transaction ID: #{transactions}." }
         end

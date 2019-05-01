@@ -24,7 +24,7 @@ describe Worker::DepositCollection do
     transactions = collected_spread.map { |s| Peatio::Transaction.new(s) }
     WalletService2.any_instance
                   .expects(:collect_deposit!)
-                  .with(deposit, anything)
+                  .with(instance_of(Deposits::Coin), anything)
                   .returns(transactions)
   end
 

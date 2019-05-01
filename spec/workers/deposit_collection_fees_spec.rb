@@ -16,27 +16,23 @@ describe Worker::DepositCollectionFees do
     spread_deposit_res = spread.map { |s| Peatio::Transaction.new(s) }
     WalletService2.any_instance
                   .expects(:spread_deposit)
-                  .with(deposit, anything)
+                  .with(instance_of(Deposits::Coin))
                   .returns(spread_deposit_res)
 
     deposit_collection_fees_res = [Peatio::Transaction.new(amount: 1, currency_id: :bbtc, hash: 'hash')]
     WalletService2.any_instance
                   .expects(:deposit_collection_fees!)
-                  .with(deposit, anything)
+                  .with(instance_of(Deposits::Coin), anything)
                   .returns(deposit_collection_fees_res)
   end
 
-  it 'calls spread_between_wallets!' do
-    expect(deposit.spread).to eq([])
+  it 'calls spread_deposit, deposit_collection_fees! and returns true' do
     expect(Worker::DepositCollectionFees.new.process(deposit)).to be_truthy
-    expect(deposit.reload.spread).to eq(spread)
   end
 
-  # it 'collect deposit and update spread' do
-  #   expect(deposit.spread).to eq(spread)
-  #   expect(deposit.collected?).to be_falsey
-  #   expect{ Worker::DepositCollection.new.process(deposit) }.to change{ deposit.reload.spread }
-  #   expect(deposit.spread).to eq(collected_spread)
-  #   expect(deposit.collected?).to be_truthy
-  # end
+  it 'updates deposit spread' do
+    expect(deposit.spread).to eq([])
+    expect{ Worker::DepositCollectionFees.new.process(deposit) }.to change{deposit.reload.spread}
+    expect(deposit.reload.spread).to eq(spread)
+  end
 end
