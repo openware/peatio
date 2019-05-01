@@ -73,11 +73,11 @@ class WalletService2
     @adapter.prepare_deposit_collection!(deposit_transaction, deposit_spread)
   end
 
-  def load_balance!(address)
+  def load_balance!
     @adapter.load_balance!
   rescue Peatio::Wallet::Error => e
     report_exception(e)
-    BlockchainService2.new(blockchain).load_balance_of_address!(address, currency_id)
+    BlockchainService2.new(blockchain).load_balance_of_address!(@wallet.address, @wallet.currency_id)
   rescue Peatio::Blockchain::Error => e
     report_exception(e)
     raise BalanceLoadError

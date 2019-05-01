@@ -10,7 +10,7 @@ module Worker
 
       withdraw = Withdraw.find_by_id(payload[:id])
 
-      unless withdraw
+      if withdraw.blank?
         Rails.logger.warn { "The withdraw with such ID doesn't exist in database." }
         return
       end
@@ -29,21 +29,21 @@ module Worker
 
         Rails.logger.warn { "Information: sending #{withdraw.amount.to_s("F")} (exchange fee is #{withdraw.fee.to_s("F")}) #{withdraw.currency.code.upcase} to #{withdraw.rid}." }
 
-        wallet = Wallet.active.withdraw.find_by(currency_id: withdraw.currency_id, kind: :hot)
+        wallet = Wallet.active.withdraw
+                       .find_by(currency_id: withdraw.currency_id, kind: :hot)
+
         unless wallet
           Rails.logger.warn { "Can't find active hot wallet for currency with code: #{withdraw.currency_id}."}
           withdraw.skip!
           return
         end
 
-        currency = withdraw.currency
+        wallet_service = WalletService2.new(wallet)
 
-        wallet_service = WalletService[wallet]
+        # Skip withdraw in case of WalletService2::BalanceLoadError (see line 65).
+        balance = wallet_service.load_balance!
 
-        # TODO: Skip withdrawal if load_balance raise error.
-        balance = wallet_service.load_balance(wallet.address, currency)
-
-        if balance < withdraw.sum
+        if balance < withdraw.amount
           Rails.logger.warn { "The withdraw skipped because wallet balance is not sufficient (wallet balance is #{balance.to_s("F")})." }
           withdraw.skip!
           return
@@ -51,18 +51,21 @@ module Worker
 
         Rails.logger.warn { "Sending request to Wallet Service." }
 
-        txid = wallet_service.build_withdrawal!(withdraw)
+        transaction = wallet_service.build_withdrawal!(withdraw)
 
-        Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{txid}." }
+        Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{transaction.hash}." }
 
         Rails.logger.warn { "Updating withdraw state in database." }
 
-        withdraw.txid = txid
+        withdraw.txid = transaction.hash
         withdraw.dispatch
         withdraw.save!
 
         Rails.logger.warn { "OK." }
 
+      rescue WalletService2::BalanceLoadError => e
+        report_exception(e)
+        withdraw.skip!
       rescue Exception => e
         begin
           Rails.logger.error { "Failed to process withdraw. See exception details below." }
