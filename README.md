@@ -74,7 +74,7 @@ Otherwise we advice to use [microkube based environment](#local-development-envi
 * [Docker](https://docs.docker.com/install/) installed
 * [Docker compose](https://docs.docker.com/compose/install/) installed
 * Ruby 2.6.2
-* Rails 4.2+
+* Rails 5.2.3+
 
 ## Installation
 
