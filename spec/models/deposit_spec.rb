@@ -65,7 +65,7 @@ describe Deposit do
     it 'spreads deposit between wallets' do
       expect(deposit.spread).to eq([])
       expect(deposit.spread_between_wallets!).to be_truthy
-      expect(deposit.reload.spread).to eq(spread.map(&:as_json))
+      expect(deposit.reload.spread).to eq(spread.map(&:as_json).map(&:symbolize_keys))
 
       expect(deposit.spread_between_wallets!).to be_falsey
     end
