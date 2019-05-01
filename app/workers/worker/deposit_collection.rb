@@ -35,8 +35,6 @@ module Worker
 
         transactions = WalletService2.new(wallet).collect_deposit!(deposit, deposit.spread_to_transactions)
 
-        binding.pry
-
         # Save txids in deposit spread.
         deposit.update(spread: transactions.map(&:as_json))
 

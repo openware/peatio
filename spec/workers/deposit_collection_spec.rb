@@ -24,8 +24,9 @@ describe Worker::DepositCollection do
                   .returns(collect_deposit_transactions)
   end
 
-  it 'should run successfully' do
-    binding.pry
+  it 'collect deposit and update spread' do
+    expect(deposit.collected?).to be_falsey
     expect{ Worker::DepositCollection.new.process(deposit) }.to change{ deposit.reload.spread }
+    expect(deposit.collected?).to be_truthy
   end
 end
