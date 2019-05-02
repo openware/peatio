@@ -4,6 +4,8 @@
 class Deposit < ApplicationRecord
   STATES = %i[submitted canceled rejected accepted collected].freeze
 
+  serialize :spread, Array
+
   include AASM
   include AASM::Locking
   include BelongsToCurrency
@@ -48,6 +50,22 @@ class Deposit < ApplicationRecord
     event :dispatch do
       transitions from: %i[accepted skipped], to: :collected
     end
+  end
+
+  def spread_to_transactions
+    spread.map { |s| Peatio::Transaction.new(s) }
+  end
+
+  def spread_between_wallets!
+    return false if spread.present?
+
+    deposit_wallet = Wallet.active.deposit.find_by(currency_id: currency_id)
+    spread = WalletService2.new(deposit_wallet).spread_deposit(self)
+    update!(spread: spread.map(&:as_json))
+  end
+
+  def spread
+    super.map(&:symbolize_keys)
   end
 
   def account
@@ -126,7 +144,7 @@ class Deposit < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20180925123806
+# Schema version: 20190426145506
 #
 # Table name: deposits
 #
@@ -142,6 +160,7 @@ end
 #  block_number :integer
 #  type         :string(30)       not null
 #  tid          :string(64)       not null
+#  spread       :string(1000)
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  completed_at :datetime

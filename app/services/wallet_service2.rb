@@ -47,6 +47,7 @@ class WalletService2
     spread_between_wallets(deposit.amount, destination_wallets)
   end
 
+  # TODO: We don't need deposit_spread anymore.
   def collect_deposit!(deposit, deposit_spread)
     pa = deposit.account.payment_address
     # NOTE: Deposit wallet configuration is tricky because wallet UIR
@@ -61,6 +62,7 @@ class WalletService2
     deposit_spread.map { |t| @adapter.create_transaction!(t, subtract_fee: true) }
   end
 
+  # TODO: We don't need deposit_spread anymore.
   def deposit_collection_fees!(deposit, deposit_spread)
     deposit_transaction = Peatio::Transaction.new(hash:         deposit.txid,
                                                   txout:        deposit.txout,
@@ -71,11 +73,11 @@ class WalletService2
     @adapter.prepare_deposit_collection!(deposit_transaction, deposit_spread)
   end
 
-  def load_balance(address)
-    @adapter.load_balance
+  def load_balance!
+    @adapter.load_balance!
   rescue Peatio::Wallet::Error => e
     report_exception(e)
-    BlockchainService2.new(blockchain).load_balance_of_address!(address, currency_id)
+    BlockchainService2.new(blockchain).load_balance_of_address!(@wallet.address, @wallet.currency_id)
   rescue Peatio::Blockchain::Error => e
     report_exception(e)
     raise BalanceLoadError

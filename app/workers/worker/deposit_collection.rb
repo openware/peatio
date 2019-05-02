@@ -18,6 +18,12 @@ module Worker
           Rails.logger.warn { "The deposit is now being processed by different worker or has been already processed. Skipping..." }
           return
         end
+
+        if deposit.spread.blank?
+          deposit.spread_between_wallets!
+          Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
+        end
+
         wallet = Wallet.active.deposit.find_by(currency_id: deposit.currency_id)
 
         unless wallet
@@ -26,9 +32,13 @@ module Worker
         end
         Rails.logger.warn { "Starting collecting deposit with id: #{deposit.id}." }
 
-        txid = WalletService[wallet].collect_deposit!(deposit)
 
-        Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{txid}." }
+        transactions = WalletService2.new(wallet).collect_deposit!(deposit, deposit.spread_to_transactions)
+
+        # Save txids in deposit spread.
+        deposit.update!(spread: transactions.map(&:as_json))
+
+        Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{transactions}." }
 
         deposit.dispatch!
       rescue Exception => e

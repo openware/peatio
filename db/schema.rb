@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_02_130148) do
+ActiveRecord::Schema.define(version: 2019_04_26_145506) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -26,8 +26,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
   create_table "assets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
-    t.integer "reference_id"
     t.string "reference_type"
+    t.integer "reference_id"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["enabled"], name: "index_currencies_on_enabled"
+    t.index ["enabled"], name: "index_currencies_on_enabled_and_code"
     t.index ["position"], name: "index_currencies_on_position"
   end
 
@@ -88,6 +89,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "block_number"
     t.string "type", limit: 30, null: false
     t.string "tid", limit: 64, null: false, collation: "utf8_bin"
+    t.string "spread", limit: 1000
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "completed_at"
@@ -102,8 +104,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
   create_table "expenses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
-    t.integer "reference_id"
     t.string "reference_type"
+    t.integer "reference_id"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
@@ -116,8 +118,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "code", null: false
     t.string "currency_id", null: false
     t.integer "member_id"
-    t.integer "reference_id"
     t.string "reference_type"
+    t.integer "reference_id"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
@@ -218,8 +220,8 @@ ActiveRecord::Schema.define(version: 2019_04_02_130148) do
     t.integer "code", null: false
     t.string "currency_id", null: false
     t.integer "member_id"
-    t.integer "reference_id"
     t.string "reference_type"
+    t.integer "reference_id"
     t.decimal "debit", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "credit", precision: 32, scale: 16, default: "0.0", null: false
     t.datetime "created_at", null: false
