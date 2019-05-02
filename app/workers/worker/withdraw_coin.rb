@@ -38,19 +38,21 @@ module Worker
           return
         end
 
-        wallet_service = WalletService2.new(wallet)
-
         # Skip withdraw in case of WalletService2::BalanceLoadError (see line 65).
-        balance = wallet_service.load_balance!
+        balance = wallet.current_balance
 
         if balance < withdraw.amount
-          Rails.logger.warn { "The withdraw skipped because wallet balance is not sufficient (wallet balance is #{balance.to_s("F")})." }
+          Rails.logger.warn do
+            "The withdraw skipped because wallet balance is not sufficient or amount greater than wallet max_balance"\
+            "wallet balance is #{balance.to_s('F')}, wallet max balance is #{wallet.max_balance.to_s('F')}."
+          end
           withdraw.skip!
           return
         end
 
         Rails.logger.warn { "Sending request to Wallet Service." }
 
+        wallet_service = WalletService2.new(wallet)
         transaction = wallet_service.build_withdrawal!(withdraw)
 
         Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{transaction.hash}." }
