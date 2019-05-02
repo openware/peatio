@@ -21,14 +21,13 @@ while running
     end
 
     from_block   = bc.height || 0
-    to_block     = [latest_block, from_block + 10].min
+    to_block     = [latest_block, from_block + bc.step].min
     (from_block..to_block).each do |block_id|
 
       Rails.logger.info { "Started processing #{bc.key} block number #{block_id}." }
 
       block_json = blockchain.process_block(block_id)
       Rails.logger.info { "Fetch #{block_json.transactions.count} transactions in block number #{block_id}." }
-      bc.update(height: block_id) if latest_block - block_id >= bc.min_confirmations
       Rails.logger.info { "Finished processing #{bc.key} block number #{block_id}." }
     end
     Rails.logger.info { "Finished processing #{bc.name} blocks." }
