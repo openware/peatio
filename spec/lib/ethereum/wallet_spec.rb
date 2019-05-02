@@ -86,7 +86,7 @@ describe Ethereum1::Wallet do
       Peatio::Transaction.new(amount: 1.1.to_d, to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa')
     end
 
-    context 'eth transaction with substract fees' do
+    context 'eth transaction with subtract fees' do
 
       let(:value) { 1_099_979_000_000_000_000 }
 
@@ -125,13 +125,13 @@ describe Ethereum1::Wallet do
                             error:  nil,
                             id:     1 }.to_json)
 
-        result = wallet.create_transaction!(transaction, substract_fee: true)
+        result = wallet.create_transaction!(transaction, subtract_fee: true)
         expect(result.as_json.symbolize_keys).to eq(amount: 1.099979.to_s,
                                                     to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa',
                                                     hash: txid)
       end
 
-      context 'without substract fees' do
+      context 'without subtract fees' do
 
         let(:value) { 1_100_000_000_000_000_000 }
 
@@ -194,7 +194,7 @@ describe Ethereum1::Wallet do
             .to_return(body: { result: txid,
                               error:  nil,
                               id:     1 }.to_json)
-          result = wallet.create_transaction!(transaction, substract_fee: true)
+          result = wallet.create_transaction!(transaction, subtract_fee: true)
           expect(result.as_json.symbolize_keys).to eq(amount: 0.109937e1.to_s,
             to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa',
             hash: txid)

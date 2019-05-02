@@ -23,14 +23,14 @@ module Bitcoin
       raise Peatio::Wallet::ClientError, e
     end
 
-    def create_transaction!(transaction, _options = {})
+    def create_transaction!(transaction, options = {})
       txid = client.json_rpc(:sendtoaddress,
                              [
                                transaction.to_address,
                                transaction.amount,
                                '',
                                '',
-                               true # subtract fee from transaction amount.
+                               options[:subtract_fee] == true # subtract fee from transaction amount.
                              ])
       transaction.hash = txid
       transaction

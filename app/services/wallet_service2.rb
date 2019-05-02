@@ -58,7 +58,7 @@ class WalletService2
                      .compact
     )
 
-    deposit_spread.map { |t| @adapter.create_transaction!(t, substract_fee: true) }
+    deposit_spread.map { |t| @adapter.create_transaction!(t, subtract_fee: true) }
   end
 
   def deposit_collection_fees!(deposit, deposit_spread)
