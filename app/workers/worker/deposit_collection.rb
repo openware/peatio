@@ -38,7 +38,7 @@ module Worker
         # Save txids in deposit spread.
         deposit.update!(spread: transactions.map(&:as_json))
 
-        Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{transactions}." }
+        Rails.logger.warn { "The API accepted deposit collection and assigned transaction ID: #{transactions.map(&:as_json)}." }
 
         deposit.dispatch!
       rescue Exception => e
