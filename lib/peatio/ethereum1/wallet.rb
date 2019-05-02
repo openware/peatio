@@ -12,12 +12,12 @@ module Ethereum1
     def configure(settings = {})
       @settings.merge!(settings.slice(*SUPPORTED_SETTINGS))
 
-      @wallet = settings.fetch(:wallet) do
+      @wallet = @settings.fetch(:wallet) do
         raise Peatio::Wallet::MissingSettingError, :wallet
       end.slice(:uri, :address, :secret)
 
-      @currency = settings.fetch(:currency) do
-        raise Peatio::Wallet::MissingSettingError, :wallet
+      @currency = @settings.fetch(:currency) do
+        raise Peatio::Wallet::MissingSettingError, :currency
       end.slice(:id, :base_factor, :options)
     end
 
@@ -42,6 +42,10 @@ module Ethereum1
     end
 
     def prepare_deposit_collection!(transaction, deposit_spread)
+      # TODO: Add spec for this behaviour.
+      # Don't prepare for deposit_collection in case of eth deposit.
+      return [] if @currency.dig(:options, :erc20_contract_address).blank?
+
       options = DEFAULT_ETH_FEE.merge(@currency.fetch(:options).slice(:gas_limit, :gas_price))
 
       # We collect fees depending on the number of spread deposit size
