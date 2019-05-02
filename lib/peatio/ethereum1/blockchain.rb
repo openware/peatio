@@ -32,11 +32,11 @@ module Ethereum1
       if block_json.blank? || block_json['transactions'].blank?
         return Peatio::Block.new(block_number, [])
       end
-
       block_json.fetch('transactions').each_with_object([]) do |tx, block_arr|
         if tx.fetch('input').hex <= 0
           next if invalid_eth_transaction?(tx)
         else
+          next if @erc20.find { |c| c.dig(:options, :erc20_contract_address) == normalize_address(tx.fetch('to')) }.blank?
           tx = client.json_rpc(:eth_getTransactionReceipt, [normalize_txid(tx.fetch('hash'))])
           next if tx.nil? || invalid_erc20_transaction?(tx)
         end

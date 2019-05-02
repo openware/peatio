@@ -1,4 +1,6 @@
 class BlockchainService2
+  Error = Class.new(StandardError)
+
   attr_reader :blockchain, :adapter
 
   def initialize(blockchian)
@@ -32,14 +34,13 @@ class BlockchainService2
 
   def process_block(block_number)
     block = @adapter.fetch_block!(block_number)
-
     deposits = filter_deposits(block)
     withdrawals = filter_withdrawals(block)
 
     ActiveRecord::Base.transaction do
       deposits.each(&method(:update_or_create_deposit))
       withdrawals.each(&method(:update_withdrawal))
-      # TODO: Do we update height ???
+      update_height(block_number, adapter.latest_block_number)
     end
     block
   end
@@ -103,5 +104,11 @@ class BlockchainService2
     elsif transaction.status == :success && withdrawal.confirmations >= @blockchain.min_confirmations
       withdrawal.success!
     end
+  end
+
+  def update_height(block_number, latest_block)
+    raise Error, "#{blockchain.name} height was reset." if blockchain.height != blockchain.reload.height
+
+    blockchain.update(height: block_number) if latest_block - block_number >= blockchain.min_confirmations
   end
 end
