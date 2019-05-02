@@ -286,7 +286,7 @@ describe Ethereum1::Wallet do
           .to_return(body: { result: txid,
                              error:  nil,
                              id:     1 }.to_json)
-        result = wallet.prepare_deposit_collection!(transaction, spread_deposit)
+        result = wallet.prepare_deposit_collection!(transaction, spread_deposit, trst.to_blockchain_api_settings)
         expect(result.as_json.symbolize_keys).to eq(amount: '0.000042',
           to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa',
           hash: txid)

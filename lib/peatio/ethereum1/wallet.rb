@@ -41,19 +41,19 @@ module Ethereum1
       raise Peatio::Wallet::ClientError, e
     end
 
-    def prepare_deposit_collection!(transaction, deposit_spread)
+    def prepare_deposit_collection!(transaction, deposit_spread, deposit_currency)
       # TODO: Add spec for this behaviour.
       # Don't prepare for deposit_collection in case of eth deposit.
-      return [] if @currency.dig(:options, :erc20_contract_address).blank?
+      return [] if deposit_currency.dig(:options, :erc20_contract_address).blank?
 
-      options = DEFAULT_ETH_FEE.merge(@currency.fetch(:options).slice(:gas_limit, :gas_price))
+      options = DEFAULT_ERC20_FEE.merge(deposit_currency.fetch(:options).slice(:gas_limit, :gas_price))
 
       # We collect fees depending on the number of spread deposit size
       # Example: if deposit spreads on three wallets need to collect eth fee for 3 transactions
       fees = convert_from_base_unit(options.fetch(:gas_limit) * options.fetch(:gas_price))
       transaction.amount = fees * deposit_spread.size
 
-      create_eth_transaction!(transaction)
+      [create_eth_transaction!(transaction)]
     rescue Ethereum1::Client::Error => e
       raise Peatio::Wallet::ClientError, e
     end
