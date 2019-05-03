@@ -40,14 +40,12 @@ module Worker
 
         # Skip withdraw in case of WalletService2::BalanceLoadError (see line 65).
         balance = wallet.current_balance
-
-        if balance < withdraw.amount
+        if balance == 'N/A' || balance < withdraw.amount
           Rails.logger.warn do
             "The withdraw skipped because wallet balance is not sufficient or amount greater than wallet max_balance"\
-            "wallet balance is #{balance.to_s('F')}, wallet max balance is #{wallet.max_balance.to_s('F')}."
+            "wallet balance is #{balance.to_s}, wallet max balance is #{wallet.max_balance.to_s}."
           end
-          withdraw.skip!
-          return
+          return withdraw.skip!
         end
 
         Rails.logger.warn { "Sending request to Wallet Service." }

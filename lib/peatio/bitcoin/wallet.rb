@@ -13,7 +13,7 @@ module Bitcoin
       end.slice(:uri, :address)
 
       @currency = @settings.fetch(:currency) do
-        raise Peatio::Wallet::MissingSettingError, :wallet
+        raise Peatio::Wallet::MissingSettingError, :currency
       end.slice(:id, :base_factor, :options)
     end
 
