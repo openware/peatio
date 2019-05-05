@@ -11,21 +11,6 @@
 # TODO: Use new withdraw factories.
 # TODO: Get rid of legacy withdraw factories.
 FactoryBot.define do
-  factory :legacy_usd_withdraw, aliases: %i[usd_withdraw], class: Withdraws::Fiat do
-    member { create(:member, :level_3) }
-    currency { Currency.find(:usd) }
-    rid { Faker::Bank.iban }
-    sum { 1000.to_d }
-    type { 'Withdraws::Fiat' }
-
-    account do
-      member.get_account(:usd).tap do |a|
-        a.balance = 50_000
-        a.save(validate: false)
-      end
-    end
-  end
-
   factory :legacy_eth_withdraw, aliases: %i[eth_withdraw], class: Withdraws::Coin do
     currency { Currency.find(:eth) }
     member { create(:member, :level_3) }
@@ -88,7 +73,7 @@ FactoryBot.define do
     type { 'Withdraws::Coin' }
   end
 
-  factory :new_usd_withdraw, class: Withdraws::Fiat do
+  factory :usd_withdraw, class: Withdraws::Fiat do
 
     # We need to have valid Liability-based balance to spend funds.
     trait :with_deposit_liability do

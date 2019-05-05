@@ -9,7 +9,7 @@ describe API::V2::Account::Withdraws, type: :request do
 
   describe 'GET /api/v2/account/withdraws' do
     let!(:btc_withdraws) { create_list(:btc_withdraw, 20, :with_deposit_liability, member: member) }
-    let!(:usd_withdraws) { create_list(:usd_withdraw, 20, member: member) }
+    let!(:usd_withdraws) { create_list(:usd_withdraw, 20, :with_deposit_liability, member: member) }
 
     it 'requires authentication' do
       get '/api/v2/account/withdraws'

@@ -11,7 +11,7 @@ describe Withdraw do
 
   context 'bank withdraw' do
     describe '#audit!' do
-      subject { create(:usd_withdraw) }
+      subject { create(:usd_withdraw, :with_deposit_liability) }
       before  { subject.submit! }
 
       it 'should accept withdraw with clean history' do
@@ -112,7 +112,7 @@ describe Withdraw do
   end
 
   context 'aasm_state' do
-    subject { create(:new_usd_withdraw, :with_deposit_liability, sum: 1000) }
+    subject { create(:usd_withdraw, :with_deposit_liability, sum: 1000) }
 
     before do
       subject.stubs(:send_withdraw_confirm_email)
@@ -490,7 +490,7 @@ describe Withdraw do
   end
 
   context 'fee is set to fixed value of 10' do
-    let(:withdraw) { create(:usd_withdraw, sum: 200) }
+    let(:withdraw) { create(:usd_withdraw, :with_deposit_liability, sum: 200) }
     before { Currency.any_instance.expects(:withdraw_fee).once.returns(10) }
     it 'computes fee' do
       expect(withdraw.fee).to eql 10.to_d
@@ -499,11 +499,11 @@ describe Withdraw do
   end
 
   context 'fee exceeds amount' do
-    let(:withdraw) { build(:usd_withdraw, sum: 200) }
+    let(:withdraw) { build(:usd_withdraw, sum: 200, member: nil) }
     before { Currency.any_instance.expects(:withdraw_fee).once.returns(200) }
     it 'fails validation' do
       expect(withdraw.save).to eq false
-      expect(withdraw.errors.full_messages).to include 'Amount must be greater than 0.0'
+      expect(withdraw.errors[:amount]).to match(["must be greater than 0.0"])
     end
   end
 
