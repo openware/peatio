@@ -4,7 +4,7 @@
 describe Withdraw do
   describe '#fix_precision' do
     it 'should round down to max precision' do
-      withdraw = create(:btc_withdraw, sum: '0.123456789')
+      withdraw = create(:btc_withdraw, :with_deposit_liability, sum: '0.123456789')
       expect(withdraw.sum).to eq('0.12345678'.to_d)
     end
   end
@@ -29,7 +29,7 @@ describe Withdraw do
 
   context 'coin withdraw' do
     describe '#audit!' do
-      subject { create(:btc_withdraw, sum: sum) }
+      subject { create(:btc_withdraw, :with_deposit_liability, sum: sum) }
       let(:sum) { 10.to_d }
       before { subject.submit! }
 
@@ -41,7 +41,7 @@ describe Withdraw do
 
       context 'internal recipient' do
         let(:payment_address) { create(:btc_payment_address) }
-        subject { create(:btc_withdraw, rid: payment_address.address) }
+        subject { create(:btc_withdraw, :with_deposit_liability, rid: payment_address.address) }
 
         around do |example|
           WebMock.disable_net_connect!
@@ -417,7 +417,7 @@ describe Withdraw do
     context :load do
       let(:txid) { 'a738cb8411e2141f3de43c5f3e7a3aabe71c099bb91d296ded84f0daf29d881c' }
 
-      subject { create(:btc_withdraw) }
+      subject { create(:btc_withdraw, :with_deposit_liability) }
 
       before { subject.submit! }
       before { subject.accept! }
@@ -437,7 +437,7 @@ describe Withdraw do
     context :load do
       let(:txid) { 'a738cb8411e2141f3de43c5f3e7a3aabe71c099bb91d296ded84f0daf29d881c' }
 
-      subject { create(:btc_withdraw) }
+      subject { create(:btc_withdraw, :with_deposit_liability) }
 
       before { subject.submit! }
       before { subject.accept! }
@@ -465,24 +465,24 @@ describe Withdraw do
     end
 
     context 'returns false if exceeds 24h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, sum: 2, aasm_state: 'accepted') }
+      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 2, aasm_state: 'accepted') }
       it { expect(withdraw).to_not be_quick }
     end
 
     context 'returns false if exceeds 72h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, sum: 4, aasm_state: 'accepted') }
+      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 4, aasm_state: 'accepted') }
       it { expect(withdraw).to_not be_quick }
     end
 
     context 'returns true if doesn\'t exceeds 24h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, sum: 0.5, aasm_state: 'accepted') }
+      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 0.5, aasm_state: 'accepted') }
       it { expect(withdraw).to be_quick }
     end
 
     context 'returns false if exceeds 24h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, sum: 0.5, aasm_state: 'accepted') }
+      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 0.5, aasm_state: 'accepted') }
       it do
-        second_withdraw = create(:btc_withdraw, member: withdraw.member, sum: 0.8, aasm_state: 'accepted')
+        second_withdraw = create(:btc_withdraw, :with_deposit_liability, member: withdraw.member, sum: 0.8, aasm_state: 'accepted')
         second_withdraw.process!
         expect(second_withdraw).to_not be_quick
       end
@@ -508,22 +508,22 @@ describe Withdraw do
   end
 
   it 'automatically generates TID if it is blank' do
-    expect(create(:btc_withdraw).tid).not_to be_blank
+    expect(create(:btc_withdraw, :with_deposit_liability).tid).not_to be_blank
   end
 
   it 'doesn\'t generate TID if it is not blank' do
-    expect(create(:btc_withdraw, tid: 'TID1234567890xyz').tid).to eq 'TID1234567890xyz'
+    expect(create(:btc_withdraw, :with_deposit_liability, tid: 'TID1234567890xyz').tid).to eq 'TID1234567890xyz'
   end
 
   it 'validates uniqueness of TID' do
-    record1 = create(:btc_withdraw)
-    record2 = build(:btc_withdraw, tid: record1.tid)
+    record1 = create(:btc_withdraw, :with_deposit_liability)
+    record2 = build(:btc_withdraw, tid: record1.tid, member: nil)
     record2.save
-    expect(record2.errors.full_messages.first).to match(/tid has already been taken/i)
+    expect(record2.errors[:tid]).to match(["has already been taken"])
   end
 
   it 'uppercases TID' do
-    record = create(:btc_withdraw)
+    record = create(:btc_withdraw, :with_deposit_liability)
     expect(record.tid).to eq record.tid.upcase
   end
 
@@ -567,8 +567,7 @@ describe Withdraw do
   end
 
   context 'validate min withdrawal sum' do
-
-    subject { build(:btc_withdraw, sum: 0.1) }
+    subject { build(:btc_withdraw, sum: 0.1, member: nil) }
 
     before do
       Currency.find('btc').update(min_withdraw_amount: 0.5.to_d)
