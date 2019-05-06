@@ -91,7 +91,7 @@ describe Worker::WithdrawCoin do
     end
 
     it 'returns nil and skip withdrawal' do
-      expect(Worker::WithdrawCoin.new.process(processing_withdrawal.as_json)).to be(nil)
+      expect(Worker::WithdrawCoin.new.process(processing_withdrawal.as_json)).to be(true)
       expect(processing_withdrawal.reload.skipped?).to be_truthy
     end
   end
