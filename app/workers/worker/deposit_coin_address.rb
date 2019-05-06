@@ -29,7 +29,7 @@ module Worker
 
           pa.update!(address: result[:address],
                      secret:  result[:secret],
-                     details: result[:details].merge(pa.details))
+                     details: result.fetch(:details, {}).merge(pa.details))
         end
 
         # Enqueue address generation again if address is not provided.

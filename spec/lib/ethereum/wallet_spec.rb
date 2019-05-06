@@ -3,8 +3,13 @@ describe Ethereum1::Wallet do
 
   context :configure do
     let(:settings) { { wallet: {}, currency: {} }}
-    it 'requires wallet and currency' do
+    it 'requires wallet' do
       expect{ wallet.configure(settings.except(:wallet)) }.to raise_error(Peatio::Wallet::MissingSettingError)
+
+      expect{ wallet.configure(settings) }.to_not raise_error
+    end
+
+    it 'requires currency' do
       expect{ wallet.configure(settings.except(:currency)) }.to raise_error(Peatio::Wallet::MissingSettingError)
 
       expect{ wallet.configure(settings) }.to_not raise_error
@@ -244,7 +249,7 @@ describe Ethereum1::Wallet do
 
     context :prepare_deposit_collection! do
 
-      let(:value) { '0x2632e314a000' }
+      let(:value) { '0xa3b5840f4000' }
 
       let(:request_body) do
         { jsonrpc: '2.0',
@@ -286,8 +291,8 @@ describe Ethereum1::Wallet do
           .to_return(body: { result: txid,
                              error:  nil,
                              id:     1 }.to_json)
-        result = wallet.prepare_deposit_collection!(transaction, spread_deposit)
-        expect(result.as_json.symbolize_keys).to eq(amount: '0.000042',
+        result = wallet.prepare_deposit_collection!(transaction, spread_deposit, trst.to_blockchain_api_settings)
+        expect(result.first.as_json.symbolize_keys).to eq(amount: '0.00018',
           to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa',
           hash: txid)
       end

@@ -70,7 +70,10 @@ class WalletService2
                                                   block_number: deposit.block_number,
                                                   amount:       deposit.amount,
                                                   currency_id:  deposit.currency_id)
-    @adapter.prepare_deposit_collection!(deposit_transaction, deposit_spread)
+
+    @adapter.prepare_deposit_collection!(deposit_transaction,
+                                         deposit_spread,
+                                         deposit.currency.to_blockchain_api_settings)
   end
 
   def load_balance!

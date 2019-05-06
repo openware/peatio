@@ -3,8 +3,13 @@ describe Bitcoin::Wallet do
 
   context :configure do
     let(:settings) { { wallet: {}, currency: {} }}
-    it 'requires wallet and currency' do
+    it 'requires wallet' do
       expect{ wallet.configure(settings.except(:wallet)) }.to raise_error(Peatio::Wallet::MissingSettingError)
+
+      expect{ wallet.configure(settings) }.to_not raise_error
+    end
+
+    it 'requires currency' do
       expect{ wallet.configure(settings.except(:currency)) }.to raise_error(Peatio::Wallet::MissingSettingError)
 
       expect{ wallet.configure(settings) }.to_not raise_error

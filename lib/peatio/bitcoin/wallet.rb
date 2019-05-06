@@ -8,12 +8,12 @@ module Bitcoin
     def configure(settings = {})
       @settings.merge!(settings.slice(*SUPPORTED_SETTINGS))
 
-      @wallet = settings.fetch(:wallet) do
+      @wallet = @settings.fetch(:wallet) do
         raise Peatio::Wallet::MissingSettingError, :wallet
       end.slice(:uri, :address)
 
-      @currency = settings.fetch(:currency) do
-        raise Peatio::Wallet::MissingSettingError, :wallet
+      @currency = @settings.fetch(:currency) do
+        raise Peatio::Wallet::MissingSettingError, :currency
       end.slice(:id, :base_factor, :options)
     end
 
@@ -30,7 +30,7 @@ module Bitcoin
                                transaction.amount,
                                '',
                                '',
-                               options[:subtract_fee] == true # subtract fee from transaction amount.
+                               options[:subtract_fee].to_s == 'true' # subtract fee from transaction amount.
                              ])
       transaction.hash = txid
       transaction
@@ -39,7 +39,7 @@ module Bitcoin
     end
 
     def load_balance!
-      client.json_rpc(:getbalance).yield_self { |b| BigDecimal(b) }
+      client.json_rpc(:getbalance).to_d
 
     rescue Bitcoin::Client::Error => e
       raise Peatio::Blockchain::ClientError, e
