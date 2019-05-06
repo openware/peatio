@@ -33,7 +33,7 @@ describe BlockchainService2 do
   # after(:each) { clear_redis }
 
   before do
-    Peatio::BlockchainAPI.expects(:adapter_for)
+    Peatio::Blockchain::Registry.expects(:[])
                          .with(:fake)
                          .returns(fake_adapter)
                          .at_least_once
