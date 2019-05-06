@@ -111,7 +111,7 @@ FactoryBot.define do
       max_balance        { 0.0 }
       nsig               { 2 }
       status             { 'active' }
-      gateway            { 'parity' }
+      gateway            { 'peth' }
       uri                { 'http://127.0.0.1:8545' }
       secret             { 'changeme' }
     end
@@ -125,7 +125,7 @@ FactoryBot.define do
       max_balance        { 100.0 }
       nsig               { 2 }
       status             { 'active' }
-      gateway            { 'parity' }
+      gateway            { 'peth' }
       uri                { 'http://127.0.0.1:8545' }
       secret             { 'changeme' }
     end
@@ -139,7 +139,7 @@ FactoryBot.define do
       max_balance        { 0.0 }
       nsig               { 2 }
       status             { 'active' }
-      gateway            { 'parity' }
+      gateway            { 'peth' }
       uri                { 'http://127.0.0.1:8545' }
       secret             { 'changeme' }
     end
@@ -153,7 +153,7 @@ FactoryBot.define do
       max_balance        { 100.0 }
       nsig               { 2 }
       status             { 'active' }
-      gateway            { 'parity' }
+      gateway            { 'peth' }
       uri                { 'http://127.0.0.1:8545' }
       secret             { 'changeme' }
     end
@@ -167,7 +167,7 @@ FactoryBot.define do
       max_balance        { 1000.0 }
       nsig               { 2 }
       status             { 'active' }
-      gateway            { 'parity' }
+      gateway            { 'peth' }
       uri                { 'http://127.0.0.1:8545' }
       secret             { 'changeme' }
     end
@@ -181,7 +181,7 @@ FactoryBot.define do
       max_balance        { 1000.0 }
       nsig               { 2 }
       status             { 'active' }
-      gateway            { 'parity' }
+      gateway            { 'peth' }
       uri                { 'http://127.0.0.1:8545' }
       secret             { 'changeme' }
     end

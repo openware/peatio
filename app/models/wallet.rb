@@ -32,8 +32,7 @@ class Wallet < ApplicationRecord
 
   validates :status,  inclusion: { in: %w[active disabled] }
 
-  # TODO: Uncomment in the finale stage
-  # validates :gateway, inclusion: { in: gateways }
+  validates :gateway, inclusion: { in: ->(_){ Wallet.gateways.map(&:to_s) } }
 
   validates :nsig,        numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
