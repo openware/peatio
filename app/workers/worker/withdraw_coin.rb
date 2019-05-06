@@ -38,7 +38,6 @@ module Worker
           return
         end
 
-        # Skip withdraw in case of WalletService2::BalanceLoadError (see line 65).
         balance = wallet.current_balance
         if balance == 'N/A' || balance < withdraw.amount
           Rails.logger.warn do
@@ -63,9 +62,6 @@ module Worker
 
         Rails.logger.warn { "OK." }
 
-      rescue WalletService2::BalanceLoadError => e
-        report_exception(e)
-        withdraw.skip!
       rescue Exception => e
         begin
           Rails.logger.error { "Failed to process withdraw. See exception details below." }

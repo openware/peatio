@@ -1,5 +1,6 @@
 class BlockchainService2
   Error = Class.new(StandardError)
+  BalanceLoadError = Class.new(StandardError)
 
   attr_reader :blockchain, :adapter
 
@@ -18,6 +19,9 @@ class BlockchainService2
 
   def load_balance!(address, currency_id)
     @adapter.load_balance_of_address!(address, currency_id)
+  rescue Peatio::Blockchain::Error => e
+    report_exception(e)
+    raise BalanceLoadError
   end
 
   # @deprecated
@@ -67,6 +71,9 @@ class BlockchainService2
       end
       return
     end
+
+    # TODO: Rewrite this guard clause
+    return unless PaymentAddress.find_by(currency_id: transaction.currency_id, address: transaction.to_address)
 
     deposit =
       Deposits::Coin.find_or_create_by!(
