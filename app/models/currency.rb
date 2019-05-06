@@ -83,7 +83,7 @@ class Currency < ApplicationRecord
   # Allows to dynamically check value of code:
   #
   #   code.btc? # true if code equals to "btc".
-  #   code.xrp? # true if code equals to "xrp".
+  #   code.eth? # true if code equals to "eth".
   #
   def code
     id&.inquiry
