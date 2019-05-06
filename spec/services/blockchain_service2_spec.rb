@@ -39,10 +39,6 @@ describe BlockchainService2 do
                          .at_least_once
 
     fake_adapter.stubs(:latest_block_number).returns(4)
-    # TODO: Remove me once we replace Blockchain#blokchain_api with Blockchain#blockchain_apiv2.
-    Blockchain.any_instance
-              .stubs(:blockchain_api)
-              .returns(BlockchainService2.new(blockchain))
   end
 
   # Deposit context: (mock fetch_block)
