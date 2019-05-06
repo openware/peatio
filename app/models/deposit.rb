@@ -28,10 +28,6 @@ class Deposit < ApplicationRecord
 
   before_validation { self.completed_at ||= Time.current if completed? }
 
-  after_commit on: :create do
-    collect! if aasm_state == 'accepted'
-  end
-
   aasm whiny_transitions: false do
     state :submitted, initial: true
     state :canceled

@@ -41,11 +41,13 @@ class BlockchainService2
     deposits = filter_deposits(block)
     withdrawals = filter_withdrawals(block)
 
+    accepted_deposits = []
     ActiveRecord::Base.transaction do
-      deposits.each(&method(:update_or_create_deposit))
+      accepted_deposits = deposits.map(&method(:update_or_create_deposit)).compact
       withdrawals.each(&method(:update_withdrawal))
       update_height(block_number, adapter.latest_block_number)
     end
+    accepted_deposits.each(&:collect!)
     block
   end
 
@@ -62,7 +64,7 @@ class BlockchainService2
     block.select { |transaction| transaction.hash.in?(withdraw_txids) }
   end
 
-  def update_or_create_deposit(transaction)
+  def update_or_create_deposit(transaction, deposits = [])
     if transaction.amount <= Currency.find(transaction.currency_id).min_deposit_amount
       # Currently we just skip tiny deposits.
       Rails.logger.info do
@@ -87,9 +89,11 @@ class BlockchainService2
         d.block_number = transaction.block_number
       end
 
-    deposit.update_column(:block_number, transaction.block_number)
+    deposit.update_column(:block_number, transaction.block_number) if deposit.block_number != transaction.block_number
     if deposit.confirmations >= @blockchain.min_confirmations && deposit.accept!
-      deposit.collect!
+      deposit
+    else
+      nil
     end
   end
 
