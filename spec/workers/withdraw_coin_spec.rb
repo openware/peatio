@@ -61,7 +61,7 @@ describe Worker::WithdrawCoin do
   context 'WalletService2 raises error' do
     before do
       WalletService2.expects(:new)
-        .raises(Peatio::WalletAPI::NotRegisteredAdapterError)
+        .raises(Peatio::Wallet::Registry::NotRegisteredAdapterError)
     end
 
     it 'returns true and fail withdrawal' do
