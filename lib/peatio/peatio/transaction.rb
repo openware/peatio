@@ -8,8 +8,9 @@ module Peatio
                   :to_address,
                   :amount,
                   :block_number,
-                  :currency_id,
-                  :status
+                  :currency_id
+
+    attr_writer :status
 
     validates :hash, :txout,
               :to_address,
@@ -33,16 +34,3 @@ module Peatio
     end
   end
 end
-
-# txid:           deposit_txs[:id],
-# address:        entry[:address],
-# amount:         entry[:amount],
-# member:         payment_address.account.member,
-# currency:       payment_address.currency,
-# txout:          entry[:txout],
-# block_number:   deposit_txs[:block_number]
-#
-# txid:           withdraw_txs[:id],
-# rid:            entry[:address],
-# amount:         entry[:amount],
-# block_number:   withdraw_txs[:block_number]

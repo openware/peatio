@@ -23,10 +23,6 @@ class Blockchain < ApplicationRecord
   def blockchain_api
     BlockchainService2.new(self)
   end
-
-  # def blockchain_apiv2
-  #   BlockchainService2.new(self)
-  # end
 end
 
 # == Schema Information

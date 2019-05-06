@@ -20,16 +20,12 @@ class BlockchainService2
     @adapter.load_balance_of_address!(address, currency_id)
   end
 
-  # @deprecated
-  # TODO: Update me once we replace Blockchain#blokchain_api with Blockchain#blockchain_apiv2.
   def case_sensitive?
-    @adapter.features.fetch(:case_sensitive) { @adapter.case_sensitive? }
+    @adapter.features[:case_sensitive]
   end
 
-  # @deprecated
-  # TODO: Update me once we replace Blockchain#blokchain_api with Blockchain#blockchain_apiv2.
   def supports_cash_addr_format?
-    @adapter.features.fetch(:cash_addr_format) { @adapter.supports_cash_addr_format? }
+    @adapter.features[:cash_addr_format]
   end
 
   def process_block(block_number)

@@ -15,6 +15,9 @@ class FakeWallet < Peatio::Wallet::Abstract
   def configure(settings = {}); end
 end
 
+Peatio::BlockchainAPI.register(:fake, FakeBlockchain.new)
+Peatio::WalletAPI.register(:fake, FakeWallet.new)
+
 describe WalletService2 do
   let!(:blockchain) { create(:blockchain, 'fake-testnet') }
   let!(:currency) { create(:currency, :fake) }
