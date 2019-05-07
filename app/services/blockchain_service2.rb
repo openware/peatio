@@ -64,7 +64,7 @@ class BlockchainService2
     block.select { |transaction| transaction.hash.in?(withdraw_txids) }
   end
 
-  def update_or_create_deposit(transaction, deposits = [])
+  def update_or_create_deposit(transaction)
     if transaction.amount <= Currency.find(transaction.currency_id).min_deposit_amount
       # Currently we just skip tiny deposits.
       Rails.logger.info do
@@ -75,7 +75,7 @@ class BlockchainService2
     end
 
     # TODO: Rewrite this guard clause
-    return unless PaymentAddress.find_by(currency_id: transaction.currency_id, address: transaction.to_address)
+    return unless PaymentAddress.exists?(currency_id: transaction.currency_id, address: transaction.to_address)
 
     deposit =
       Deposits::Coin.find_or_create_by!(
