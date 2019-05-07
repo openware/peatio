@@ -50,7 +50,7 @@ class BlockchainService2
   private
   def filter_deposits(block)
     # TODO: Process addresses in batch in case of huge number of PA.
-    addresses = PaymentAddress.where(currency: @blockchain.currencies).pluck(:address)
+    addresses = PaymentAddress.where(currency: @blockchain.currencies).pluck(:address).compact
     block.select { |transaction| transaction.to_address.in?(addresses) }
   end
 
