@@ -1,4 +1,4 @@
-module Ethereum1
+module Ethereum
   class Blockchain < Peatio::Blockchain::Abstract
 
     UndefinedCurrencyError = Class.new(StandardError)
@@ -47,13 +47,13 @@ module Ethereum1
 
         block_arr.append(*txs)
       end.yield_self { |block_arr| Peatio::Block.new(block_number, block_arr) }
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Blockchain::ClientError, e
     end
 
     def latest_block_number
       client.json_rpc(:eth_blockNumber).to_i(16)
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Blockchain::ClientError, e
     end
 
@@ -69,7 +69,7 @@ module Ethereum1
         .to_d
         .yield_self { |amount| convert_from_base_unit(amount, currency) }
       end
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Blockchain::ClientError, e
     end
 
@@ -84,7 +84,7 @@ module Ethereum1
     end
 
     def client
-      @client ||= Ethereum1::Client.new(settings_fetch(:server))
+      @client ||= Ethereum::Client.new(settings_fetch(:server))
     end
 
     def settings_fetch(key)

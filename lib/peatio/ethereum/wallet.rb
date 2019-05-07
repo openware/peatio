@@ -1,4 +1,4 @@
-module Ethereum1
+module Ethereum
   class Wallet < Peatio::Wallet::Abstract
 
     DEFAULT_ETH_FEE = { gas_limit: 21_000, gas_price: 1_000_000_000 }.freeze
@@ -27,7 +27,7 @@ module Ethereum1
         { address: normalize_address(client.json_rpc(:personal_newAccount, [password])),
           secret:  password }
       end
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Wallet::ClientError, e
     end
 
@@ -37,7 +37,7 @@ module Ethereum1
       else
         create_eth_transaction!(transaction, options)
       end
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Wallet::ClientError, e
     end
 
@@ -54,7 +54,7 @@ module Ethereum1
       transaction.amount = fees * deposit_spread.size
 
       [create_eth_transaction!(transaction)]
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Wallet::ClientError, e
     end
 
@@ -67,7 +67,7 @@ module Ethereum1
         .to_d
         .yield_self { |amount| convert_from_base_unit(amount) }
       end
-    rescue Ethereum1::Client::Error => e
+    rescue Ethereum::Client::Error => e
       raise Peatio::Wallet::ClientError, e
     end
 
@@ -100,7 +100,7 @@ module Ethereum1
                     }.compact, @wallet.fetch(:secret)])
 
       unless valid_txid?(normalize_txid(txid))
-        raise Ethereum1::WalletClient::Error, \
+        raise Ethereum::WalletClient::Error, \
               "Withdrawal from #{@wallet.fetch(:address)} to #{transaction.to_address} failed."
       end
       transaction.amount = convert_from_base_unit(amount)
@@ -127,7 +127,7 @@ module Ethereum1
                   }.compact, @wallet.fetch(:secret)])
 
       unless valid_txid?(normalize_txid(txid))
-        raise Ethereum1::WalletClient::Error, \
+        raise Ethereum::WalletClient::Error, \
               "Withdrawal from #{@wallet.fetch(:address)} to #{transaction.to_address} failed."
       end
       transaction.hash = normalize_txid(txid)

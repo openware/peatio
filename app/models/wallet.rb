@@ -51,7 +51,7 @@ class Wallet < ApplicationRecord
 
   class << self
     def gateways
-      Peatio::Wallet::Registry.adapters.keys
+      Peatio::Wallet.registry.adapters.keys
     end
 
     def kinds(options={})
@@ -82,8 +82,8 @@ class Wallet < ApplicationRecord
   end
 
   def current_balance
-    WalletService2.new(self).load_balance!
-  rescue BlockchainService2::BalanceLoadError
+    WalletService.new(self).load_balance!
+  rescue BlockchainService::BalanceLoadError
     NOT_AVAILABLE
   end
 

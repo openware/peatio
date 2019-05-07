@@ -49,7 +49,7 @@ module Worker
 
         Rails.logger.warn { "Sending request to Wallet Service." }
 
-        wallet_service = WalletService2.new(wallet)
+        wallet_service = WalletService.new(wallet)
         transaction = wallet_service.build_withdrawal!(withdraw)
 
         Rails.logger.warn { "The currency API accepted withdraw and assigned transaction ID: #{transaction.hash}." }

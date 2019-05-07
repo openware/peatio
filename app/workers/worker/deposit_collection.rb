@@ -34,7 +34,7 @@ module Worker
         Rails.logger.warn { "Starting collecting deposit with id: #{deposit.id}." }
 
 
-        transactions = WalletService2.new(wallet).collect_deposit!(deposit, deposit.spread_to_transactions)
+        transactions = WalletService.new(wallet).collect_deposit!(deposit, deposit.spread_to_transactions)
 
         # Save txids in deposit spread.
         deposit.update!(spread: transactions.map(&:as_json))

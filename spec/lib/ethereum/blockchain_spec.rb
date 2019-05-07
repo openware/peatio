@@ -1,4 +1,4 @@
-describe Ethereum1::Blockchain do
+describe Ethereum::Blockchain do
 
   let(:eth) do
     Currency.find_by(id: :eth)
@@ -13,7 +13,7 @@ describe Ethereum1::Blockchain do
   end
 
   let(:blockchain) do
-    Ethereum1::Blockchain.new.tap { |b| b.configure(server: server, currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings, ring.to_blockchain_api_settings]) }
+    Ethereum::Blockchain.new.tap { |b| b.configure(server: server, currencies: [eth.to_blockchain_api_settings, trst.to_blockchain_api_settings, ring.to_blockchain_api_settings]) }
   end
 
   let(:server) { 'http://127.0.0.1:8545' }
@@ -21,23 +21,23 @@ describe Ethereum1::Blockchain do
 
   context :features do
     it 'defaults' do
-      blockchain1 = Ethereum1::Blockchain.new
-      expect(blockchain1.features).to eq Ethereum1::Blockchain::DEFAULT_FEATURES
+      blockchain1 = Ethereum::Blockchain.new
+      expect(blockchain1.features).to eq Ethereum::Blockchain::DEFAULT_FEATURES
     end
 
     it 'override defaults' do
-      blockchain2 = Ethereum1::Blockchain.new(cash_addr_format: true)
+      blockchain2 = Ethereum::Blockchain.new(cash_addr_format: true)
       expect(blockchain2.features[:cash_addr_format]).to be_truthy
     end
 
     it 'custom feautures' do
-      blockchain3 = Ethereum1::Blockchain.new(custom_feature: :custom)
-      expect(blockchain3.features.keys).to contain_exactly(*Ethereum1::Blockchain::SUPPORTED_FEATURES)
+      blockchain3 = Ethereum::Blockchain.new(custom_feature: :custom)
+      expect(blockchain3.features.keys).to contain_exactly(*Ethereum::Blockchain::SUPPORTED_FEATURES)
     end
   end
 
   context :configure do
-    let(:blockchain) { Ethereum1::Blockchain.new }
+    let(:blockchain) { Ethereum::Blockchain.new }
     it 'default settings' do
       expect(blockchain.settings).to eq({})
     end
@@ -60,7 +60,7 @@ describe Ethereum1::Blockchain do
     end
 
     let(:blockchain) do
-      Ethereum1::Blockchain.new.tap { |b| b.configure(server: server) }
+      Ethereum::Blockchain.new.tap { |b| b.configure(server: server) }
     end
 
     let(:method) { :eth_blockNumber }
@@ -136,7 +136,7 @@ describe Ethereum1::Blockchain do
     end
 
     before do
-      Ethereum1::Client.any_instance.stubs(:rpc_call_id).returns(1)
+      Ethereum::Client.any_instance.stubs(:rpc_call_id).returns(1)
       block_data.each do |blk|
         # stub get_block_hash
         stub_request(:post, endpoint)
@@ -350,7 +350,7 @@ describe Ethereum1::Blockchain do
       end
 
       it 'raise undefined currency error' do
-        expect { blockchain.load_balance_of_address!('something', :usdt).to raise(Ethereum1::Blockchain::UndefinedCurrencyError) }
+        expect { blockchain.load_balance_of_address!('something', :usdt).to raise(Ethereum::Blockchain::UndefinedCurrencyError) }
       end
     end
 

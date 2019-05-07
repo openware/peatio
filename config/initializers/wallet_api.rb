@@ -1,3 +1,3 @@
-Peatio::Wallet::Registry[:bitcoind] = Bitcoin::Wallet.new
-Peatio::Wallet::Registry[:geth] = Ethereum1::Wallet.new
-Peatio::Wallet::Registry[:peth] = Ethereum1::Wallet.new
+Peatio::Wallet.registry[:bitcoind] = Bitcoin::Wallet.new
+Peatio::Wallet.registry[:geth] = Ethereum::Wallet.new
+Peatio::Wallet.registry[:peth] = Ethereum::Wallet.new

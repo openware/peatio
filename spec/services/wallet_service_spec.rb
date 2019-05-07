@@ -15,10 +15,10 @@ class FakeWallet < Peatio::Wallet::Abstract
   def configure(settings = {}); end
 end
 
-Peatio::Blockchain::Registry[:fake] = FakeBlockchain.new
-Peatio::Wallet::Registry[:fake] = FakeWallet.new
+Peatio::Blockchain.registry[:fake] = FakeBlockchain.new
+Peatio::Wallet.registry[:fake] = FakeWallet.new
 
-describe WalletService2 do
+describe WalletService do
   let!(:blockchain) { create(:blockchain, 'fake-testnet') }
   let!(:currency) { create(:currency, :fake) }
   let(:wallet) { create(:wallet, :fake_hot) }
@@ -26,20 +26,20 @@ describe WalletService2 do
   let(:fake_wallet_adapter) { FakeWallet.new }
   let(:fake_blockchain_adapter) { FakeBlockchain.new }
 
-  let(:service) { WalletService2.new(wallet) }
+  let(:service) { WalletService.new(wallet) }
 
   before do
-    Peatio::Blockchain::Registry.expects(:[])
+    Peatio::Blockchain.registry.expects(:[])
                          .with(:fake)
                          .returns(fake_blockchain_adapter)
                          .at_least_once
 
-    Peatio::Wallet::Registry.expects(:[])
+    Peatio::Wallet.registry.expects(:[])
                      .with(:fake)
                      .returns(fake_wallet_adapter)
                      .at_least_once
 
-    Blockchain.any_instance.stubs(:blockchain_api).returns(BlockchainService2.new(blockchain))
+    Blockchain.any_instance.stubs(:blockchain_api).returns(BlockchainService.new(blockchain))
   end
 
   context :create_address! do
@@ -462,7 +462,7 @@ describe WalletService2 do
     let!(:hot_wallet) { create(:wallet, :fake_hot) }
     let!(:cold_wallet) { create(:wallet, :fake_cold) }
 
-    let(:service) { WalletService2.new(deposit_wallet) }
+    let(:service) { WalletService.new(deposit_wallet) }
 
     let(:amount) { 2 }
     let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
@@ -522,7 +522,7 @@ describe WalletService2 do
     let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
 
     let(:fake_wallet_adapter) { FakeWallet.new }
-    let(:service) { WalletService2.new(deposit_wallet) }
+    let(:service) { WalletService.new(deposit_wallet) }
 
     context 'Spread deposit with single entry' do
 
@@ -593,7 +593,7 @@ describe WalletService2 do
     let(:deposit) { create(:deposit_btc, amount: amount, currency: currency) }
 
     let(:fake_wallet_adapter) { FakeWallet.new }
-    let(:service) { WalletService2.new(fee_wallet) }
+    let(:service) { WalletService.new(fee_wallet) }
 
     let(:spread_deposit) do [{ to_address: 'fake-cold',
       amount: '2.0',

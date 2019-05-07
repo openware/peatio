@@ -1,9 +1,9 @@
-class WalletService2
+class WalletService
   attr_reader :wallet, :adapter
 
   def initialize(wallet)
     @wallet = wallet
-    @adapter = Peatio::Wallet::Registry[wallet.gateway.to_sym]
+    @adapter = Peatio::Wallet.registry[wallet.gateway.to_sym]
     @adapter.configure(wallet: @wallet.to_wallet_api_settings,
                        currency: @wallet.currency.to_blockchain_api_settings)
   end
@@ -78,7 +78,7 @@ class WalletService2
     @adapter.load_balance!
   rescue Peatio::Wallet::Error => e
     report_exception(e)
-    BlockchainService2.new(wallet.blockchain).load_balance!(@wallet.address, @wallet.currency_id)
+    BlockchainService.new(wallet.blockchain).load_balance!(@wallet.address, @wallet.currency_id)
   end
 
   private

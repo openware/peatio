@@ -9,12 +9,12 @@ class FakeBlockchain < Peatio::Blockchain::Abstract
   def configure(settings = {}); end
 end
 
-describe BlockchainService2 do
+describe BlockchainService do
 
   let!(:blockchain) { create(:blockchain, 'fake-testnet') }
   let(:block_number) { 1 }
   let(:fake_adapter) { FakeBlockchain.new }
-  let(:service) { BlockchainService2.new(blockchain) }
+  let(:service) { BlockchainService.new(blockchain) }
 
   let!(:fake_currency1) { create(:currency, :fake, id: 'fake1', symbol: 'F') }
   let!(:fake_currency2) { create(:currency, :fake, id: 'fake2', symbol: 'G') }
@@ -33,7 +33,7 @@ describe BlockchainService2 do
   # after(:each) { clear_redis }
 
   before do
-    Peatio::Blockchain::Registry.expects(:[])
+    Peatio::Blockchain.registry.expects(:[])
                          .with(:fake)
                          .returns(fake_adapter)
                          .at_least_once

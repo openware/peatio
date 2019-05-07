@@ -1,4 +1,4 @@
-module Ethereum1
+module Ethereum
   class Client
     Error = Class.new(StandardError)
     class ConnectionError < Error; end
