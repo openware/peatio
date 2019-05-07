@@ -7,8 +7,10 @@ class Blockchain < ApplicationRecord
 
   validates :key, :name, :client, presence: true
   validates :status, inclusion: { in: %w[active disabled] }
-  validates :height, numericality: { greater_than_or_equal_to: 1, only_integer: true }
-  validates :min_confirmations, numericality: { greater_than_or_equal_to: 1, only_integer: true }
+  validates :height,
+            :min_confirmations,
+            :step,
+            numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :server, url: { allow_blank: true }
 
   def explorer=(hash)
@@ -26,7 +28,7 @@ class Blockchain < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20180708171446
+# Schema version: 20190502103256
 #
 # Table name: blockchains
 #
@@ -36,6 +38,7 @@ end
 #  client               :string(255)      not null
 #  server               :string(255)
 #  height               :integer          not null
+#  step                 :integer          default(6), not null
 #  explorer_address     :string(255)
 #  explorer_transaction :string(255)
 #  min_confirmations    :integer          default(6), not null
