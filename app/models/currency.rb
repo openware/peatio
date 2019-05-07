@@ -104,9 +104,10 @@ class Currency < ApplicationRecord
   def to_blockchain_api_settings
     # We pass options are available as top-level hash keys and via options for
     # compatibility with Wallet#to_wallet_api_settings.
-    options.deep_symbolize_keys.merge(id:          id,
-                                      base_factor: base_factor,
-                                      options:     options.deep_symbolize_keys)
+    opt = options.compact.deep_symbolize_keys
+    opt.deep_symbolize_keys.merge(id:          id,
+                                  base_factor: base_factor,
+                                  options:     opt)
   end
 
   def summary

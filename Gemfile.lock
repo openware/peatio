@@ -1,9 +1,10 @@
 GIT
   remote: https://github.com/ysv/peatio-core
-  revision: f9e1460a17ca1a409b1edb47f50ec9bf6bfb03d7
+  revision: 71808425008a97cbb460cec21d0f48fb44273d85
   branch: feature/plugable-currencies
   specs:
     peatio (0.4.5)
+      activemodel (~> 5.2.3)
       amqp
       bunny
       clamp

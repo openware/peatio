@@ -88,7 +88,7 @@ class Wallet < ApplicationRecord
   end
 
   def to_wallet_api_settings
-    settings.deep_symbolize_keys.merge(address: address)
+    settings.compact.deep_symbolize_keys.merge(address: address)
   end
 
   def wallet_url
