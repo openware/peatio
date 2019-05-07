@@ -1,6 +1,7 @@
 module Bitcoin
   class Client
     Error = Class.new(StandardError)
+    class ConnectionError < Error; end
 
     class ResponseError < Error
       def initialize(code, msg)
@@ -30,7 +31,7 @@ module Bitcoin
       response['error'].tap { |error| raise ResponseError.new(error['code'], error['message']) if error }
       response.fetch('result')
     rescue Faraday::Error => e
-      raise Error, e
+      raise ConnectionError, e
     end
 
     private
