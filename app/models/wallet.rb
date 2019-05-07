@@ -51,7 +51,7 @@ class Wallet < ApplicationRecord
 
   class << self
     def gateways
-      Peatio::Wallet::Registry.adapters.keys
+      Peatio::Wallet.registry.adapters.keys
     end
 
     def kinds(options={})
