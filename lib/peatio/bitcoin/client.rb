@@ -32,6 +32,8 @@ module Bitcoin
       response.fetch('result')
     rescue Faraday::Error => e
       raise ConnectionError, e
+    rescue => e
+      raise Error, e
     end
 
     private
