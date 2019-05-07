@@ -23,7 +23,7 @@ class Blockchain < ApplicationRecord
   end
 
   def blockchain_api
-    BlockchainService2.new(self)
+    BlockchainService.new(self)
   end
 end
 

@@ -31,7 +31,7 @@ module Worker
           return
         end
 
-        transactions = WalletService2.new(wallet).deposit_collection_fees!(deposit, deposit.spread_to_transactions)
+        transactions = WalletService.new(wallet).deposit_collection_fees!(deposit, deposit.spread_to_transactions)
 
         if transactions.present?
           Rails.logger.warn { "The API accepted deposit collection fees transfer and assigned transaction IDs: #{transactions.map(&:as_json)}." }

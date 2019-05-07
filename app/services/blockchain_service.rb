@@ -1,4 +1,4 @@
-class BlockchainService2
+class BlockchainService
   Error = Class.new(StandardError)
   BalanceLoadError = Class.new(StandardError)
 

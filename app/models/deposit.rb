@@ -60,7 +60,7 @@ class Deposit < ApplicationRecord
     return false if spread.present?
 
     deposit_wallet = Wallet.active.deposit.find_by(currency_id: currency_id)
-    spread = WalletService2.new(deposit_wallet).spread_deposit(self)
+    spread = WalletService.new(deposit_wallet).spread_deposit(self)
     update!(spread: spread.map(&:as_json))
   end
 

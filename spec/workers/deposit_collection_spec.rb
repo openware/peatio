@@ -8,7 +8,7 @@ describe Worker::DepositCollection do
       .tap { |d| d.update!(spread: spread) }
   end
   let(:wallet) { Wallet.find_by_blockchain_key('btc-testnet') }
-  let(:wallet_service) { WalletService2.new(wallet) }
+  let(:wallet_service) { WalletService.new(wallet) }
   let(:txid) { Faker::Lorem.characters(64) }
   let(:spread) do
     [{ to_address: 'to-address', amount: 0.1 }]
@@ -22,7 +22,7 @@ describe Worker::DepositCollection do
 
   before do
     transactions = collected_spread.map { |s| Peatio::Transaction.new(s) }
-    WalletService2.any_instance
+    WalletService.any_instance
                   .expects(:collect_deposit!)
                   .with(instance_of(Deposits::Coin), anything)
                   .returns(transactions)

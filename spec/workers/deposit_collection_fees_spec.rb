@@ -6,7 +6,7 @@ describe Worker::DepositCollectionFees do
     create(:deposit, :deposit_trst).tap { |d| d.accept! }
   end
   let(:wallet) { Wallet.find_by_blockchain_key('eth-rinkeby') }
-  let(:wallet_service) { WalletService2.new(wallet) }
+  let(:wallet_service) { WalletService.new(wallet) }
   let(:txid) { Faker::Lorem.characters(64) }
   let(:spread) do
     [{ to_address: 'to-address', amount: 0.1 }]
@@ -14,13 +14,13 @@ describe Worker::DepositCollectionFees do
 
   before do
     spread_deposit_res = spread.map { |s| Peatio::Transaction.new(s) }
-    WalletService2.any_instance
+    WalletService.any_instance
                   .expects(:spread_deposit)
                   .with(instance_of(Deposits::Coin))
                   .returns(spread_deposit_res)
 
     deposit_collection_fees_res = [Peatio::Transaction.new(amount: 1, currency_id: :bbtc, hash: 'hash')]
-    WalletService2.any_instance
+    WalletService.any_instance
                   .expects(:deposit_collection_fees!)
                   .with(instance_of(Deposits::Coin), anything)
                   .returns(deposit_collection_fees_res)

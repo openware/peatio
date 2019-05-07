@@ -19,7 +19,7 @@ module Worker
         return
       end
 
-      wallet_service = WalletService2.new(wallet)
+      wallet_service = WalletService.new(wallet)
 
       acc.payment_address.tap do |pa|
         pa.with_lock do

@@ -60,7 +60,7 @@ describe Worker::WithdrawCoin do
 
   context 'WalletService2 raises error' do
     before do
-      WalletService2.expects(:new)
+      WalletService.expects(:new)
         .raises(Peatio::Wallet::Registry::NotRegisteredAdapterError)
     end
 
@@ -72,7 +72,7 @@ describe Worker::WithdrawCoin do
 
   context 'wallet balance is not sufficient' do
     before do
-      WalletService2.any_instance
+      WalletService.any_instance
                     .expects(:load_balance!)
                     .returns(withdrawal.amount * 0.9)
     end
@@ -85,11 +85,11 @@ describe Worker::WithdrawCoin do
 
   context 'wallet balance is sufficient but build_withdrawal! raises error' do
     before do
-      WalletService2.any_instance
+      WalletService.any_instance
                     .expects(:load_balance!)
                     .returns(withdrawal.amount)
 
-      WalletService2.any_instance
+      WalletService.any_instance
                     .expects(:build_withdrawal!)
                     .with(instance_of(Withdraws::Coin))
                     .raises(Peatio::Blockchain::ClientError)
@@ -103,14 +103,14 @@ describe Worker::WithdrawCoin do
 
   context 'wallet balance is sufficient but build_withdrawal! returns transaction' do
     before do
-      WalletService2.any_instance
+      WalletService.any_instance
                     .expects(:load_balance!)
                     .returns(withdrawal.amount)
 
       transaction = Peatio::Transaction.new(amount: withdrawal.amount,
                                             to_address: withdrawal.rid,
                                             hash: 'hash-1')
-      WalletService2.any_instance
+      WalletService.any_instance
                     .expects(:build_withdrawal!)
                     .with(instance_of(Withdraws::Coin))
                     .returns(transaction)

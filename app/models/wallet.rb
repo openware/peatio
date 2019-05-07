@@ -82,8 +82,8 @@ class Wallet < ApplicationRecord
   end
 
   def current_balance
-    WalletService2.new(self).load_balance!
-  rescue BlockchainService2::BalanceLoadError
+    WalletService.new(self).load_balance!
+  rescue BlockchainService::BalanceLoadError
     NOT_AVAILABLE
   end
 

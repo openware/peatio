@@ -11,7 +11,7 @@ while running
     break unless running
     Rails.logger.info { "Processing #{bc.name} blocks." }
 
-    blockchain = BlockchainService2.new(bc)
+    blockchain = BlockchainService.new(bc)
     latest_block = blockchain.latest_block_number
 
     # Don't start process if we didn't receive new blocks.

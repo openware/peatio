@@ -17,7 +17,7 @@ describe Worker::DepositCoinAddress do
   subject { account.payment_address.address }
 
   before do
-    WalletService2.any_instance
+    WalletService.any_instance
                   .expects(:create_address!)
                   .returns(create_address_result)
   end

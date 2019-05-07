@@ -59,7 +59,7 @@ describe Deposit do
     let(:deposit) { create(:deposit_btc, amount: 3.7) }
 
     before do
-      WalletService2.any_instance.expects(:spread_deposit).returns(spread)
+      WalletService.any_instance.expects(:spread_deposit).returns(spread)
     end
 
     it 'spreads deposit between wallets' do
