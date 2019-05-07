@@ -70,19 +70,6 @@ describe Worker::WithdrawCoin do
     end
   end
 
-  context 'WalletService2 load_balance raises BalanceLoadError' do
-    before do
-      WalletService2.any_instance
-                    .expects(:load_balance!)
-                    .raises(WalletService2::BalanceLoadError)
-    end
-
-    it 'returns true and skip withdrawal' do
-      expect(Worker::WithdrawCoin.new.process(processing_withdrawal.as_json)).to be_truthy
-      expect(processing_withdrawal.reload.skipped?).to be_truthy
-    end
-  end
-
   context 'wallet balance is not sufficient' do
     before do
       WalletService2.any_instance

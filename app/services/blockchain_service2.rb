@@ -1,5 +1,6 @@
 class BlockchainService2
   Error = Class.new(StandardError)
+  BalanceLoadError = Class.new(StandardError)
 
   attr_reader :blockchain, :adapter
 
@@ -18,6 +19,9 @@ class BlockchainService2
 
   def load_balance!(address, currency_id)
     @adapter.load_balance_of_address!(address, currency_id)
+  rescue Peatio::Blockchain::Error => e
+    report_exception(e)
+    raise BalanceLoadError
   end
 
   def case_sensitive?
@@ -33,11 +37,13 @@ class BlockchainService2
     deposits = filter_deposits(block)
     withdrawals = filter_withdrawals(block)
 
+    accepted_deposits = []
     ActiveRecord::Base.transaction do
-      deposits.each(&method(:update_or_create_deposit))
+      accepted_deposits = deposits.map(&method(:update_or_create_deposit)).compact
       withdrawals.each(&method(:update_withdrawal))
       update_height(block_number, adapter.latest_block_number)
     end
+    accepted_deposits.each(&:collect!)
     block
   end
 
@@ -64,6 +70,9 @@ class BlockchainService2
       return
     end
 
+    # TODO: Rewrite this guard clause
+    return unless PaymentAddress.exists?(currency_id: transaction.currency_id, address: transaction.to_address)
+
     deposit =
       Deposits::Coin.find_or_create_by!(
         currency_id: transaction.currency_id,
@@ -76,9 +85,11 @@ class BlockchainService2
         d.block_number = transaction.block_number
       end
 
-    deposit.update_column(:block_number, transaction.block_number)
+    deposit.update_column(:block_number, transaction.block_number) if deposit.block_number != transaction.block_number
     if deposit.confirmations >= @blockchain.min_confirmations && deposit.accept!
-      deposit.collect!
+      deposit
+    else
+      nil
     end
   end
 

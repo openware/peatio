@@ -38,7 +38,7 @@ module Ethereum1
         else
           next if @erc20.find { |c| c.dig(:options, :erc20_contract_address) == normalize_address(tx.fetch('to')) }.blank?
           tx = client.json_rpc(:eth_getTransactionReceipt, [normalize_txid(tx.fetch('hash'))])
-          next if tx.nil? || invalid_erc20_transaction?(tx)
+          next if tx.nil? || tx.fetch('to').blank?
         end
 
         txs = build_transactions(tx).map do |ntx|
@@ -120,6 +120,11 @@ module Ethereum1
     end
 
     def build_erc20_transactions(txn_receipt)
+      # Build invalid transaction for failed withdrawals
+      if transaction_status(txn_receipt) == 'fail' && txn_receipt.fetch('logs').blank?
+        return build_invalid_erc20_transaction(txn_receipt)
+      end
+
       txn_receipt.fetch('logs').each_with_object([]) do |log, formatted_txs|
 
         next if log.fetch('topics').blank? || log.fetch('topics')[0] != TOKEN_EVENT_IDENTIFIER
@@ -142,18 +147,26 @@ module Ethereum1
       end
     end
 
+    def build_invalid_erc20_transaction(txn_receipt)
+      currencies = @erc20.select { |c| c.dig(:options, :erc20_contract_address) == txn_receipt.fetch('to') }
+      return if currencies.blank?
+
+      currencies.each_with_object([]) do |currency, invalid_txs|
+        invalid_txs << { hash:         normalize_txid(txn_receipt.fetch('transactionHash')),
+                         block_number: txn_receipt.fetch('blockNumber').to_i(16),
+                         currency_id:  currency.fetch(:id),
+                         status:       transaction_status(txn_receipt) }
+      end
+    end
+
     def transaction_status(block_txn)
       # TODO: Add fetching status for eth transaction
-      block_txn.fetch('status', '0x1') == '0x1' ? 'success' : 'fail'
+      block_txn.fetch('status', '0x1') == SUCCESS ? 'success' : 'fail'
     end
 
     def invalid_eth_transaction?(block_txn)
       block_txn.fetch('to').blank? \
       || block_txn.fetch('value').hex.to_d <= 0 && block_txn.fetch('input').hex <= 0
-    end
-
-    def invalid_erc20_transaction?(txn_receipt)
-      txn_receipt.fetch('to').blank? || txn_receipt.fetch('logs').blank?
     end
 
     def contract_address(currency)

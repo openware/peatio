@@ -6,12 +6,13 @@ module Worker
     def process(payload)
       Rails.logger.info { "Received request for deposit collection at #{Time.now} deposit_id: #{payload['id']}." }
       deposit = Deposit.find_by_id(payload['id'])
-      Rails.logger.info { "Deposit amount: #{deposit.amount}, deposit address: #{deposit.address} " }
 
       unless deposit
         Rails.logger.warn { "The deposit with id: #{payload['id']} doesn't exist."}
         return
       end
+
+      Rails.logger.info { "Deposit amount: #{deposit.amount}, deposit address: #{deposit.address} " }
 
       deposit.with_lock do
         if deposit.collected?

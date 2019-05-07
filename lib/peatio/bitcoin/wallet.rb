@@ -42,7 +42,7 @@ module Bitcoin
       client.json_rpc(:getbalance).to_d
 
     rescue Bitcoin::Client::Error => e
-      raise Peatio::Blockchain::ClientError, e
+      raise Peatio::Wallet::ClientError, e
     end
 
     private
