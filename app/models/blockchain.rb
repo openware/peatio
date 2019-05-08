@@ -13,6 +13,12 @@ class Blockchain < ApplicationRecord
             numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :server, url: { allow_blank: true }
 
+  class << self
+    def clients
+      Peatio::Blockchain.registry.adapters.keys
+    end
+  end
+
   def explorer=(hash)
     write_attribute(:explorer_address, hash.fetch('address'))
     write_attribute(:explorer_transaction, hash.fetch('transaction'))
