@@ -13,6 +13,8 @@ class Blockchain < ApplicationRecord
             numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :server, url: { allow_blank: true }
 
+  scope :active,   -> { where(status: :active) }
+
   class << self
     def clients
       Peatio::Blockchain.registry.adapters.keys

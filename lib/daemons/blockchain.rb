@@ -7,7 +7,13 @@ running = true
 Signal.trap(:TERM) { running = false }
 
 while running
-  Blockchain.where(key: ENV.fetch('BLOCKCHAIN', Blockchain.pluck(:key)), status: :active).each do |bc|
+  Blockchain.active.tap do |blockchains|
+    if ENV.key?('BLOCKCHAINS')
+      blockchain_keys = ENV.fetch('BLOCKCHAINS').split(',').map(&:squish).reject(&:blank?)
+      blockchains.where!(key: blockchain_keys)
+    end
+  end.find_each do |bc|
+
     break unless running
     Rails.logger.info { "Processing #{bc.name} blocks." }
 
