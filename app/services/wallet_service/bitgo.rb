@@ -13,9 +13,10 @@ module WalletService
       pa = deposit.account.payment_address
 
       # This builds a transaction object, but does not sign or send it.
+      # TODO: For now we multiply amount by 0.9 we consider that fee is less than 10%.
       fee = client.build_raw_transaction(
           { address: destination_address },
-          deposit.amount
+          deposit.amount * 0.9
       )
 
       # We can't collect all funds we need to subtract txn fee.

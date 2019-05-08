@@ -71,7 +71,7 @@ describe WalletService::Bitgo do
     let(:options) { {} }
     let(:request_method) { :post }
     let(:request_path) { '/tbtc/wallet/' + deposit_wallet.bitgo_wallet_id + '/tx/build' }
-    let(:request_body) {{recipients:[{address: hot_wallet.address, amount: "#{wallet_client.convert_to_base_unit!(deposit.amount)}" }]} }
+    let(:request_body) {{recipients:[{address: hot_wallet.address, amount: "#{wallet_client.convert_to_base_unit!(deposit.amount * 0.9)}" }]} }
     let(:response_body) {'{"feeInfo": {"fee": 3037}}'}
 
     let(:set_tx_request_path) { '/tbtc/wallet/' + deposit_wallet.bitgo_wallet_id + '/sendcoins' }

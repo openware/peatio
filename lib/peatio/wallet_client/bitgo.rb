@@ -35,7 +35,7 @@ module WalletClient
     def build_raw_transaction(recipient, amount)
       rest_api(:post, '/wallet/' + urlsafe_wallet_id + '/tx/build', {
           recipients: [{address: normalize_address(recipient.fetch(:address)), amount: convert_to_base_unit!(amount).to_s }]
-      }.compact, false).fetch('feeInfo').fetch('fee').yield_self(&method(:convert_from_base_unit))
+      }.compact).fetch('feeInfo').fetch('fee').yield_self(&method(:convert_from_base_unit))
     end
 
     def inspect_address!(address)
