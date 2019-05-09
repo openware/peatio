@@ -97,14 +97,15 @@ class Order < ApplicationRecord
 
   def trigger_pusher_event
     # skip market type orders, they should not appear on trading-ui
-    return if ord_type != 'limit'
+    return unless ord_type == 'limit' || state == 'done'
 
+    order_price = ord_type == 'limit' ? price : avg_price
     Member.trigger_pusher_event member_id, :order, \
       id:               id,
       at:               at,
       market:           market_id,
       kind:             kind,
-      price:            price&.to_s('F'),
+      price:            order_price&.to_s('F'),
       state:            state,
       remaining_volume: volume.to_s('F'),
       origin_volume:    origin_volume.to_s('F')

@@ -254,3 +254,59 @@ describe Order, '#record_cancel_operations!' do
     }.by(-subject.locked)
   end
 end
+
+describe Order, '#trigger_pusher_event' do
+
+  context 'trigger pusher event for limit order' do
+    let!(:order){ create(:order_ask, :with_deposit_liability) }
+
+    subject { order }
+
+    let(:data) do
+      {
+        id:               subject.id,
+        at:               subject.created_at.to_i,
+        market:           subject.market_id,
+        kind:             subject.kind,
+        price:            subject.price.to_s('F'),
+        state:            subject.state,
+        remaining_volume: subject.volume.to_s('F'),
+        origin_volume:    subject.origin_volume.to_s('F')
+      }
+    end
+
+    before { AMQPQueue.expects(:enqueue).with(:pusher_member, member_id: subject.member.id, event: :order, data: data) }
+
+    it { subject.trigger_pusher_event }
+  end
+
+  context 'trigger pusher event for market order' do
+    let!(:order) { create(:order_ask, :with_deposit_liability, ord_type: 'market', price: nil) }
+
+    subject { order }
+
+    let(:data) do
+      {
+        id:               subject.id,
+        at:               subject.created_at.to_i,
+        market:           subject.market_id,
+        kind:             subject.kind,
+        price:            subject.avg_price.to_s('F'),
+        state:            subject.state,
+        remaining_volume: subject.volume.to_s('F'),
+        origin_volume:    subject.origin_volume.to_s('F')
+      }
+    end
+
+    it 'doesnt push event for active market order' do
+      AMQPQueue.expects(:enqueue).with(:pusher_member, member_id: subject.member.id, event: :order, data: data).never
+      subject.trigger_pusher_event
+    end
+
+    it 'pushes event for completed market order' do
+      subject.update!(state: 'done')
+      AMQPQueue.expects(:enqueue).with(:pusher_member, member_id: subject.member.id, event: :order, data: data)
+      subject.trigger_pusher_event
+    end
+  end
+end
