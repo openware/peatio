@@ -62,7 +62,7 @@ CMD ["bundle", "exec", "puma", "--config", "config/puma.rb"]
 FROM base
 
 # Copy Gemfile.plugin for installing plugins.
-COPY Gemfile.plugin Gemfile.lock $APP_HOME
+COPY Gemfile.plugin Gemfile.lock $APP_HOME/
 
 # Install plugins.
 RUN bundle install --path /opt/vendor/bundle
