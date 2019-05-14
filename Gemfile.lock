@@ -1,5 +1,6 @@
-PATH
-  remote: ../peatio-litecoin
+GIT
+  remote: https://github.com/rubykube/peatio-litecoin
+  revision: b3bb19e8ae2fad3d940f4fa2246e4a4a5f231286
   specs:
     peatio-litecoin (0.1.0)
       activesupport (~> 5.2.3)
