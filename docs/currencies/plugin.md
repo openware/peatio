@@ -46,6 +46,8 @@ During this step you will create your own ruby gem for implementing your coin Bl
 We will use [peatio-litecoin](https://github.com/rubukybe/peatio-litecoin) as example.
 My advice is to clone it and use as plugin development guide.
 
+For more currencies examples check [Bitcoin](../../lib/peatio/bitcoin) and [Ethereum](../../lib/peatio/ethereum) implementation.
+
 1. ***Create a new gem. And update .gemspec.*** 💎
 
 ```bash
