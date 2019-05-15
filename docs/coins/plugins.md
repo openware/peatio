@@ -1,3 +1,5 @@
 # List of coin plugins approved by RubyKube
 
 * [Litecoin](https://github.com/rubykube/litecoin)
+
+## For plugin integration check doc/integration of specific plugin.
