@@ -11,15 +11,15 @@ interfaces described inside [peatio-core](https://github.com/rubykube/peatio-cor
 You need to be familiar with [Blockchain](https://www.rubydoc.info/gems/peatio/0.5.0/Peatio/Blockchain/Abstract)
 and [Wallet](https://www.rubydoc.info/gems/peatio/0.5.0/Peatio/Blockchain/Abstract) interfaces.
 
-*Note that you can skip optional methods if they are not supported by your coin*
+**Note:** *you can skip optional methods if they are not supported by your coin.*
 
-### Start with coin API research.
+### Coin API research.
 
 First of all need to start your coin node locally or inside VM and try to access it via HTTP e.g. using `curl` or `http`.
 You need to study your coin API to get list of calls for implementing [Blockchain](https://www.rubydoc.info/gems/peatio/0.5.0/Peatio/Blockchain/Abstract) and
 [Wallet](https://www.rubydoc.info/gems/peatio/0.5.0/Peatio/Blockchain/Abstract) interfaces. 
 
-*Note that single method may require multiple API calls*.
+**Note:** *single method may require multiple API calls.*
 
 We next list of JSON RPC methods for Bitcoin integration:
   * getbalance
@@ -39,20 +39,22 @@ For Ethereum Blockchain (ETH, ERC20) we use next list of methods:
   * personal_newAccount
   * personal_sendTransaction
   
-### Start your gem implementation.
+### Ruby gem implementation.
 
 During this step you will create your own ruby gem for implementing your coin Blockchain and Wallet classes.
 
 We will use [peatio-litecoin ](https://github.com/rubukybe/peatio-litecoin) as example. 
 
 1. Create a new gem. And update .gemspec.
-   Note that there is no requirements for gem naming and module hierarchy.
+
 ```bash
 bundle gem peatio-litecoin
 ```
+**Note:** *there is no requirements for gem naming and module hierarchy.*
 
-2. Add your gem dependencies to .gemspec. If you will need more you could add them later.
-   I use the next list of gems you could specify preferred by you (single one required is peatio).
+2. Add your gem dependencies to .gemspec.
+
+I use the next list of gems you could specify preferred by you.
 ```ruby
   spec.add_dependency "activesupport", "~> 5.2.3"
   spec.add_dependency "better-faraday", "~> 1.0.5"
@@ -68,14 +70,17 @@ bundle gem peatio-litecoin
   spec.add_development_dependency "webmock", "~> 3.5"
 ```
 
+**Note:** *peatio gem is required.*
+
 3. Install your dependencies.
 ```bash
 bundle install
 ```
 
 4. Save responses in spec/resources.
-   You could start from saving few responses and then extend your mock factory.
-   peatio-litecoin spec/resources directory has the following structure.
+
+You could start from saving few responses and then extend your mock factory.
+Peatio-litecoin spec/resources directory has the following structure.
 ```bash
 tree spec/resources
 spec/resources
@@ -98,8 +103,9 @@ spec/resources
 ```
 
 5. Prepare your gem structure.
-   You could organize files and directories as you wish.
-   peatio-litecoin has the following lib and spec structure.
+
+You could organize files and directories as you wish.
+Peatio-litecoin has the following lib and spec structure.
 ```bash
 tree lib
 lib
@@ -123,9 +129,10 @@ spec/peatio
 ```
 
 6. Start your coin client implementation.
-   First of all try to find reliable ruby client for your coin and implement own if there is no such. 
-   There is no client interface so you could construct client in the way convenient for you
-   but note that it's your gem base because you will use it widely during Blockchain and Wallet implementation.
+
+First of all try to find reliable ruby client for your coin and implement own if there is no such. 
+There is no client interface so you could construct client in the way convenient for you
+but note that it's your gem base because you will use it widely during Blockchain and Wallet implementation.
    
 7. Try to use make API calls with your client. You could use ./bin/console for this.
 ```ruby
