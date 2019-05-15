@@ -146,7 +146,7 @@ client.json_rpc(:getblockcount) # => 1087729
 client.json_rpc(:getnewaddress) # => "QQPyC9uTQ1YKu3V1Dr4rNqHkHgJG3qr8JC"
 ```
 
-8. ***Use spec/resources for client testing.🧰***
+8. ***Use spec/resources for client testing.*** 🧰
 
 E.g. specs for peatio-litecoin client:
 
@@ -272,7 +272,7 @@ Finished in 0.01205 seconds (files took 1.08 seconds to load)
 6 examples, 0 failures
 ```
 
-13. ***Register your plugin blockchain and wallet to make it accessible by Peatio®️***
+13. ***Register your plugin blockchain and wallet to make it accessible by Peatio.️*** ®
 
 ```ruby
 Peatio::Blockchain.registry[:litecoin] = Litecoin::Blockchain.new
@@ -311,7 +311,7 @@ docs
 
     **Don't forget to describe custom steps here e.g.**
     
-    *For activating your hot wallet send some XRP to it* or *For ERC20 integration fee wallet is required*.
+    *"Send some XRP for wallet activation"* or *"For ERC20 integration fee wallet with ETH is required"*.
 
 * json-rpc.md
 
