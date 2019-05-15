@@ -44,18 +44,18 @@ For Ethereum Blockchain (ETH, ERC20) we use next list of methods:
 During this step you will create your own ruby gem for implementing your coin Blockchain and Wallet classes.
 
 We will use [peatio-litecoin](https://github.com/rubukybe/peatio-litecoin) as example.
-My advice is to clone it because I'm reckon you will need it.
+My advice is to clone it and use as plugin development guide.
 
-1. ***Create a new gem. And update .gemspec.💎***
+1. ***Create a new gem. And update .gemspec.*** 💎
 
 ```bash
 bundle gem peatio-litecoin
 ```
 **Note:** *there is no requirements for gem naming and module hierarchy.*
 
-2. ***Add your gem dependencies to .gemspec.🛠***
+2. ***Add your gem dependencies to .gemspec.*** 🛠
 
-I use the next list of gems you could specify preferred by you.
+I use the next list of gems (you could specify preferred by you inside you gem):
 ```ruby
   spec.add_dependency "activesupport", "~> 5.2.3"
   spec.add_dependency "better-faraday", "~> 1.0.5"
@@ -73,15 +73,17 @@ I use the next list of gems you could specify preferred by you.
 
 **Note:** *peatio gem is required.*
 
-3. ***Install your dependencies.⚙️***
+3. ***Install your dependencies.️*** ⚙
+
 ```bash
 bundle install
 ```
 
-4. ***Save responses in spec/resources.📥***
+4. ***Save responses in spec/resources.*** 📥
 
 You could start from saving few responses and then extend your mock factory.
-Peatio-litecoin spec/resources directory has the following structure.
+Peatio-litecoin spec/resources directory has the following structure:
+
 ```bash
 tree spec/resources
 spec/resources
@@ -103,10 +105,11 @@ spec/resources
     └── response.json
 ```
 
-5. ***Prepare your gem structure.📐***
+5. ***Prepare your gem structure.*** 📐
 
 You could organize files and directories as you wish.
-Peatio-litecoin has the following lib and spec structure.
+Peatio-litecoin has the following lib and spec structure:
+
 ```bash
 tree lib
 lib
@@ -129,13 +132,13 @@ spec/peatio
 └── litecoin_spec.rb
 ```
 
-6. ***Start with your coin client implementation.🥚***
+6. ***Start with your coin client implementation.*** 🥚
 
 First of all try to find reliable ruby client for your coin and implement own if there is no such. 
 We don't provide client interface so you could construct client in the way it's convenient for you
 but note that it's your gem base because you will use it widely during Blockchain and Wallet implementation.
    
-7. ***Try to call API with your client. Use ./bin/console for this.📮***
+7. ***Try to call API with your client. Use ./bin/console for this.*** 📮
 
 ```ruby
 client = Peatio::Litecoin::Client.new('http://user:password@127.0.0.1:19332') # => #<Peatio::Litecoin::Client:0x00007fca61d82650 @json_rpc_endpoint=#<URI::HTTP http://user:password@127.0.0.1:19332>>
@@ -145,7 +148,8 @@ client.json_rpc(:getnewaddress) # => "QQPyC9uTQ1YKu3V1Dr4rNqHkHgJG3qr8JC"
 
 8. ***Use spec/resources for client testing.🧰***
 
-E.g. specs for peatio-litecoin client.
+E.g. specs for peatio-litecoin client:
+
 ```bash
 bundle exec rspec spec/peatio/litecoin/client_spec.rb
 
@@ -167,7 +171,7 @@ Finished in 0.01355 seconds (files took 1.11 seconds to load)
 6 examples, 0 failures
 ```
 
-9. ***Implement Blockchain::Abstract interface required methods.🔗***
+9. ***Implement Blockchain::Abstract interface required methods.*** 🔗
 
 ```ruby
 module Peatio
@@ -180,15 +184,17 @@ end
 ```
 
 I suggest using the next order of methods implementation:
+
     * initialize
     * configure
     * latest_block_number
     * fetch_block!
     * load_balance_of_address! (optional)
 
-10. ***Mock API calls using spec/resources and test your blockchain.🛡️***
+10. ***Mock API calls using spec/resources and test your blockchain.️*** 🛡
 
-E.g. specs for peatio-litecoin blockchain.
+E.g. specs for peatio-litecoin blockchain:
+
 ```bash
 Peatio::Litecoin::Blockchain
   features
@@ -225,7 +231,7 @@ Finished in 0.02604 seconds (files took 1.14 seconds to load)
 ```
 
 
-11. ***Implement Wallet::Abstract interface required methods.💸***
+11. ***Implement Wallet::Abstract interface required methods.*** 💸
 
 ```ruby
 module Peatio
@@ -238,15 +244,17 @@ end
 ``` 
 
 I suggest using the next order of methods implementation:
+
     * initialize
     * configure
     * create_address!
     * create_transaction!
     * load_balance! (optional)
 
-12. ***Mock API calls using spec/resources and test your wallet.🔐️***
+12. ***Mock API calls using spec/resources and test your wallet.*** 🔐️
 
-E.g. specs for peatio-litecoin wallet.
+E.g. specs for peatio-litecoin wallet:
+
 ```bash
 Peatio::Litecoin::Wallet
   configure
@@ -275,9 +283,10 @@ For more info check hooks.rb and railtie.rb.
 
 **Note:** *You could just copy paste this files and change wallet and blockchain names.*
 
-14. ***Test your plugin inside peatio eco system.🧪***
+14. ***Test your plugin inside peatio eco system.*** 🧪
 
 Every story which touch blockchain or wallet should work successfully:
+
     * deposit address generation
     * deposit detection
     * blockchain synchronization
@@ -285,7 +294,7 @@ Every story which touch blockchain or wallet should work successfully:
     * withdraw creation
     * withdraw confirmation
 
-15. ***Document your plugin integration steps.📝***
+15. ***Document your plugin integration steps.*** 📝
 
 Documentation folder for Litecoin has the following structure:
 ```bash
@@ -296,16 +305,20 @@ docs
 ```
 
 * integration.md
+
     Describe full plugin integration flow in integration.md.
     **Image Build** and **Peatio Configuration** sections are required.
 
     **Don't forget to describe custom steps here e.g.**
+    
     *For activating your hot wallet send some XRP to it* or *For ERC20 integration fee wallet is required*.
 
 * json-rpc.md
+
     List all API calls used for gem development here with examples and description.
 
 * testnet.md
+
     Give instructions how to get coins in testent.
 
 **Note:** it's minimalistic doc structure. More doc is more love for your plugin.
