@@ -1,4 +1,4 @@
-# Currency plugin development and integration.
+# Currency plugin development.
 
 Peatio Plugin API v2 gives ability to extend Peatio with any coin
 which fits into basic [Blockchain](https://www.rubydoc.info/gems/peatio/0.5.0/Peatio/Blockchain/Abstract) and [Wallet](https://www.rubydoc.info/gems/peatio/0.5.0/Peatio/Blockchain/Abstract)
@@ -324,3 +324,7 @@ docs
     Give instructions how to get coins in testent.
 
 **Note:** it's minimalistic doc structure. More doc is more love for your plugin.
+
+16. Contact us to review your plugin and add to [approved plugins list](../plugins.md).
+
+For doing it left comment with your plugin link and short description [here](https://github.com/rubykube/peatio/issues/2212).
