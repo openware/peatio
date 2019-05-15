@@ -45,14 +45,14 @@ During this step you will create your own ruby gem for implementing your coin Bl
 
 We will use [peatio-litecoin ](https://github.com/rubukybe/peatio-litecoin) as example. 
 
-1. Create a new gem. And update .gemspec.
+1. ***Create a new gem. And update .gemspec.***
 
 ```bash
 bundle gem peatio-litecoin
 ```
 **Note:** *there is no requirements for gem naming and module hierarchy.*
 
-2. Add your gem dependencies to .gemspec.
+2. ***Add your gem dependencies to .gemspec.***
 
 I use the next list of gems you could specify preferred by you.
 ```ruby
@@ -72,12 +72,12 @@ I use the next list of gems you could specify preferred by you.
 
 **Note:** *peatio gem is required.*
 
-3. Install your dependencies.
+3. ***Install your dependencies.***
 ```bash
 bundle install
 ```
 
-4. Save responses in spec/resources.
+4. ***Save responses in spec/resources.***
 
 You could start from saving few responses and then extend your mock factory.
 Peatio-litecoin spec/resources directory has the following structure.
@@ -102,7 +102,7 @@ spec/resources
     └── response.json
 ```
 
-5. Prepare your gem structure.
+5. ***Prepare your gem structure.***
 
 You could organize files and directories as you wish.
 Peatio-litecoin has the following lib and spec structure.
@@ -128,21 +128,23 @@ spec/peatio
 └── litecoin_spec.rb
 ```
 
-6. Start your coin client implementation.
+6. ***Start your coin client implementation.***
 
 First of all try to find reliable ruby client for your coin and implement own if there is no such. 
 There is no client interface so you could construct client in the way convenient for you
 but note that it's your gem base because you will use it widely during Blockchain and Wallet implementation.
    
-7. Try to use make API calls with your client. You could use ./bin/console for this.
+7. ***Try to use API calls with your client. Use ./bin/console for this.***
+
 ```ruby
 client = Peatio::Litecoin::Client.new('http://user:password@127.0.0.1:19332') # => #<Peatio::Litecoin::Client:0x00007fca61d82650 @json_rpc_endpoint=#<URI::HTTP http://user:password@127.0.0.1:19332>>
 client.json_rpc(:getblockcount) # => 1087729
 client.json_rpc(:getnewaddress) # => "QQPyC9uTQ1YKu3V1Dr4rNqHkHgJG3qr8JC"
 ```
 
-8. Use spec/resources for client testing.
-   E.g. specs for peatio-litecoin client.
+8. ***Use spec/resources for client testing.***
+
+E.g. specs for peatio-litecoin client.
 ```bash
 bundle exec rspec spec/peatio/litecoin/client_spec.rb
 
@@ -163,4 +165,3 @@ Peatio::Litecoin::Client
 Finished in 0.01355 seconds (files took 1.11 seconds to load)
 6 examples, 0 failures
 ```
-
