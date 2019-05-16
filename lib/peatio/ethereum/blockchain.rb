@@ -14,16 +14,18 @@ module Ethereum
     end
 
     def configure(settings = {})
+      # Clean client state during configure.
+      @client = nil
       @erc20 = []; @eth = []
-      supported_settings = settings.slice(*SUPPORTED_SETTINGS)
-      supported_settings[:currencies]&.each do |c|
+
+      @settings.merge!(settings.slice(*SUPPORTED_SETTINGS))
+      @settings[:currencies]&.each do |c|
         if c.dig(:options, :erc20_contract_address).present?
           @erc20 << c
         else
           @eth << c
         end
       end
-      @settings.merge!(supported_settings)
     end
 
     def fetch_block!(block_number)
@@ -65,9 +67,9 @@ module Ethereum
         load_erc20_balance(address, currency)
       else
         client.json_rpc(:eth_getBalance, [normalize_address(address), 'latest'])
-        .hex
-        .to_d
-        .yield_self { |amount| convert_from_base_unit(amount, currency) }
+              .hex
+              .to_d
+              .yield_self { |amount| convert_from_base_unit(amount, currency) }
       end
     rescue Ethereum::Client::Error => e
       raise Peatio::Blockchain::ClientError, e
@@ -78,9 +80,9 @@ module Ethereum
     def load_erc20_balance(address, currency)
       data = abi_encode('balanceOf(address)', normalize_address(address))
       client.json_rpc(:eth_call, [{ to: contract_address(currency), data: data }, 'latest'])
-        .hex
-        .to_d
-        .yield_self { |amount| convert_from_base_unit(amount, currency) }
+            .hex
+            .to_d
+            .yield_self { |amount| convert_from_base_unit(amount, currency) }
     end
 
     def client

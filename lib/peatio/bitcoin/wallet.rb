@@ -6,6 +6,9 @@ module Bitcoin
     end
 
     def configure(settings = {})
+      # Clean client state during configure.
+      @client = nil
+
       @settings.merge!(settings.slice(*SUPPORTED_SETTINGS))
 
       @wallet = @settings.fetch(:wallet) do
