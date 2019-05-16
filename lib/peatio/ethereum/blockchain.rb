@@ -163,7 +163,7 @@ module Ethereum
 
     def transaction_status(block_txn)
       # TODO: Add fetching status for eth transaction
-      block_txn.fetch('status', '0x1') == SUCCESS ? 'success' : 'fail'
+      block_txn.fetch('status', '0x1') == SUCCESS ? 'success' : 'failed'
     end
 
     def invalid_eth_transaction?(block_txn)

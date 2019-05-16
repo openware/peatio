@@ -106,9 +106,9 @@ class BlockchainService
 
     withdrawal.update_column(:block_number, transaction.block_number)
 
-    if transaction.status == :fail
+    if transaction.status.failed?
       withdrawal.fail!
-    elsif transaction.status == :success && withdrawal.confirmations >= @blockchain.min_confirmations
+    elsif transaction.status.success? && withdrawal.confirmations >= @blockchain.min_confirmations
       withdrawal.success!
     end
   end
