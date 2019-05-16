@@ -1,3 +1,14 @@
+GIT
+  remote: https://github.com/rubykube/peatio-litecoin
+  revision: 55cc2d48797d1e310f5dd6394256a499f6c647d0
+  specs:
+    peatio-litecoin (0.1.0)
+      activesupport (~> 5.2.3)
+      better-faraday (~> 1.0.5)
+      faraday (~> 0.15.4)
+      memoist (~> 0.16.0)
+      peatio (~> 0.5.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -235,7 +246,7 @@ GEM
     parser (2.6.0.0)
       ast (~> 2.4.0)
     passgen (1.0.2)
-    peatio (0.5.0)
+    peatio (0.5.1)
       activemodel (~> 5.2.3)
       amqp
       bunny
@@ -244,12 +255,6 @@ GEM
       eventmachine
       jwt
       mysql2
-    peatio-litecoin (0.1.0)
-      activesupport (~> 5.2.3)
-      better-faraday (~> 1.0.5)
-      faraday (~> 0.15.4)
-      memoist (~> 0.16.0)
-      peatio (~> 0.5.0)
     popper_js (1.14.5)
     powerpack (0.1.2)
     pry (0.12.2)
@@ -452,8 +457,8 @@ DEPENDENCIES
   mocha (~> 1.8)
   mysql2 (~> 0.5.2)
   passgen (~> 1.0.2)
-  peatio (~> 0.5.0)
-  peatio-litecoin (~> 0.1.0)
+  peatio (~> 0.5.1)
+  peatio-litecoin!
   pry-byebug (~> 3.7)
   puma (~> 3.12.0)
   rack-attack (~> 5.4.2)
