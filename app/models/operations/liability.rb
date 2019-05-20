@@ -12,6 +12,26 @@ module Operations
     validates :member_id, absence: {
       if: ->(liability) { liability.account.scope != 'member' }
     }
+
+    after_create do |liability|
+      AMQPQueue.enqueue(
+        :order_processor,
+        subject: 'operation',
+        payload: liability.to_matching_attributes,
+      )
+    end
+
+    def to_matching_attributes
+      {
+        code:           code,
+        currency:       currency.id,
+        member_id:      (member.nil?) ? nil : member.id,
+        reference_id:   (reference.nil?) ? nil : reference.id,
+        reference_type: reference_type.to_s.downcase,
+        debit:          debit,
+        credit:         credit,
+      }
+    end
   end
 end
 
