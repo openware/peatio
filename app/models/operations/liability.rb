@@ -13,6 +13,7 @@ module Operations
       if: ->(liability) { liability.account.scope != 'member' }
     }
 
+    # Notify third party trading engine about member balance update.
     after_commit on: :create do
       AMQPQueue.enqueue(:events_processor,
                         subject: :operation,
