@@ -227,7 +227,7 @@ describe BlockchainService do
   context 'two fake withdrawals for two currency were updated during block processing' do
     let!(:fake_account1) { member.get_account(:fake1).tap { |ac| ac.update!(balance: 50, locked: 10) } }
     let!(:fake_account2) { member.get_account(:fake2).tap { |ac| ac.update!(balance: 50, locked: 10) } }
-    let!(:withdrawal1) do 
+    let!(:withdrawal1) do
       Withdraw.create!(member: member,
                        account: fake_account1,
                        currency: fake_currency1,
@@ -238,7 +238,7 @@ describe BlockchainService do
                        type: Withdraws::Coin,
                        aasm_state: :confirming)
     end
-    let!(:withdrawal2) do 
+    let!(:withdrawal2) do
       Withdraw.create!(member: member,
                         account: fake_account2,
                         currency: fake_currency2,
@@ -278,7 +278,7 @@ describe BlockchainService do
       end
 
       let!(:transaction) do
-        Peatio::Transaction.new(hash: 'fake_hash', to_address: 'fake_address', amount: 1, block_number: 3, currency_id: fake_currency1.id, txout: 10, status: 'fail')
+        Peatio::Transaction.new(hash: 'fake_hash', to_address: 'fake_address', amount: 1, block_number: 3, currency_id: fake_currency1.id, txout: 10, status: 'failed')
       end
 
       before do
