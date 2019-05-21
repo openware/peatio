@@ -25,7 +25,7 @@ module Operations
         currency:       currency_id,
         member_id:      member_id,
         reference_id:   reference_id,
-        reference_type: reference_type.downcase,
+        reference_type: reference_type&.downcase,
         debit:          debit,
         credit:         credit }
     end
