@@ -110,8 +110,9 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: amount,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: amount,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -133,8 +134,9 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: amount,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: amount,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -163,8 +165,9 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: amount,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: amount,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -190,8 +193,9 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-2',
-            amount: amount,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: amount,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -219,11 +223,13 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: 5,
-            currency_id: currency.id },
+             status: 'pending',
+             amount: 5,
+             currency_id: currency.id },
            { to_address: 'destination-wallet-2',
-            amount: 5,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: 5,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -248,8 +254,9 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-2',
-            amount: 1.2,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: 1.2,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -275,6 +282,7 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-2',
+             status: 'pending',
              amount: 1.2,
              currency_id: currency.id }]
         end
@@ -334,11 +342,13 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: 5,
-            currency_id: currency.id },
+             status: 'pending',
+             amount: 5,
+             currency_id: currency.id },
            { to_address: 'destination-wallet-2',
-            amount: 5,
-            currency_id: currency.id}]
+             status: 'pending',
+             amount: 5,
+             currency_id: currency.id}]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -370,11 +380,13 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: 5,
-            currency_id: currency.id },
+             status: 'pending',
+             amount: 5,
+             currency_id: currency.id },
            { to_address: 'destination-wallet-3',
-            amount: 5,
-            currency_id: currency.id}]
+             status: 'pending',
+             amount: 5,
+             currency_id: currency.id}]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -404,8 +416,9 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-3',
-            amount: amount,
-            currency_id: currency.id }]
+             status: 'pending',
+             amount: amount,
+             currency_id: currency.id }]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -437,14 +450,17 @@ describe WalletService do
 
         let(:expected_spread) do
           [{ to_address: 'destination-wallet-1',
-            amount: 3,
-            currency_id: currency.id },
+             status: 'pending',
+             amount: 3,
+             currency_id: currency.id },
            { to_address: 'destination-wallet-2',
+             status: 'pending',
              amount: 3,
              currency_id: currency.id },
            { to_address: 'destination-wallet-3',
-            amount: 4,
-            currency_id: currency.id}]
+             status: 'pending',
+             amount: 4,
+             currency_id: currency.id}]
         end
 
         subject { service.send(:spread_between_wallets, amount, destination_wallets) }
@@ -469,6 +485,7 @@ describe WalletService do
 
     let(:expected_spread) do
       [{ to_address: 'fake-cold',
+         status: 'pending',
          amount: '2.0',
          currency_id: currency.id }]
     end
