@@ -105,7 +105,8 @@ describe Bitcoin::Wallet do
       result = wallet.create_transaction!(transaction)
       expect(result.as_json.symbolize_keys).to eq(amount: 1.1,
                                                   to_address: '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf',
-                                                  hash: txid)
+                                                  hash: txid,
+                                                  status: 'pending')
     end
 
     it 'requests rpc and sends transaction with subtract fees' do
@@ -127,7 +128,8 @@ describe Bitcoin::Wallet do
       result = wallet.create_transaction!(transaction, subtract_fee: true)
       expect(result.as_json.symbolize_keys).to eq(amount: 1.1,
                                                   to_address: '2N4qYjye5yENLEkz4UkLFxzPaxJatF3kRwf',
-                                                  hash: txid)
+                                                  hash: txid,
+                                                  status: 'pending')
     end
   end
 
