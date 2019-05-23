@@ -9,7 +9,7 @@ describe Worker::DepositCollectionFees do
   let(:wallet_service) { WalletService.new(wallet) }
   let(:txid) { Faker::Lorem.characters(64) }
   let(:spread) do
-    [{ to_address: 'to-address', amount: 0.1 }]
+    [{ to_address: 'to-address', amount: 0.1, status: 'pending' }]
   end
 
   before do
