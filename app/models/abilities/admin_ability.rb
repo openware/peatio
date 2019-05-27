@@ -1,13 +1,11 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-module Admin
-  class Ability
+module Abilities
+  class AdminAbility
     include CanCan::Ability
 
     def initialize(user)
-      return unless user.admin?
-
       can :read, Order
       can :read, Trade
       can :manage, Member
@@ -25,6 +23,8 @@ module Admin
       can :manage, Currency
       can :manage, Blockchain
       can :manage, Wallet
+      # can :manage, Account
+      # can :manage, PaymentAddress
     end
   end
 end
