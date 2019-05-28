@@ -38,6 +38,5 @@ class ApplicationController < ActionController::Base
 
   def is_admin?
     current_user.role.in?(Member::ADMIN_ROLES)
-    # current_user&.admin?
   end
 end
