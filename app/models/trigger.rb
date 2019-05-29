@@ -37,15 +37,14 @@ class Trigger < ApplicationRecord
   STATES = { pending: 0, active: 100, done: 200, cancelled: -100 }.freeze
 
   # TODO: Add trigger types description.
-  TYPES = %i[stop trailing_stop oco].freeze
+  TYPES = %w[stop trailing_stop oco].freeze
 
   enumerize :state, in: STATES, scope: true
-
-  validates :price, numericality: { greater_than: 0 }
 
   # Disable STI so we can use type column.
   self.inheritance_column = true
 
+  validates :price, numericality: { greater_than: 0 }
   validates :type, inclusion: { in: TYPES }
 end
 
