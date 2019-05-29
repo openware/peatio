@@ -21,14 +21,14 @@ while running
       [
         "Liabilities number was #{liabilities_was} and now it's #{liabilities_number}",
         "Recalculating member balances"
-      ].join("\n").tap { |m| Rails.logger.info m }
+      ].join("\n").tap { |m| Rails.logger.debug m }
       liabilities_was = liabilities_number
       break
     end
     [
       "Liabilities number didn't change since last update",
       "Skip balance recalculating"
-    ].join("\n").tap { |m| Rails.logger.info m }
+    ].join("\n").tap { |m| Rails.logger.debug m }
     sleep 0.5
   end
 
@@ -48,12 +48,14 @@ while running
     Account.where(currency: currency).find_in_batches do |accounts_group|
       ActiveRecord::Base.transaction do
         accounts_group.each do |legacy_account|
-          balance = Operations::Liability.where(code:      main_liability_code,
-                                                member_id: legacy_account.member_id)
+          balance = Operations::Liability.where(code:        main_liability_code,
+                                                member_id:   legacy_account.member_id,
+                                                currency_id: currency.id)
                                          .sum('credit - debit')
 
-          locked = Operations::Liability.where(code:      locked_liability_code,
-                                               member_id: legacy_account.member_id)
+          locked = Operations::Liability.where(code:        locked_liability_code,
+                                               member_id:   legacy_account.member_id,
+                                               currency_id: currency.id)
                                         .sum('credit - debit')
 
           if legacy_account.balance != balance || legacy_account.locked != locked
