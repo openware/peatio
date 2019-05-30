@@ -5,6 +5,6 @@ describe Trigger do
   let(:trigger){ create(:trigger) }
 
   it do
-    binding.pry
+    expect{trigger}.to_not raise_error
   end
 end
