@@ -1,7 +1,6 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-
 class Trigger < ApplicationRecord
   extend Enumerize
 
@@ -34,18 +33,32 @@ class Trigger < ApplicationRecord
   # 2 - triggered by trade
   # 3 - reject order on submit
   # 4 - cancel order by user
-  STATES = { pending: 0, active: 100, done: 200, cancelled: -100 }.freeze
+  STATES = { pending: 0, active: 100, done: 200, cancelled: 255 }.freeze
 
-  # TODO: Add trigger types description.
-  TYPES = %w[stop trailing_stop oco].freeze
+  # TODO: Order types documentation.
+  TYPES = {
+    # Regular order types:
+    market:              10,
+    limit:               11,
+    stop_loss:           20,
+    stop_loss_limit:     21,
+    trailing_stop:       30,
+    trailing_stop_limit: 31,
+    oco:                 41,
+
+    # Margin order types:
+    margin_market:              110,
+    margin_limit:               111,
+    margin_stop_loss:           120,
+    margin_stop_loss_limit:     121,
+    margin_trailing_stop:       130,
+    margin_trailing_stop_limit: 131,
+    margin_oco:                 141
+  }.freeze
 
   enumerize :state, in: STATES, scope: true
 
-  # Disable STI so we can use type column.
-  self.inheritance_column = true
-
-  validates :price, numericality: { greater_than: 0 }
-  validates :type, inclusion: { in: TYPES }
+  enumerize :ord_type, in: TYPES, scope: true
 end
 
 # == Schema Information
@@ -55,15 +68,15 @@ end
 #
 #  id         :bigint(8)        not null, primary key
 #  order_id   :bigint(8)        not null
-#  price      :decimal(32, 16)  default(0.0), not null
-#  state      :integer          default("pending"), not null
-#  type       :string(10)       not null
+#  value      :binary(128)      not null
+#  state      :integer          default("pending"), unsigned, not null
+#  ord_type   :integer          unsigned, not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 # Indexes
 #
+#  index_triggers_on_ord_type  (ord_type)
 #  index_triggers_on_order_id  (order_id)
 #  index_triggers_on_state     (state)
-#  index_triggers_on_type      (type)
 #

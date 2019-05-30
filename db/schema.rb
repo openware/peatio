@@ -262,14 +262,14 @@ ActiveRecord::Schema.define(version: 2019_05_29_142209) do
 
   create_table "triggers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "order_id", null: false
-    t.decimal "price", precision: 32, scale: 16, default: "0.0", null: false
-    t.integer "state", default: 0, null: false
-    t.string "type", limit: 10, null: false
+    t.binary "value", limit: 128, null: false
+    t.integer "state", limit: 1, default: 0, null: false, unsigned: true
+    t.integer "ord_type", limit: 1, null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["ord_type"], name: "index_triggers_on_ord_type"
     t.index ["order_id"], name: "index_triggers_on_order_id"
     t.index ["state"], name: "index_triggers_on_state"
-    t.index ["type"], name: "index_triggers_on_type"
   end
 
   create_table "wallets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
