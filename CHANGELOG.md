@@ -1,5 +1,97 @@
 # Change Log
 
+## [2.2.6](https://github.com/rubykube/peatio/tree/2.2.6) (2019-05-30)
+[Full Changelog](https://github.com/rubykube/peatio/compare/2.2.5...2.2.6)
+
+## [2.2.5](https://github.com/rubykube/peatio/tree/2.2.5) (2019-05-30)
+[Full Changelog](https://github.com/rubykube/peatio/compare/2.2.4...2.2.5)
+
+**Closed issues:**
+
+- cant create ERC20 Deposit Address [\#2216](https://github.com/rubykube/peatio/issues/2216)
+
+**Merged pull requests:**
+
+- AMQP messages for third party trading engine integration [\#2215](https://github.com/rubykube/peatio/pull/2215) ([ysv](https://github.com/ysv))
+
+## [2.2.4](https://github.com/rubykube/peatio/tree/2.2.4) (2019-05-27)
+[Full Changelog](https://github.com/rubykube/peatio/compare/2.2.3...2.2.4)
+
+**Closed issues:**
+
+- Cant create deposit\_address [\#2211](https://github.com/rubykube/peatio/issues/2211)
+- ERC20 Gas limit & Gas price Withdrawal bug [\#2155](https://github.com/rubykube/peatio/issues/2155)
+
+**Merged pull requests:**
+
+- Peatio-litecoin gem integration with minor updates. Coin plugin development doc [\#2210](https://github.com/rubykube/peatio/pull/2210) ([ysv](https://github.com/ysv))
+- Plugable coins API [\#2168](https://github.com/rubykube/peatio/pull/2168) ([ysv](https://github.com/ysv))
+
+## [2.2.3](https://github.com/rubykube/peatio/tree/2.2.3) (2019-05-14)
+[Full Changelog](https://github.com/rubykube/peatio/compare/2.2.2...2.2.3)
+
+**Merged pull requests:**
+
+- Change order 'state' to int for order\_processor [\#2205](https://github.com/rubykube/peatio/pull/2205) ([mnaichuk](https://github.com/mnaichuk))
+- Add management API endpoint for listing trades [\#2182](https://github.com/rubykube/peatio/pull/2182) ([ymasiuk](https://github.com/ymasiuk))
+
+## [2.2.2](https://github.com/rubykube/peatio/tree/2.2.2) (2019-05-14)
+[Full Changelog](https://github.com/rubykube/peatio/compare/2.2.1...2.2.2)
+
+**Closed issues:**
+
+- application.yml not seen on 1.9 stable tree [\#2202](https://github.com/rubykube/peatio/issues/2202)
+- key not found: "TIMEZONE" \(KeyError\) [\#2197](https://github.com/rubykube/peatio/issues/2197)
+- Docker Setup for Production Environment [\#2154](https://github.com/rubykube/peatio/issues/2154)
+- must use barong? or can use an external KYC service? [\#2151](https://github.com/rubykube/peatio/issues/2151)
+- can't see sign in page [\#2139](https://github.com/rubykube/peatio/issues/2139)
+- My money appears in the "admin panel", but the money don't appear "funds panel" [\#2137](https://github.com/rubykube/peatio/issues/2137)
+- Error when accepting deposit, related to redirect\_to :back [\#2123](https://github.com/rubykube/peatio/issues/2123)
+- Peatio and Ethereum/client-go:stable  [\#2122](https://github.com/rubykube/peatio/issues/2122)
+- Sync geth but Ethereum does not appear on the local [\#2118](https://github.com/rubykube/peatio/issues/2118)
+- TypeError: wrong argument type Hash \(expected String\) [\#2107](https://github.com/rubykube/peatio/issues/2107)
+- insuficient funds for gas\*price + value [\#2064](https://github.com/rubykube/peatio/issues/2064)
+- Move to ruby 2.6 [\#2057](https://github.com/rubykube/peatio/issues/2057)
+- Remove funds UI and dependencies [\#2055](https://github.com/rubykube/peatio/issues/2055)
+- eth and erc20 token withdraw no working [\#2049](https://github.com/rubykube/peatio/issues/2049)
+- Link is absolute in application.yml [\#2038](https://github.com/rubykube/peatio/issues/2038)
+- Improve pagination in REST API [\#2029](https://github.com/rubykube/peatio/issues/2029)
+- Barong Auth provider integration [\#2028](https://github.com/rubykube/peatio/issues/2028)
+- on Funds tab getting error [\#2027](https://github.com/rubykube/peatio/issues/2027)
+- "Make Test" Error \(wallets.spec.js\) [\#2006](https://github.com/rubykube/peatio/issues/2006)
+- need help on POST api [\#2003](https://github.com/rubykube/peatio/issues/2003)
+-  We can add full order ballots.With fields of loss or gain can already be preechidos by the client. [\#1999](https://github.com/rubykube/peatio/issues/1999)
+- It's not a problem! How to install the whole stack in a simple way as a lib and generate some commands to function [\#1977](https://github.com/rubykube/peatio/issues/1977)
+
+**Merged pull requests:**
+
+- Fix Bitgo WalletService & WalletClient build\_raw\_transaction [\#2206](https://github.com/rubykube/peatio/pull/2206) ([ysv](https://github.com/ysv))
+- Blockchain & Wallet final refactoring [\#2203](https://github.com/rubykube/peatio/pull/2203) ([ysv](https://github.com/ysv))
+- Move core code to peatio gem [\#2201](https://github.com/rubykube/peatio/pull/2201) ([ysv](https://github.com/ysv))
+- Bugfixing and improvements for Blockchain/WaletService [\#2200](https://github.com/rubykube/peatio/pull/2200) ([mnaichuk](https://github.com/mnaichuk))
+- Remove Legacy source code & finalize TODOs [\#2199](https://github.com/rubykube/peatio/pull/2199) ([ysv](https://github.com/ysv))
+- Local daemons bugfixing and improvements  [\#2195](https://github.com/rubykube/peatio/pull/2195) ([ysv](https://github.com/ysv))
+- Add :step column to blockchain model, update Blockchain daemon [\#2194](https://github.com/rubykube/peatio/pull/2194) ([mnaichuk](https://github.com/mnaichuk))
+- Update ruby version to 2.6.2 [\#2191](https://github.com/rubykube/peatio/pull/2191) ([sd189](https://github.com/sd189))
+
+## [2.2.1](https://github.com/rubykube/peatio/tree/2.2.1) (2019-05-06)
+[Full Changelog](https://github.com/rubykube/peatio/compare/2.0.39...2.2.1)
+
+**Merged pull requests:**
+
+- Update blockchain daemon with BlockchainService v2 [\#2193](https://github.com/rubykube/peatio/pull/2193) ([mnaichuk](https://github.com/mnaichuk))
+- Update Bitcoin::WalletClient with subtract fees [\#2192](https://github.com/rubykube/peatio/pull/2192) ([mnaichuk](https://github.com/mnaichuk))
+- Make daemons compatible with WalletService v2 [\#2190](https://github.com/rubykube/peatio/pull/2190) ([ysv](https://github.com/ysv))
+- Add Ethereum::Wallet specs [\#2188](https://github.com/rubykube/peatio/pull/2188) ([mnaichuk](https://github.com/mnaichuk))
+- Move to Blockchain & Wallet API v2 [\#2187](https://github.com/rubykube/peatio/pull/2187) ([ysv](https://github.com/ysv))
+- Bitcoin::Blockchain load\_balance\_of\_address & Bitcoin::Wallet load\_balance [\#2186](https://github.com/rubykube/peatio/pull/2186) ([ysv](https://github.com/ysv))
+-  Add load\_balance & load\_balance\_of\_address [\#2185](https://github.com/rubykube/peatio/pull/2185) ([ysv](https://github.com/ysv))
+- Remove BlockchainAddress, use Hash instead;  Fix collection publish;  Finish WalletService2 specs [\#2184](https://github.com/rubykube/peatio/pull/2184) ([mnaichuk](https://github.com/mnaichuk))
+- Define Exception hierarchy for Blockchain & Wallet [\#2183](https://github.com/rubykube/peatio/pull/2183) ([ysv](https://github.com/ysv))
+- \[ci skip\] Prepare for 2.1.0 release [\#2177](https://github.com/rubykube/peatio/pull/2177) ([ysv](https://github.com/ysv))
+- Implement Ethereum::Blockchain & Ethereum::Client [\#2174](https://github.com/rubykube/peatio/pull/2174) ([mnaichuk](https://github.com/mnaichuk))
+- WalletService2 & Peatio::Wallet::Abstract design [\#2173](https://github.com/rubykube/peatio/pull/2173) ([ysv](https://github.com/ysv))
+
 ## [2.0.39](https://github.com/rubykube/peatio/tree/2.0.39) (2019-04-22)
 [Full Changelog](https://github.com/rubykube/peatio/compare/2.1.20...2.0.39)
 
