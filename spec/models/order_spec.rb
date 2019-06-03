@@ -265,13 +265,20 @@ describe Order, '#trigger_pusher_event' do
     let(:data) do
       {
         id:               subject.id,
-        at:               subject.created_at.to_i,
         market:           subject.market_id,
         kind:             subject.kind,
-        price:            subject.price.to_s('F'),
+        side:             subject.side,
+        ord_type:         subject.ord_type,
+        price:            subject.price&.to_s('F'),
+        avg_price:        subject.avg_price&.to_s('F'),
         state:            subject.state,
+        origin_volume:    subject.origin_volume.to_s('F'),
         remaining_volume: subject.volume.to_s('F'),
-        origin_volume:    subject.origin_volume.to_s('F')
+        executed_volume:  (subject.origin_volume - subject.volume).to_s('F'),
+        at:               subject.created_at.to_i,
+        created_at:       subject.created_at.to_i,
+        updated_at:       subject.updated_at.to_i,
+        trades_count:     subject.trades_count,
       }
     end
 
@@ -288,13 +295,20 @@ describe Order, '#trigger_pusher_event' do
     let(:data) do
       {
         id:               subject.id,
-        at:               subject.created_at.to_i,
         market:           subject.market_id,
         kind:             subject.kind,
-        price:            subject.avg_price.to_s('F'),
+        side:             subject.side,
+        ord_type:         subject.ord_type,
+        price:            subject.price&.to_s('F'),
+        avg_price:        subject.avg_price&.to_s('F'),
         state:            subject.state,
+        origin_volume:    subject.origin_volume.to_s('F'),
         remaining_volume: subject.volume.to_s('F'),
-        origin_volume:    subject.origin_volume.to_s('F')
+        executed_volume:  (subject.origin_volume - subject.volume).to_s('F'),
+        at:               subject.created_at.to_i,
+        created_at:       subject.created_at.to_i,
+        updated_at:       subject.updated_at.to_i,
+        trades_count:     subject.trades_count
       }
     end
 
