@@ -16,11 +16,7 @@ env:
     BULLET="true"
 
 services:
-  - mysql
-  - redis-server
-  - rabbitmq
   - docker
-  - docker-compose
 
 # Execute all of the commands which need to be executed before installing dependencies.
 before_install:
@@ -29,8 +25,11 @@ before_install:
 
 # Execute all of the commands which should install application dependencies.
 install:
-  - docker-compose -f config/backend.yml up -d vault
+  - sudo service mysql stop
+  - docker-compose -f config/backend.yml up -d db redis rabbitmq vault
   - bundle install --deployment --without production --jobs=$(nproc) --retry=3
+  # TODO: Sleep until MySQL start.
+  - sleep 15
 
 # Execute all of the commands which need to be executed before running actual tests.
 before_script:

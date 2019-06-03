@@ -6,6 +6,7 @@ services:
     image: mysql:5.7
     volumes:
       - db_data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:

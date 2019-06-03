@@ -112,4 +112,56 @@ describe Account do
       end
     end
   end
+
+  describe 'recalculate_accounts PROCEDURE' do
+    def recalculate_accounts
+      # Explicitly call MySQL recalculate_accounts procedure.
+      Account.connection.execute('CALL recalculate_accounts();')
+    end
+
+    it 'updates balance to zero if there is no liabilities' do
+      expect(subject.balance).to eq(10.to_d)
+      expect(subject.locked).to eq(10.to_d)
+
+      recalculate_accounts
+
+      expect(subject.reload.balance).to eq(0.to_d)
+      expect(subject.reload.locked).to eq(0.to_d)
+
+      subject.plus_funds(15)
+
+      expect(subject.balance).to eq(15.to_d)
+
+      recalculate_accounts
+
+      expect(subject.reload.balance).to eq(0.to_d)
+    end
+
+    it 'recalculates balance by liabilities' do
+      subject.update(balance: 0, locked: 0)
+
+      recalculate_accounts
+
+      expect(subject.reload.balance).to eq(0.to_d)
+      expect(subject.reload.locked).to eq(0.to_d)
+
+      create(:deposit, :deposit_btc, member: subject.member, amount: 20).accept!
+
+      recalculate_accounts
+
+      expect(subject.reload.balance).to eq(20.to_d)
+      expect(subject.reload.locked).to eq(0.to_d)
+
+      subject.plus_funds!(2)
+      subject.lock_funds!(5)
+
+      expect(subject.reload.balance).to eq(17.to_d)
+      expect(subject.reload.locked).to eq(5.to_d)
+
+      recalculate_accounts
+
+      expect(subject.reload.balance).to eq(20.to_d)
+      expect(subject.reload.locked).to eq(0.to_d)
+    end
+  end
 end
