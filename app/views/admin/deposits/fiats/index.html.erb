@@ -5,7 +5,7 @@
       <%= link_to raw("Latest deposits"), admin_deposit_index_path(state: 'latest'), class: 'btn btn-primary  mb-3' %>
     </div>
     <div class="col-6">
-      <% if can? :create, Deposits::Fiat %>
+      <% if can? :manage, Deposit %>
         <%= link_to raw("<i class='fa fa-plus mr-2'></i> New Deposit"), new_admin_deposit_path(currency: currency.code), class: "btn btn-primary float-right mb-3" %>
       <% end %>
     </div>
