@@ -130,7 +130,7 @@ module API
           documentation: {
             type: 'API::V2::Entities::Trade',
             is_array: true,
-            desc: "Trades wiht this order."
+            desc: "Trades with this order."
           },
           if: { type: :full }
         ) do |order, _options|

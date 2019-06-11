@@ -10,11 +10,15 @@ class Order < ApplicationRecord
 
   extend Enumerize
   STATES = { pending: 0, wait: 100, done: 200, cancel: -100, reject: -200 }.freeze
-  enumerize :state, in: STATES, scope: true
 
-  TYPES = %w[ market limit ]
+  PRIMITIVE_TYPES = %w[market limit]
+  ADVANCED_TYPES  = %w[stop_loss stop_loss_limit]
+  TYPES           = PRIMITIVE_TYPES + ADVANCED_TYPES
+
+  MARKET_TYPES = %w[market stop_loss]
+  LIMIT_TYPES  = %w[limit stop_loss_limit]
+
   enumerize :ord_type, in: TYPES, scope: true
-
   after_commit :trigger_pusher_event
   before_validation :fix_number_precision, on: :create
 
@@ -85,10 +89,31 @@ class Order < ApplicationRecord
     rescue => e
       report_exception_to_screen(e)
     end
+
+    def is_limit?(order_type)
+      LIMIT_TYPES.include?(order_type)
+    end
+
+    def is_market?(order_type)
+      MARKET_TYPES.include?(order_type)
+    end
+
+    def is_advanced?(order_type)
+      ADVANCED_TYPES.include?(order_type)
+    end
+
+    def is_primitive?(order_type)
+      PRIMITIVE_TYPES.include?(order_type)
+    end
   end
 
   def funds_used
     origin_locked - locked
+  end
+
+  def trigger_price
+    trigger = Trigger.find_by_order_id(id)
+    trigger.nil? ? nil : trigger.value
   end
 
   def config
@@ -185,30 +210,46 @@ class Order < ApplicationRecord
     end
   end
 
-  private
-
-  def is_limit_order?
-    ord_type == 'limit'
+  def is_limit?
+    LIMIT_TYPES.include?(ord_type)
   end
+
+  def is_market?
+    MARKET_TYPES.include?(ord_type)
+  end
+
+  def is_advanced?
+    ADVANCED_TYPES.include?(ord_type)
+  end
+
+  def is_primitive?
+    PRIMITIVE_TYPES.include?(ord_type)
+  end
+
+  private
 
   def market_order_validations
     errors.add(:price, 'must not be present') if price.present?
   end
 
   FUSE = '0.9'.to_d
-  def estimate_required_funds(price_levels)
+  def estimate_required_funds(price_levels, trigger_price)
     required_funds = Account::ZERO
     expected_volume = volume
 
-    until expected_volume.zero? || price_levels.empty?
-      level_price, level_volume = price_levels.shift
+    if is_advanced?
+      required_funds = trigger_price * expected_volume
+    else
+      until expected_volume.zero? || price_levels.empty?
+        level_price, level_volume = price_levels.shift
 
-      v = [expected_volume, level_volume].min
-      required_funds += yield level_price, v
-      expected_volume -= v
+        v = [expected_volume, level_volume].min
+        required_funds += yield level_price, v
+        expected_volume -= v
+      end
+
+      raise InsufficientMarketLiquidity if expected_volume.nonzero?
     end
-
-    raise InsufficientMarketLiquidity if expected_volume.nonzero?
 
     required_funds
   end

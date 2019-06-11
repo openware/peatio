@@ -16,10 +16,19 @@ module API
           origin_volume: attrs[:volume]
       end
 
+      def build_trigger(order, attr)
+        Trigger.new \
+          order_id:      order.id,
+          order_type:    ::Trigger::TYPES[order.ord_type],
+          value:         attr[:trigger_price],
+          state:         ::Trigger::PENDING
+      end
+
       def check_balance(order)
         current_user.accounts
                     .find_by_currency_id(order.currency)
                     .balance >= order.locked
+
       end
 
       def create_order(attrs)
@@ -38,15 +47,20 @@ module API
         error!({ errors: [message] }, 422)
       end
 
-      def create_order2(attrs)
+      def create_advanced_order(attrs)
         create_order_errors = {
-          ::Account::AccountError => 'market.account.insufficient_balance',
-          ::Order::InsufficientMarketLiquidity => 'market.order.insufficient_market_liquidity',
-          ActiveRecord::RecordInvalid => 'market.order.invalid_volume_or_price'
+            ::Account::AccountError => 'market.account.insufficient_balance',
+            ::Order::InsufficientMarketLiquidity => 'market.order.insufficient_market_liquidity',
+            ActiveRecord::RecordInvalid => 'market.order.invalid_volume_or_price'
         }
 
-        order = build_order(attrs)
-        submit_order(order)
+        ActiveRecord::Base.transaction do
+          order = build_order(attrs)
+          submit_order(order, attrs)
+          trigger = build_trigger(order, attrs)
+          submit_trigger(trigger)
+        end
+
         order
       rescue => e
         message = create_order_errors.fetch(e.class, 'market.order.create_error')
@@ -54,9 +68,9 @@ module API
         error!({ errors: [message] }, 422)
       end
 
-      def submit_order(order)
+      def submit_order(order, attrs = nil)
         order.fix_number_precision # number must be fixed before computing locked
-        order.locked = order.origin_locked = order.compute_locked
+        order.locked = order.origin_locked = order.compute_locked(attrs[:trigger_price])
         raise ::Account::AccountError unless check_balance(order)
 
         order.save!
@@ -69,6 +83,22 @@ module API
         AMQPQueue.enqueue(:events_processor,
                           subject: :submit_order,
                           payload: order.as_json_for_events_processor)
+      end
+
+      def submit_trigger(trigger)
+        trigger.save!
+
+        # Notify third party trading engine about order submit.
+        AMQPQueue.enqueue(:events_processor,
+                          subject: :submit_trigger,
+                          payload: trigger.as_json_for_events_processor)
+      end
+
+      def cancel_trigger(trigger)
+        # Notify third party trading engine about trigger stop.
+        AMQPQueue.enqueue(:events_processor,
+          subject: :stop_trigger,
+          payload: trigger.as_json_for_events_processor)
       end
 
       def cancel_order(order)

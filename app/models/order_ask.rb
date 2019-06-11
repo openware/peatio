@@ -8,7 +8,7 @@ class OrderAsk < Order
   validates :price,
             presence: true,
             numericality: { greater_than_or_equal_to: ->(order){ order.market.min_ask_price }},
-            if: :is_limit_order?
+            if: :is_limit?
 
   validates :origin_volume,
             presence: true,
@@ -41,15 +41,18 @@ class OrderAsk < Order
     Currency.find(ask)
   end
 
-  def compute_locked
-    case ord_type
-    when 'limit'
+  def compute_locked(trigger_price = nil)
+    if is_advanced? && trigger_price.blank?
+      raise ArgumentError, "The variable trigger_price is not set."
+    end
+
+    case
+    when is_limit?
       volume
-    when 'market'
-      estimate_required_funds(Global[market_id].bids) {|_p, v| v}
+    when is_market?
+      estimate_required_funds(Global[market_id].bids, trigger_price) {|_p, v| v}
     end
   end
-
 end
 
 # == Schema Information

@@ -5,7 +5,7 @@ class OrderBid < Order
   has_many :trades, foreign_key: :bid_id
   scope :matching_rule, -> { order(price: :desc, created_at: :asc) }
 
-  validates :price, presence: true, if: :is_limit_order?
+  validates :price, presence: true, if: :is_limit?
   validates :price,
             numericality: { less_than_or_equal_to: ->(order){ order.market.max_bid_price }},
             if: ->(order){ order.ord_type == 'limit' && order.market.max_bid_price.nonzero? }
@@ -42,12 +42,16 @@ class OrderBid < Order
   end
 
   LOCKING_BUFFER_FACTOR = '1.1'.to_d
-  def compute_locked
+  def compute_locked(trigger_price = nil)
+    if is_advanced? && trigger_price.blank?
+      raise ArgumentError, "The variable trigger_price is not set."
+    end
+
     case ord_type
-    when 'limit'
+    when is_limit?
       price*volume
-    when 'market'
-      funds = estimate_required_funds(Global[market_id].asks) {|p, v| p*v }
+    when is_market?
+      funds = estimate_required_funds(Global[market_id].asks, trigger_price) {|p, v| p*v }
       funds*LOCKING_BUFFER_FACTOR
     end
   end

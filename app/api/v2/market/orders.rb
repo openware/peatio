@@ -81,11 +81,15 @@ module API
           use :market, :order
         end
         post '/orders' do
-          if params[:ord_type] == 'market' && params.key?(:price)
-            error!({ errors: ['market.order.market_order_price'] }, 422)
+          if Order.is_advanced?(params[:ord_type])
+            order = create_advanced_order(params)
+            present order, with: API::V2::Entities::Order
+          else
+            order = create_order(params)
+            present order, with: API::V2::Entities::Order
           end
-          order = create_order2(params)
-          present order, with: API::V2::Entities::Order
+
+          # TODO: Should we return trigger price here ?
         end
 
         desc 'Cancel an order.'
@@ -93,16 +97,25 @@ module API
           use :order_id
         end
         post '/orders/:id/cancel' do
-          begin
-            order = current_user.orders.find(params[:id])
+          order = current_user.orders.find(params[:id])
+
+          if order.is_advanced?
+            trigger = Trigger.find_by(order: order)
+            if trigger.state == Trigger::DONE
+              cancel_order(order)
+            else
+              cancel_trigger(trigger)
+            end
+          else
             cancel_order(order)
-            present order, with: API::V2::Entities::Order
-          rescue ActiveRecord::RecordNotFound => e
-            # RecordNotFound in rescued by ExceptionsHandler.
-            raise(e)
-          rescue
-            error!({ errors: ['market.order.cancel_error'] }, 422)
           end
+
+          present order, with: API::V2::Entities::Order
+        rescue ActiveRecord::RecordNotFound => e
+          # RecordNotFound in rescued by ExceptionsHandler.
+          raise(e)
+        rescue
+          error!({ errors: ['market.order.cancel_error'] }, 422)
         end
 
         desc 'Cancel all my orders.',
