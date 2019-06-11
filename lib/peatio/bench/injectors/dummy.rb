@@ -15,18 +15,30 @@ module Bench
 
       private
 
-      def construct_order
+      def construct_order(i)
         market = @markets.sample
         type = config.fetch(:side) { %w[OrderBid OrderAsk].sample }
-        { type:     type,
-          state:    Order::PENDING,
-          member:   @members.sample,
-          market:   market,
-          ask:      market.base_unit,
-          bid:      market.quote_unit,
-          ord_type: :limit,
-          price:    config.fetch(:price) { rand(@min_price..@max_price) },
-          volume:   rand(@min_volume..@max_volume) }
+        if i % 4 == 0
+          { type:     type,
+            state:    Order::WAIT,
+            member:   @members.sample,
+            market:   market,
+            ask:      market.base_unit,
+            bid:      market.quote_unit,
+            ord_type: :market,
+            volume:   rand(@min_volume..@max_volume) }
+        else
+          { type:     type,
+            state:    Order::WAIT,
+            member:   @members.sample,
+            market:   market,
+            ask:      market.base_unit,
+            bid:      market.quote_unit,
+            ord_type: :limit,
+            price:    config.fetch(:price) { rand(@min_price..@max_price) },
+            volume:   rand(@min_volume..@max_volume) }
+        end
+
       end
 
       def default_config
