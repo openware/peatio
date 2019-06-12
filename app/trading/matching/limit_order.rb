@@ -19,7 +19,7 @@ module Matching
       raise InvalidOrderError.new(attrs) unless valid?
     end
 
-    def trade_with(counter_order, counter_book)
+    def trade_with(counter_order, _, _)
       if counter_order.is_a?(LimitOrder)
         if crossed?(counter_order.price)
           trade_price  = counter_order.price

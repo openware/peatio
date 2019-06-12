@@ -10,7 +10,7 @@ module Worker
       if run_cache_thread
         cache_thread = Thread.new do
           loop do
-            sleep 3
+            sleep 0.5
             cache_book
           end
         end

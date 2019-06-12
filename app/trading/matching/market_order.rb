@@ -19,15 +19,26 @@ module Matching
       raise ::Matching::InvalidOrderError.new(attrs) unless valid?(attrs)
     end
 
-    def trade_with(counter_order, counter_book)
+    def trade_with(counter_order, counter_book, market)
       if counter_order.is_a?(LimitOrder)
         trade_price  = counter_order.price
-        trade_volume = [volume, volume_limit(trade_price), counter_order.volume].min
-        trade_funds  = trade_price*trade_volume
+        trade_volume = [volume,
+                        counter_order.volume].min
+
+        if volume_limit(trade_price) < trade_volume
+          trade_volume = market.fix_number_precision :bid, volume_limit(trade_price)
+          trade_funds = market.fix_number_precision :ask, locked
+        else
+          trade_funds = market.fix_number_precision :ask, (trade_price * trade_volume)
+        end
+
         [trade_price, trade_volume, trade_funds]
       elsif price = counter_book.best_limit_price
         trade_price  = price
-        trade_volume = [volume, volume_limit(trade_price), counter_order.volume, counter_order.volume_limit(trade_price)].min
+        trade_volume = [volume,
+                        volume_limit(trade_price),
+                        counter_order.volume,
+                        counter_order.volume_limit(trade_price)].min
         trade_funds  = trade_price*trade_volume
         [trade_price, trade_volume, trade_funds]
       end

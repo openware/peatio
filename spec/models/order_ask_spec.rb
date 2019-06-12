@@ -27,7 +27,7 @@ describe OrderAsk do
     end
 
     it 'should require a little' do
-      bid = OrderBid.new(volume: '5'.to_d, ord_type: 'market').compute_locked
+      bid = OrderBid.new(volume: '5'.to_d, ord_type: 'market', market_id: 'btcusd').compute_locked
       expect(bid).to eq('1010'.to_d * OrderBid::LOCKING_BUFFER_FACTOR)
     end
 

@@ -27,11 +27,11 @@ describe OrderBid do
     end
 
     it 'should require a little' do
-      expect(OrderBid.new(volume: '5'.to_d, ord_type: 'market').compute_locked).to eq '500'.to_d * OrderBid::LOCKING_BUFFER_FACTOR
+      expect(OrderBid.new(volume: '5'.to_d, ord_type: 'market', market_id: 'btcusd').compute_locked).to eq '500'.to_d * OrderBid::LOCKING_BUFFER_FACTOR
     end
 
     it 'should require more' do
-      expect(OrderBid.new(volume: '25'.to_d, ord_type: 'market').compute_locked).to eq '2520'.to_d * OrderBid::LOCKING_BUFFER_FACTOR
+      expect(OrderBid.new(volume: '25'.to_d, ord_type: 'market', market_id: 'btcusd').compute_locked).to eq '2520'.to_d * OrderBid::LOCKING_BUFFER_FACTOR
     end
 
     it 'should raise error if the market is not deep enough' do

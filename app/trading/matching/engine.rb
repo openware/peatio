@@ -4,11 +4,11 @@
 module Matching
   class Engine
 
-    attr :orderbook, :mode, :queue
+    attr :orderbook, :mode, :queue, :market
     delegate :ask_orders, :bid_orders, to: :orderbook
 
     def initialize(market, options={})
-      @market    = market
+      @market = market
       @orderbook = OrderBookManager.new(market.id)
 
       # Engine is able to run in different mode:
@@ -27,7 +27,7 @@ module Matching
     end
 
     def cancel(order)
-      book, counter_book = orderbook.get_books(order.type)
+      book, = orderbook.get_books(order.type)
       book.remove(order)
       publish_cancel(order)
     rescue => e
@@ -76,8 +76,7 @@ module Matching
     def match_implementation(order, counter_book)
       return if order.filled?
       return unless (counter_order = counter_book.top)
-
-      if trade = order.trade_with(counter_order, counter_book)
+      if trade = order.trade_with(counter_order, counter_book, market)
         counter_book.fill_top(*trade)
         order.fill(*trade)
         publish(order, counter_order, trade)
