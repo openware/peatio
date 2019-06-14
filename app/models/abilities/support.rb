@@ -10,7 +10,6 @@ module Abilities
       can :read, Deposit
       can :read, Withdraw
       can :read, Account
-      can :read, PaymentAddress
     end
   end
 end
