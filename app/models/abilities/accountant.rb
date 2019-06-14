@@ -17,6 +17,8 @@ module Abilities
       can :read, Withdraw
       can :read, Account
       can :read, PaymentAddress
+
+      can :create, Deposits::Fiat
     end
   end
 end

@@ -8,6 +8,7 @@ module API
         before { authenticate! }
 
         mount Admin::Orders
+        mount Admin::Blockchains
       end
     end
   end
