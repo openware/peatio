@@ -2,17 +2,19 @@
 # frozen_string_literal: true
 
 describe API::V2::Admin::Orders, type: :request do
-  let(:member) { create(:member, :level_3, email: 'example@gmail.com', uid: 'ID73BF61C8H0') }
-  let(:token) { jwt_for(member) }
+  let(:admin) { create(:member, :admin, :level_3, email: 'example@gmail.com', uid: 'ID73BF61C8H0') }
+  let(:token) { jwt_for(admin) }
+  let(:level_3_member) { create(:member, :level_3) }
+  let(:level_3_member_token) { jwt_for(level_3_member) }
 
   describe 'GET /api/v2/admin/orders' do
     before do
       # NOTE: We specify updated_at attribute for testing order of Order.
-      create(:order_bid, :btcusd, price: '11'.to_d, origin_volume: '123.123456789', member: member, updated_at: Time.at(1548224524), created_at: Time.at(1548234524))
-      create(:order_bid, :btceth, price: '11'.to_d, origin_volume: '123.123456789', member: member, updated_at: Time.at(1548234524), created_at: Time.at(1548254524))
-      create(:order_bid, :btcusd, price: '12'.to_d, origin_volume: '123.123456789', member: member, state: Order::CANCEL, updated_at: Time.at(1548244524), created_at: Time.at(1548254524))
-      create(:order_ask, :btcusd, price: '13'.to_d, origin_volume: '123.123456789', member: member, state: Order::WAIT, updated_at: Time.at(1548254524), created_at: Time.at(1548254524))
-      create(:order_ask, :btcusd, price: '14'.to_d, origin_volume: '123.123456789', member: member, state: Order::DONE, created_at: Time.at(1548254524))
+      create(:order_bid, :btcusd, price: '11'.to_d, origin_volume: '123.123456789', member: admin, updated_at: Time.at(1548224524), created_at: Time.at(1548234524))
+      create(:order_bid, :btceth, price: '11'.to_d, origin_volume: '123.123456789', member: admin, updated_at: Time.at(1548234524), created_at: Time.at(1548254524))
+      create(:order_bid, :btcusd, price: '12'.to_d, origin_volume: '123.123456789', member: admin, state: Order::CANCEL, updated_at: Time.at(1548244524), created_at: Time.at(1548254524))
+      create(:order_ask, :btcusd, price: '13'.to_d, origin_volume: '123.123456789', member: admin, state: Order::WAIT, updated_at: Time.at(1548254524), created_at: Time.at(1548254524))
+      create(:order_ask, :btcusd, price: '14'.to_d, origin_volume: '123.123456789', member: admin, state: Order::DONE, created_at: Time.at(1548254524))
     end
 
     it 'requires authentication' do
@@ -23,37 +25,37 @@ describe API::V2::Admin::Orders, type: :request do
     it 'validates market param' do
       api_get '/api/v2/admin/orders', params: { market: 'usdusd' }, token: token
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('market.market.doesnt_exist')
+      expect(response).to include_api_error('admin.market.doesnt_exist')
     end
 
     it 'validates limit param' do
       api_get '/api/v2/admin/orders', params: { market: 'btcusd', limit: -1 }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.invalid_limit')
+      expect(response).to include_api_error('admin.order.invalid_limit')
     end
 
     it 'validates price param' do
       api_get '/api/v2/admin/orders', params: { market: 'btcusd', price: -1 }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.non_positive_price')
+      expect(response).to include_api_error('admin.order.non_positive_price')
     end
 
     it 'validates origin_volume param' do
       api_get '/api/v2/admin/orders', params: { market: 'btcusd', origin_volume: -1 }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.non_positive_origin_volume')
+      expect(response).to include_api_error('admin.order.non_positive_origin_volume')
     end
 
     it 'validates page param' do
       api_get '/api/v2/admin/orders', params: { market: 'btcusd', limit: 2, page: "page 2" }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.non_integer_page')
+      expect(response).to include_api_error('admin.order.non_integer_page')
     end
 
     it 'validates ord_type param' do
       api_get '/api/v2/admin/orders', params: { ord_type: 'test' }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('market.order.invalid_ord_type')
+      expect(response).to include_api_error('admin.order.invalid_ord_type')
     end
 
     it 'returns orders with state done' do
@@ -151,6 +153,12 @@ describe API::V2::Admin::Orders, type: :request do
 
       expect(response).to be_successful
       expect(result.size).to eq 2
+    end
+
+    it 'return error in case of not permitted ability' do
+      api_get'/api/v2/admin/orders', token: level_3_member_token
+      expect(response.code).to eq '403'
+      expect(response).to include_api_error('admin.ability.not_permitted')
     end
   end
 end

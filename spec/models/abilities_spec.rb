@@ -88,23 +88,12 @@ describe Abilities do
     it { is_expected.to be_able_to(:read, Account.new) }
     it { is_expected.to be_able_to(:read, Deposit.new) }
     it { is_expected.to be_able_to(:read, Withdraw.new) }
-    it { is_expected.to be_able_to(:read, PaymentAddress.new) }
-    it { is_expected.to be_able_to(:read, Operations::Account.new) }
-    it { is_expected.to be_able_to(:read, Operations::Asset.new) }
-    it { is_expected.to be_able_to(:read, Operations::Expense.new) }
-    it { is_expected.to be_able_to(:read, Operations::Liability.new) }
-    it { is_expected.to be_able_to(:read, Operations::Revenue.new) }
     it { is_expected.to be_able_to(:read, Member.new) }
     it { is_expected.not_to be_able_to(:write, Member.new) }
     it { is_expected.not_to be_able_to(:write, Account.new) }
     it { is_expected.not_to be_able_to(:write, Deposit.new) }
     it { is_expected.not_to be_able_to(:write, Withdraw.new) }
     it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Account.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Asset.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Expense.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Liability.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Revenue.new) }
   end
 
   context 'abilities for technical' do
@@ -115,6 +104,16 @@ describe Abilities do
     it { is_expected.to be_able_to(:manage, Currency.new) }
     it { is_expected.to be_able_to(:manage, Blockchain.new) }
     it { is_expected.to be_able_to(:manage, Wallet.new) }
+    it { is_expected.to be_able_to(:read, Member.new) }
+    it { is_expected.to be_able_to(:read, Deposit.new) }
+    it { is_expected.to be_able_to(:read, Withdraw.new) }
+    it { is_expected.to be_able_to(:read, Account.new) }
+    it { is_expected.to be_able_to(:read, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:write, Member.new) }
+    it { is_expected.not_to be_able_to(:write, Deposit.new) }
+    it { is_expected.not_to be_able_to(:write, Withdraw.new) }
+    it { is_expected.not_to be_able_to(:write, Account.new) }
+    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
   end
 
   context 'abilities for accountant' do
