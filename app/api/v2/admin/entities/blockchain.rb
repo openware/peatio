@@ -10,7 +10,7 @@ module API
             :id,
             documentation:{
               type: Integer,
-              desc: "Unique blockchain id."
+              desc: 'Unique blockchain id'
             }
           )
 
@@ -18,7 +18,7 @@ module API
             :key,
             documentation:{
               type: String,
-              desc: "Unique blockchain key."
+              desc: 'Unique blockchain key'
             }
           )
 
@@ -26,7 +26,7 @@ module API
             :name,
             documentation:{
               type: String,
-              desc: "Unique blockchain name."
+              desc: 'Unique blockchain name'
             }
           )
 
@@ -34,7 +34,7 @@ module API
             :client,
             documentation:{
               type: String,
-              desc: "Unique blockchain client."
+              desc: 'Unique blockchain client'
             }
           )
 
@@ -42,7 +42,7 @@ module API
             :server,
             documentation:{
               type: String,
-              desc: "Blockchain server url."
+              desc: 'Blockchain server url'
             }
           )
 
@@ -50,7 +50,7 @@ module API
             :height,
             documentation:{
               type: Integer,
-              desc: "The number of blocks preceding a particular block on blockchain."
+              desc: 'The number of blocks preceding a particular block on blockchain'
             }
           )
 
@@ -58,7 +58,7 @@ module API
             :step,
             documentation:{
               type: Integer,
-              desc: "Blockchain step."
+              desc: 'Blockchain step'
             }
           )
 
@@ -66,7 +66,7 @@ module API
             :explorer_address,
             documentation:{
               type: String,
-              desc: "Blockchain explorer address."
+              desc: 'Blockchain explorer address'
             }
           )
 
@@ -74,7 +74,7 @@ module API
             :explorer_transaction,
             documentation:{
               type: String,
-              desc: "Blockchain explorer_transaction."
+              desc: 'Blockchain explorer transaction'
             }
           )
 
@@ -82,7 +82,7 @@ module API
             :min_confirmations,
             documentation:{
               type: Integer,
-              desc: "Blockchain min_confirmations."
+              desc: 'Blockchain min confirmations'
             }
           )
 
@@ -90,7 +90,7 @@ module API
             :status,
             documentation:{
               type: String,
-              desc: "Blockchain status (active/disabled)."
+              desc: 'Blockchain status (active/disabled)'
             }
           )
 
@@ -99,7 +99,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: "Blockchain created time in iso8601 format."
+              desc: 'Blockchain created time in iso8601 format'
             }
           )
 
@@ -108,7 +108,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: "Blockchain updated time in iso8601 format."
+              desc: 'Blockchain updated time in iso8601 format'
             }
           )
         end

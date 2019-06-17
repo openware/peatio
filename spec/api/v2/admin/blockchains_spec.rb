@@ -42,6 +42,14 @@ describe API::V2::Admin::Blockchains, type: :request do
       expect(result.size).to eq 3
     end
 
+    it 'returns blockchains by ascending order' do
+      api_get '/api/v2/admin/blockchains', params: { order_by: 'asc', sort_field: 'client'}, token: token
+      result = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(result.first['client']).to eq 'bitcoin'
+    end
+
     it 'returns paginated blockchains' do
       api_get '/api/v2/admin/blockchains', params: { limit: 2, page: 1 }, token: token
       result = JSON.parse(response.body)
@@ -81,19 +89,19 @@ describe API::V2::Admin::Blockchains, type: :request do
     it 'validate step param' do
       api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: -2 }
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.step.non_positive_step')
+      expect(response).to include_api_error('admin.blockchain.invalid_step')
     end
 
     it 'validate min_confirmations param' do
       api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: -6, step: 2 }
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.min_confirmations.non_positive_min_confirmations')
+      expect(response).to include_api_error('admin.blockchain.invalid_min_confirmations')
     end
 
     it 'validate status param' do
       api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'actived', min_confirmations: 6, step: 2 }
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.status.invalid_status')
+      expect(response).to include_api_error('admin.blockchain.invalid_status')
     end
 
     it 'checked required params' do
@@ -114,6 +122,28 @@ describe API::V2::Admin::Blockchains, type: :request do
 
     it 'return error in case of not permitted ability' do
       api_post '/api/v2/admin/blockchains/new', token: level_3_member_token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      expect(response.code).to eq '403'
+      expect(response).to include_api_error('admin.ability.not_permitted')
+    end
+  end
+
+  describe 'POST /api/v2/admin/blockchains/update' do
+    it 'returns updated blockchain' do
+      api_post '/api/v2/admin/blockchains/update', params: { key: 'test-blockchain', id: Blockchain.first.id }, token: token
+      result = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(result['key']).to eq 'test-blockchain'
+    end
+
+    it 'checked required params' do
+      api_post '/api/v2/admin/blockchains/update', token: level_3_member_token, params: { key: 'test-blockchain'}
+      expect(response).to have_http_status 422
+      expect(response).to include_api_error('admin.blockchain.missing_id')
+    end
+
+    it 'return error in case of not permitted ability' do
+      api_post '/api/v2/admin/blockchains/update', token: level_3_member_token, params: { key: 'test-blockchain', id: Blockchain.first.id }
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
     end
