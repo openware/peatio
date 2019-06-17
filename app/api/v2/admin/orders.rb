@@ -5,14 +5,31 @@ module API
   module V2
     module Admin
       class Orders < Grape::API
-        helpers ::API::V2::Admin::NamedParams
+        helpers ::API::V2::Admin::OrderParams
 
         desc 'Get all orders, results is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Order
         params do
-          use :orders_param
-          use :paginate_param
+          optional :limit,
+                   type: { value: Integer, message: 'admin.order.non_integer_limit' },
+                   values: { value: 1..1000, message: 'admin.order.invalid_limit' },
+                   default: 100,
+                   desc: 'Limit the number of returned orders. Default to 100.'
+          optional :page,
+                   type: { value: Integer, message: 'admin.order.non_integer_page' },
+                   allow_blank: false,
+                   default: 1,
+                   desc: 'Specify the page of paginated results.'
+          optional :order_by,
+                   type: String,
+                   values: { value: %w(asc desc), message: 'admin.order.invalid_order_by' },
+                   default: 'desc',
+                   desc: "If set, returned orders will be sorted in specific order, default to 'desc'."
+          optional :sort_field,
+                   type: String,
+                   desc: 'Name of the field which will be ordered by'
+          use :order_params
         end
         get '/orders' do
           authorize! :read, Order
@@ -32,8 +49,9 @@ module API
             updated_at_lt: params[:updated_at_to].present? ? Time.at(params[:updated_at_to]) : nil
           }
 
-          order_collection = Order.ransack(ransack_params).result
-          present paginate(order_collection), with: API::V2::Admin::Entities::Order
+          search = Order.ransack(ransack_params)
+          search.sorts = "#{params[:sort_field]} #{params[:order_by]}" if params[:sort_field].present?
+          present paginate(search.result), with: API::V2::Admin::Entities::Order
         end
       end
     end
