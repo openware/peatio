@@ -10,7 +10,7 @@ module API
             :id,
             documentation:{
               type: Integer,
-              desc: "Unique order id."
+              desc: 'Unique order id'
             }
           )
 
@@ -18,7 +18,7 @@ module API
             :side,
             documentation: {
               type: String,
-              desc: "Either 'sell' or 'buy'."
+              desc: "Either 'sell' or 'buy'"
             }
           )
 
@@ -26,7 +26,7 @@ module API
             :ord_type,
             documentation: {
               type: String,
-              desc: "Type of order, either 'limit' or 'market'."
+              desc: "Type of order, either 'limit' or 'market'"
             }
           )
 
@@ -43,7 +43,7 @@ module API
             :avg_price,
             documentation: {
               type: BigDecimal,
-              desc: "Average execution price, average of price in trades."
+              desc: 'Average execution price, average of price in trades'
             }
           )
 
@@ -51,10 +51,10 @@ module API
             :state,
             documentation: {
               type: String,
-              desc: "One of 'wait', 'done', 'pending' or 'cancel'."\
+              desc: "One of 'wait', 'done', 'pending', 'reject' or 'cancel'."\
                     "An order in 'wait' is an active order, waiting fulfillment;"\
                     "a 'done' order is an order fulfilled;"\
-                    "'cancel' means the order has been canceled."
+                    "'cancel' means the order has been canceled"
             }
           )
 
@@ -64,7 +64,7 @@ module API
             documentation: {
               type: String,
               desc: "The market in which the order is placed, e.g. 'btcusd'."\
-                    "All available markets can be found at /api/v2/markets."
+                    "All available markets can be found at /api/v2/admin/markets"
             }
           )
 
@@ -74,7 +74,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: "Order create time in iso8601 format."
+              desc: 'Order create time in iso8601 format'
             }
           )
 
@@ -83,7 +83,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: "Order updated time in iso8601 format."
+              desc: 'Order updated time in iso8601 format'
             }
           )
 
@@ -95,7 +95,7 @@ module API
                     "An order could be partially executed,"\
                     "e.g. an order sell 5 btc can be matched with a buy 3 btc order,"\
                     "left 2 btc to be sold; in this case the order's volume would be '5.0',"\
-                    "its remaining_volume would be '2.0', its executed volume is '3.0'."
+                    "its remaining_volume would be '2.0', its executed volume is '3.0'"
             }
           )
 
@@ -104,7 +104,7 @@ module API
             as: :remaining_volume,
             documentation: {
               type: BigDecimal,
-              desc: "The remaining volume, see 'volume'."
+              desc: "The remaining volume, see 'volume'"
             }
           )
 
@@ -112,7 +112,7 @@ module API
             :executed_volume,
             documentation: {
               type: BigDecimal,
-              desc: "The executed volume, see 'volume'."
+              desc: "The executed volume, see 'volume'"
             }
           ) do |order, _options|
               order.origin_volume - order.volume
@@ -122,7 +122,7 @@ module API
             :trades_count,
             documentation: {
               type: Integer,
-              desc: "Count of trades."
+              desc: 'Count of trades'
             }
           )
 
@@ -131,7 +131,7 @@ module API
             documentation: {
               type: 'API::V2::Entities::Trade',
               is_array: true,
-              desc: "Trades with this order."
+              desc: 'Trades with this order'
             },
             if: { type: :full }
           ) do |order, _options|
@@ -142,7 +142,7 @@ module API
             :email,
             documentation: {
               type: String,
-              desc: 'The shared user email.'
+              desc: 'The shared user email'
             }
           ) { |w| w.member.email }
 
@@ -150,7 +150,7 @@ module API
             :uid,
             documentation: {
               type: String,
-              desc: 'The shared user ID.'
+              desc: 'The shared user ID'
             }
           ) { |w| w.member.uid }
 
