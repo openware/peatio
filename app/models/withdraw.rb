@@ -10,7 +10,6 @@ class Withdraw < ApplicationRecord
                processing
                succeed
                canceled
-               failing
                failed
                confirming].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
@@ -47,7 +46,6 @@ class Withdraw < ApplicationRecord
     state :rejected
     state :processing
     state :succeed
-    state :failing
     state :failed
     state :confirming
 
@@ -82,8 +80,11 @@ class Withdraw < ApplicationRecord
     end
 
     event :process do
-      transitions from: %i[accepted skipped], to: :processing
-      after :send_coins!
+      transitions from: %i[processing accepted skipped], to: :processing, if: :processable?
+      after do
+        update!(attempts: self.attempts + 1)
+        send_coins!
+      end
     end
 
     event :load do
@@ -116,16 +117,8 @@ class Withdraw < ApplicationRecord
       transitions from: :processing, to: :skipped
     end
 
-    event :retry do
-      transitions from: %i[processing confirming failing], to: :failing, if: :retryable?
-      after do
-        update!(attempts: self.attempts + 1)
-        send_coins!
-      end
-    end
-
     event :fail do
-      transitions from: %i[processing confirming failing], to: :failed
+      transitions from: %i[processing confirming], to: :failed
       after do
         unlock_funds
         record_cancel_operations!
@@ -137,12 +130,12 @@ class Withdraw < ApplicationRecord
     sums_24h = Withdraw.where(currency_id: currency_id,
       member_id: member_id,
       created_at: [1.day.ago..Time.now],
-      aasm_state: [:processing, :confirming, :failing, :succeed])
+      aasm_state: [:processing, :confirming, :succeed])
       .sum(:sum) + sum
     sums_72h = Withdraw.where(currency_id: currency_id,
       member_id: member_id,
       created_at: [3.day.ago..Time.now],
-      aasm_state: [:processing, :confirming, :failing, :succeed])
+      aasm_state: [:processing, :confirming, :succeed])
       .sum(:sum) + sum
 
     sums_24h <= currency.withdraw_limit_24h && sums_72h <= currency.withdraw_limit_72h
@@ -181,7 +174,7 @@ class Withdraw < ApplicationRecord
       blockchain_txid: txid }
   end
 
-  def retryable?
+  def processable?
     attempts < MAX_ATTEMPTS
   end
 private

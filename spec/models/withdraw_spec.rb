@@ -440,18 +440,18 @@ describe Withdraw do
         subject.process!
       end
 
-      it 'transitions to :failing after calling #retry from :processing' do
+      it 'transitions to :processing after calling #process from :processing' do
         subject.expects(:send_coins!)
 
-        expect { subject.retry! }.to_not change { subject.account.amount }
+        expect { subject.process! }.to_not change { subject.account.amount }
         expect(subject.failing?).to be true
       end
 
-      it 'transitions to :failing after calling #retry from :confirming' do
+      it 'transitions to :processing after calling #process from :confirming' do
         subject.dispatch!
         subject.expects(:send_coins!)
 
-        expect { subject.retry! }.to_not change { subject.account.amount }
+        expect { subject.process! }.to_not change { subject.account.amount }
         expect(subject.failing?).to be true
       end
     end
@@ -461,11 +461,11 @@ describe Withdraw do
         subject.submit!
         subject.accept!
         subject.process!
-        Withdraw::MAX_ATTEMPTS.times { subject.retry! }
+        Withdraw::MAX_ATTEMPTS.times { subject.process! }
       end
 
       it 'transitions to :failed after calling #fail from :failing' do
-        expect(subject.may_retry?).to be false
+        expect(subject.may_process?).to be false
         expect { subject.fail! }.to_not change { subject.account.amount }
         expect(subject.failed?).to be true
       end
