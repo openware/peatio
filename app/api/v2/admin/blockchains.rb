@@ -43,7 +43,7 @@ module API
         end
         params do
           requires :id,
-                   type: Integer,
+                   type: { value: Integer, message: 'admin.blockchain.non_integer_id' },
                    desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:id][:desc] }
         end
         get '/blockchains/:id' do
@@ -52,7 +52,7 @@ module API
           present Blockchain.find(params[:id]), with: API::V2::Admin::Entities::Blockchain
         end
 
-        desc 'Creates new blockchain.' do
+        desc 'Create new blockchain.' do
           success API::V2::Admin::Entities::Blockchain
         end
         params do
@@ -65,7 +65,7 @@ module API
           blockchain = Blockchain.new(data)
           if blockchain.save
             present blockchain, with: API::V2::Admin::Entities::Blockchain
-            status 200
+            status 201
           else
             body errors: blockchain.errors.full_messages
             status 422

@@ -10,6 +10,7 @@ module API
         mount Admin::Orders
         mount Admin::Blockchains
         mount Admin::Currencies
+        mount Admin::Markets
       end
     end
   end
