@@ -13,7 +13,7 @@ module API
         params do
           optional :type,
                    type: String,
-                   values: { value: %w[fiat coin], message: 'admin.currency.invalid_type' },
+                   values: { value: ::Currency.types.map(&:to_s), message: 'admin.currency.invalid_type' },
                    desc: -> { API::V2::Admin::Entities::Currency.documentation[:type][:desc] }
           optional :limit,
                    type: { value: Integer, message: 'admin.currency.non_integer_limit' },
@@ -71,7 +71,7 @@ module API
           currency = Currency.new(data)
           if currency.save
             present currency, with: API::V2::Admin::Entities::Currency
-            status 200
+            status 201
           else
             body errors: currency.errors.full_messages
             status 422

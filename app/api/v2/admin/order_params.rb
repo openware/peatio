@@ -33,10 +33,10 @@ module API
                    values: { value: %w(buy sell), message: 'admin.order.invalid_type' },
                    desc: 'Filter order by type.'
           optional :email,
-                   type: { value: String, message: 'admin.order.non_string_email'},
+                   type: String,
                    desc: -> { V2::Entities::Member.documentation[:email][:desc] }
           optional :uid,
-                   type: { value: String, message: 'admin.order.non_string_uid'},
+                   type: String,
                    desc: -> { V2::Entities::Member.documentation[:uid][:desc] }
           optional :updated_at_from,
                    type: { value: Integer, message: 'admin.order.non_integer_updated_at_from' },

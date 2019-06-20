@@ -9,17 +9,17 @@ module API
 
         params :create_currency_params do
           requires :id,
-                   type: { value: String, message: 'admin.currency.non_string_id' },
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:id][:desc] }
           requires :symbol,
-                   type: { value: String, message: 'admin.currency.non_string_symbol'},
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:symbol][:desc] }
           optional :name,
-                   type: { value: String, message: 'admin.currency.non_string_name'},
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:name][:desc] }
           optional :type,
                    type: String,
-                   values: { value: %w(coin fiat), message: 'admin.currency.invalid_type' },
+                   values: { value: ::Currency.types.map(&:to_s), message: 'admin.currency.invalid_type' },
                    default: 'coin',
                    desc: -> { V2::Admin::Entities::Currency.documentation[:type][:desc] }
           given type: ->(val) { val == 'coin' } do
@@ -30,37 +30,37 @@ module API
           end
           optional :deposit_fee,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_deposit_fee' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_deposit_fee' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_deposit_fee' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:deposit_fee][:desc] }
           optional :min_deposit_amount,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_deposit_fee' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_deposit_fee' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_deposit_fee' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:deposit_fee][:desc] }
           optional :min_collection_amount,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_min_collection_amount' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_min_collection_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_min_collection_amount' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:min_collection_amount][:desc] }
           optional :withdraw_fee,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_withdraw_fee' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_withdraw_fee' },
+                   values: { value: -> (p){ p >= 0  }, message: 'admin.currency.ivalid_withdraw_fee' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:withdraw_fee][:desc] }
           optional :min_withdraw_amount,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_min_withdraw_amount' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_min_withdraw_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_min_withdraw_amount' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:min_withdraw_amount][:desc] }
           optional :withdraw_limit_24h,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_withdraw_limit_24h' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_withdraw_limit_24h' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_withdraw_limit_24h' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:withdraw_limit_24h][:desc] }
           optional :withdraw_limit_72h,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_withdraw_limit_72h' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_withdraw_limit_72h' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_withdraw_limit_72h' },
                    default: 0.0,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:withdraw_limit_72h][:desc] }
           optional :position,
@@ -84,7 +84,7 @@ module API
                    default: 8,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:precision][:desc] }
           optional :icon_url,
-                   type: { value: String, message: 'admin.currency.non_string_icon_url'},
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:icon_url][:desc] }
         end
 
@@ -94,10 +94,10 @@ module API
                    values: { value: -> { ::Currency.ids }, message: 'admin.currency.doesnt_exist' },
                    desc: -> { V2::Entities::Currency.documentation[:id][:desc] }
           optional :symbol,
-                   type: { value: String, message: 'admin.currency.non_string_symbol'},
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:symbol][:desc] }
           optional :name,
-                   type: { value: String, message: 'admin.currency.non_string_name'},
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:name][:desc] }
           optional :blockchain_key,
                    type: String,
@@ -105,31 +105,31 @@ module API
                    desc: -> { V2::Admin::Entities::Currency.documentation[:blockchain_key][:desc] }
           optional :deposit_fee,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_deposit_fee' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_deposit_fee' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_deposit_fee' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:deposit_fee][:desc] }
           optional :min_deposit_amount,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_deposit_fee' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_deposit_fee' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_deposit_fee' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:deposit_fee][:desc] }
           optional :min_collection_amount,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_min_collection_amount' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_min_collection_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_min_collection_amount' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:min_collection_amount][:desc] }
           optional :withdraw_fee,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_withdraw_fee' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_withdraw_fee' },
+                   values: { value: -> (p){ p >= 0  }, message: 'admin.currency.invalid_withdraw_fee' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:withdraw_fee][:desc] }
           optional :min_withdraw_amount,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_min_withdraw_amount' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_min_withdraw_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_min_withdraw_amount' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:min_withdraw_amount][:desc] }
           optional :withdraw_limit_24h,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_withdraw_limit_24h' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_withdraw_limit_24h' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_withdraw_limit_24h' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:withdraw_limit_24h][:desc] }
           optional :withdraw_limit_72h,
                    type: { value: BigDecimal, message: 'admin.currency.non_decimal_withdraw_limit_72h' },
-                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.currency.non_positive_withdraw_limit_72h' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_withdraw_limit_72h' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:withdraw_limit_72h][:desc] }
           optional :position,
                    type: { value: Integer, message: 'admin.currency.non_integer_position' },
@@ -147,7 +147,7 @@ module API
                    type: { value: Integer, message: 'admin.currency.non_integer_base_precision' },
                    desc: -> { V2::Admin::Entities::Currency.documentation[:precision][:desc] }
           optional :icon_url,
-                   type: { value: String, message: 'admin.currency.non_string_icon_url'},
+                   type: String,
                    desc: -> { V2::Admin::Entities::Currency.documentation[:icon_url][:desc] }
         end
       end
