@@ -89,13 +89,13 @@ describe API::V2::Admin::Blockchains, type: :request do
     it 'validate step param' do
       api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: -2 }
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.blockchain.invalid_step')
+      expect(response).to include_api_error('admin.blockchain.non_positive_step')
     end
 
     it 'validate min_confirmations param' do
       api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: -6, step: 2 }
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.blockchain.invalid_min_confirmations')
+      expect(response).to include_api_error('admin.blockchain.non_positive_min_confirmations')
     end
 
     it 'validate status param' do
