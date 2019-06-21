@@ -183,11 +183,30 @@ describe Withdraw do
         expect(subject.processing?).to be true
       end
 
+      it 'transitions to :failed after calling #fail! when withdrawing fiat currency' do
+        subject.stubs(:coin?).returns(false)
+
+        subject.process!
+
+        expect { subject.fail! }.to_not change { subject.account.amount }
+
+        expect(subject.failed?).to be true
+      end
+
       it 'transitions to :processing after calling #process!' do
         subject.expects(:send_coins!)
 
         subject.process!
 
+        expect(subject.processing?).to be true
+      end
+
+      it 'retry withdraw after calling #process from :processing' do
+        subject.process!
+        subject.expects(:send_coins!)
+
+        expect { subject.process! }.to_not change { subject.account.amount }
+        expect(subject.attempts).to eq 2
         expect(subject.processing?).to be true
       end
 
@@ -430,29 +449,6 @@ describe Withdraw do
         subject.update(txid: txid)
         subject.load!
         expect(subject.confirming?).to be true
-      end
-    end
-
-    context :failing do
-      before do
-        subject.submit!
-        subject.accept!
-        subject.process!
-      end
-
-      it 'transitions to :processing after calling #process from :processing' do
-        subject.expects(:send_coins!)
-
-        expect { subject.process! }.to_not change { subject.account.amount }
-        expect(subject.failing?).to be true
-      end
-
-      it 'transitions to :processing after calling #process from :confirming' do
-        subject.dispatch!
-        subject.expects(:send_coins!)
-
-        expect { subject.process! }.to_not change { subject.account.amount }
-        expect(subject.failing?).to be true
       end
     end
 
