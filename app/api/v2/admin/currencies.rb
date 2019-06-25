@@ -32,7 +32,7 @@ module API
                    desc: "If set, returned currencies will be sorted in specific order, default to 'desc'."
           optional :sort_field,
                    type: String,
-                   desc: 'Name of the field which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by'
         end
         get '/currencies' do
           authorize! :read, Currency
@@ -58,7 +58,7 @@ module API
           present Currency.find(params[:id]), with: API::V2::Admin::Entities::Currency
         end
 
-        desc 'Creates new currency.' do
+        desc 'Create new currency.' do
           success API::V2::Admin::Entities::Currency
         end
         params do

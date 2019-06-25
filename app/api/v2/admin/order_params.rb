@@ -14,11 +14,11 @@ module API
                    desc: -> { V2::Entities::Market.documentation[:id][:desc] }
           optional :state,
                    type: String,
-                   values: { value: -> { Order.state.values }, message: 'admin.order.invalid_state' },
+                   values: { value: -> { ::Order.state.values }, message: 'admin.order.invalid_state' },
                    desc: 'Filter order by state.'
           optional :ord_type,
                    type: String,
-                   values: { value: Order::TYPES, message: 'admin.order.invalid_ord_type' },
+                   values: { value: ::Order::TYPES, message: 'admin.order.invalid_ord_type' },
                    desc: 'Filter order by ord_type.'
           optional :price,
                    type: { value: BigDecimal, message: 'admin.order.non_decimal_price' },

@@ -10,8 +10,7 @@ module API
             :id,
             documentation: {
               desc: 'Currency code.',
-              type: String,
-              values: -> { ::Currency.enabled.codes }
+              type: String
             }
           )
 
@@ -63,7 +62,6 @@ module API
             :type,
             documentation: {
               type: String,
-              values: -> { ::Currency.types },
               desc: 'Currency type'
             }
           )
