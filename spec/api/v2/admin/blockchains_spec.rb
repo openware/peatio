@@ -79,7 +79,7 @@ describe API::V2::Admin::Blockchains, type: :request do
 
   describe 'POST /api/v2/admin/blockchains/new' do
     it 'creates new blockchain' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
@@ -90,6 +90,12 @@ describe API::V2::Admin::Blockchains, type: :request do
       api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: -2 }
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.blockchain.non_positive_step')
+    end
+
+    it 'validate height param' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: -123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      expect(response).to have_http_status 422
+      expect(response).to include_api_error('admin.blockchain.non_positive_height')
     end
 
     it 'validate min_confirmations param' do
@@ -115,9 +121,6 @@ describe API::V2::Admin::Blockchains, type: :request do
       expect(response).to include_api_error('admin.blockchain.missing_height')
       expect(response).to include_api_error('admin.blockchain.missing_explorer_transaction')
       expect(response).to include_api_error('admin.blockchain.missing_explorer_address')
-      expect(response).to include_api_error('admin.blockchain.missing_status')
-      expect(response).to include_api_error('admin.blockchain.missing_min_confirmations')
-      expect(response).to include_api_error('admin.blockchain.missing_step')
     end
 
     it 'return error in case of not permitted ability' do
@@ -134,6 +137,12 @@ describe API::V2::Admin::Blockchains, type: :request do
 
       expect(response).to be_successful
       expect(result['key']).to eq 'test-blockchain'
+    end
+
+    it 'validate height param' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: -123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      expect(response).to have_http_status 422
+      expect(response).to include_api_error('admin.blockchain.non_positive_height')
     end
 
     it 'checked required params' do

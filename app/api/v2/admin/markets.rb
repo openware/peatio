@@ -28,7 +28,7 @@ module API
                    desc: "If set, returned markets will be sorted in specific order, default to 'desc'."
           optional :sort_field,
                    type: String,
-                   desc: 'Name of the field which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by'
         end
         get '/markets' do
           authorize! :read, ::Market
@@ -52,7 +52,7 @@ module API
           present ::Market.find(params[:id]), with: API::V2::Admin::Entities::Market
         end
 
-        desc 'Creates new market.' do
+        desc 'Create new market.' do
           success API::V2::Admin::Entities::Market
         end
         params do

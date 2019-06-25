@@ -28,7 +28,7 @@ module API
                    desc: "If set, returned blockchains will be sorted in specific order, default to 'desc'."
           optional :sort_field,
                    type: String,
-                   desc: 'Name of the field which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by'
         end
         get '/blockchains' do
           authorize! :read, Blockchain

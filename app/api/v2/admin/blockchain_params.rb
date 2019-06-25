@@ -22,6 +22,7 @@ module API
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:server][:desc] }
           requires :height,
                    type: { value: Integer, message: 'admin.blockchain.non_integer_height' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.blockchain.non_positive_height' },
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:height][:desc] }
           requires :explorer_transaction,
                    type: String,
@@ -29,17 +30,20 @@ module API
           requires :explorer_address,
                    type: String,
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:explorer_address][:desc] }
-          requires :status,
+          optional :status,
                    type: String,
                    values: { value: %w(active disabled), message: 'admin.blockchain.invalid_status' },
+                   default: 'active',
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:status][:desc] }
-          requires :min_confirmations,
+          optional :min_confirmations,
                    type: { value: Integer, message: 'admin.blockchain.non_integer_min_confirmations' },
                    values: { value: -> (p){ p.try(:positive?) }, message: 'admin.blockchain.non_positive_min_confirmations' },
+                   default: 6,
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:min_confirmations][:desc] }
-          requires :step,
+          optional :step,
                    type: { value: Integer, message: 'admin.blockchain.non_integer_step' },
                    values: { value: -> (p){ p.try(:positive?) }, message: 'admin.blockchain.non_positive_step' },
+                   default: 6,
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:step][:desc] }
         end
 
@@ -61,6 +65,7 @@ module API
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:server][:desc] }
           optional :height,
                    type: { value: Integer, message: 'admin.blockchain.non_integer_height' },
+                   values: { value: -> (p){ p.try(:positive?) }, message: 'admin.blockchain.non_positive_height' },
                    desc: -> { V2::Admin::Entities::Blockchain.documentation[:height][:desc] }
           optional :explorer_transaction,
                    type: String,
