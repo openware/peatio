@@ -28,7 +28,7 @@ module API
                    desc: "If set, returned orders will be sorted in specific order, default to 'desc'."
           optional :sort_field,
                    type: String,
-                   desc: 'Name of the field which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by'
           use :order_params
         end
         get '/orders' do

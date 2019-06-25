@@ -13,7 +13,7 @@ module API
               desc: "Unique market id. It's always in the form of xxxyyy,"\
                     "where xxx is the base currency code, yyy is the quote"\
                     "currency code, e.g. 'btcusd'. All available markets can"\
-                    "be found at /api/v2/markets."
+                    "be found at /api/v2/admin/markets."
             }
           )
 
@@ -21,7 +21,7 @@ module API
             :ask_unit,
             documentation: {
               type: String,
-              desc: "Market ask unit."
+              desc: 'Market ask unit'
             }
           )
 
@@ -29,7 +29,7 @@ module API
             :bid_unit,
             documentation: {
               type: String,
-              desc: "Market bid unit."
+              desc: 'Market bid unit'
             }
           )
 
@@ -37,7 +37,7 @@ module API
             :ask_fee,
             documentation: {
               type: BigDecimal,
-              desc: "Market ask fee."
+              desc: 'Market ask fee'
             }
           )
 
@@ -45,7 +45,7 @@ module API
             :bid_fee,
             documentation: {
               type: BigDecimal,
-              desc: "Market bid fee."
+              desc: 'Market bid fee'
             }
           )
 
@@ -53,7 +53,7 @@ module API
             :min_ask_price,
             documentation: {
               type: BigDecimal,
-              desc: "Max ask order price."
+              desc: 'Max ask order price'
             }
           )
 
@@ -61,7 +61,7 @@ module API
             :max_bid_price,
             documentation: {
               type: BigDecimal,
-              desc: "Max bid order price."
+              desc: 'Max bid order price'
             }
           )
 
@@ -69,7 +69,7 @@ module API
             :min_ask_amount,
             documentation: {
               type: BigDecimal,
-              desc: "Min ask order amount."
+              desc: 'Min ask order amount'
             }
           )
 
@@ -77,7 +77,7 @@ module API
             :min_bid_amount,
             documentation: {
               type: BigDecimal,
-              desc: "Min bid order amount."
+              desc: 'Min bid order amount'
             }
           )
 
@@ -85,7 +85,7 @@ module API
             :ask_precision,
             documentation: {
               type: BigDecimal,
-              desc: "Precision for ask order."
+              desc: 'Precision for ask order'
             }
           )
 
@@ -93,7 +93,7 @@ module API
             :bid_precision,
             documentation: {
               type: BigDecimal,
-              desc: "Precision for bid order."
+              desc: 'Precision for bid order'
             }
           )
 
@@ -118,7 +118,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: 'Currency created time in iso8601 format'
+              desc: 'Market created time in iso8601 format'
             }
           )
 
@@ -127,7 +127,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: 'Currency updated time in iso8601 format'
+              desc: 'Market updated time in iso8601 format'
             }
           )
         end

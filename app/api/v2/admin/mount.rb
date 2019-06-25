@@ -11,6 +11,7 @@ module API
         mount Admin::Blockchains
         mount Admin::Currencies
         mount Admin::Markets
+        mount Admin::Wallets
       end
     end
   end
