@@ -3,9 +3,11 @@
 
 module Workers
   module AMQP
-    class DepositCoinAddress
+    class DepositCoinAddress < Base
       def process(payload)
         payload.symbolize_keys!
+
+        logger.warn account_id: payload[:account_id], message: 'Received request for creating account address.'
 
         acc = Account.find_by_id(payload[:account_id])
         return unless acc
@@ -13,10 +15,9 @@ module Workers
 
         wallet = Wallet.active.deposit.find_by(currency_id: acc.currency_id)
         unless wallet
-          Rails.logger.warn do
-            "Unable to generate deposit address."\
-            "Deposit Wallet for #{acc.currency_id} doesn't exist"
-          end
+          logger.warn account_id: acc.id,
+                      message: "Unable to generate deposit address."\
+                               "Deposit Wallet for #{acc.currency_id} doesn't exist"
           return
         end
 
@@ -29,8 +30,11 @@ module Workers
             result = wallet_service.create_address!(acc)
 
             pa.update!(address: result[:address],
-                      secret:  result[:secret],
-                      details: result.fetch(:details, {}).merge(pa.details))
+                       secret:  result[:secret],
+                       details: result.fetch(:details, {}).merge(pa.details))
+
+            logger.warn account_id: acc.id,
+                        message: "Payment address was created for #{acc.currency_id.upcase} account with id #{acc.id}"
           end
 
           # Enqueue address generation again if address is not provided.
@@ -43,6 +47,12 @@ module Workers
       # The system is designed in such way that when user will
       # request list of accounts system will ask to generate address again (if it is not generated of course).
       rescue StandardError => e
+        # Reraise db connection errors to start retry logic.
+        if Retry::DB_EXCEPTIONS.any? { |exception| e.is_a?(exception) }
+          logger.warn message: "Lost db connection"
+          raise e
+        end
+
         report_exception(e)
       end
 

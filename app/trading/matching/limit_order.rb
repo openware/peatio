@@ -34,7 +34,7 @@ module Matching
       end
     end
 
-    def fill(trade_price, trade_volume, trade_funds)
+    def fill(_trade_price, trade_volume, _trade_funds)
       raise NotEnoughVolume if trade_volume > @volume
       @volume -= trade_volume
     end

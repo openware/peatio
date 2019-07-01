@@ -20,5 +20,22 @@ Signal.trap("TERM", &terminate)
 begin
   worker.run
 rescue StandardError => e
+  if e.is_a?(Bunny::TCPConnectionFailedForAllHosts) || e.is_a?(Bunny::ConnectionClosedError)
+    unless Retry.rmq
+      Rails.logger.warn { "Killing worker due to rabbitmq lost connection..." }
+      raise e
+    end
+
+    retry
+  end
+
+  if e.cause.is_a?(Mysql2::Error) || e.is_a?(Mysql2::Error::ConnectionError)
+    unless Retry.db
+      Rails.logger.warn { "Killing worker due to db lost connection..." }
+      raise e
+    end
+
+    retry
+  end
   report_exception(e)
 end

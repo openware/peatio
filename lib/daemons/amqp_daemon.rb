@@ -27,45 +27,61 @@ Signal.trap("TERM", &terminate)
 
 workers = []
 ARGV.each do |id|
-  worker = AMQPConfig.binding_worker(id)
-  queue  = ch.queue *AMQPConfig.binding_queue(id)
+  begin
+    worker = AMQPConfig.binding_worker(id)
+    queue  = ch.queue *AMQPConfig.binding_queue(id)
 
-  if args = AMQPConfig.binding_exchange(id)
-    x = ch.send *args
+    if args = AMQPConfig.binding_exchange(id)
+      x = ch.send *args
 
-    case args.first
-    when 'direct'
-      queue.bind x, routing_key: AMQPConfig.routing_key(id)
-    when 'topic'
-      AMQPConfig.topics(id).each do |topic|
-        queue.bind x, routing_key: topic
+      case args.first
+      when 'direct'
+        queue.bind x, routing_key: AMQPConfig.routing_key(id)
+      when 'topic'
+        AMQPConfig.topics(id).each do |topic|
+          queue.bind x, routing_key: topic
+        end
+      else
+        queue.bind x
       end
-    else
-      queue.bind x
+    end
+
+    clean_start = AMQPConfig.data[:binding][id][:clean_start]
+    queue.purge if clean_start
+
+  rescue Mysql2::Error, ActiveRecord::StatementInvalid => e
+    if e.cause.is_a?(Mysql2::Error) || e.is_a?(Mysql2::Error::ConnectionError)
+      unless Retry.db
+        logger.warn { "Killing worker due to db lost connection..." }
+        terminate.call
+      end
+      retry
     end
   end
-
-  clean_start = AMQPConfig.data[:binding][id][:clean_start]
-  queue.purge if clean_start
 
   # Enable manual acknowledge mode by setting manual_ack: true.
   queue.subscribe manual_ack: true do |delivery_info, metadata, payload|
     logger.info { "Received: #{payload}" }
     begin
 
-      # Invoke Worker#process with floating number of arguments.
-      args          = [JSON.parse(payload), metadata, delivery_info]
-      arity         = worker.method(:process).arity
-      resized_args  = arity < 0 ? args : args[0...arity]
-      worker.method(:process).call(*resized_args)
+      worker.process(JSON.parse(payload))
 
       # Send confirmation to RabbitMQ that message has been successfully processed.
       # See http://rubybunny.info/articles/queues.html
       ch.ack(delivery_info.delivery_tag)
 
-    rescue => e
+    rescue StandardError => e
+      if e.cause.is_a?(Mysql2::Error) || e.is_a?(Mysql2::Error::ConnectionError)
+        unless Retry.db
+          logger.warn { "Killing worker due to db lost connection..." }
+          # Ask RabbitMQ to deliver message once again later.
+          # See http://rubybunny.info/articles/queues.html
+          ch.nack(delivery_info.delivery_tag, false, true)
+          terminate.call
+        end
+        retry
+      end
       report_exception(e)
-
       # Ask RabbitMQ to deliver message once again later.
       # See http://rubybunny.info/articles/queues.html
       ch.nack(delivery_info.delivery_tag, false, true)

@@ -10,9 +10,6 @@ module Workers
       def process
         Withdraw.submitted.each do |withdraw|
           withdraw.audit!
-        rescue
-          puts "Error on withdraw audit: #{$!}"
-          puts $!.backtrace.join("\n")
         end
       end
     end

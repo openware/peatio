@@ -3,8 +3,10 @@
 
 module Workers
   module AMQP
-    class TradeExecutor
+    class TradeExecutor < Base
       def process(payload)
+        logger.warn message: "Received #{payload}"
+
         ::Matching::Executor.new(payload.symbolize_keys).execute
       end
     end

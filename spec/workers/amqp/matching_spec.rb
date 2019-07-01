@@ -22,7 +22,7 @@ describe Workers::AMQP::Matching do
     let(:existing) { create(:order_ask, :btcusd, price: '4001', volume: '10.0', member: alice) }
 
     before do
-      subject.process({ action: 'submit', order: existing.to_matching_attributes }, {}, {})
+      subject.process({ action: 'submit', order: existing.to_matching_attributes })
     end
 
     it 'should started engine' do
@@ -33,10 +33,8 @@ describe Workers::AMQP::Matching do
       order = create(:order_bid, :btcusd, price: '4001', volume: '8.0', member: bob)
 
       AMQPQueue.expects(:enqueue)
-               .with(:slave_book, { action: 'update', order: { id: existing.id, timestamp: existing.at, type: :ask, volume: '2.0'.to_d, price: existing.price, market: 'btcusd', ord_type: 'limit' } }, anything)
-      AMQPQueue.expects(:enqueue)
                .with(:trade_executor, { market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '8.0'.to_d, funds: '32008'.to_d }, anything)
-      subject.process({ action: 'submit', order: order.to_matching_attributes }, {}, {})
+      subject.process({ action: 'submit', order: order.to_matching_attributes })
     end
 
     it 'should match part of new order' do
@@ -44,8 +42,7 @@ describe Workers::AMQP::Matching do
 
       AMQPQueue.expects(:enqueue)
                .with(:trade_executor, { market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '10.0'.to_d, funds: '40010'.to_d }, anything)
-      AMQPQueue.expects(:enqueue).with(:slave_book, anything, anything).times(2)
-      subject.process({ action: 'submit', order: order.to_matching_attributes }, {}, {})
+      subject.process({ action: 'submit', order: order.to_matching_attributes })
     end
   end
 
@@ -97,11 +94,11 @@ describe Workers::AMQP::Matching do
     let(:existing) { create(:order_ask, :btcusd, price: '4001', volume: '10.0', member: alice) }
 
     before do
-      subject.process({ action: 'submit', order: existing.to_matching_attributes }, {}, {})
+      subject.process({ action: 'submit', order: existing.to_matching_attributes })
     end
 
     it 'should cancel existing order' do
-      subject.process({ action: 'cancel', order: existing.to_matching_attributes }, {}, {})
+      subject.process({ action: 'cancel', order: existing.to_matching_attributes })
       expect(subject.engines[market.id].ask_orders.limit_orders).to be_empty
     end
   end

@@ -97,7 +97,7 @@ module Workers
         k = key(market, period)
         point = get_point(market, period, ts)
 
-        logger.info { "append #{k}: #{point.to_json}" }
+        logger.warn message: "append #{k}: #{point.to_json}"
         @r.rpush k, point.to_json
         publish_point(market, period, point)
 
@@ -116,7 +116,7 @@ module Workers
         # Return if there is nothing to update.
         return if @r.lindex(k, -1) == point.to_json
 
-        logger.info { "update #{k}: #{point.to_json}" }
+        logger.warn message: "update #{k}: #{point.to_json}"
         @r.lset(k, -1, point.to_json) # Replace last element.
         publish_point(market, period, point)
       end
@@ -127,7 +127,7 @@ module Workers
       end
 
       def publish_point(market_id, period, point)
-        logger.info { "publishing #{point} to #{event_name(period)} stream" }
+        logger.warn message: "publishing #{point} to #{event_name(period)} stream"
         Peatio::MQ::Events.publish('public', market_id,
                                    event_name(period), point)
       end

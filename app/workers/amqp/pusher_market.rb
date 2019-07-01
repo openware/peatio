@@ -5,8 +5,10 @@ require "peatio/mq/events"
 
 module Workers
   module AMQP
-    class PusherMarket
+    class PusherMarket < Base
       def process(payload)
+        logger.warn message: "Received #{payload}"
+
         trade = Trade.new(payload)
 
         Peatio::MQ::Events.publish("private", trade.ask.member.uid, "trade", trade.for_notify(trade.ask.member))

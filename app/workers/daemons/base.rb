@@ -7,11 +7,13 @@ module Workers
       class << self; attr_accessor :sleep_time end
 
       attr_accessor :running
-      attr_reader :logger
 
       def initialize
         @running = true
-        @logger = Rails.logger
+      end
+
+      def logger
+        @logger ||= TaggedLogger.new(Rails.logger, worker: self.class)
       end
 
       def stop
@@ -23,6 +25,12 @@ module Workers
           begin
             process
           rescue StandardError => e
+            # Reraise db connection errors to start retry logic.
+            if (Retry::DB_EXCEPTIONS + Retry::RABBIT_MQ_EXCEPTIONS).any? { |exception| e.is_a?(exception) }
+              logger.warn message: 'Lost backend connection.'
+              raise e
+            end
+
             report_exception(e)
           end
           wait

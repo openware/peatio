@@ -3,7 +3,7 @@
 
 module Workers
   module AMQP
-    class Matching
+    class Matching < Base
 
       class DryrunError < StandardError
         attr :engine
@@ -18,8 +18,9 @@ module Workers
         reload 'all'
       end
 
-      def process(payload, metadata, delivery_info)
+      def process(payload)
         payload.symbolize_keys!
+        logger.warn message: "Received #{payload}"
 
         case payload[:action]
         when 'submit'
@@ -31,7 +32,7 @@ module Workers
         when 'new'
           initialize_engine Market.find(payload[:market])
         else
-          Rails.logger.fatal { "Unknown action: #{payload[:action]}" }
+          logger.fatal message: "Unknown action: #{payload[:action]}"
         end
       end
 
@@ -47,18 +48,18 @@ module Workers
         if market == 'all'
           # NOTE: Run matching engine for disabled markets.
           Market.find_each(&method(:initialize_engine))
-          Rails.logger.info { "All engines reloaded." }
+          logger.warn message: "All engines reloaded."
         else
           initialize_engine Market.find(market)
-          Rails.logger.info { "#{market} engine reloaded." }
+          logger.warn message: "#{market} engine reloaded."
         end
       rescue DryrunError => e
         # stop started engines
         engines.each {|id, engine| engine.shift_gears(:dryrun) unless engine == e.engine }
 
-        Rails.logger.fatal { "#{market} engine failed to start. Matched during dryrun:" }
+        logger.fatal message: "#{market} engine failed to start. Matched during dryrun:"
         e.engine.queue.each do |trade|
-          Rails.logger.info { trade[1].inspect }
+          logger.info message: trade[1].inspect
         end
       end
 
@@ -104,7 +105,7 @@ module Workers
             end
           end
         else
-          Rails.logger.info { "#{market.id} engine already started. mode=#{engine.mode}" }
+          logger.info message: "#{market.id} engine already started. mode=#{engine.mode}"
         end
       end
 

@@ -3,31 +3,34 @@
 
 module Workers
   module AMQP
-    class DepositCollectionFees
+    class DepositCollectionFees < Base
       def process(payload)
-        Rails.logger.info { "Received request for deposit collection fees transfer id: #{payload['id']}." }
+        logger.info deposit_id: payload['id'], message: "Received request for deposit collection fees transfer."
         deposit = Deposit.find_by_id(payload['id'])
 
         unless deposit
-          Rails.logger.warn { "The deposit with id: #{payload['id']} doesn't exist."}
+          logger.warn id: payload['id'], message: 'The deposit with such id doesn\'t exist.'
           return
         end
 
         deposit.with_lock do
           if deposit.collected?
-            Rails.logger.warn { "The deposit is now being processed by different worker or has been already processed. Skipping..." }
+            logger.warn deposit_id: deposit.id,
+                        message: "The deposit is now being processed by different worker or has been already processed. Skipping..."
             return
           end
 
 
           if deposit.spread.blank?
             deposit.spread_between_wallets!
-            Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
+            logger.warn deposit_id: deposit.id,
+                        message: "The deposit was spreaded in the next way: #{deposit.spread}"
           end
 
           wallet = Wallet.active.fee.find_by(blockchain_key: deposit.currency.blockchain_key)
           unless wallet
-            Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
+            logger.warn deposit_id: deposit.id,
+                        message: "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."
             AMQPQueue.enqueue(:deposit_collection, id: deposit.id)
             return
           end
@@ -35,18 +38,27 @@ module Workers
           transactions = WalletService.new(wallet).deposit_collection_fees!(deposit, deposit.spread_to_transactions)
 
           if transactions.present?
-            Rails.logger.warn { "The API accepted deposit collection fees transfer and assigned transaction IDs: #{transactions.map(&:as_json)}." }
+            logger.warn deposit_id: deposit.id,
+                        message: "The API accepted deposit collection fees transfer and assigned transaction IDs: #{transactions.map(&:as_json)}."
           end
 
           AMQPQueue.enqueue(:deposit_collection, id: deposit.id)
-          Rails.logger.warn { "Deposit collection job enqueue." }
-        rescue Exception => e
+          logger.warn deposit_id: deposit.id,
+                      message: "Deposit collection job enqueue."
+        rescue StandardError => e
+          # Reraise db connection errors to start retry logic.
+          if Retry::DB_EXCEPTIONS.any? { |exception| e.is_a?(exception) }
+            logger.warn message: "Lost db connection"
+            raise e
+          end
+
           begin
-            Rails.logger.error { "Failed to collect fee transfer deposit #{deposit.id}. See exception details below." }
+            logger.error depsot_id: deposit.id,
+                          message: "Failed to collect fee transfer. See exception details below."
             report_exception(e)
           ensure
             deposit.skip!
-            Rails.logger.error { "Exit..." }
+            logger.error { "Exit..." }
           end
         end
       end

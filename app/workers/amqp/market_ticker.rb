@@ -3,7 +3,7 @@
 
 module Workers
   module AMQP
-    class MarketTicker
+    class MarketTicker < Base
 
       FRESH_TRADES = 80
 
@@ -14,7 +14,7 @@ module Workers
         Market.enabled.each(&method(:initialize_market_data))
       end
 
-      def process(payload, metadata, delivery_info)
+      def process(payload)
         trade = Trade.new payload
         update_ticker trade
         update_latest_trades trade
@@ -25,7 +25,8 @@ module Workers
         ticker[:low]  = get_market_low trade.market.id, trade
         ticker[:high] = get_market_high trade.market.id, trade
         ticker[:last] = trade.price
-        Rails.logger.info { ticker.inspect }
+        logger.warn  trade_id: trade.id,
+                      message: ticker.inspect
         Rails.cache.write "peatio:#{trade.market.id}:ticker", ticker
       end
 

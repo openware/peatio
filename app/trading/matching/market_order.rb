@@ -37,7 +37,7 @@ module Matching
       type == :ask ? locked : locked/trade_price
     end
 
-    def fill(trade_price, trade_volume, trade_funds)
+    def fill(_trade_price, trade_volume, trade_funds)
       raise NotEnoughVolume if trade_volume > @volume
       @volume -= trade_volume
 

@@ -3,6 +3,7 @@ connect:
   port: <%= ENV.fetch('RABBITMQ_PORT', '5672') %>
   username: <%= ENV.fetch('RABBITMQ_USER', 'guest') %>
   password: <%= ENV.fetch('RABBITMQ_PASSWORD', 'guest') %>
+  recover_from_connection_close: <%= ENV.fetch('RABBITMQ_RECOVER', 'false') %>
 
 exchange:
   trade:
@@ -18,9 +19,6 @@ exchange:
 queue:
   matching:
     name: peatio.matching
-    durable: true
-  slave_book:
-    name: peatio.orderbook.slave
     durable: true
   new_trade:
     name: peatio.trade.new

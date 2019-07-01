@@ -24,6 +24,7 @@ module Workers
 
         Peatio::MQ::Events.publish("public", "global", "tickers", tickers)
 
+        logger.warn message: "Orderbook and tickers updated"
         tickers.clear
       end
     end
