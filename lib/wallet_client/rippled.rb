@@ -38,7 +38,7 @@ module WalletClient
     end
 
     def create_raw_address!(options = {})
-      secret = options.fetch(:secret) { Passgen.generate(length: 64, symbols: true) }
+      secret = options.fetch(:secret) { PasswordGenerator.generate(64) }
       json_rpc(:wallet_propose, { passphrase: secret }).fetch('result')
                                                        .yield_self do |result|
         result.slice('key_type', 'master_seed', 'master_seed_hex',
