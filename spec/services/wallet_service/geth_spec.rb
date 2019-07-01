@@ -36,7 +36,7 @@ describe WalletService::Geth do
     end
 
     before do
-      Passgen.stubs(:generate).returns('pass@word')
+      PasswordGenerator.stubs(:generate).returns('pass@word')
       stub_request(:post, deposit_wallet.uri ).with(body: personal_newAccount_request).to_return(body: personal_newAccount_response)
     end
 

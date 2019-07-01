@@ -238,7 +238,6 @@ GEM
     parallel (1.12.1)
     parser (2.5.3.0)
       ast (~> 2.4.0)
-    passgen (1.0.2)
     peatio (0.4.4)
       amqp
       bunny
@@ -456,7 +455,6 @@ DEPENDENCIES
   omniauth-auth0 (~> 2.0.0)
   omniauth-barong (~> 0.1.4)
   omniauth-google-oauth2 (~> 0.5.3)
-  passgen (~> 1.0.2)
   peatio (~> 0.4.3)
   pry-byebug (~> 3.6)
   puma (~> 3.11.4)
@@ -481,4 +479,4 @@ DEPENDENCIES
   webmock (~> 3.3)
 
 BUNDLED WITH
-   1.17.1
+   1.17.2
