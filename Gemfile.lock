@@ -231,7 +231,6 @@ GEM
     parallel (1.14.0)
     parser (2.6.0.0)
       ast (~> 2.4.0)
-    passgen (1.0.2)
     peatio (0.4.5)
       amqp
       bunny
@@ -440,7 +439,6 @@ DEPENDENCIES
   mini_racer (~> 0.2.4)
   mocha (~> 1.8)
   mysql2 (~> 0.5.2)
-  passgen (~> 1.0.2)
   peatio (~> 0.4.5)
   pry-byebug (~> 3.7)
   puma (~> 3.12.0)
