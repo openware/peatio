@@ -20,7 +20,7 @@ module Bench
         @number = config[:number].to_i
         @step = config.fetch(:step, 10000).to_i
         @markets = ::Market.where(id: config[:markets].split(',').map(&:squish).reject(&:blank?))
-        @i = 0
+        @order_number = 0
       end
 
       def generate!(members = nil)
@@ -30,7 +30,7 @@ module Bench
           Rails.logger.info { "Created orders: #{@queue.size}" }
           Array.new(@step) do
             ActiveRecord::Base.transaction do
-              @i += 1
+              @order_number += 1
               create_order.tap { |o| @queue << o }
             end
           end

@@ -15,10 +15,10 @@ module Bench
 
       private
 
-      def construct_order(i)
+      def construct_order
         market = @markets.sample
         type = config.fetch(:side) { %w[OrderBid OrderAsk].sample }
-        if i % 4 == 0
+        if @order_number % 4 == 0 && @order_number > 20
           { type:     type,
             state:    Order::WAIT,
             member:   @members.sample,

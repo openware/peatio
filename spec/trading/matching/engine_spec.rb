@@ -18,6 +18,55 @@ describe Matching::Engine do
     let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '2.0'.to_d, volume: '1.0'.to_d) }
     let!(:ask3) { Matching.mock_limit_order(type: :ask, price: '3.0'.to_d, volume: '1.0'.to_d) }
 
+    context 'precise values 1' do
+      let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.8006'.to_d, volume: '0.0111'.to_d) }
+      let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '1.4117'.to_d, volume: '0.3346'.to_d) }
+
+      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.472371977'.to_d, volume: '0.8395'.to_d) }
+      let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.47237199'.to_d, volume: '0.8395'.to_d) }
+
+      it 'huit' do
+        subject.submit ask1
+        subject.submit ask2
+        subject.submit bid
+
+      end
+    end
+
+    context 'precise values 2' do
+      let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.8006'.to_d, volume: '0.0111'.to_d) }
+      let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '1.4117'.to_d, volume: '0.3346'.to_d) }
+
+      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.472371977'.to_d, volume: '0.8395'.to_d) }
+
+      let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.0088866600000009'.to_d, volume: '0.0112'.to_d) }
+
+      it 'huit' do
+        subject.submit ask1
+        subject.submit ask2
+        subject.submit bid
+
+        binding.pry
+      end
+    end
+
+    context 'precise values 2' do
+      let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.000005'.to_d, volume: '0.000000000001'.to_d) }
+
+      let!(:bid) { Matching.mock_limit_order(type: :bid, price: '1.6'.to_d, volume: '0.1'.to_d) }
+
+      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.472371977'.to_d, volume: '0.8395'.to_d) }
+
+      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.0088866600000009'.to_d, volume: '0.0112'.to_d) }
+
+      it 'huit' do
+        subject.submit ask1
+        subject.submit bid
+
+        binding.pry
+      end
+    end
+
     it 'should fill the market order completely' do
       mo = Matching.mock_market_order(type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
 

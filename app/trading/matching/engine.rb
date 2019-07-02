@@ -81,6 +81,8 @@ module Matching
         counter_book.fill_top(*trade)
         order.fill(*trade)
         publish(order, counter_order, trade)
+        pp "order ", order
+        pp "trade ", trade
         match_implementation(order, counter_book)
       end
     end
@@ -93,8 +95,8 @@ module Matching
     def publish(order, counter_order, trade)
       ask, bid = order.type == :ask ? [order, counter_order] : [counter_order, order]
 
-      price  = @market.round_price(trade[0])
-      volume = @market.round_amount(trade[1])
+      price  = trade[0]
+      volume = trade[1]
       funds  = trade[2]
 
       Rails.logger.info { "[#{@market.id}] new trade - ask: #{ask.label} bid: #{bid.label} price: #{price} volume: #{volume} funds: #{funds}" }

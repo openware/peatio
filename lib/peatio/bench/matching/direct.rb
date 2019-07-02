@@ -41,14 +41,20 @@ module Bench
         loop do
           order = @injector.pop
           if order.present?
-            order.fix_number_precision
+            order.round_amount_and_price
             order.locked = order.origin_locked = order.compute_locked
             order.hold_account!.lock_funds(order.locked)
             order.save!
           end
           if @injector.size == 0
             10.times { p "-" }
-            sleep @orders_number/10 + 1
+            wait_orders_before = Order.active.count
+            loop do
+              sleep 2
+              break if wait_orders_before == Order.active.count
+              wait_orders_before = Order.active.count
+            end
+
             pp "Market Orders: #{Order.where(ord_type: :market).count} "
             min_ask = OrderAsk.where(state: :wait).pluck(:price).compact.min
             max_bid = OrderBid.where(state: :wait).pluck(:price).compact.max
