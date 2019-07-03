@@ -61,8 +61,7 @@ module API
         post '/wallets/new' do
           authorize! :create, Wallet
 
-          data = declared(params)
-          wallet = Wallet.new(data)
+          wallet = Wallet.new(declared(params))
           if wallet.save
             present wallet, with: API::V2::Admin::Entities::Wallet
             status 201
@@ -82,7 +81,7 @@ module API
           authorize! :write, Wallet
 
           wallet = Wallet.find(params[:id])
-          if wallet.update(params)
+          if wallet.update(declared(params, include_missing: false))
             present wallet, with: API::V2::Admin::Entities::Wallet
           else
             body errors: wallet.errors.full_messages

@@ -61,8 +61,7 @@ module API
         post '/markets/new' do
           authorize! :create, ::Market
 
-          data = declared(params)
-          market = ::Market.new(data)
+          market = ::Market.new(declared(params))
           if market.save
             present market, with: API::V2::Admin::Entities::Market
             status 201
@@ -82,7 +81,7 @@ module API
           authorize! :write, ::Market
 
           market = ::Market.find(params[:id])
-          if market.update(params)
+          if market.update(declared(params, include_missing: false))
             present market, with: API::V2::Admin::Entities::Market
           else
             body errors: market.errors.full_messages

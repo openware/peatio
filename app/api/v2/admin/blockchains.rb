@@ -61,8 +61,7 @@ module API
         post '/blockchains/new' do
           authorize! :create, Blockchain
 
-          data = declared(params)
-          blockchain = Blockchain.new(data)
+          blockchain = Blockchain.new(declared(params))
           if blockchain.save
             present blockchain, with: API::V2::Admin::Entities::Blockchain
             status 201
@@ -82,7 +81,7 @@ module API
           authorize! :write, Blockchain
 
           blockchain = Blockchain.find(params[:id])
-          if blockchain.update(params)
+          if blockchain.update(declared(params, include_missing: false))
             present blockchain, with: API::V2::Admin::Entities::Blockchain
           else
             body errors: blockchain.errors.full_messages

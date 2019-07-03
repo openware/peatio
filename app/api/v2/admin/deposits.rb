@@ -58,9 +58,7 @@ module API
             when 'reject'
               deposit.reject!
             else
-              body errors: [ 'admin.deposit.invalid_action' ]
-              status 422
-              return
+              error!({ errors: ['admin.deposit.invalid_action'] }, 422)
             end
           else
             case params[:action]
@@ -71,9 +69,7 @@ module API
             when 'collect_fee'
               deposit.collect!
             else
-              body errors: [ 'admin.deposit.invalid_action' ]
-              status 422
-              return
+              error!({ errors: ['admin.deposit.invalid_action'] }, 422)
             end
           end
 

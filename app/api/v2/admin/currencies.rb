@@ -67,8 +67,7 @@ module API
         post '/currencies/new' do
           authorize! :create, Currency
 
-          data = declared(params)
-          currency = Currency.new(data)
+          currency = Currency.new(declared(params))
           if currency.save
             present currency, with: API::V2::Admin::Entities::Currency
             status 201
@@ -88,7 +87,7 @@ module API
           authorize! :write, Currency
 
           currency = Currency.find(params[:id])
-          if currency.update(params)
+          if currency.update(declared(params, include_missing: false))
             present currency, with: API::V2::Admin::Entities::Currency
           else
             body errors: currency.errors.full_messages

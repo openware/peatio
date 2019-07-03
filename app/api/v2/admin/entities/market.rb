@@ -18,18 +18,18 @@ module API
           )
 
           expose(
-            :ask_unit,
+            :base_unit,
             documentation: {
               type: String,
-              desc: 'Market ask unit'
+              desc: 'Market base(ask) unit'
             }
           )
 
           expose(
-            :bid_unit,
+            :quote_unit,
             documentation: {
               type: String,
-              desc: 'Market bid unit'
+              desc: 'Market quote(bid) unit'
             }
           )
 
@@ -50,50 +50,42 @@ module API
           )
 
           expose(
-            :min_ask_price,
+            :min_price,
             documentation: {
               type: BigDecimal,
-              desc: 'Max ask order price'
+              desc: 'Min order price'
             }
           )
 
           expose(
-            :max_bid_price,
+            :max_price,
             documentation: {
               type: BigDecimal,
-              desc: 'Max bid order price'
+              desc: 'Max order price'
             }
           )
 
           expose(
-            :min_ask_amount,
+            :min_amount,
             documentation: {
               type: BigDecimal,
-              desc: 'Min ask order amount'
+              desc: 'Min order amount'
             }
           )
 
           expose(
-            :min_bid_amount,
+            :amount_precision,
             documentation: {
-              type: BigDecimal,
-              desc: 'Min bid order amount'
+              type: Integer,
+              desc: 'Amount precision'
             }
           )
 
           expose(
-            :ask_precision,
+            :price_precision,
             documentation: {
-              type: BigDecimal,
-              desc: 'Precision for ask order'
-            }
-          )
-
-          expose(
-            :bid_precision,
-            documentation: {
-              type: BigDecimal,
-              desc: 'Precision for bid order'
+              type: Integer,
+              desc: 'Price precision'
             }
           )
 
@@ -106,10 +98,10 @@ module API
           )
 
           expose(
-            :enabled,
+            :state,
             documentation: {
               type: String,
-              desc: 'Market display'
+              desc: "Market state, one of #{::Market::STATES}"
             }
           )
 
