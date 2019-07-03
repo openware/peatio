@@ -8,52 +8,57 @@ module API
         extend ::Grape::API::Helpers
 
         params :create_market_params do
-          requires :ask_unit,
+          requires :base_unit,
                    type: String,
                    values: { value: -> { ::Currency.ids }, message: 'admin.market.currency_doesnt_exist' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:ask_unit][:desc] }
-          requires :bid_unit,
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:base_unit][:desc] }
+          requires :quote_unit,
                    type: String,
                    values: { value: -> { ::Currency.ids }, message: 'admin.market.currency_doesnt_exist' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:bid_unit][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:quote_unit][:desc] }
+          requires :amount_precision,
+                   type: { value: Integer, message: 'admin.market.non_integer_amount_precision' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_amount_precision' },
+                   default: 0,
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:amount_precision][:desc] }
+          requires :price_precision,
+                   type: { value: Integer, message: 'admin.market.non_integer_price_precision' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_price_precision' },
+                   default: 0,
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:price_precision][:desc] }
+          requires :min_price,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_price' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_price' },
+                   default: 0.0,
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:min_price][:desc] }
+          optional :max_price,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_max_price' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_max_price' },
+                   default: 0.0,
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:max_price][:desc] }
           optional :ask_fee,
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_ask_fee' },
                    values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_ask_fee' },
                    default: 0.0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
           optional :bid_fee,
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_bid_fee' },
                    values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_bid_fee' },
                    default: 0.0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:bid_fee][:desc] }
-          optional :min_ask_price,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_ask_price' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_ask_price' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:bid_fee][:desc] }
+          optional :min_amount,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_amount' },
                    default: 0.0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:min_ask_price][:desc] }
-          optional :max_bid_price,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_max_bid_price' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_max_bid_price' },
-                   default: 0.0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:max_bid_price][:desc] }
-          optional :min_ask_amount,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_ask_amount' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_ask_amount' },
-                   default: 0.0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:min_ask_amount][:desc] }
-          optional :min_bid_amount,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_bid_amount' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_bid_amount' },
-                   default: 0.0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:min_bid_amount][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
           optional :position,
                    type: { value: Integer, message: 'admin.market.non_integer_position' },
                    default: 0,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:position][:desc] }
-          optional :enabled,
-                   type: { value: Boolean, message: 'admin.market.non_boolean_enabled' },
-                   default: true,
-                   desc: -> { V2::Admin::Entities::Market.documentation[:enabled][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:position][:desc] }
+          optional :state,
+                   values: { value: ::Market::STATES, message: 'admin.market.invalid_state' },
+                   default: 'enabled',
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:state][:desc] }
         end
 
         params :update_market_params do
@@ -63,39 +68,36 @@ module API
           optional :ask_fee,
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_ask_fee' },
                    values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_ask_fee' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
           optional :bid_fee,
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_bid_fee' },
                    values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_bid_fee' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:bid_fee][:desc] }
-          optional :min_ask_price,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_ask_price' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_ask_price' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:min_ask_price][:desc] }
-          optional :max_bid_price,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_max_bid_price' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_max_bid_price' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:max_bid_price][:desc] }
-          optional :min_ask_amount,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_ask_amount' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_ask_amount' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:min_ask_amount][:desc] }
-          optional :min_bid_amount,
-                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_bid_amount' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_bid_amount' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:min_bid_amount][:desc] }
-          optional :ask_precision,
-                   type: { value: Integer, message: 'admin.currency.non_integer_ask_precision' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:ask_precision][:desc] }
-          optional :bid_precision,
-                   type: { value: Integer, message: 'admin.currency.non_integer_bid_precision' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:bid_precision][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:bid_fee][:desc] }
+          optional :min_price,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_price' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_price' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:min_price][:desc] }
+          optional :max_price,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_max_price' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_max_price' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:max_price][:desc] }
+          optional :min_amount,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_amount' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
+          optional :amount_precision,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_amount_precision' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_amount_precision' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:amount_precision][:desc] }
+          optional :price_precision,
+                   type: { value: Integer, message: 'admin.currency.non_integer_price_precision' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:price_precision][:desc] }
           optional :position,
                    type: { value: Integer, message: 'admin.market.non_integer_position' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:position][:desc] }
-          optional :enabled,
-                   type: { value: Boolean, message: 'admin.market.non_boolean_enabled' },
-                   desc: -> { V2::Admin::Entities::Market.documentation[:enabled][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:position][:desc] }
+          optional :state,
+                   values: { value: ::Market::STATES, message: 'admin.market.invalid_state' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:state][:desc] }
         end
       end
     end

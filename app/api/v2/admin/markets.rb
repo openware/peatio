@@ -7,7 +7,7 @@ module API
       class Markets < Grape::API
         helpers ::API::V2::Admin::MarketParams
 
-        desc 'Get all markets, results is paginated.',
+        desc 'Get all markets, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Market
         params do
@@ -21,20 +21,21 @@ module API
                    allow_blank: false,
                    default: 1,
                    desc: 'Specify the page of paginated results.'
+          optional :ordering,
+                   type: String,
+                   values: { value: %w(asc desc), message: 'admin.market.invalid_ordering' },
+                   default: 'asc',
+                   desc: 'If set, returned markets will be sorted in specific order, default to \'asc\'.'
           optional :order_by,
+                   default: 'id',
                    type: String,
-                   values: { value: %w(asc desc), message: 'admin.market.invalid_order_by' },
-                   default: 'desc',
-                   desc: "If set, returned markets will be sorted in specific order, default to 'desc'."
-          optional :sort_field,
-                   type: String,
-                   desc: 'Name of the field, which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by.'
         end
         get '/markets' do
           authorize! :read, ::Market
 
           search = ::Market.ransack()
-          search.sorts = "#{params[:sort_field]} #{params[:order_by]}" if params[:sort_field].present?
+          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Market
         end
 
@@ -61,8 +62,7 @@ module API
         post '/markets/new' do
           authorize! :create, ::Market
 
-          data = declared(params)
-          market = ::Market.new(data)
+          market = ::Market.new(declared(params))
           if market.save
             present market, with: API::V2::Admin::Entities::Market
             status 201
@@ -82,7 +82,7 @@ module API
           authorize! :write, ::Market
 
           market = ::Market.find(params[:id])
-          if market.update(params)
+          if market.update(declared(params, include_missing: false))
             present market, with: API::V2::Admin::Entities::Market
           else
             body errors: market.errors.full_messages

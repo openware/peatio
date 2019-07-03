@@ -7,7 +7,7 @@ module API
       class Blockchains < Grape::API
         helpers ::API::V2::Admin::BlockchainParams
 
-        desc 'Get all blockchains, results is paginated.',
+        desc 'Get all blockchains, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Blockchain
         params do
@@ -21,20 +21,21 @@ module API
                    allow_blank: false,
                    default: 1,
                    desc: 'Specify the page of paginated results.'
+          optional :ordering,
+                   type: String,
+                   values: { value: %w(asc desc), message: 'admin.blockchain.invalid_ordering' },
+                   default: 'asc',
+                   desc: 'If set, returned blockchains will be sorted in specific order, defaults to \'asc\'.'
           optional :order_by,
+                   default: 'id',
                    type: String,
-                   values: { value: %w(asc desc), message: 'admin.blockchain.invalid_order_by' },
-                   default: 'desc',
-                   desc: "If set, returned blockchains will be sorted in specific order, default to 'desc'."
-          optional :sort_field,
-                   type: String,
-                   desc: 'Name of the field, which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by.'
         end
         get '/blockchains' do
           authorize! :read, Blockchain
 
           search = Blockchain.ransack()
-          search.sorts = "#{params[:sort_field]} #{params[:order_by]}" if params[:sort_field].present?
+          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Blockchain
         end
 
@@ -61,8 +62,7 @@ module API
         post '/blockchains/new' do
           authorize! :create, Blockchain
 
-          data = declared(params)
-          blockchain = Blockchain.new(data)
+          blockchain = Blockchain.new(declared(params))
           if blockchain.save
             present blockchain, with: API::V2::Admin::Entities::Blockchain
             status 201
@@ -82,7 +82,7 @@ module API
           authorize! :write, Blockchain
 
           blockchain = Blockchain.find(params[:id])
-          if blockchain.update(params)
+          if blockchain.update(declared(params, include_missing: false))
             present blockchain, with: API::V2::Admin::Entities::Blockchain
           else
             body errors: blockchain.errors.full_messages

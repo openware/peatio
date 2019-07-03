@@ -61,7 +61,7 @@ describe API::V2::Account::Deposits, type: :request do
       result = JSON.parse(response.body)
 
       expect(result.size).to eq 1
-      expect(result.first['txid']).to eq d.txid
+      expect(result.first['blockchain_txid']).to eq d.txid
     end
 
     it 'returns deposits for currency usd' do

@@ -11,7 +11,7 @@ module API
           optional :market,
                    type: String,
                    values: { value: -> { ::Market.enabled.ids }, message: 'admin.market.doesnt_exist' },
-                   desc: -> { V2::Entities::Market.documentation[:id][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:id][:desc] }
           optional :state,
                    type: String,
                    values: { value: -> { ::Order.state.values }, message: 'admin.order.invalid_state' },
@@ -23,21 +23,21 @@ module API
           optional :price,
                    type: { value: BigDecimal, message: 'admin.order.non_decimal_price' },
                    values: { value: -> (p){ p.try(:positive?) }, message: 'admin.order.non_positive_price' },
-                   desc: -> { V2::Admin::Entities::Order.documentation[:price][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Order.documentation[:price][:desc] }
           optional :origin_volume,
                    type: { value: BigDecimal, message: 'admin.order.non_decimal_price' },
                    values: { value: -> (p){ p.try(:positive?) }, message: 'admin.order.non_positive_origin_volume' },
-                   desc: -> { V2::Admin::Entities::Order.documentation[:origin_volume][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Order.documentation[:origin_volume][:desc] }
           optional :type,
                    type: String,
                    values: { value: %w(buy sell), message: 'admin.order.invalid_type' },
                    desc: 'Filter order by type.'
           optional :email,
                    type: String,
-                   desc: -> { V2::Entities::Member.documentation[:email][:desc] }
+                   desc: -> { API::V2::Entities::Member.documentation[:email][:desc] }
           optional :uid,
                    type: String,
-                   desc: -> { V2::Entities::Member.documentation[:uid][:desc] }
+                   desc: -> { API::V2::Entities::Member.documentation[:uid][:desc] }
           optional :updated_at_from,
                    type: { value: Integer, message: 'admin.order.non_integer_updated_at_from' },
                    allow_blank: { value: false, message: 'admin.order.empty_time_from' },
@@ -58,6 +58,25 @@ module API
                    allow_blank: { value: false, message: 'admin.order.empty_time_to' },
                    desc: "An integer represents the seconds elapsed since Unix epoch."\
                          "If set, only orders executed before the time will be returned."
+          optional :limit,
+                   type: { value: Integer, message: 'admin.order.non_integer_limit' },
+                   values: { value: 1..1000, message: 'admin.order.invalid_limit' },
+                   default: 100,
+                   desc: 'Limit the number of returned orders. Default to 100.'
+          optional :page,
+                   type: { value: Integer, message: 'admin.order.non_integer_page' },
+                   allow_blank: false,
+                   default: 1,
+                   desc: 'Specify the page of paginated results.'
+          optional :ordering,
+                   type: String,
+                   values: { value: %w(asc desc), message: 'admin.order.invalid_ordering' },
+                   default: 'asc',
+                   desc: 'If set, returned orders will be sorted in specific order, default to \'asc\'.'
+          optional :order_by,
+                   type: String,
+                   default: 'id',
+                   desc: 'Name of the field, which will be ordered by'
         end
       end
     end

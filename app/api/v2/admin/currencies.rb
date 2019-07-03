@@ -9,7 +9,7 @@ module API
 
         desc 'Get list of currencies',
           is_array: true,
-          success: Entities::Currency
+          success: API::V2::Admin::Entities::Currency
         params do
           optional :type,
                    type: String,
@@ -25,20 +25,21 @@ module API
                    allow_blank: false,
                    default: 1,
                    desc: 'Specify the page of paginated results.'
+          optional :ordering,
+                   type: String,
+                   values: { value: %w(asc desc), message: 'admin.currency.invalid_ordering' },
+                   default: 'asc',
+                   desc: 'If set, returned currencies will be sorted in specific order, defaults to \'asc\'.'
           optional :order_by,
+                   default: 'id',
                    type: String,
-                   values: { value: %w(asc desc), message: 'admin.currency.invalid_order_by' },
-                   default: 'desc',
-                   desc: "If set, returned currencies will be sorted in specific order, default to 'desc'."
-          optional :sort_field,
-                   type: String,
-                   desc: 'Name of the field, which will be ordered by'
+                   desc: 'Name of the field, which will be ordered by.'
         end
         get '/currencies' do
           authorize! :read, Currency
 
           search = Currency.ransack(type_eq: params[:type])
-          search.sorts = "#{params[:sort_field]} #{params[:order_by]}" if params[:sort_field].present?
+          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
 
           present paginate(search.result), with: API::V2::Admin::Entities::Currency
         end
@@ -67,8 +68,7 @@ module API
         post '/currencies/new' do
           authorize! :create, Currency
 
-          data = declared(params)
-          currency = Currency.new(data)
+          currency = Currency.new(declared(params))
           if currency.save
             present currency, with: API::V2::Admin::Entities::Currency
             status 201
@@ -88,7 +88,7 @@ module API
           authorize! :write, Currency
 
           currency = Currency.find(params[:id])
-          if currency.update(params)
+          if currency.update(declared(params, include_missing: false))
             present currency, with: API::V2::Admin::Entities::Currency
           else
             body errors: currency.errors.full_messages
