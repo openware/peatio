@@ -5,6 +5,9 @@ require_relative 'constants'
 
 module Matching
   class MarketOrder
+
+    include Helpers
+
     attr :id, :timestamp, :type, :locked, :market
     attr_accessor :volume
 
@@ -31,8 +34,6 @@ module Matching
         else
           trade_funds = round2(trade_price * trade_volume)
         end
-
-        # trade_funds  = round2(trade_price * trade_volume)
 
         [trade_price, trade_volume, trade_funds]
       elsif price = counter_book.best_limit_price

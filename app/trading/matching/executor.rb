@@ -151,6 +151,7 @@ module Matching
       fee                         = income_value * order.fee
       real_income_value           = income_value - fee
 
+      binding.pry
       outcome_account.assign_attributes outcome_account.attributes_after_unlock_and_sub_funds!(outcome_value)
       income_account.assign_attributes income_account.attributes_after_plus_funds!(real_income_value)
 

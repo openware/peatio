@@ -5,6 +5,9 @@ require_relative 'constants'
 
 module Matching
   class LimitOrder
+
+    include Helpers
+
     attr :id, :timestamp, :type, :price, :market
     attr_accessor :volume
 

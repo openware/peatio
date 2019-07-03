@@ -19,21 +19,62 @@ describe Matching::Engine do
     let!(:ask3) { Matching.mock_limit_order(type: :ask, price: '3.0'.to_d, volume: '1.0'.to_d) }
 
     context 'precise values 1' do
-      let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.8006'.to_d, volume: '0.0111'.to_d) }
-      let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '1.4117'.to_d, volume: '0.3346'.to_d) }
+      subject { Matching::Engine.new(market, mode: :dryrun) }
 
-      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.472371977'.to_d, volume: '0.8395'.to_d) }
-      let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.47237199'.to_d, volume: '0.8395'.to_d) }
+      let!(:ask1_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 0.8006.to_d,
+               volume: 0.0111.to_d)
+      end
+
+      let!(:ask2_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 1.4117.to_d,
+               volume: 0.3346.to_d)
+      end
+
+      let!(:bid1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 0.47237199.to_d,
+               price: nil,
+               volume: 0.8395.to_d)
+      end
+
+      let!(:ask1_mock) do
+        Matching.mock_limit_order(id: ask1_in_db.id,
+                                  type: :ask,
+                                  price: ask1_in_db.price,
+                                  volume: ask1_in_db.volume)
+      end
+
+      let!(:ask2_mock) do
+        Matching.mock_limit_order(id: ask2_in_db.id,
+                                  type: :ask,
+                                  price: ask2_in_db.price,
+                                  volume: ask2_in_db.volume)
+      end
+
+      let!(:bid1_mock) do
+        Matching.mock_market_order(id: bid1_in_db.id,
+                                   type: :bid,
+                                   locked: bid1_in_db.locked,
+                                   volume: bid1_in_db.volume)
+      end
 
       it 'huit' do
-        subject.submit ask1
-        subject.submit ask2
-        subject.submit bid
-
+        subject.submit ask1_mock
+        subject.submit ask2_mock
+        subject.submit bid1_mock
       end
     end
 
     context 'precise values 2' do
+      subject { Matching::Engine.new(market, mode: :dryrun) }
+
       let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.8006'.to_d, volume: '0.0111'.to_d) }
       let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '1.4117'.to_d, volume: '0.3346'.to_d) }
 
@@ -45,12 +86,12 @@ describe Matching::Engine do
         subject.submit ask1
         subject.submit ask2
         subject.submit bid
-
-        binding.pry
       end
     end
 
-    context 'precise values 2' do
+    context 'precise values 3' do
+      subject         { Matching::Engine.new(market, mode: :dryrun) }
+
       let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.000005'.to_d, volume: '0.000000000001'.to_d) }
 
       let!(:bid) { Matching.mock_limit_order(type: :bid, price: '1.6'.to_d, volume: '0.1'.to_d) }
