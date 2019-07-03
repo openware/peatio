@@ -7,7 +7,7 @@ module API
       class Wallets < Grape::API
         helpers ::API::V2::Admin::WalletParams
 
-        desc 'Get all wallets, results is paginated.',
+        desc 'Get all wallets, result is paginated.',
           is_array: true,
           uccess: API::V2::Admin::Entities::Wallet
         params do
@@ -21,12 +21,13 @@ module API
                    allow_blank: false,
                    default: 1,
                    desc: 'Specify the page of paginated results.'
-          optional :order_by,
+          optional :ordering,
                    type: String,
-                   values: { value: %w(asc desc), message: 'admin.wallet.invalid_order_by' },
-                   default: 'desc',
-                   desc: "If set, returned wallets will be sorted in specific order, default to 'desc'."
-          optional :sort_field,
+                   values: { value: %w(asc desc), message: 'admin.wallet.invalid_ordering' },
+                   default: 'asc',
+                   desc: 'If set, returned wallets will be sorted in specific order, default to \'desc\'.'
+          optional :order_by,
+                   default: 'id',
                    type: String,
                    desc: 'Name of the field, which will be ordered by'
         end
@@ -34,7 +35,7 @@ module API
           authorize! :read, Wallet
 
           search = Wallet.ransack()
-          search.sorts = "#{params[:sort_field]} #{params[:order_by]}" if params[:sort_field].present?
+          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Wallet
         end
 
@@ -61,8 +62,7 @@ module API
         post '/wallets/new' do
           authorize! :create, Wallet
 
-          data = declared(params)
-          wallet = Wallet.new(data)
+          wallet = Wallet.new(declared(params))
           if wallet.save
             present wallet, with: API::V2::Admin::Entities::Wallet
             status 201
@@ -82,7 +82,7 @@ module API
           authorize! :write, Wallet
 
           wallet = Wallet.find(params[:id])
-          if wallet.update(params)
+          if wallet.update(declared(params, include_missing: false))
             present wallet, with: API::V2::Admin::Entities::Wallet
           else
             body errors: wallet.errors.full_messages

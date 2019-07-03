@@ -18,7 +18,7 @@ module API
               :name,
               documentation: {
                   type: String,
-                  desc: 'Currency name'
+                  desc: 'Currency name.'
               },
               if: -> (currency){ currency.name.present? }
           )
@@ -27,7 +27,7 @@ module API
             :blockchain_key,
             documentation: {
                 type: String,
-                desc: 'Currency blockchain key'
+                desc: 'Currency blockchain key.'
             },
             if: -> (currency){ currency.coin? }
           )
@@ -36,7 +36,7 @@ module API
             :symbol,
             documentation: {
               type: String,
-              desc: 'Currency symbol'
+              desc: 'Currency symbol.'
             }
           )
 
@@ -44,7 +44,7 @@ module API
             :explorer_transaction,
             documentation: {
               type: String,
-              desc: 'Currency transaction exprorer url template'
+              desc: 'Currency transaction exprorer url template.'
             },
             if: -> (currency){ currency.coin? }
           )
@@ -53,7 +53,7 @@ module API
             :explorer_address,
             documentation: {
               type: String,
-              desc: 'Currency address exprorer url template'
+              desc: 'Currency address exprorer url template.'
             },
             if: -> (currency){ currency.coin? }
           )
@@ -62,7 +62,7 @@ module API
             :type,
             documentation: {
               type: String,
-              desc: 'Currency type'
+              desc: 'Currency type.'
             }
           )
 
@@ -70,7 +70,7 @@ module API
             :deposit_fee,
             documentation: {
               type: BigDecimal,
-              desc: 'Currency deposit fee'
+              desc: 'Currency deposit fee.'
             }
           )
 
@@ -78,7 +78,7 @@ module API
             :min_deposit_amount,
             documentation: {
               type: BigDecimal,
-              desc: 'Minimal deposit amount'
+              desc: 'Minimal deposit amount.'
             }
           )
 
@@ -86,7 +86,7 @@ module API
             :withdraw_fee,
             documentation: {
               type: BigDecimal,
-              desc: 'Currency withdraw fee'
+              desc: 'Currency withdraw fee.'
             }
           )
 
@@ -94,7 +94,7 @@ module API
             :min_withdraw_amount,
             documentation: {
               type: BigDecimal,
-              desc: 'Minimal withdraw amount'
+              desc: 'Minimal withdraw amount.'
             }
           )
 
@@ -102,7 +102,7 @@ module API
             :min_collection_amount,
             documentation: {
               type: BigDecimal,
-              desc: 'Minimal collection amount'
+              desc: 'Minimal collection amount.'
             }
           )
 
@@ -110,7 +110,7 @@ module API
             :withdraw_limit_24h,
             documentation: {
               type: BigDecimal,
-              desc: 'Currency 24h withdraw limit'
+              desc: 'Currency 24h withdraw limit.'
             }
           )
 
@@ -118,7 +118,7 @@ module API
             :withdraw_limit_72h,
             documentation: {
               type: BigDecimal,
-              desc: 'Currency 72h withdraw limit'
+              desc: 'Currency 72h withdraw limit.'
             }
           )
 
@@ -126,7 +126,7 @@ module API
             :base_factor,
             documentation: {
               type: Integer,
-              desc: 'Currency base factor'
+              desc: 'Currency base factor.'
             }
           )
 
@@ -134,7 +134,7 @@ module API
             :precision,
             documentation: {
               type: Integer,
-              desc: 'Currency precision'
+              desc: 'Currency precision.'
             }
           )
 
@@ -142,7 +142,7 @@ module API
             :position,
             documentation: {
               type: Integer,
-              desc: 'Currency position'
+              desc: 'Currency position.'
             }
           )
 
@@ -150,7 +150,7 @@ module API
             :enabled,
             documentation: {
               type: String,
-              desc: 'Currency display'
+              desc: 'Currency display.'
             }
           )
 
@@ -158,7 +158,7 @@ module API
             :icon_url,
             documentation: {
               type: String,
-              desc: 'Currency icon'
+              desc: 'Currency icon.'
             },
             if: -> (currency){ currency.icon_url.present? }
           )
@@ -167,7 +167,7 @@ module API
             :options,
             documentation: {
               type: JSON,
-              desc: 'Currency options'
+              desc: 'Currency options.'
             },
             if: -> (currency){ currency.coin? }
           )
@@ -177,7 +177,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: 'Currency created time in iso8601 format'
+              desc: 'Currency created time in iso8601 format.'
             }
           )
 
@@ -186,7 +186,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: 'Currency updated time in iso8601 format'
+              desc: 'Currency updated time in iso8601 format.'
             }
           )
         end

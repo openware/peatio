@@ -44,7 +44,7 @@ describe API::V2::Admin::Wallets, type: :request do
     end
 
     it 'returns wallets by ascending order' do
-      api_get '/api/v2/admin/wallets', params: { order_by: 'asc', sort_field: 'currency_id'}, token: token
+      api_get '/api/v2/admin/wallets', params: { ordering: 'asc', order_by: 'currency_id'}, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
@@ -102,7 +102,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate status' do
       api_post '/api/v2/admin/wallets/new', params: { name: 'Test', kind: 'deposit', currency_id: 'eth', address: 'blank', blockchain_key: 'btc-testnet', gateway: 'geth', settings: { uri: 'http://127.0.0.1:18332'}, status: 'disable' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.invalid_status')
@@ -110,7 +109,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate gateway' do
       api_post '/api/v2/admin/wallets/update', params: { name: 'Test', kind: 'deposit', currency_id: 'eth', address: 'blank', blockchain_key: 'btc-testnet', settings: { uri: 'http://127.0.0.1:18332'}, gateway: 'test' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.gateway_doesnt_exist')
@@ -118,7 +116,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate kind' do
       api_post '/api/v2/admin/wallets/update', params: { name: 'Test', kind: 'test', currency_id: 'eth', address: 'blank', blockchain_key: 'btc-testnet', settings: { uri: 'http://127.0.0.1:18332'}, gateway: 'geth' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.invalid_kind')
@@ -126,7 +123,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate currency_id' do
       api_post '/api/v2/admin/wallets/update', params: { name: 'Test', kind: 'deposit', address: 'blank', blockchain_key: 'btc-testnet', gateway: 'geth', settings: { uri: 'http://127.0.0.1:18332'}, currency_id: 'test' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.currency_id_doesnt_exist')
@@ -151,7 +147,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate blockchain_key' do
       api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, blockchain_key: 'test' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.blockchain_key_doesnt_exist')
@@ -159,7 +154,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate status' do
       api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, status: 'disable' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.invalid_status')
@@ -167,7 +161,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate gateway' do
       api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, gateway: 'test' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.gateway_doesnt_exist')
@@ -175,7 +168,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate kind' do
       api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, kind: 'test' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.invalid_kind')
@@ -183,7 +175,6 @@ describe API::V2::Admin::Wallets, type: :request do
 
     it 'validate currency_id' do
       api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, currency_id: 'test' }, token: token
-      result = JSON.parse(response.body)
 
       expect(response.code).to eq '422'
       expect(response).to include_api_error('admin.wallet.currency_id_doesnt_exist')

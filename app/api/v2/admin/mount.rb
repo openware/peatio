@@ -12,6 +12,8 @@ module API
         mount Admin::Currencies
         mount Admin::Markets
         mount Admin::Wallets
+        mount Admin::Deposits
+        mount Admin::Withdraws
       end
     end
   end

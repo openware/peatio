@@ -43,7 +43,7 @@ describe API::V2::Admin::Blockchains, type: :request do
     end
 
     it 'returns blockchains by ascending order' do
-      api_get '/api/v2/admin/blockchains', params: { order_by: 'asc', sort_field: 'client'}, token: token
+      api_get '/api/v2/admin/blockchains', params: { ordering: 'asc', order_by: 'client'}, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful

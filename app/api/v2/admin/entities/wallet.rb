@@ -11,7 +11,7 @@ module API
             :id,
             documentation:{
               type: Integer,
-              desc: 'Unique wallet id'
+              desc: 'Unique wallet id.'
             }
           )
 
@@ -19,7 +19,7 @@ module API
             :name,
             documentation: {
                 type: String,
-                desc: 'Wallet name'
+                desc: 'Wallet name.'
             }
           )
 
@@ -27,7 +27,7 @@ module API
             :kind,
             documentation: {
                 type: String,
-                desc: "Kind of wallet 'deposit','fee','hot','warm' or 'cold'"
+                desc: "Kind of wallet 'deposit','fee','hot','warm' or 'cold'."
             }
           )
 
@@ -35,7 +35,7 @@ module API
             :currency_id,
             documentation: {
                 type: String,
-                desc: 'Wallet currency id'
+                desc: 'Wallet currency id.'
             }
           )
 
@@ -43,7 +43,7 @@ module API
             :address,
             documentation: {
                 type: String,
-                desc: 'Wallet address'
+                desc: 'Wallet address.'
             }
           )
 
@@ -51,7 +51,7 @@ module API
             :gateway,
             documentation: {
                 type: String,
-                desc: 'Wallet gateway'
+                desc: 'Wallet gateway.'
             }
           )
 
@@ -59,7 +59,7 @@ module API
             :nsig,
             documentation: {
                 type: Integer,
-                desc: 'Wallet number of signatures'
+                desc: 'Wallet number of signatures.'
             }
           )
 
@@ -67,7 +67,7 @@ module API
             :max_balance,
             documentation: {
                 type: BigDecimal,
-                desc: 'Wallet max balance'
+                desc: 'Wallet max balance.'
             }
           )
 
@@ -75,7 +75,7 @@ module API
             :parent,
             documentation: {
                 type: Integer,
-                desc: 'Wallet parent'
+                desc: 'Wallet parent.'
             }
           )
 
@@ -83,7 +83,7 @@ module API
             :blockchain_key,
             documentation: {
                 type: String,
-                desc: 'Wallet blockchain key'
+                desc: 'Wallet blockchain key.'
             }
           )
 
@@ -91,7 +91,7 @@ module API
             :status,
             documentation: {
                 type: String,
-                desc: 'Wallet status (active/disabled)'
+                desc: 'Wallet status (active/disabled).'
             }
           )
 
@@ -99,7 +99,7 @@ module API
             :settings,
             documentation: {
               type: JSON,
-              desc: 'Wallet settings'
+              desc: 'Wallet settings.'
             }
           )
 
@@ -108,7 +108,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: 'Wallet created time in iso8601 format'
+              desc: 'Wallet created time in iso8601 format.'
             }
           )
 
@@ -117,7 +117,7 @@ module API
             format_with: :iso8601,
             documentation: {
               type: String,
-              desc: 'Wallet updated time in iso8601 format'
+              desc: 'Wallet updated time in iso8601 format.'
             }
           )
         end
