@@ -25,12 +25,12 @@ module API
                    allow_blank: false,
                    default: 1,
                    desc: 'Specify the page of paginated results.'
-          optional :order_by,
+          optional :ordering,
                    type: String,
-                   values: { value: %w(asc desc), message: 'admin.currency.invalid_order_by' },
+                   values: { value: %w(asc desc), message: 'admin.currency.invalid_ordering' },
                    default: 'desc',
                    desc: "If set, returned currencies will be sorted in specific order, default to 'desc'."
-          optional :sort_field,
+          optional :order_by,
                    type: String,
                    desc: 'Name of the field, which will be ordered by'
         end
@@ -38,7 +38,7 @@ module API
           authorize! :read, Currency
 
           search = Currency.ransack(type_eq: params[:type])
-          search.sorts = "#{params[:sort_field]} #{params[:order_by]}" if params[:sort_field].present?
+          search.sorts = "#{params[:order_by]} #{params[:ordering]}" if params[:order_by].present?
 
           present paginate(search.result), with: API::V2::Admin::Entities::Currency
         end

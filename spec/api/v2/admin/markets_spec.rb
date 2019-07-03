@@ -44,7 +44,7 @@ describe API::V2::Admin::Markets, type: :request do
     end
 
     it 'returns markets by ascending order' do
-      api_get '/api/v2/admin/markets', params: { order_by: 'asc', sort_field: 'bid_unit'}, token: token
+      api_get '/api/v2/admin/markets', params: { ordering: 'asc', order_by: 'bid_unit'}, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful

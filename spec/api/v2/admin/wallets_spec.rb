@@ -44,7 +44,7 @@ describe API::V2::Admin::Wallets, type: :request do
     end
 
     it 'returns wallets by ascending order' do
-      api_get '/api/v2/admin/wallets', params: { order_by: 'asc', sort_field: 'currency_id'}, token: token
+      api_get '/api/v2/admin/wallets', params: { ordering: 'asc', order_by: 'currency_id'}, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful

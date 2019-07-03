@@ -148,7 +148,7 @@ describe API::V2::Admin::Orders, type: :request do
     end
 
     it 'returns orders by ascending order' do
-      api_get '/api/v2/admin/orders', params: { market: 'btcusd', order_by: 'asc', sort_field: 'updated_at'}, token: token
+      api_get '/api/v2/admin/orders', params: { market: 'btcusd', ordering: 'asc', order_by: 'updated_at'}, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
