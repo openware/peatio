@@ -77,14 +77,26 @@ module Matching
       return if order.filled?
       return unless (counter_order = counter_book.top)
 
-      if trade = order.trade_with(counter_order, counter_book)
-        counter_book.fill_top(*trade)
-        order.fill(*trade)
-        publish(order, counter_order, trade)
-        pp "order ", order
-        pp "trade ", trade
-        match_implementation(order, counter_book)
-      end
+      # trade is price, volume, funds Array.
+      trade = order.trade_with(counter_order, counter_book)
+      return if trade.blank?
+
+      price, volume, funds = trade
+
+      trade = Trade.new(price, volume, funds)
+      trade.validate!
+
+      counter_book.fill_top(price, volume, funds)
+      order.fill(price, volume, funds)
+      publish(order, counter_order, [price, volume, funds])
+      match_implementation(order, counter_book)
+
+    rescue OrderError => e
+      report_exception(e)
+      cancel(e.order)
+    rescue TradeError => e
+      report_exception(e)
+      cancel(order)
     end
 
     def add_or_cancel(order, book)
@@ -95,6 +107,8 @@ module Matching
     def publish(order, counter_order, trade)
       ask, bid = order.type == :ask ? [order, counter_order] : [counter_order, order]
 
+      # Rounding is forbidden in this step because it can cause difference
+      # between amount/funds in DB and orderbook.
       price  = trade[0]
       volume = trade[1]
       funds  = trade[2]
@@ -113,6 +127,25 @@ module Matching
         :order_processor,
         { action: 'cancel', order: order.attributes },
         { persistent: false }
+    end
+
+    # min_amount_by_precision - is the smallest positive number which could be
+    # rounded to value greater then 0 with precision defined by
+    # Market #amount_precision. So min_amount_by_precision is the smallest amount
+    # of order/trade for current market.
+    # E.g.
+    #   market.amount_precision => 4
+    #   min_amount_by_precision => 0.0001
+    #
+    #   market.amount_precision => 2
+    #   min_amount_by_precision => 0.01
+    #
+    def min_amount_by_precision
+      0.1.to_d**@market.amount_precision
+    end
+
+    def validate_trade
+
     end
   end
 end

@@ -4,9 +4,7 @@
 require_relative 'constants'
 
 module Matching
-  class LimitOrder
-
-    include Helpers
+  class LimitOrder < AbstractOrder
 
     attr :id, :timestamp, :type, :price, :market
     attr_accessor :volume
@@ -19,7 +17,7 @@ module Matching
       @price      = attrs[:price].to_d
       @market     = attrs[:market]
 
-      raise InvalidOrderError.new(attrs) unless valid?
+      raise LegacyInvalidOrderError.new(attrs) unless valid?
     end
 
     def trade_with(counter_order, counter_book)

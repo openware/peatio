@@ -5,7 +5,32 @@ module Matching
 
   ZERO = 0.to_d unless defined?(ZERO)
 
-  class InvalidOrderError   < StandardError; end
+  class OrderError < StandardError
+
+    attr_reader :order
+
+    def initialize(order, message=nil)
+      @order = order
+      super message
+    end
+  end
+
+  InvalidOrderError = Class.new(OrderError)
+  # Do we need this error?
+  MarketOrderExceededFundsError = Class.new(OrderError)
+
+  class TradeError < StandardError
+
+    attr_reader :trade
+
+    def initialize(trade, message=nil)
+      @trade = trade
+      super message
+    end
+  end
+
+  # TODO: Use InvalidOrderError instead of LegacyInvalidOrderError.
+  class LegacyInvalidOrderError < StandardError; end
   class NotEnoughVolume     < StandardError; end
   class ExceedSumLimit      < StandardError; end
   class TradeExecutionError < StandardError

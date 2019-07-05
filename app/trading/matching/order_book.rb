@@ -44,7 +44,7 @@ module Matching
     end
 
     def add(order)
-      raise InvalidOrderError, "volume is zero" if order.volume <= ZERO
+      raise LegacyInvalidOrderError, "volume is zero" if order.volume <= ZERO
 
       case order
       when LimitOrder
