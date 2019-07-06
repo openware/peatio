@@ -3,40 +3,40 @@
 require 'yaml'
 
 namespace :seed do
-  desc 'Adds missing accounts to database defined at config/seed/accounts.yml.'
+  desc 'Adds missing accounts to database defined at config/seed/accounts.yml.erb.'
   task accounts: :environment do
     Operations::Account.transaction do
-      YAML.load_file(Rails.root.join('config/seed/accounts.yml')).each do |hash|
+      YAML.load_file(Rails.root.join('config/seed/accounts.yml.erb')).each do |hash|
         next if Operations::Account.exists?(code: hash.fetch('code'))
         Operations::Account.create!(hash)
       end
     end
   end
 
-  desc 'Adds missing currencies to database defined at config/seed/currencies.yml.'
+  desc 'Adds missing currencies to database defined at config/seed/currencies.yml.erb.'
   task currencies: :environment do
     Currency.transaction do
-      YAML.load_file(Rails.root.join('config/seed/currencies.yml')).each do |hash|
+      YAML.load_file(Rails.root.join('config/seed/currencies.yml.erb')).each do |hash|
         next if Currency.exists?(id: hash.fetch('id'))
         Currency.create!(hash)
       end
     end
   end
 
-  desc 'Adds missing blockchains to database defined at config/seed/blockchains.yml.'
+  desc 'Adds missing blockchains to database defined at config/seed/blockchains.yml.erb.'
   task blockchains: :environment do
     Blockchain.transaction do
-      YAML.load_file(Rails.root.join('config/seed/blockchains.yml')).each do |hash|
+      YAML.load_file(Rails.root.join('config/seed/blockchains.yml.erb')).each do |hash|
         next if Blockchain.exists?(key: hash.fetch('key'))
         Blockchain.create!(hash)
       end
     end
   end
 
-  desc 'Adds missing markets to database defined at config/seed/markets.yml.'
+  desc 'Adds missing markets to database defined at config/seed/markets.yml.erb.'
   task markets: :environment do
     Market.transaction do
-      YAML.load_file(Rails.root.join('config/seed/markets.yml'))
+      YAML.load_file(Rails.root.join('config/seed/markets.yml.erb'))
         .map(&:symbolize_keys)
         .each do |hash|
           next if Market.exists?(id: hash.fetch(:id))
@@ -65,10 +65,10 @@ namespace :seed do
     end
   end
 
-  desc 'Adds missing wallets to database defined at config/seed/wallets.yml.'
+  desc 'Adds missing wallets to database defined at config/seed/wallets.yml.erb.'
   task wallets: :environment do
     Wallet.transaction do
-      YAML.load_file(Rails.root.join('config/seed/wallets.yml')).each do |hash|
+      YAML.load_file(Rails.root.join('config/seed/wallets.yml.erb')).each do |hash|
         next if Wallet.exists?(name: hash.fetch('name'))
         Wallet.create!(hash)
       end
