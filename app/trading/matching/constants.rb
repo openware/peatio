@@ -5,7 +5,9 @@ module Matching
 
   ZERO = 0.to_d unless defined?(ZERO)
 
-  class OrderError < StandardError
+  Error = Class.new(StandardError)
+
+  class OrderError < Error
 
     attr_reader :order
 
@@ -19,7 +21,7 @@ module Matching
   # Do we need this error?
   MarketOrderExceededFundsError = Class.new(OrderError)
 
-  class TradeError < StandardError
+  class TradeError < Error
 
     attr_reader :trade
 

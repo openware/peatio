@@ -17,10 +17,104 @@ module Matching
       shift_gears(options[:mode] || :run)
     end
 
+    def submit2(order)
+      messages = match2(order)
+      messages.each do |m|
+        queue.enqueue(*m)
+      end
+    end
+
+    def match2(order)
+      book, opposite_book = orderbook.get_books(order.type)
+
+      messages = []
+      loop do
+        # If order is fulfilled we break the loop.
+        break if order.filled?
+
+        if opposite_book.top.blank?
+          if order.is_a?(LimitOrder)
+            book.add(order)
+          else
+            messages << [
+              :order_processor,
+              { action: 'cancel', order: order.attributes },
+              { persistent: false }
+            ]
+          end
+          break
+        end
+
+        opposite_order = opposite_book.top
+        trade = order.trade_with(opposite_order, opposite_book)
+
+        price, volume, funds = trade
+        Matching::Trade.new(price, volume, funds).validate!
+
+        order.fill(price, volume, funds)
+        opposite_book.fill_top(price, volume, funds)
+
+        messages << trade_message(order, opposite_order, trade)
+      end
+
+      messages
+    rescue TradeError => e
+      messages << [
+        :order_processor,
+        { action: 'cancel', order: order.attributes },
+        { persistent: false }
+      ]
+    rescue OrderError => e
+      messages << [
+        :order_processor,
+        { action: 'cancel', order: order.attributes },
+        { persistent: false }
+      ]
+    end
+
+    # def match(order, counter_book, attempt_number = 1, maximum_attempts = 3)
+    #   return if attempt_number >= maximum_attempts
+    #   match_implementation(order, counter_book)
+    # rescue StandardError => e
+    #   raise e if e.is_a?(Matching::Error)
+    #
+    #   report_exception(e) if attempt_number == 1
+    #   match(order, counter_book, attempt_number + 1, maximum_attempts)
+    # end
+    #
+    # def match_implementation(order, counter_book)
+    #   return if order.filled?
+    #   return unless (counter_order = counter_book.top)
+    #
+    #   # trade represented in for of [price, volume, funds] array.
+    #   trade = order.trade_with(counter_order, counter_book)
+    #   return if trade.blank?
+    #
+    #   price, volume, funds = trade
+    #
+    #   trade = Matching::Trade.new(price, volume, funds)
+    #   trade.validate!
+    #
+    #   counter_book.fill_top(price, volume, funds)
+    #   order.fill(price, volume, funds)
+    #   publish(order, counter_order, [price, volume, funds])
+    #   match_implementation(order, counter_book)
+    # end
+
     def submit(order)
       book, counter_book = orderbook.get_books order.type
       match(order, counter_book)
       add_or_cancel(order, book)
+    rescue OrderError => e
+      Rails.logger.warn "Failed to match order #{order.label} (#{e})"
+      publish_cancel(order)
+      if e.order.id != order.id
+        Rails.logger.warn "Failed to match order #{e.order.label} (#{e})"
+        publish_cancel(e.order)
+      end
+    rescue TradeError => e
+      report_exception(e)
+      publish_cancel(order)
     rescue => e
       Rails.logger.error { "Failed to submit order #{order.label}." }
       report_exception(e)
@@ -69,6 +163,8 @@ module Matching
       return if attempt_number >= maximum_attempts
       match_implementation(order, counter_book)
     rescue StandardError => e
+      raise e if e.is_a?(Matching::Error)
+
       report_exception(e) if attempt_number == 1
       match(order, counter_book, attempt_number + 1, maximum_attempts)
     end
@@ -90,15 +186,6 @@ module Matching
       order.fill(price, volume, funds)
       publish(order, counter_order, [price, volume, funds])
       match_implementation(order, counter_book)
-    rescue OrderError => e
-      binding.pry
-      report_exception(e)
-      cancel(e.order)
-
-      match_implementation(order, counter_book) if e.order.id != order.id
-    rescue TradeError => e
-      report_exception(e)
-      cancel(order)
     end
 
     def add_or_cancel(order, book)
@@ -122,6 +209,24 @@ module Matching
         {market_id: @market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: funds},
         {persistent: false}
       )
+    end
+
+    def trade_message(order, counter_order, trade)
+      ask, bid = order.type == :ask ? [order, counter_order] : [counter_order, order]
+
+      # Rounding is forbidden in this step because it can cause difference
+      # between amount/funds in DB and orderbook.
+      price  = trade[0]
+      volume = trade[1]
+      funds  = trade[2]
+
+      Rails.logger.info { "[#{@market.id}] new trade - ask: #{ask.label} bid: #{bid.label} price: #{price} volume: #{volume} funds: #{funds}" }
+
+        [
+          :trade_executor,
+          {market_id: @market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: funds},
+          {persistent: false}
+        ]
     end
 
     def publish_cancel(order)
