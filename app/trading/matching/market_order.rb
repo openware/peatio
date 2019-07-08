@@ -23,13 +23,19 @@ module Matching
     def trade_with(counter_order, counter_book)
       if counter_order.is_a?(LimitOrder)
         trade_price  = counter_order.price
-        trade_volume = [volume, volume_limit(trade_price), counter_order.volume].min
-        trade_funds  = trade_price*trade_volume
+        trade_volume = [volume, counter_order.volume].min
+        trade_funds  = trade_price * trade_volume
+        raise OrderError.new(self, 'Market order out of locked') if trade_funds > locked
+
         [trade_price, trade_volume, trade_funds]
       elsif price = counter_book.best_limit_price
         trade_price  = price
-        trade_volume = [volume, volume_limit(trade_price), counter_order.volume, counter_order.volume_limit(trade_price)].min
-        trade_funds  = trade_price*trade_volume
+        trade_volume = [volume, counter_order.volume].min
+        trade_funds  = trade_price * trade_volume
+
+        raise OrderError.new(self, 'Market order out of locked') if trade_funds > locked
+        raise OrderError.new(counter_order, 'Market order out of locked') if trade_funds > counter_order.locked
+
         [trade_price, trade_volume, trade_funds]
       end
     end

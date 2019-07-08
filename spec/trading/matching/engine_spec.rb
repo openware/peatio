@@ -69,6 +69,8 @@ describe Matching::Engine do
         subject.submit ask1_mock
         subject.submit ask2_mock
         subject.submit bid1_mock
+
+        binding.pry
       end
     end
 

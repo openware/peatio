@@ -9,14 +9,15 @@ module Matching
     end
 
     def validate!
-      if [@price, @volume, @funds].any? { |d| d == ZERO }
-        raise TradeError, self, 'price, volume or funds is equal to 0.'
-      elsif @price * @volume != @funds
-        raise TradeError, self, 'price * volume != funds'
-      elsif round(@price * @volume) != round(@funds)
-        raise TradeError, self, 'round(@price * @volume) != round(@funds)'
-      end
-      true
+      message =
+        if [@price, @volume, @funds].any? { |d| d == ZERO }
+          'price, volume or funds is equal to 0.'
+        elsif @price * @volume != @funds
+          'price * volume != funds'
+        elsif round(@price * @volume) != round(@funds)
+          'round(@price * @volume) != round(@funds)'
+        end
+      message.present? ? raise(TradeError.new(self, message)) : true
     end
 
     private

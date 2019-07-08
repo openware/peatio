@@ -77,23 +77,25 @@ module Matching
       return if order.filled?
       return unless (counter_order = counter_book.top)
 
-      # trade is price, volume, funds Array.
+      # trade represented in for of [price, volume, funds] array.
       trade = order.trade_with(counter_order, counter_book)
       return if trade.blank?
 
       price, volume, funds = trade
 
-      trade = Trade.new(price, volume, funds)
+      trade = Matching::Trade.new(price, volume, funds)
       trade.validate!
 
       counter_book.fill_top(price, volume, funds)
       order.fill(price, volume, funds)
       publish(order, counter_order, [price, volume, funds])
       match_implementation(order, counter_book)
-
     rescue OrderError => e
+      binding.pry
       report_exception(e)
       cancel(e.order)
+
+      match_implementation(order, counter_book) if e.order.id != order.id
     rescue TradeError => e
       report_exception(e)
       cancel(order)
@@ -142,10 +144,6 @@ module Matching
     #
     def min_amount_by_precision
       0.1.to_d**@market.amount_precision
-    end
-
-    def validate_trade
-
     end
   end
 end
