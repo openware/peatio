@@ -13,28 +13,29 @@ describe Matching::Engine do
   before          { subject.stubs(:orderbook).returns(orderbook) }
 
   context 'submit market order 2' do
-    context 'market order out of locked' do
+    context 'market order out of locked 2' do
       subject { Matching::Engine.new(market, mode: :dryrun) }
 
+      # We have the next state of ask(sell) order book.
+      # | price | volume |
+      # | 0.8006| 0.9817 |
+      #
+      # Bid market order for 0.8395 BTC was created with 0.6716 USD locked
+      # (estimated average price is 0.8). But orderbook state changed and order doesn't
+      # have enough locked to match with first in orderbook.
+      # We expect order to be cancelled.
       let!(:ask1_in_db) do
         create(:order_ask,
                :btcusd,
                price: 0.8006.to_d,
-               volume: 0.0111.to_d)
-      end
-
-      let!(:ask2_in_db) do
-        create(:order_ask,
-               :btcusd,
-               price: 1.4117.to_d,
-               volume: 0.3346.to_d)
+               volume: 0.9817.to_d)
       end
 
       let!(:bid1_in_db) do
         create(:order_bid,
                :btcusd,
                ord_type: :market,
-               locked: 0.47237199.to_d,
+               locked: 0.6716.to_d,
                price: nil,
                volume: 0.8395.to_d)
       end
@@ -43,35 +44,58 @@ describe Matching::Engine do
         Matching.mock_limit_order(id: ask1_in_db.id,
                                   type: :ask,
                                   price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume)
-      end
-
-      let!(:ask2_mock) do
-        Matching.mock_limit_order(id: ask2_in_db.id,
-                                  type: :ask,
-                                  price: ask2_in_db.price,
-                                  volume: ask2_in_db.volume)
+                                  volume: ask1_in_db.volume,
+                                  timestamp: 1562668113)
       end
 
       let!(:bid1_mock) do
         Matching.mock_market_order(id: bid1_in_db.id,
                                    type: :bid,
                                    locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume)
+                                   volume: bid1_in_db.volume,
+                                   timestamp: 1562668113)
       end
 
+      let(:expected_messages) do
+        [
+          [
+            :order_processor,
+            {
+              :action=>"cancel",
+              :order=>
+                {:id=>bid1_in_db.id,
+                 :timestamp=>1562668113,
+                 :type=>:bid,
+                 :locked=>0.6716.to_d,
+                 :volume=>0.8395.to_d,
+                 :market=>"btcusd",
+                 :ord_type=>"market"}
+            },
+            {:persistent=>false}
+          ]
+        ]
+      end
       it 'publish single trade and cancel order' do
-        subject.submit ask1_mock
-        subject.submit ask2_mock
-        subject.submit bid1_mock
-        binding.pry
-        expect(subject.queue).to_eq '1'
+        subject.submit2 ask1_mock
+        subject.submit2 bid1_mock
+        expect(subject.queue).to eq expected_messages
       end
     end
 
-    context 'market order out of locked 2222' do
+    context 'market order out of locked 2' do
       subject { Matching::Engine.new(market, mode: :dryrun) }
 
+      # We have the next state of ask(sell) order book.
+      # | price | volume |
+      # | 0.8006| 0.0111 |
+      # | 1.4117| 0.9346 |
+      #
+      # Bid market order for 0.8395 BTC was created with 0.47237199 USD locked
+      # (estimated average price is 0.562682).
+      # But orderbook state changed and order doesn't have enough locked to
+      # fulfill. We expect order to be partially filled and then cancelled.
+      # For full order execution we need 1.181463512078
+      # (0.0111 * 0.8006 + 0.83061334 * 1.4117). Which is less then locked.
       let!(:ask1_in_db) do
         create(:order_ask,
                :btcusd,
@@ -83,7 +107,7 @@ describe Matching::Engine do
         create(:order_ask,
                :btcusd,
                price: 1.4117.to_d,
-               volume: 0.3346.to_d)
+               volume: 0.9346.to_d)
       end
 
       let!(:bid1_in_db) do
@@ -99,65 +123,382 @@ describe Matching::Engine do
         Matching.mock_limit_order(id: ask1_in_db.id,
                                   type: :ask,
                                   price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume)
+                                  volume: ask1_in_db.volume,
+                                  timestamp: 1562668113)
       end
 
       let!(:ask2_mock) do
         Matching.mock_limit_order(id: ask2_in_db.id,
                                   type: :ask,
                                   price: ask2_in_db.price,
-                                  volume: ask2_in_db.volume)
+                                  volume: ask2_in_db.volume,
+                                  timestamp: 1562668113)
       end
 
       let!(:bid1_mock) do
         Matching.mock_market_order(id: bid1_in_db.id,
                                    type: :bid,
                                    locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume)
+                                   volume: bid1_in_db.volume,
+                                   timestamp: 1562668113)
       end
 
+      let(:expected_messages) do
+        [
+          [
+            :trade_executor,
+            {
+              :market_id=>"btcusd",
+              :ask_id=>ask1_in_db.id,
+              :bid_id=>bid1_in_db.id,
+              :strike_price=>0.8006.to_d,
+              :volume=>0.0111.to_d,
+              :funds=>0.00888666.to_d
+            },
+            { persistent: false }
+          ],
+          [
+            :order_processor,
+            {
+              :action=>"cancel",
+              :order=>
+                {:id=>bid1_in_db.id,
+                 :timestamp=>1562668113,
+                 :type=>:bid,
+                 :locked=>0.46348533.to_d,
+                 :volume=>0.8284.to_d,
+                 :market=>"btcusd",
+                 :ord_type=>"market"}
+            },
+           {:persistent=>false}
+          ]
+        ]
+      end
       it 'publish single trade and cancel order' do
         subject.submit2 ask1_mock
         subject.submit2 ask2_mock
         subject.submit2 bid1_mock
-        binding.pry
-        expect(subject.queue).to_eq '1'
+        expect(subject.queue).to eq expected_messages
       end
     end
 
-    context 'precise values 2' do
+    context 'market order out of locked 3' do
       subject { Matching::Engine.new(market, mode: :dryrun) }
 
-      let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.8006'.to_d, volume: '0.0111'.to_d) }
-      let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '1.4117'.to_d, volume: '0.3346'.to_d) }
+      # We have the next state of ask(sell) order book.
+      # | price | volume |
+      # | 3000.0| 0.0009 |
+      # | 3001.0| 0.0011 |
+      # | 3010.0| 0.1000 |
+      #
+      # Bid market order for 0.01 BTC was created with 30.03 USD locked
+      # (estimated average price is 3003).
+      # But orderbook state changed and order doesn't have enough locked to
+      # fulfill. We expect order to create two trades and then cancel.
+      # For full order execution we need 30.0811
+      # (3000 * 0.0009 + 3001 * 0.0011 + 3010 * 0.008).
+      # Which is less then locked.
+      let!(:ask1_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 3000.to_d,
+               volume: 0.0009.to_d)
+      end
 
-      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.472371977'.to_d, volume: '0.8395'.to_d) }
+      let!(:ask2_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 3001.to_d,
+               volume: 0.0011.to_d)
+      end
 
-      let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.0088866600000009'.to_d, volume: '0.0112'.to_d) }
+      let!(:ask3_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 3010.to_d,
+               volume: 0.1000.to_d)
+      end
 
-      it 'huit' do
-        subject.submit ask1
-        subject.submit ask2
-        subject.submit bid
+      let!(:bid1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 30.03.to_d,
+               price: nil,
+               volume: 0.01.to_d)
+      end
+
+      let!(:ask1_mock) do
+        Matching.mock_limit_order(id: ask1_in_db.id,
+                                  type: :ask,
+                                  price: ask1_in_db.price,
+                                  volume: ask1_in_db.volume,
+                                  timestamp: 1562668113)
+      end
+
+      let!(:ask2_mock) do
+        Matching.mock_limit_order(id: ask2_in_db.id,
+                                  type: :ask,
+                                  price: ask2_in_db.price,
+                                  volume: ask2_in_db.volume,
+                                  timestamp: 1562668113)
+      end
+
+      let!(:ask3_mock) do
+        Matching.mock_limit_order(id: ask3_in_db.id,
+                                  type: :ask,
+                                  price: ask3_in_db.price,
+                                  volume: ask3_in_db.volume,
+                                  timestamp: 1562668113)
+      end
+
+      let!(:bid1_mock) do
+        Matching.mock_market_order(id: bid1_in_db.id,
+                                   type: :bid,
+                                   locked: bid1_in_db.locked,
+                                   volume: bid1_in_db.volume,
+                                   timestamp: 1562668113)
+      end
+
+      let(:expected_messages) do
+        [
+          [
+            :trade_executor,
+            { :market_id=>"btcusd",
+              :ask_id=>1,
+              :bid_id=>4,
+              :strike_price=>0.3e4,
+              :volume=>0.9e-3,
+              :funds=>0.27e1 },
+            { :persistent=>false }
+          ],
+          [
+            :trade_executor,
+            { :market_id=>"btcusd",
+              :ask_id=>2,
+              :bid_id=>4,
+              :strike_price=>0.3001e4,
+              :volume=>0.11e-2,
+              :funds=>0.33011e1 },
+            { :persistent=>false }
+          ],
+          [
+            :order_processor,
+            { :action=>"cancel",
+              :order=> {
+                :id=>4,
+                :timestamp=>1562668113,
+                :type=>:bid,
+                :locked=>0.240289e2,
+                :volume=>0.8e-2,
+                :market=>"btcusd",
+                :ord_type=>"market"
+              }},
+            { :persistent=>false }
+          ]
+        ]
+      end
+      it 'publish single trade and cancel order' do
+        subject.submit2 ask1_mock
+        subject.submit2 ask2_mock
+        subject.submit2 bid1_mock
+        expect(subject.queue).to eq expected_messages
       end
     end
 
-    context 'precise values 3' do
-      subject         { Matching::Engine.new(market, mode: :dryrun) }
+    context 'market doesn\'t have enough funds 1' do
+      subject { Matching::Engine.new(market, mode: :dryrun) }
 
-      let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '0.000005'.to_d, volume: '0.000000000001'.to_d) }
+      # We have the next state of ask(sell) order book.
+      # | price | volume |
+      # | 3000.0| 0.0009 |
+      #
+      # Bid market order for 0.001 BTC was created with 30.03 USD locked
+      # (estimated average price is 3003).
+      # But orderbook state changed and market doesn't have enough volume to
+      # fulfill. We expect order to match with the first opposite order and then
+      # be cancelled.
+      let!(:ask1_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 3000.to_d,
+               volume: 0.0009.to_d)
+      end
 
-      let!(:bid) { Matching.mock_limit_order(type: :bid, price: '1.6'.to_d, volume: '0.1'.to_d) }
+      let!(:bid1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 30.03.to_d,
+               price: nil,
+               volume: 0.01.to_d)
+      end
 
-      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.472371977'.to_d, volume: '0.8395'.to_d) }
+      let!(:ask1_mock) do
+        Matching.mock_limit_order(id: ask1_in_db.id,
+                                  type: :ask,
+                                  price: ask1_in_db.price,
+                                  volume: ask1_in_db.volume,
+                                  timestamp: 1562668113)
+      end
 
-      # let!(:bid) { Matching.mock_market_order(type: :bid, locked: '0.0088866600000009'.to_d, volume: '0.0112'.to_d) }
+      let!(:bid1_mock) do
+        Matching.mock_market_order(id: bid1_in_db.id,
+                                   type: :bid,
+                                   locked: bid1_in_db.locked,
+                                   volume: bid1_in_db.volume,
+                                   timestamp: 1562668113)
+      end
 
-      it 'huit' do
-        subject.submit ask1
-        subject.submit bid
+      let(:expected_messages) do
+        [
+          [
+            :trade_executor,
+            {
+              :market_id=>"btcusd",
+              :ask_id=>ask1_in_db.id,
+              :bid_id=>bid1_in_db.id,
+              :strike_price=>0.3e4,
+              :volume=>0.9e-3,
+              :funds=>0.27e1
+            },
+            { :persistent=>false }
+          ],
+          [
+            :order_processor,
+            {
+              :action=>"cancel",
+              :order=> {
+                :id=>bid1_in_db.id,
+                :timestamp=>1562668113,
+                :type=>:bid,
+                :locked=>0.2733e2,
+                :volume=>0.91e-2,
+                :market=>"btcusd",
+                :ord_type=>"market"
+              }
+            },
+          { :persistent=>false }
+          ]
+        ]
+      end
+      it 'publish single trade and cancel order' do
+        subject.submit2 ask1_mock
+        subject.submit2 bid1_mock
+        expect(subject.queue).to eq expected_messages
+      end
+    end
 
-        binding.pry
+    context 'market doesn\'t have enough funds 2' do
+      subject { Matching::Engine.new(market, mode: :dryrun) }
+
+      # We have the next state of ask(sell) order book.
+      # | price | volume |
+      # | 3000.0| 0.0009 |
+      #
+      # 1. Bid market order for 0.00045 BTC was created with 1.35 USD locked
+      # (estimated average price is 3000).
+      # 2. Bid market order for 0.0009 BTC was created with 2.7 USD locked
+      # (estimated average price is 3000).
+      # Firs order match fully. Second order match partially and cancel.
+      let!(:ask1_in_db) do
+        create(:order_ask,
+               :btcusd,
+               price: 3000.to_d,
+               volume: 0.0009.to_d)
+      end
+
+      let!(:bid1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 1.35.to_d,
+               price: nil,
+               volume: 0.00045.to_d)
+      end
+
+      let!(:bid2_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 2.7.to_d,
+               price: nil,
+               volume: 0.0009.to_d)
+      end
+
+      let!(:ask1_mock) do
+        Matching.mock_limit_order(id: ask1_in_db.id,
+                                  type: :ask,
+                                  price: ask1_in_db.price,
+                                  volume: ask1_in_db.volume,
+                                  timestamp: 1562668113)
+      end
+
+      let!(:bid1_mock) do
+        Matching.mock_market_order(id: bid1_in_db.id,
+                                   type: :bid,
+                                   locked: bid1_in_db.locked,
+                                   volume: bid1_in_db.volume,
+                                   timestamp: 1562668113)
+      end
+
+      let!(:bid2_mock) do
+        Matching.mock_market_order(id: bid2_in_db.id,
+                                   type: :bid,
+                                   locked: bid2_in_db.locked,
+                                   volume: bid2_in_db.volume,
+                                   timestamp: 1562668113)
+      end
+
+      let(:expected_messages) do
+        [
+          [
+            :trade_executor,
+            {
+              :market_id => "btcusd",
+              :ask_id => ask1_in_db.id,
+              :bid_id => bid1_in_db.id,
+              :strike_price => 0.3e4,
+              :volume => 0.4e-3,
+              :funds => 0.12e1
+            },
+            { :persistent => false }
+          ],
+          [
+            :trade_executor,
+            {
+              :market_id => "btcusd",
+              :ask_id => ask1_in_db.id,
+              :bid_id => bid2_in_db.id,
+              :strike_price => 0.3e4,
+              :volume => 0.5e-3,
+              :funds => 0.15e1
+            },
+            { :persistent => false }
+          ],
+          [
+            :order_processor,
+            {
+              :action => "cancel",
+              :order => {
+                :id => bid2_in_db.id,
+                :timestamp => 1562668113,
+                :type => :bid,
+                :locked => 0.12e1,
+                :volume => 0.4e-3,
+                :market => "btcusd",
+                :ord_type => "market"
+              }
+            },
+            { :persistent => false }
+          ]
+        ]
+      end
+      it 'publish single trade and cancel order' do
+        subject.submit2 ask1_mock
+        subject.submit2 bid1_mock
+        subject.submit2 bid2_mock
+        expect(subject.queue).to eq expected_messages
       end
     end
   end
