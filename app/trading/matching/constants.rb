@@ -18,7 +18,7 @@ module Matching
   end
 
   InvalidOrderError = Class.new(OrderError)
-  # Do we need this error?
+  # TODO: Do we need this error?
   MarketOrderExceededFundsError = Class.new(OrderError)
 
   class TradeError < Error

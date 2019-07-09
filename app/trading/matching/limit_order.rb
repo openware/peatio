@@ -69,6 +69,5 @@ module Matching
         market: @market,
         ord_type: 'limit' }
     end
-
   end
 end

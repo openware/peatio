@@ -1,3 +1,6 @@
+# encoding: UTF-8
+# frozen_string_literal: true
+
 module Matching
   # TODO: Use Trade instead of price, volume, funds array.
   class Trade
