@@ -29,11 +29,8 @@ module Matching
           [trade_price, trade_volume, trade_funds]
         end
       else
-        trade_volume = [volume, counter_order.volume, counter_order.volume_limit(price)].min
-        trade_funds  = price * trade_volume
-        raise OrderError.new(counter_order, 'Market order out of locked') if trade_funds > counter_order.locked
-
-        [price, trade_volume, trade_funds]
+        Rails.logger.warn "TRADE WITH !!!!!"
+        binding.pry
       end
     end
 

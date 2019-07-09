@@ -18,6 +18,7 @@ module Matching
     end
 
     def submit2(order)
+      Rails.logger.warn 'Submit 2'
       messages = match2(order)
       messages.each do |m|
         queue.enqueue(*m)
@@ -36,17 +37,22 @@ module Matching
           if order.is_a?(LimitOrder)
             book.add(order)
           else
-            messages << [
-              :order_processor,
-              { action: 'cancel', order: order.attributes },
-              { persistent: false }
-            ]
+            messages << order_cancel_message(order)
           end
           break
         end
 
         opposite_order = opposite_book.top
         trade = order.trade_with(opposite_order, opposite_book)
+
+        if trade.blank?
+          if order.is_a?(LimitOrder)
+            book.add(order)
+          else
+            messages << order_cancel_message(order)
+          end
+          break
+        end
 
         price, volume, funds = trade
         Matching::Trade.new(price, volume, funds).validate!
@@ -59,69 +65,16 @@ module Matching
 
       messages
     rescue TradeError => e
-      messages << [
-        :order_processor,
-        { action: 'cancel', order: order.attributes },
-        { persistent: false }
-      ]
+      # TODO: Decide what do we need to do with such pair of orders.
+      # TODO: Log error.
+      messages << order_cancel_message(order)
     rescue OrderError => e
-      messages << [
-        :order_processor,
-        { action: 'cancel', order: order.attributes },
-        { persistent: false }
-      ]
-    end
-
-    # def match(order, counter_book, attempt_number = 1, maximum_attempts = 3)
-    #   return if attempt_number >= maximum_attempts
-    #   match_implementation(order, counter_book)
-    # rescue StandardError => e
-    #   raise e if e.is_a?(Matching::Error)
-    #
-    #   report_exception(e) if attempt_number == 1
-    #   match(order, counter_book, attempt_number + 1, maximum_attempts)
-    # end
-    #
-    # def match_implementation(order, counter_book)
-    #   return if order.filled?
-    #   return unless (counter_order = counter_book.top)
-    #
-    #   # trade represented in for of [price, volume, funds] array.
-    #   trade = order.trade_with(counter_order, counter_book)
-    #   return if trade.blank?
-    #
-    #   price, volume, funds = trade
-    #
-    #   trade = Matching::Trade.new(price, volume, funds)
-    #   trade.validate!
-    #
-    #   counter_book.fill_top(price, volume, funds)
-    #   order.fill(price, volume, funds)
-    #   publish(order, counter_order, [price, volume, funds])
-    #   match_implementation(order, counter_book)
-    # end
-
-    def submit(order)
-      book, counter_book = orderbook.get_books order.type
-      match(order, counter_book)
-      add_or_cancel(order, book)
-    rescue OrderError => e
-      Rails.logger.warn "Failed to match order #{order.label} (#{e})"
-      publish_cancel(order)
-      if e.order.id != order.id
-        Rails.logger.warn "Failed to match order #{e.order.label} (#{e})"
-        publish_cancel(e.order)
-      end
-    rescue TradeError => e
-      report_exception(e)
-      publish_cancel(order)
-    rescue => e
-      Rails.logger.error { "Failed to submit order #{order.label}." }
-      report_exception(e)
+      # TODO: Log error.
+      messages << order_cancel_message(order)
     end
 
     def cancel(order)
-      book, counter_book = orderbook.get_books(order.type)
+      book, _counter_book = orderbook.get_books(order.type)
       book.remove(order)
       publish_cancel(order)
     rescue => e
@@ -159,38 +112,29 @@ module Matching
 
     private
 
-    def match(order, counter_book, attempt_number = 1, maximum_attempts = 3)
-      return if attempt_number >= maximum_attempts
-      match_implementation(order, counter_book)
-    rescue StandardError => e
-      raise e if e.is_a?(Matching::Error)
+    def trade_message(order, counter_order, trade)
+      ask, bid = order.type == :ask ? [order, counter_order] : [counter_order, order]
 
-      report_exception(e) if attempt_number == 1
-      match(order, counter_book, attempt_number + 1, maximum_attempts)
+      # NOTE: Rounding is forbidden in this step because it can cause the
+      # difference between amount/funds values in DB and orderbook.
+      price  = trade[0]
+      volume = trade[1]
+      funds  = trade[2]
+
+      [:trade_executor,
+       { market_id: @market.id,
+         ask_id: ask.id,
+         bid_id: bid.id,
+         strike_price: price,
+         volume: volume,
+         funds: funds },
+       { persistent: false }]
     end
 
-    def match_implementation(order, counter_book)
-      return if order.filled?
-      return unless (counter_order = counter_book.top)
-
-      # trade represented in for of [price, volume, funds] array.
-      trade = order.trade_with(counter_order, counter_book)
-      return if trade.blank?
-
-      price, volume, funds = trade
-
-      trade = Matching::Trade.new(price, volume, funds)
-      trade.validate!
-
-      counter_book.fill_top(price, volume, funds)
-      order.fill(price, volume, funds)
-      publish(order, counter_order, [price, volume, funds])
-      match_implementation(order, counter_book)
-    end
-
-    def add_or_cancel(order, book)
-      return if order.filled?
-      order.is_a?(LimitOrder) ? book.add(order) : publish_cancel(order)
+    def order_cancel_message(order)
+      [:order_processor,
+       { action: 'cancel', order: order.attributes },
+       { persistent: false }]
     end
 
     def publish(order, counter_order, trade)
@@ -204,51 +148,11 @@ module Matching
 
       Rails.logger.info { "[#{@market.id}] new trade - ask: #{ask.label} bid: #{bid.label} price: #{price} volume: #{volume} funds: #{funds}" }
 
-      @queue.enqueue(
-        :trade_executor,
-        {market_id: @market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: funds},
-        {persistent: false}
-      )
-    end
-
-    def trade_message(order, counter_order, trade)
-      ask, bid = order.type == :ask ? [order, counter_order] : [counter_order, order]
-
-      # Rounding is forbidden in this step because it can cause difference
-      # between amount/funds in DB and orderbook.
-      price  = trade[0]
-      volume = trade[1]
-      funds  = trade[2]
-
-      Rails.logger.info { "[#{@market.id}] new trade - ask: #{ask.label} bid: #{bid.label} price: #{price} volume: #{volume} funds: #{funds}" }
-
-        [
-          :trade_executor,
-          {market_id: @market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: funds},
-          {persistent: false}
-        ]
+      @queue.enqueue(*trade_message(order, counter_order, trade))
     end
 
     def publish_cancel(order)
-      @queue.enqueue \
-        :order_processor,
-        { action: 'cancel', order: order.attributes },
-        { persistent: false }
-    end
-
-    # min_amount_by_precision - is the smallest positive number which could be
-    # rounded to value greater then 0 with precision defined by
-    # Market #amount_precision. So min_amount_by_precision is the smallest amount
-    # of order/trade for current market.
-    # E.g.
-    #   market.amount_precision => 4
-    #   min_amount_by_precision => 0.0001
-    #
-    #   market.amount_precision => 2
-    #   min_amount_by_precision => 0.01
-    #
-    def min_amount_by_precision
-      0.1.to_d**@market.amount_precision
+      @queue.enqueue(*order_cancel_message(order))
     end
   end
 end

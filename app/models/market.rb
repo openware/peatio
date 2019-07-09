@@ -90,6 +90,21 @@ class Market < ApplicationRecord
     Global[id]
   end
 
+  # min_amount_by_precision - is the smallest positive number which could be
+  # rounded to value greater then 0 with precision defined by
+  # Market #amount_precision. So min_amount_by_precision is the smallest amount
+  # of order/trade for current market.
+  # E.g.
+  #   market.amount_precision => 4
+  #   min_amount_by_precision => 0.0001
+  #
+  #   market.amount_precision => 2
+  #   min_amount_by_precision => 0.01
+  #
+  def min_amount_by_precision
+    0.1.to_d**@market.amount_precision
+  end
+
 private
 
   def validate_preciseness
