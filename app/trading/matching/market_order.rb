@@ -29,8 +29,8 @@ module Matching
 
         [trade_price, trade_volume, trade_funds]
       elsif price = counter_book.best_limit_price
+        # TODO: Decide what do we do here.
         Rails.logger.warn "TRADE WITH !!!!!"
-        binding.pry
       end
     end
 

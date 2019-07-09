@@ -29,8 +29,8 @@ module Matching
           [trade_price, trade_volume, trade_funds]
         end
       else
+        # TODO: Decide what do we do here.
         Rails.logger.warn "TRADE WITH !!!!!"
-        binding.pry
       end
     end
 
