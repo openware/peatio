@@ -22,7 +22,7 @@ describe Matching::OrderBook do
     it 'should reject invalid order whose volume is zero' do
       expect do
         subject.add Matching.mock_limit_order(type: :ask, volume: '0.0'.to_d)
-      end.to raise_error(::Matching::LegacyInvalidOrderError)
+      end.to raise_error(Matching::OrderError)
     end
 
     it 'should add market order' do

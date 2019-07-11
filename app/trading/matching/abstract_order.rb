@@ -24,7 +24,7 @@ module Matching
       method_not_implemented
     end
 
-    def valid?
+    def valid?(_attrs)
       method_not_implemented
     end
 

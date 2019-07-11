@@ -17,7 +17,7 @@ module Matching
       @volume     = attrs[:volume].to_d
       @market     = attrs[:market]
 
-      raise ::Matching::LegacyInvalidOrderError.new(attrs) unless valid?(attrs)
+      raise OrderError.new(self, 'order is not valid') unless valid?(attrs)
     end
 
     def trade_with(counter_order, counter_book)
@@ -52,9 +52,12 @@ module Matching
     end
 
     def valid?(attrs)
-      return false unless [:ask, :bid].include?(type)
-      return false if attrs[:price].present? # should have no limit price
-      id && timestamp && market && locked > ZERO
+      type.in?(%i[ask bid]) && \
+        attrs[:price].blank? && \
+        id.present? && \
+        timestamp.present? && \
+        market.present? && \
+        locked > ZERO
     end
 
     def attributes

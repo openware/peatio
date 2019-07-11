@@ -17,7 +17,7 @@ module Matching
       @price      = attrs[:price].to_d
       @market     = attrs[:market]
 
-      raise LegacyInvalidOrderError.new(attrs) unless valid?
+      raise OrderError.new(self, 'order is not valid') unless valid?(attrs)
     end
 
     def trade_with(counter_order, counter_book)
@@ -55,9 +55,12 @@ module Matching
       "%d/$%s/%s" % [id, price.to_s('F'), volume.to_s('F')]
     end
 
-    def valid?
-      return false unless [:ask, :bid].include?(type)
-      id && timestamp && market && price > ZERO
+    def valid?(attrs)
+      type.in?(%i[ask bid]) && \
+        id.present? && \
+        timestamp.present? && \
+        market.present? && \
+        price > ZERO
     end
 
     def attributes

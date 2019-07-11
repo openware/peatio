@@ -17,10 +17,6 @@ module Matching
     end
   end
 
-  InvalidOrderError = Class.new(OrderError)
-  # TODO: Do we need this error?
-  MarketOrderExceededFundsError = Class.new(OrderError)
-
   class TradeError < Error
 
     attr_reader :trade
@@ -31,8 +27,8 @@ module Matching
     end
   end
 
-  # TODO: Use InvalidOrderError instead of LegacyInvalidOrderError.
-  class LegacyInvalidOrderError < StandardError; end
+  # TODO: Use OrderError & TradeError instead of
+  # NotEnoughVolume, ExceedSumLimit, TradeExecutionError.
   class NotEnoughVolume     < StandardError; end
   class ExceedSumLimit      < StandardError; end
   class TradeExecutionError < StandardError
