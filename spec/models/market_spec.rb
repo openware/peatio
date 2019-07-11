@@ -170,6 +170,18 @@ describe Market do
       expect(record.errors.full_messages).to include(/#{to_readable(:min_amount)} must be greater than or equal to 0.01/i)
     end
 
+    it 'validates fee preciseness' do
+      record = Market.create(valid_attributes)
+
+      %i[bid_fee ask_fee].each do |f|
+        record.reload
+        expect(record.update(f => 0.0001)).to eq true
+        expect(record.update(f => 0.00011)).to eq false
+        expect(record.update(f => 0.00001)).to eq false
+        expect(record.update(f => 0.02000003)).to eq false
+      end
+    end
+
     it 'allows to set min_amount greater than value defined by amount_precision' do
       record = Market.new(valid_attributes.merge(min_amount: 1))
       expect(record.save).to eq true

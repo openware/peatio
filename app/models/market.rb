@@ -17,7 +17,14 @@
 
 class Market < ApplicationRecord
 
+  # Since we use decimal with 16 digits fractional part for storing numbers in DB
+  # sum of multipliers fractional parts must not be greater then 16.
+  # In the wors situation we have 3 multipliers (price * amount * fee).
+  # For fee we define static precision - 4.
+  # So 12 left for amount and price precision.
   DB_DECIMAL_PRECISION = 16
+  FEE_PRECISION = 4
+  FUNDS_PRECISION = 12
 
   STATES = %w[enabled disabled hidden locked sale presale].freeze
   # enabled - user can view and trade.
@@ -39,7 +46,7 @@ class Market < ApplicationRecord
   validate { errors.add(:id, :taken) if Market.where(base_unit: quote_unit, quote_unit: base_unit).present? }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
   validates :base_unit, :quote_unit, presence: true
-  validates :ask_fee, :bid_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 0.5 }
+  validate  :validate_fee_preciseness
   validates :amount_precision, :price_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :base_unit, :quote_unit, inclusion: { in: -> (_) { Currency.codes } }
   validate  :validate_preciseness
@@ -109,11 +116,19 @@ class Market < ApplicationRecord
 
 private
 
+  def validate_fee_preciseness
+    %i[bid_fee ask_fee].each do |f|
+      if public_send(f).round(FEE_PRECISION) != public_send(f)
+        errors.add(f, "is too precise (max fractional part size is #{FEE_PRECISION})")
+      end
+    end
+  end
+
   def validate_preciseness
     if price_precision &&
        amount_precision &&
-       price_precision + amount_precision > DB_DECIMAL_PRECISION
-      errors.add(:market, "is too precise (price_precision + amount_precision > #{DB_DECIMAL_PRECISION})")
+       price_precision + amount_precision > FUNDS_PRECISION
+      errors.add(:market, "is too precise (price_precision + amount_precision > #{FUNDS_PRECISION})")
     end
   end
 

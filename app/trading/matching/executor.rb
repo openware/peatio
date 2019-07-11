@@ -68,7 +68,7 @@ module Matching
           .where(member_id: [@ask.member_id, @bid.member_id].uniq, currency_id: [@market.base_unit, @market.quote_unit])
           .each_with_object({}) { |record, memo| memo["#{record.currency_id}:#{record.member_id}"] = record }
 
-        @trade = ::Trade.new \
+        @trade = Trade.new \
           ask:           @ask,
           ask_member_id: @ask.member_id,
           bid:           @bid,
