@@ -36,7 +36,7 @@ module Workers
       end
 
       def submit(order)
-        engines[order.market].submit2(order)
+        engines[order.market].submit(order)
       end
 
       def cancel(order)

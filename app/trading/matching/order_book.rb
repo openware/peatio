@@ -44,7 +44,7 @@ module Matching
     end
 
     def add(order)
-      raise OrderError.new(order, 'volume is zero') if order.volume <= ZERO
+      raise OrderError.new(order, 'volume is less than or equal to zero') if order.volume <= ZERO
 
       case order
       when LimitOrder

@@ -17,7 +17,7 @@ module Matching
       @price      = attrs[:price].to_d
       @market     = attrs[:market]
 
-      raise OrderError.new(self, 'order is not valid') unless valid?(attrs)
+      raise OrderError.new(self, 'Order is not valid') unless valid?(attrs)
     end
 
     def trade_with(counter_order, counter_book)

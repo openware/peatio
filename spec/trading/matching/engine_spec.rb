@@ -12,7 +12,7 @@ describe Matching::Engine do
   subject         { Matching::Engine.new(market, mode: :run) }
   before          { subject.stubs(:orderbook).returns(orderbook) }
 
-  context 'submit2 market order 2' do
+  context 'submit market order 2' do
     context 'market order out of locked 2' do
       subject { Matching::Engine.new(market, mode: :dryrun) }
 
@@ -76,8 +76,8 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit2 ask1_mock
-        subject.submit2 bid1_mock
+        subject.submit ask1_mock
+        subject.submit bid1_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -175,9 +175,9 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit2 ask1_mock
-        subject.submit2 ask2_mock
-        subject.submit2 bid1_mock
+        subject.submit ask1_mock
+        subject.submit ask2_mock
+        subject.submit bid1_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -299,9 +299,9 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit2 ask1_mock
-        subject.submit2 ask2_mock
-        subject.submit2 bid1_mock
+        subject.submit ask1_mock
+        subject.submit ask2_mock
+        subject.submit bid1_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -383,8 +383,8 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit2 ask1_mock
-        subject.submit2 bid1_mock
+        subject.submit ask1_mock
+        subject.submit bid1_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -495,15 +495,15 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit2 ask1_mock
-        subject.submit2 bid1_mock
-        subject.submit2 bid2_mock
+        subject.submit ask1_mock
+        subject.submit bid1_mock
+        subject.submit bid2_mock
         expect(subject.queue).to eq expected_messages
       end
     end
   end
 
-  context 'submit2 market order' do
+  context 'submit market order' do
     let!(:bid)  { Matching.mock_limit_order(type: :bid, price: '0.1'.to_d, volume: '0.1'.to_d) }
     let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '1.0'.to_d, volume: '1.0'.to_d) }
     let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '2.0'.to_d, volume: '1.0'.to_d) }
@@ -516,11 +516,11 @@ describe Matching::Engine do
       AMQPQueue.expects(:enqueue).with(:trade_executor, { market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d }, anything)
       AMQPQueue.expects(:enqueue).with(:trade_executor, { market_id: market.id, ask_id: ask3.id, bid_id: mo.id, strike_price: ask3.price, volume: '0.4'.to_d, funds: '1.2'.to_d }, anything)
 
-      subject.submit2 bid
-      subject.submit2 ask1
-      subject.submit2 ask2
-      subject.submit2 ask3
-      subject.submit2 mo
+      subject.submit bid
+      subject.submit ask1
+      subject.submit ask2
+      subject.submit ask3
+      subject.submit mo
 
       expect(subject.ask_orders.limit_orders.size).to eq 1
       expect(subject.ask_orders.limit_orders.values.first).to eq [ask3]
@@ -536,24 +536,24 @@ describe Matching::Engine do
       AMQPQueue.expects(:enqueue).with(:trade_executor, { market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d }, anything)
       AMQPQueue.expects(:enqueue).with(:order_processor, has_entries(action: 'cancel', order: has_entry(id: mo.id)), anything)
 
-      subject.submit2 bid
-      subject.submit2 ask1
-      subject.submit2 ask2
-      subject.submit2 mo
+      subject.submit bid
+      subject.submit ask1
+      subject.submit ask2
+      subject.submit mo
 
       expect(subject.ask_orders.limit_orders).to be_empty
       expect(subject.bid_orders.market_orders).to be_empty
     end
   end
 
-  context 'submit2 limit order' do
+  context 'submit limit order' do
     context 'fully match incoming order' do
       it 'should execute trade' do
         AMQPQueue.expects(:enqueue)
                  .with(:trade_executor, { market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: '50.0'.to_d }, anything)
 
-        subject.submit2(ask)
-        subject.submit2(bid)
+        subject.submit(ask)
+        subject.submit(bid)
 
         expect(subject.ask_orders.limit_orders).to be_empty
         expect(subject.bid_orders.limit_orders).to be_empty
@@ -567,8 +567,8 @@ describe Matching::Engine do
         AMQPQueue.expects(:enqueue)
                  .with(:trade_executor, { market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: 3.to_d, funds: '30.0'.to_d }, anything)
 
-        subject.submit2(ask)
-        subject.submit2(bid)
+        subject.submit(ask)
+        subject.submit(bid)
 
         expect(subject.ask_orders.limit_orders).to be_empty
         expect(subject.bid_orders.limit_orders).not_to be_empty
@@ -592,8 +592,8 @@ describe Matching::Engine do
       it 'should execute trade' do
         AMQPQueue.expects(:enqueue).times(asks.size)
 
-        asks.each { |ask| subject.submit2(ask) }
-        subject.submit2(bid)
+        asks.each { |ask| subject.submit(ask) }
+        subject.submit(bid)
 
         expect(subject.ask_orders.limit_orders).to be_empty
         expect(subject.bid_orders.limit_orders).not_to be_empty
@@ -606,13 +606,13 @@ describe Matching::Engine do
       let(:high_ask) { Matching.mock_limit_order(type: :ask, price: price, volume: 3.to_d) }
 
       it 'should match bid with high ask' do
-        subject.submit2(low_ask) # low ask enters first
-        subject.submit2(high_ask)
+        subject.submit(low_ask) # low ask enters first
+        subject.submit(high_ask)
         subject.cancel(low_ask) # but it's canceled
 
         AMQPQueue.expects(:enqueue)
                  .with(:trade_executor, { market_id: market.id, ask_id: high_ask.id, bid_id: bid.id, strike_price: high_ask.price, volume: high_ask.volume, funds: '30.0'.to_d }, anything)
-        subject.submit2(bid)
+        subject.submit(bid)
 
         expect(subject.ask_orders.limit_orders).to be_empty
         expect(subject.bid_orders.limit_orders).not_to be_empty
@@ -622,11 +622,11 @@ describe Matching::Engine do
 
   context '#cancel' do
     it 'should cancel order' do
-      subject.submit2(ask)
+      subject.submit(ask)
       subject.cancel(ask)
       expect(subject.ask_orders.limit_orders).to be_empty
 
-      subject.submit2(bid)
+      subject.submit(bid)
       subject.cancel(bid)
       expect(subject.bid_orders.limit_orders).to be_empty
     end
@@ -638,8 +638,8 @@ describe Matching::Engine do
     it 'should not publish matched trades' do
       AMQPQueue.expects(:enqueue).never
 
-      subject.submit2(ask)
-      subject.submit2(bid)
+      subject.submit(ask)
+      subject.submit(bid)
 
       expect(subject.ask_orders.limit_orders).to be_empty
       expect(subject.bid_orders.limit_orders).to be_empty

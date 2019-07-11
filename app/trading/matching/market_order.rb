@@ -17,7 +17,8 @@ module Matching
       @volume     = attrs[:volume].to_d
       @market     = attrs[:market]
 
-      raise OrderError.new(self, 'order is not valid') unless valid?(attrs)
+      binding.pry
+      raise OrderError.new(self, 'Order is not valid') unless valid?(attrs)
     end
 
     def trade_with(counter_order, counter_book)
@@ -25,7 +26,8 @@ module Matching
         trade_price  = counter_order.price
         trade_volume = [volume, counter_order.volume].min
         trade_funds  = trade_price * trade_volume
-        raise OrderError.new(self, 'Market order out of locked') if trade_funds > locked
+
+        return if trade_funds > locked
 
         [trade_price, trade_volume, trade_funds]
       elsif price = counter_book.best_limit_price
