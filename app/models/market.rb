@@ -48,7 +48,9 @@ class Market < ApplicationRecord
   validates :min_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :max_price, numericality: { allow_blank: true, greater_than_or_equal_to: ->(market){ market.min_price }}
 
-  validates :min_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :min_amount,
+            presence: true,
+            numericality: { greater_than_or_equal_to: ->(market){ market.min_amount_by_precision } }
 
   validates :state, inclusion: { in: STATES }
 
@@ -102,7 +104,7 @@ class Market < ApplicationRecord
   #   min_amount_by_precision => 0.01
   #
   def min_amount_by_precision
-    0.1.to_d**@market.amount_precision
+    0.1.to_d**amount_precision
   end
 
 private
