@@ -21,6 +21,24 @@ module Matching
       shift_gears(options[:mode] || :run)
     end
 
+    def shift_gears(mode)
+      case mode
+      when :dryrun
+        @queue = []
+        class <<@queue
+          def enqueue(*args)
+            push args
+          end
+        end
+      when :run
+        @queue = AMQPQueue
+      else
+        raise "Unrecognized mode: #{mode}"
+      end
+
+      @mode = mode
+    end
+
     def submit(order)
       attempt ||= 1
       match(order)
@@ -104,24 +122,6 @@ module Matching
     end
 
     private
-
-    def shift_gears(mode)
-      case mode
-      when :dryrun
-        @queue = []
-        class <<@queue
-          def enqueue(*args)
-            push args
-          end
-        end
-      when :run
-        @queue = AMQPQueue
-      else
-        raise "Unrecognized mode: #{mode}"
-      end
-
-      @mode = mode
-    end
 
     def publish(order, counter_order, trade)
       ask, bid = order.type == :ask ? [order, counter_order] : [counter_order, order]
