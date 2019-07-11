@@ -71,6 +71,16 @@ module Matching
 
         # Publish message to trade_executor with matched trade.
         publish(order, opposite_order, trade)
+
+        # NOTE: Legacy peatio was designed in the way that there is orderbook
+        # for both limit and market orders.
+        # We are using MarketOrderbookError for averting this behaviour.
+        # Market order is either match directly or it's cancelled.
+        # This error and it's usage should be dropped with market type
+        # orderbook removing.
+      rescue MarketOrderbookError => e
+        report_exception(e)
+        cancel(e.order)
       end
     end
 

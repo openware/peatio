@@ -34,6 +34,8 @@ module Matching
   # NotEnoughVolume, ExceedSumLimit, TradeExecutionError.
   class NotEnoughVolume     < Error; end
   class ExceedSumLimit      < Error; end
+
+  class MarketOrderbookError < OrderError; end
   class TradeExecutionError < Error
     attr_accessor :options
 

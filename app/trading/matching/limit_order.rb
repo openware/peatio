@@ -20,18 +20,17 @@ module Matching
       raise OrderError.new(self, 'Order is not valid') unless valid?(attrs)
     end
 
-    def trade_with(counter_order, counter_book)
-      if counter_order.is_a?(LimitOrder)
-        if crossed?(counter_order.price)
-          trade_price  = counter_order.price
-          trade_volume = [volume, counter_order.volume].min
-          trade_funds  = trade_price * trade_volume
-          [trade_price, trade_volume, trade_funds]
-        end
-      else
-        # TODO: Decide what do we do here.
-        Rails.logger.warn "TRADE WITH !!!!!"
+    def trade_with(counter_order, _counter_book)
+      if counter_order.is_a?(MarketOrder)
+        raise MarketOrderbookError.new(order, 'market order in orderbook detected')
       end
+
+      return unless crossed?(counter_order.price)
+
+      trade_price  = counter_order.price
+      trade_volume = [volume, counter_order.volume].min
+      trade_funds  = trade_price * trade_volume
+      [trade_price, trade_volume, trade_funds]
     end
 
     def fill(trade_price, trade_volume, trade_funds)

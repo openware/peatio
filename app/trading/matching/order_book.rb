@@ -23,7 +23,12 @@ module Matching
     end
 
     def top
-      @market_orders.empty? ? limit_top : @market_orders.first[1]
+      unless @market_orders.empty?
+        order = @market_orders.first[1]
+        raise MarketOrderbookError.new(order, 'market order in orderbook detected')
+      end
+
+      limit_top
     end
 
     def fill_top(trade_price, trade_volume, trade_funds)
@@ -51,7 +56,7 @@ module Matching
         @limit_orders[order.price] ||= PriceLevel.new(order.price)
         @limit_orders[order.price].add order
       when MarketOrder
-        @market_orders[order.id] = order
+        raise MarketOrderbookError.new(order, 'market order adding to orderbook detected')
       else
         raise ArgumentError, "Unknown order type"
       end

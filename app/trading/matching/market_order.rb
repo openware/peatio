@@ -17,23 +17,21 @@ module Matching
       @volume     = attrs[:volume].to_d
       @market     = attrs[:market]
 
-      binding.pry
       raise OrderError.new(self, 'Order is not valid') unless valid?(attrs)
     end
 
-    def trade_with(counter_order, counter_book)
-      if counter_order.is_a?(LimitOrder)
-        trade_price  = counter_order.price
-        trade_volume = [volume, counter_order.volume].min
-        trade_funds  = trade_price * trade_volume
-
-        return if trade_funds > locked
-
-        [trade_price, trade_volume, trade_funds]
-      elsif price = counter_book.best_limit_price
-        # TODO: Decide what do we do here.
-        Rails.logger.warn "TRADE WITH !!!!!"
+    def trade_with(counter_order, _counter_book)
+      if counter_order.is_a?(MarketOrder)
+        raise MarketOrderbookError.new(order, 'market order in orderbook detected')
       end
+
+      trade_price  = counter_order.price
+      trade_volume = [volume, counter_order.volume].min
+      trade_funds  = trade_price * trade_volume
+
+      return if trade_funds > locked
+
+      [trade_price, trade_volume, trade_funds]
     end
 
     def fill(trade_price, trade_volume, trade_funds)
