@@ -33,6 +33,10 @@ class Blockchain < ApplicationRecord
   def blockchain_api
     BlockchainService.new(self)
   end
+
+  def processed_height
+    height + min_confirmations
+  end
 end
 
 # == Schema Information
