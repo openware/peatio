@@ -11,6 +11,7 @@ describe Admin::MarketsController, type: :controller do
       base_unit:         'eth',
       ask_fee:          '0.02'.to_d,
       min_amount:       '0.02'.to_d,
+      min_price:        '0.02'.to_d,
       amount_precision: 4,
       state:            'enabled',
       position:         100 }

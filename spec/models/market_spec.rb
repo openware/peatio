@@ -62,6 +62,7 @@ describe Market do
         bid_fee:          0.1,
         ask_fee:          0.2,
         min_amount:       0.0001,
+        min_price:        0.0001,
         amount_precision: 4,
         price_precision:  4,
         position:         100 }
@@ -73,6 +74,7 @@ describe Market do
         bid_fee:          0.1,
         ask_fee:          0.2,
         min_amount:       0.0001,
+        min_price:        0.0001,
         amount_precision: 4,
         price_precision:  4,
         position:         100 }
@@ -82,6 +84,7 @@ describe Market do
 
     it 'creates valid record' do
       record = Market.new(valid_attributes)
+
       expect(record.save).to eq true
     end
 
