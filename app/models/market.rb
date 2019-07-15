@@ -47,11 +47,11 @@ class Market < ApplicationRecord
   validates :id, uniqueness: { case_sensitive: false }, presence: true
   validates :base_unit, :quote_unit, presence: true
   validates :ask_fee, :bid_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 0.5 }
-  validate  :validate_values_precisions
+  validate  :values_precisions
 
   validates :amount_precision, :price_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :base_unit, :quote_unit, inclusion: { in: -> (_) { Currency.codes } }
-  validate  :validate_precisions_sum
+  validate  :precisions_sum
   validate  :units_must_be_enabled, if: ->(m) { m.state.enabled? }
 
   validates :min_price,
@@ -138,7 +138,7 @@ private
     end
   end
 
-  def validate_values_precisions
+  def values_precisions
     { bid_fee: FEE_PRECISION, ask_fee: FEE_PRECISION,
       min_price: price_precision, max_price: price_precision,
       min_amount: amount_precision }.each do |field, precision|
@@ -148,7 +148,7 @@ private
     end
   end
 
-  def validate_precisions_sum
+  def precisions_sum
     if price_precision &&
        amount_precision &&
        price_precision + amount_precision > FUNDS_PRECISION

@@ -24,8 +24,8 @@ class Order < ApplicationRecord
             presence: true,
             numericality: { greater_than: 0, greater_than_or_equal_to: ->(order){ order.market.min_amount } }
   validate do
-    unless market.valid_precision?(origin_volume, market.amount_precision)
-      errors.add(:origin_volume, 'is to precise')
+    if origin_volume.present? && !market.valid_precision?(origin_volume, market.amount_precision)
+      errors.add(:origin_volume, 'is too precise')
     end
   end
 
@@ -34,7 +34,7 @@ class Order < ApplicationRecord
   validates :price, presence: true, if: :is_limit_order?
   validate do
     if price.present? && !market.valid_precision?(price, market.price_precision)
-      errors.add(:price, 'is to precise')
+      errors.add(:price, 'is too precise')
     end
   end
 
