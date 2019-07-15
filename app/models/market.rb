@@ -47,14 +47,19 @@ class Market < ApplicationRecord
   validates :id, uniqueness: { case_sensitive: false }, presence: true
   validates :base_unit, :quote_unit, presence: true
   validates :ask_fee, :bid_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 0.5 }
-  validate  :validate_fee_preciseness
+  validate  :validate_values_precisions
+
   validates :amount_precision, :price_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :base_unit, :quote_unit, inclusion: { in: -> (_) { Currency.codes } }
-  validate  :validate_preciseness
+  validate  :validate_precisions_sum
   validate  :units_must_be_enabled, if: ->(m) { m.state.enabled? }
 
-  validates :min_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :max_price, numericality: { allow_blank: true, greater_than_or_equal_to: ->(market){ market.min_price }}
+  validates :min_price,
+            presence: true,
+            numericality: { greater_than_or_equal_to: ->(market){ market.min_price_by_precision } }
+  validates :max_price,
+            numericality: { allow_blank: true, greater_than_or_equal_to: ->(market){ market.min_price }},
+            if: ->(market) { !market.max_price.zero? }
 
   validates :min_amount,
             presence: true,
@@ -115,17 +120,35 @@ class Market < ApplicationRecord
     0.1.to_d**amount_precision
   end
 
+  # See #min_amount_by_precision.
+  def min_price_by_precision
+    0.1.to_d**price_precision
+  end
+
+  def valid_precision?(d, max_precision)
+    d.round(max_precision) == d
+  end
+
 private
 
   def validate_fee_preciseness
     %i[bid_fee ask_fee].each do |f|
       if public_send(f).round(FEE_PRECISION) != public_send(f)
-        errors.add(f, "is too precise (max fractional part size is #{FEE_PRECISION})")
       end
     end
   end
 
-  def validate_preciseness
+  def validate_values_precisions
+    { bid_fee: FEE_PRECISION, ask_fee: FEE_PRECISION,
+      min_price: price_precision, max_price: price_precision,
+      min_amount: amount_precision }.each do |field, precision|
+      unless valid_precision?(public_send(field), precision)
+        errors.add(field, "is too precise (max fractional part size is #{precision})")
+      end
+    end
+  end
+
+  def validate_precisions_sum
     if price_precision &&
        amount_precision &&
        price_precision + amount_precision > FUNDS_PRECISION

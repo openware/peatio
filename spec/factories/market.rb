@@ -11,7 +11,7 @@ FactoryBot.define do
       bid_fee           { 0.0015 }
       amount_precision  { 4 }
       price_precision   { 4 }
-      min_price         { 0.0 }
+      min_price         { 0.0001 }
       min_amount        { 0.0001 }
       position          { 1 }
       state             { :enabled }
@@ -25,7 +25,7 @@ FactoryBot.define do
       bid_fee           { 0.0015 }
       amount_precision  { 4 }
       price_precision   { 4 }
-      min_price         { 0.0 }
+      min_price         { 0.0001 }
       min_amount        { 0.0001 }
       position          { 3 }
       state             { :enabled }
