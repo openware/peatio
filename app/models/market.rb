@@ -19,7 +19,7 @@ class Market < ApplicationRecord
 
   # Since we use decimal with 16 digits fractional part for storing numbers in DB
   # sum of multipliers fractional parts must not be greater then 16.
-  # In the wors situation we have 3 multipliers (price * amount * fee).
+  # In the worst situation we have 3 multipliers (price * amount * fee).
   # For fee we define static precision - 4.
   # So 12 left for amount and price precision.
   DB_DECIMAL_PRECISION = 16
@@ -46,6 +46,7 @@ class Market < ApplicationRecord
   validate { errors.add(:id, :taken) if Market.where(base_unit: quote_unit, quote_unit: base_unit).present? }
   validates :id, uniqueness: { case_sensitive: false }, presence: true
   validates :base_unit, :quote_unit, presence: true
+  validates :ask_fee, :bid_fee, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 0.5 }
   validate  :validate_fee_preciseness
   validates :amount_precision, :price_precision, :position, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :base_unit, :quote_unit, inclusion: { in: -> (_) { Currency.codes } }
