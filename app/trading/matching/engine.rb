@@ -62,7 +62,7 @@ module Matching
         # If order is fulfilled we stop matching.
         break if order.filled?
 
-        # If oposite orderbook is empty:
+        # If opposite orderbook is empty:
         # - add order to orderbook in case of limit order;
         # - publish message with cancel action to order processor in case of market order.
         if opposite_book.top.blank?
