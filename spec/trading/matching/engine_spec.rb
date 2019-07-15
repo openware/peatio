@@ -27,7 +27,7 @@ describe Matching::Engine do
       let!(:ask1_in_db) do
         create(:order_ask,
                :btcusd,
-               price: 0.8006.to_d,
+               price: 80.06.to_d,
                volume: 0.9817.to_d)
       end
 
@@ -35,7 +35,7 @@ describe Matching::Engine do
         create(:order_bid,
                :btcusd,
                ord_type: :market,
-               locked: 0.6716.to_d,
+               locked: 67.16.to_d,
                price: nil,
                volume: 0.8395.to_d)
       end
@@ -66,7 +66,7 @@ describe Matching::Engine do
                 {:id=>bid1_in_db.id,
                  :timestamp=>1562668113,
                  :type=>:bid,
-                 :locked=>0.6716.to_d,
+                 :locked=>67.16.to_d,
                  :volume=>0.8395.to_d,
                  :market=>"btcusd",
                  :ord_type=>"market"}
@@ -99,14 +99,14 @@ describe Matching::Engine do
       let!(:ask1_in_db) do
         create(:order_ask,
                :btcusd,
-               price: 0.8006.to_d,
+               price: 80.06.to_d,
                volume: 0.0111.to_d)
       end
 
       let!(:ask2_in_db) do
         create(:order_ask,
                :btcusd,
-               price: 1.4117.to_d,
+               price: 141.17.to_d,
                volume: 0.9346.to_d)
       end
 
@@ -114,7 +114,7 @@ describe Matching::Engine do
         create(:order_bid,
                :btcusd,
                ord_type: :market,
-               locked: 0.47237199.to_d,
+               locked: 47.237199.to_d,
                price: nil,
                volume: 0.8395.to_d)
       end
@@ -151,9 +151,9 @@ describe Matching::Engine do
               :market_id=>"btcusd",
               :ask_id=>ask1_in_db.id,
               :bid_id=>bid1_in_db.id,
-              :strike_price=>0.8006.to_d,
+              :strike_price=>80.06.to_d,
               :volume=>0.0111.to_d,
-              :funds=>0.00888666.to_d
+              :funds=>0.888666.to_d
             },
             { persistent: false }
           ],
@@ -165,7 +165,7 @@ describe Matching::Engine do
                 {:id=>bid1_in_db.id,
                  :timestamp=>1562668113,
                  :type=>:bid,
-                 :locked=>0.46348533.to_d,
+                 :locked=>46.348533.to_d,
                  :volume=>0.8284.to_d,
                  :market=>"btcusd",
                  :ord_type=>"market"}
@@ -458,9 +458,9 @@ describe Matching::Engine do
               :market_id => "btcusd",
               :ask_id => ask1_in_db.id,
               :bid_id => bid1_in_db.id,
-              :strike_price => 0.3e4,
-              :volume => 0.4e-3,
-              :funds => 0.12e1
+              :strike_price => 0.3e4.to_d,
+              :volume => 0.45e-3.to_d,
+              :funds => 0.135e1.to_d
             },
             { :persistent => false }
           ],
@@ -470,9 +470,9 @@ describe Matching::Engine do
               :market_id => "btcusd",
               :ask_id => ask1_in_db.id,
               :bid_id => bid2_in_db.id,
-              :strike_price => 0.3e4,
-              :volume => 0.5e-3,
-              :funds => 0.15e1
+              :strike_price => 0.3e4.to_d,
+              :volume => 0.45e-3.to_d,
+              :funds => 0.135e1.to_d
             },
             { :persistent => false }
           ],
@@ -484,8 +484,8 @@ describe Matching::Engine do
                 :id => bid2_in_db.id,
                 :timestamp => 1562668113,
                 :type => :bid,
-                :locked => 0.12e1,
-                :volume => 0.4e-3,
+                :locked => 0.135e1.to_d,
+                :volume => 0.45e-3.to_d,
                 :market => "btcusd",
                 :ord_type => "market"
               }
