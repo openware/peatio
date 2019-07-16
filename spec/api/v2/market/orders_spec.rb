@@ -237,6 +237,29 @@ describe API::V2::Market::Orders, type: :request do
       expect(response).to include_api_error('market.order.invalid_volume_or_price')
     end
 
+    it 'validates volume precision' do
+      member.get_account(:usd).update_attributes(balance: 1)
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '0.123456789', price: '0.1' }
+      expect(response.code).to eq '422'
+      expect(response).to include_api_error('market.order.invalid_volume_or_price')
+    end
+
+    it 'validates price greater than min_price' do
+      member.get_account(:usd).update_attributes(balance: 1)
+      m = Market.find(:btcusd)
+      m.update(min_price: 1.0)
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '0.1', price: '0.2' }
+      expect(response.code).to eq '422'
+      expect(response).to include_api_error('market.order.invalid_volume_or_price')
+    end
+
+    it 'validates price precision' do
+      member.get_account(:usd).update_attributes(balance: 1)
+      api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'buy', volume: '0.12', price: '0.123' }
+      expect(response.code).to eq '422'
+      expect(response).to include_api_error('market.order.invalid_volume_or_price')
+    end
+
     it 'validates enough funds' do
       old_count = OrderAsk.count
       api_post '/api/v2/market/orders', token: token, params: { market: 'btcusd', side: 'sell', volume: '12.13', price: '2014' }
