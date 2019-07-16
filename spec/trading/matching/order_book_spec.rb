@@ -73,8 +73,6 @@ describe Matching::OrderBook do
         else
           raise ArgumentError, "Unknown order type"
         end
-
-        broadcast(action: 'add', order: order.attributes)
       end
 
       subject.add Matching.mock_limit_order(type: :ask)
