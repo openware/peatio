@@ -61,12 +61,14 @@ class AddAccountingRecalculationProcedure < ActiveRecord::Migration[5.2]
                 accounts.balance =
                 (
                   SELECT IFNULL(SUM(credit) - SUM(debit), 0) FROM liabilities
-                  WHERE liabilities.member_id = member_id AND liabilities.currency_id = currency_id AND liabilities.code IN (201,202)
+                  WHERE liabilities.member_id = member_id AND liabilities.currency_id = currency_id AND liabilities.code
+                    IN (SELECT code FROM operations_accounts WHERE type = 'liability' AND kind = 'main')
                 ),
                 accounts.locked =
                 (
                   SELECT IFNULL(SUM(credit) - SUM(debit), 0) FROM liabilities
-                  WHERE liabilities.member_id = member_id AND liabilities.currency_id = currency_id AND liabilities.code IN (211,212)
+                  WHERE liabilities.member_id = member_id AND liabilities.currency_id = currency_id AND liabilities.code
+                    IN (SELECT code FROM operations_accounts WHERE type = 'liability' AND kind = 'locked')
                 ),
                 updated_at = NOW()
                 WHERE accounts.id = id;
