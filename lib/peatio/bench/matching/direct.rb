@@ -40,33 +40,7 @@ module Bench
       def process_messages
         loop do
           order = @injector.pop
-          if order.present?
-            order.round_amount_and_price
-            order.locked = order.origin_locked = order.compute_locked
-            order.hold_account!.lock_funds(order.locked)
-            order.save!
-          end
-          if @injector.size == 0
-            10.times { p "-" }
-            wait_orders_before = Order.active.count
-            loop do
-              sleep 2
-              break if wait_orders_before == Order.active.count
-              wait_orders_before = Order.active.count
-            end
-
-            pp "Market Orders: #{Order.where(ord_type: :market).count} "
-            min_ask = OrderAsk.where(state: :wait).pluck(:price).compact.min
-            max_bid = OrderBid.where(state: :wait).pluck(:price).compact.max
-            if min_ask.present? && max_bid.present? && max_bid >= min_ask
-              10.times { p "-" }
-              p 'Wrong mathing behaviour'
-              pp " Min ASK #{min_ask}"
-              pp " Max BID #{max_bid}"
-              10.times { p "-" }
-            end
-            break
-          end
+          break unless order
           @matching.process({action: 'submit', order: order.to_matching_attributes}, 'metadata', 'delivery_info')
         rescue StandardError => e
           Kernel.puts e
