@@ -131,13 +131,6 @@ class Market < ApplicationRecord
 
 private
 
-  def validate_fee_preciseness
-    %i[bid_fee ask_fee].each do |f|
-      if public_send(f).round(FEE_PRECISION) != public_send(f)
-      end
-    end
-  end
-
   def validate_attr_precisions
     { bid_fee: FEE_PRECISION, ask_fee: FEE_PRECISION,
       min_price: price_precision, max_price: price_precision,
