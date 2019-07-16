@@ -29,53 +29,20 @@ class AddAccountingRecalculationProcedure < ActiveRecord::Migration[5.2]
           CREATE PROCEDURE recalculate_accounts()
           BEGIN
 
-            -- Flag which defines if all accounts in cursor are processed.
-            DECLARE v_finished INTEGER DEFAULT FALSE;
-
-            DECLARE id bigint DEFAULT 0;
-            DECLARE currency_id varchar(10) DEFAULT "";
-            DECLARE member_id bigint DEFAULT 0;
-
-            -- Declare cursor for account id, currency_id and member_id.
-            DECLARE account_cursor CURSOR FOR
-            SELECT accounts.id, accounts.currency_id, accounts.member_id
-            FROM accounts;
-
-            -- Declare NOT FOUND handler.
-            DECLARE CONTINUE HANDLER
-              FOR NOT FOUND SET v_finished = TRUE;
-
-            OPEN account_cursor;
-
-            accounts_loop: LOOP
-
-              FETCH account_cursor INTO id, currency_id, member_id;
-
-              -- Finish account loop if all accounts are processed.
-              IF v_finished THEN
-                LEAVE accounts_loop;
-              END IF;
-
-              -- Recalculate account balances based on liability history.
-              UPDATE accounts SET
-                accounts.balance =
-                (
-                  SELECT IFNULL(SUM(credit) - SUM(debit), 0) FROM liabilities
-                  WHERE liabilities.member_id = member_id AND liabilities.currency_id = currency_id AND liabilities.code
-                    IN (SELECT code FROM operations_accounts WHERE type = 'liability' AND kind = 'main')
-                ),
-                accounts.locked =
-                (
-                  SELECT IFNULL(SUM(credit) - SUM(debit), 0) FROM liabilities
-                  WHERE liabilities.member_id = member_id AND liabilities.currency_id = currency_id AND liabilities.code
-                    IN (SELECT code FROM operations_accounts WHERE type = 'liability' AND kind = 'locked')
-                ),
-                updated_at = NOW()
-                WHERE accounts.id = id;
-
-            END LOOP accounts_loop;
-
-            CLOSE account_cursor;
+            UPDATE accounts SET
+            accounts.balance =
+            (
+              SELECT IFNULL(SUM(credit) - SUM(debit), 0) FROM liabilities
+              WHERE liabilities.member_id = accounts.member_id AND liabilities.currency_id = accounts.currency_id AND liabilities.code
+                IN (SELECT code FROM operations_accounts WHERE type = 'liability' AND kind = 'main')
+            ),
+            accounts.locked =
+            (
+              SELECT IFNULL(SUM(credit) - SUM(debit), 0) FROM liabilities
+              WHERE liabilities.member_id = accounts.member_id AND liabilities.currency_id = accounts.currency_id AND liabilities.code
+                IN (SELECT code FROM operations_accounts WHERE type = 'liability' AND kind = 'locked')
+            ),
+            updated_at = NOW();
           END
         SQL
 
