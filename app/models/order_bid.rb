@@ -39,6 +39,7 @@ class OrderBid < Order
       price*volume
     when 'market'
       funds = estimate_required_funds(Global[market_id].asks) {|p, v| p*v }
+      # Maximum funds precision defined in Market::FUNDS_PRECISION.
       (funds*LOCKING_BUFFER_FACTOR).round(Market::FUNDS_PRECISION, BigDecimal::ROUND_UP)
     end
   end
