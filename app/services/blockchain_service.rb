@@ -45,7 +45,7 @@ class BlockchainService
       update_height(block_number, adapter.latest_block_number)
     end
     accepted_deposits.each(&:collect!)
-    block
+    return block, deposits, withdrawals
   end
 
   private
