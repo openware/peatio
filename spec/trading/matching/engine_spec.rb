@@ -2,6 +2,14 @@
 # frozen_string_literal: true
 
 describe Matching::Engine do
+  Order.define_method(:to_matching_mock) do
+    if ord_type.to_sym == :limit
+      Matching.mock_limit_order(to_matching_attributes)
+    else
+      Matching.mock_market_order(to_matching_attributes)
+    end
+  end
+
   let(:market) { Market.find('btcusd') }
   let(:price)  { 10.to_d }
   let(:volume) { 5.to_d }
@@ -31,31 +39,13 @@ describe Matching::Engine do
                volume: 0.9817.to_d)
       end
 
-      let!(:bid1_mock) do
-        Matching.mock_limit_order(id: bid1_in_db.id,
-                                  type: :bid,
-                                  price: bid1_in_db.price,
-                                  locked: bid1_in_db.locked,
-                                  volume: bid1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
       let!(:ask1_in_db) do
-        create(:order_bid,
+        create(:order_ask,
                :btcusd,
                ord_type: :market,
                locked: 0.918.to_d,
                price: nil,
                volume: 0.918.to_d)
-      end
-
-      let!(:ask1_mock) do
-        Matching.mock_market_order(id: ask1_in_db.id,
-                                   type: :ask,
-                                   price: ask1_in_db.price,
-                                   volume: ask1_in_db.volume,
-                                   locked: ask1_in_db.locked,
-                                   timestamp: 1562668113)
       end
 
       let(:expected_messages) do
@@ -76,8 +66,8 @@ describe Matching::Engine do
       end
 
       it 'publish trade' do
-        subject.submit bid1_mock
-        subject.submit ask1_mock
+        subject.submit bid1_in_db.to_matching_mock
+        subject.submit ask1_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -98,31 +88,13 @@ describe Matching::Engine do
                volume: 0.9817.to_d)
       end
 
-      let!(:bid1_mock) do
-        Matching.mock_limit_order(id: bid1_in_db.id,
-                                  type: :bid,
-                                  price: bid1_in_db.price,
-                                  locked: bid1_in_db.locked,
-                                  volume: bid1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
       let!(:ask1_in_db) do
-        create(:order_bid,
+        create(:order_ask,
                :btcusd,
                ord_type: :market,
                locked: 0.918.to_d,
                price: nil,
                volume: 0.918.to_d)
-      end
-
-      let!(:ask1_mock) do
-        Matching.mock_market_order(id: ask1_in_db.id,
-                                   type: :ask,
-                                   price: ask1_in_db.price,
-                                   volume: ask1_in_db.volume,
-                                   locked: ask1_in_db.locked,
-                                   timestamp: 1562668113)
       end
 
       let(:expected_messages) do
@@ -143,8 +115,8 @@ describe Matching::Engine do
       end
 
       it 'publish trade' do
-        subject.submit bid1_mock
-        subject.submit ask1_mock
+        subject.submit bid1_in_db.to_matching_mock
+        subject.submit ask1_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -174,22 +146,6 @@ describe Matching::Engine do
                volume: 0.8395.to_d)
       end
 
-      let!(:ask1_mock) do
-        Matching.mock_limit_order(id: ask1_in_db.id,
-                                  type: :ask,
-                                  price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:bid1_mock) do
-        Matching.mock_market_order(id: bid1_in_db.id,
-                                   type: :bid,
-                                   locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume,
-                                   timestamp: 1562668113)
-      end
-
       let(:expected_messages) do
         [
           [
@@ -198,7 +154,7 @@ describe Matching::Engine do
               :action=>"cancel",
               :order=>
                 {:id=>bid1_in_db.id,
-                 :timestamp=>1562668113,
+                 :timestamp=>bid1_in_db.created_at.to_i,
                  :type=>:bid,
                  :locked=>67.16.to_d,
                  :volume=>0.8395.to_d,
@@ -210,8 +166,8 @@ describe Matching::Engine do
         ]
       end
       it 'publish cancel order' do
-        subject.submit ask1_mock
-        subject.submit bid1_mock
+        subject.submit ask1_in_db.to_matching_mock
+        subject.submit bid1_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -251,30 +207,6 @@ describe Matching::Engine do
                volume: 0.8395.to_d)
       end
 
-      let!(:ask1_mock) do
-        Matching.mock_limit_order(id: ask1_in_db.id,
-                                  type: :ask,
-                                  price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:ask2_mock) do
-        Matching.mock_limit_order(id: ask2_in_db.id,
-                                  type: :ask,
-                                  price: ask2_in_db.price,
-                                  volume: ask2_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:bid1_mock) do
-        Matching.mock_market_order(id: bid1_in_db.id,
-                                   type: :bid,
-                                   locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume,
-                                   timestamp: 1562668113)
-      end
-
       let(:expected_messages) do
         [
           [
@@ -295,7 +227,7 @@ describe Matching::Engine do
               :action=>"cancel",
               :order=>
                 {:id=>bid1_in_db.id,
-                 :timestamp=>1562668113,
+                 :timestamp=>bid1_in_db.created_at.to_i,
                  :type=>:bid,
                  :locked=>46.348533.to_d,
                  :volume=>0.8284.to_d,
@@ -307,9 +239,9 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit ask1_mock
-        subject.submit ask2_mock
-        subject.submit bid1_mock
+        subject.submit ask1_in_db.to_matching_mock
+        subject.submit ask2_in_db.to_matching_mock
+        subject.submit bid1_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -358,38 +290,6 @@ describe Matching::Engine do
                volume: 0.01.to_d)
       end
 
-      let!(:ask1_mock) do
-        Matching.mock_limit_order(id: ask1_in_db.id,
-                                  type: :ask,
-                                  price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:ask2_mock) do
-        Matching.mock_limit_order(id: ask2_in_db.id,
-                                  type: :ask,
-                                  price: ask2_in_db.price,
-                                  volume: ask2_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:ask3_mock) do
-        Matching.mock_limit_order(id: ask3_in_db.id,
-                                  type: :ask,
-                                  price: ask3_in_db.price,
-                                  volume: ask3_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:bid1_mock) do
-        Matching.mock_market_order(id: bid1_in_db.id,
-                                   type: :bid,
-                                   locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume,
-                                   timestamp: 1562668113)
-      end
-
       let(:expected_messages) do
         [
           [
@@ -417,7 +317,7 @@ describe Matching::Engine do
             { :action=>"cancel",
               :order=> {
                 :id=>bid1_in_db.id,
-                :timestamp=>1562668113,
+                :timestamp=>bid1_in_db.created_at.to_i,
                 :type=>:bid,
                 :locked=>0.240289e2,
                 :volume=>0.8e-2,
@@ -429,9 +329,9 @@ describe Matching::Engine do
         ]
       end
       it 'publish single two trades and cancel order' do
-        subject.submit ask1_mock
-        subject.submit ask2_mock
-        subject.submit bid1_mock
+        subject.submit ask1_in_db.to_matching_mock
+        subject.submit ask2_in_db.to_matching_mock
+        subject.submit bid1_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -462,22 +362,6 @@ describe Matching::Engine do
                volume: 0.01.to_d)
       end
 
-      let!(:ask1_mock) do
-        Matching.mock_limit_order(id: ask1_in_db.id,
-                                  type: :ask,
-                                  price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:bid1_mock) do
-        Matching.mock_market_order(id: bid1_in_db.id,
-                                   type: :bid,
-                                   locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume,
-                                   timestamp: 1562668113)
-      end
-
       let(:expected_messages) do
         [
           [
@@ -498,7 +382,7 @@ describe Matching::Engine do
               :action=>"cancel",
               :order=> {
                 :id=>bid1_in_db.id,
-                :timestamp=>1562668113,
+                :timestamp=>bid1_in_db.created_at.to_i,
                 :type=>:bid,
                 :locked=>0.2733e2,
                 :volume=>0.91e-2,
@@ -511,8 +395,8 @@ describe Matching::Engine do
         ]
       end
       it 'publish single trade and cancel order' do
-        subject.submit ask1_mock
-        subject.submit bid1_mock
+        subject.submit ask1_in_db.to_matching_mock
+        subject.submit bid1_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
@@ -552,30 +436,6 @@ describe Matching::Engine do
                volume: 0.0009.to_d)
       end
 
-      let!(:ask1_mock) do
-        Matching.mock_limit_order(id: ask1_in_db.id,
-                                  type: :ask,
-                                  price: ask1_in_db.price,
-                                  volume: ask1_in_db.volume,
-                                  timestamp: 1562668113)
-      end
-
-      let!(:bid1_mock) do
-        Matching.mock_market_order(id: bid1_in_db.id,
-                                   type: :bid,
-                                   locked: bid1_in_db.locked,
-                                   volume: bid1_in_db.volume,
-                                   timestamp: 1562668113)
-      end
-
-      let!(:bid2_mock) do
-        Matching.mock_market_order(id: bid2_in_db.id,
-                                   type: :bid,
-                                   locked: bid2_in_db.locked,
-                                   volume: bid2_in_db.volume,
-                                   timestamp: 1562668113)
-      end
-
       let(:expected_messages) do
         [
           [
@@ -608,7 +468,7 @@ describe Matching::Engine do
               :action => "cancel",
               :order => {
                 :id => bid2_in_db.id,
-                :timestamp => 1562668113,
+                :timestamp => bid2_in_db.created_at.to_i,
                 :type => :bid,
                 :locked => 0.135e1.to_d,
                 :volume => 0.45e-3.to_d,
@@ -621,9 +481,9 @@ describe Matching::Engine do
         ]
       end
       it 'publish single two trades and cancel order' do
-        subject.submit ask1_mock
-        subject.submit bid1_mock
-        subject.submit bid2_mock
+        subject.submit ask1_in_db.to_matching_mock
+        subject.submit bid1_in_db.to_matching_mock
+        subject.submit bid2_in_db.to_matching_mock
         expect(subject.queue).to eq expected_messages
       end
     end
