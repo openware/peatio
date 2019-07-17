@@ -13,9 +13,143 @@ describe Matching::Engine do
   before          { subject.stubs(:orderbook).returns(orderbook) }
 
   context 'submit market order 2' do
-    context 'market order out of locked 2' do
-      subject { Matching::Engine.new(market, mode: :dryrun) }
+    subject { Matching::Engine.new(market, mode: :dryrun) }
 
+    context 'sell market order 1' do
+      # We have the next state of bid(buy) order book.
+      # | price | volume |
+      # | 0.86  | 0.9817 |
+      #
+      # Ask market order for 0.918 BTC was created.
+      # We expect order to be fully executed.
+      let!(:bid1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :limit,
+               locked: 0.844262.to_d,
+               price: 0.86.to_d,
+               volume: 0.9817.to_d)
+      end
+
+      let!(:bid1_mock) do
+        Matching.mock_limit_order(id: bid1_in_db.id,
+                                  type: :bid,
+                                  price: bid1_in_db.price,
+                                  locked: bid1_in_db.locked,
+                                  volume: bid1_in_db.volume,
+                                  timestamp: 1562668113)
+      end
+
+      let!(:ask1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 0.918.to_d,
+               price: nil,
+               volume: 0.918.to_d)
+      end
+
+      let!(:ask1_mock) do
+        Matching.mock_market_order(id: ask1_in_db.id,
+                                   type: :ask,
+                                   price: ask1_in_db.price,
+                                   volume: ask1_in_db.volume,
+                                   locked: ask1_in_db.locked,
+                                   timestamp: 1562668113)
+      end
+
+      let(:expected_messages) do
+        [
+          [
+            :trade_executor,
+            {
+              :market_id=>"btcusd",
+              :ask_id=>ask1_in_db.id,
+              :bid_id=>bid1_in_db.id,
+              :strike_price=>0.86.to_d,
+              :volume=>0.918.to_d,
+              :funds=>0.78948.to_d
+            },
+            { persistent: false }
+          ]
+        ]
+      end
+
+      it 'publish trade' do
+        subject.submit bid1_mock
+        subject.submit ask1_mock
+        expect(subject.queue).to eq expected_messages
+      end
+    end
+
+    context 'sell market order 2' do
+      # We have the next state of bid(buy) order book.
+      # | price | volume |
+      # | 8.6   | 0.9817 |
+      #
+      # Ask market order for 0.918 BTC was created.
+      # We expect order to be fully executed.
+      let!(:bid1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :limit,
+               locked: 8.44262.to_d,
+               price: 8.6.to_d,
+               volume: 0.9817.to_d)
+      end
+
+      let!(:bid1_mock) do
+        Matching.mock_limit_order(id: bid1_in_db.id,
+                                  type: :bid,
+                                  price: bid1_in_db.price,
+                                  locked: bid1_in_db.locked,
+                                  volume: bid1_in_db.volume,
+                                  timestamp: 1562668113)
+      end
+
+      let!(:ask1_in_db) do
+        create(:order_bid,
+               :btcusd,
+               ord_type: :market,
+               locked: 0.918.to_d,
+               price: nil,
+               volume: 0.918.to_d)
+      end
+
+      let!(:ask1_mock) do
+        Matching.mock_market_order(id: ask1_in_db.id,
+                                   type: :ask,
+                                   price: ask1_in_db.price,
+                                   volume: ask1_in_db.volume,
+                                   locked: ask1_in_db.locked,
+                                   timestamp: 1562668113)
+      end
+
+      let(:expected_messages) do
+        [
+          [
+            :trade_executor,
+            {
+              :market_id=>"btcusd",
+              :ask_id=>ask1_in_db.id,
+              :bid_id=>bid1_in_db.id,
+              :strike_price=>8.6.to_d,
+              :volume=>0.918.to_d,
+              :funds=>7.8948.to_d
+            },
+            { persistent: false }
+          ]
+        ]
+      end
+
+      it 'publish trade' do
+        subject.submit bid1_mock
+        subject.submit ask1_mock
+        expect(subject.queue).to eq expected_messages
+      end
+    end
+
+    context 'market order out of locked 1' do
       # We have the next state of ask(sell) order book.
       # | price | volume |
       # | 0.8006| 0.9817 |
@@ -75,7 +209,7 @@ describe Matching::Engine do
           ]
         ]
       end
-      it 'publish single trade and cancel order' do
+      it 'publish cancel order' do
         subject.submit ask1_mock
         subject.submit bid1_mock
         expect(subject.queue).to eq expected_messages
@@ -83,8 +217,6 @@ describe Matching::Engine do
     end
 
     context 'market order out of locked 2' do
-      subject { Matching::Engine.new(market, mode: :dryrun) }
-
       # We have the next state of ask(sell) order book.
       # | price | volume |
       # | 0.8006| 0.0111 |
@@ -183,8 +315,6 @@ describe Matching::Engine do
     end
 
     context 'market order out of locked 3' do
-      subject { Matching::Engine.new(market, mode: :dryrun) }
-
       # We have the next state of ask(sell) order book.
       # | price | volume |
       # | 3000.0| 0.0009 |
@@ -298,7 +428,7 @@ describe Matching::Engine do
           ]
         ]
       end
-      it 'publish single trade and cancel order' do
+      it 'publish single two trades and cancel order' do
         subject.submit ask1_mock
         subject.submit ask2_mock
         subject.submit bid1_mock
@@ -307,8 +437,6 @@ describe Matching::Engine do
     end
 
     context 'market doesn\'t have enough funds 1' do
-      subject { Matching::Engine.new(market, mode: :dryrun) }
-
       # We have the next state of ask(sell) order book.
       # | price | volume |
       # | 3000.0| 0.0009 |
@@ -390,8 +518,6 @@ describe Matching::Engine do
     end
 
     context 'market doesn\'t have enough funds 2' do
-      subject { Matching::Engine.new(market, mode: :dryrun) }
-
       # We have the next state of ask(sell) order book.
       # | price | volume |
       # | 3000.0| 0.0009 |
@@ -494,7 +620,7 @@ describe Matching::Engine do
           ]
         ]
       end
-      it 'publish single trade and cancel order' do
+      it 'publish single two trades and cancel order' do
         subject.submit ask1_mock
         subject.submit bid1_mock
         subject.submit bid2_mock

@@ -28,7 +28,7 @@ module Matching
       trade_price  = counter_order.price
       trade_volume = [volume, counter_order.volume].min
       trade_funds  = trade_price * trade_volume
-
+binding.pry
       return if trade_funds > locked
 
       [trade_price, trade_volume, trade_funds]
