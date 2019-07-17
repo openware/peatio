@@ -7,15 +7,17 @@ module Workers
       class << self; attr_accessor :sleep_time end
 
       attr_accessor :running
-      attr_reader :logger
 
       def initialize
         @running = true
-        @logger = Rails.logger
       end
 
       def stop
         @running = false
+      end
+
+      def logger
+        @logger ||= TaggedLogger.new(Rails.logger, worker: self.class)
       end
 
       def run

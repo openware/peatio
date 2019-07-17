@@ -44,7 +44,7 @@ module Workers
           # Save txids in deposit spread.
           deposit.update!(spread: transactions.map(&:as_json))
 
-          logger.warn message: "The API accepted deposit collection and assigned transaction ID: #{transactions.map}.",
+          logger.warn message: "The API accepted deposit collection and assigned transaction ID: #{transactions}.",
                       model: deposit
 
           deposit.dispatch!

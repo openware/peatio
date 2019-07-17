@@ -22,6 +22,10 @@ class TaggedLogger
   [:fatal, :error, :warn, :info, :debug].each do |log_method|
     define_method(log_method) do |msg|
       if msg.is_a? Hash
+        if msg[:model].respond_to?(:to_log_message)
+          msg.merge!(msg[:model].to_log_message)
+          msg.delete(:model)
+        end
         msg = @tags.merge msg
       else
         msg = @tags.merge(message: msg)
@@ -30,4 +34,12 @@ class TaggedLogger
       @logger.method(log_method).call(msg)
     end
   end
+
+  # def to_log_message(msg)
+  #   if msg[:models].is_a? Array
+  #     msg[:models].each do |item|
+  #       binding.pry
+  #     end
+  #   end
+  # end
 end

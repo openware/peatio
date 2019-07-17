@@ -177,6 +177,18 @@ class Withdraw < ApplicationRecord
   def processable?
     attempts < MAX_ATTEMPTS
   end
+
+  def to_log_message
+    {
+      withdraw_id: id,
+      currency: currency_id,
+      amount: amount,
+      fee: fee,
+      rid: rid,
+      txid: txid
+    }
+  end
+
 private
 
   # @deprecated
@@ -252,17 +264,6 @@ private
         reference:  self
       )
     end
-  end
-
-  def to_log_message
-    {
-      withdraw_id: id,
-      currency: currency_id,
-      amount: amount,
-      address: address,
-      txid: txid,
-      spread: spread
-    }
   end
 
   def send_coins!
