@@ -3,7 +3,7 @@
 
 module Workers
   module AMQP
-    class OrderProcessor
+    class OrderProcessor < Base
       def initialize
         Order.where(state: ::Order::PENDING).find_each do |order|
           Order.submit(order.id)

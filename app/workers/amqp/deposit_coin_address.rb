@@ -3,7 +3,7 @@
 
 module Workers
   module AMQP
-    class DepositCoinAddress
+    class DepositCoinAddress < Base
       def process(payload)
         payload.symbolize_keys!
 

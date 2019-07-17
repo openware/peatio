@@ -112,6 +112,17 @@ class Deposit < ApplicationRecord
     end
   end
 
+  def to_log_message
+    {
+      deposit_id: id,
+      currency: currency_id,
+      amount: amount,
+      address: address,
+      txid: txid,
+      spread: spread
+    }
+  end
+
   private
 
   # Creates dependant operations for deposit.

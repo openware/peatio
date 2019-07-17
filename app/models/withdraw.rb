@@ -254,6 +254,17 @@ private
     end
   end
 
+  def to_log_message
+    {
+      withdraw_id: id,
+      currency: currency_id,
+      amount: amount,
+      address: address,
+      txid: txid,
+      spread: spread
+    }
+  end
+
   def send_coins!
     AMQPQueue.enqueue(:withdraw_coin, id: id) if coin?
   end

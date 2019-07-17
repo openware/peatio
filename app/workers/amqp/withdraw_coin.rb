@@ -3,7 +3,7 @@
 
 module Workers
   module AMQP
-    class WithdrawCoin
+    class WithdrawCoin < Base
       def initialize
         @logger = TaggedLogger.new(Rails.logger, worker: __FILE__)
       end
@@ -21,14 +21,13 @@ module Workers
 
         withdraw.with_lock do
           unless withdraw.processing?
-            @logger.warn id: withdraw.id,
-                         message: 'The withdraw is being processed by another worker or has already been processed.'
+            @logger.warn message: 'The withdraw is being processed by another worker or has already been processed.',
+                         model: withdraw
             return
           end
 
           if withdraw.rid.blank?
-            @logger.warn id: withdraw.id,
-                         message: 'The destination address doesn\'t exist.'
+            @logger.warn message: 'The destination address doesn\'t exist.', model: withdraw
             withdraw.fail!
             return
           end
