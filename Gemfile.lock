@@ -169,7 +169,7 @@ GEM
       rack
     grape_on_rails_routes (0.3.2)
       rails (>= 3.1.1)
-    hashdiff (0.4.0)
+    hashdiff (1.0.0)
     hashie (3.6.0)
     http_parser.rb (0.6.0)
     i18n (1.6.0)
@@ -337,7 +337,7 @@ GEM
     rspec-retry (0.6.1)
       rspec-core (> 3.3)
     rspec-support (3.8.2)
-    rubocop (0.72.0)
+    rubocop (0.73.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.6)
