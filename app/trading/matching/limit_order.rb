@@ -4,18 +4,13 @@
 require_relative 'constants'
 
 module Matching
-  class LimitOrder < AbstractOrder
+  class LimitOrder < BaseOrder
 
-    attr :id, :timestamp, :type, :price, :market
-    attr_accessor :volume
+    attr_reader :price
 
     def initialize(attrs)
-      @id         = attrs[:id]
-      @timestamp  = attrs[:timestamp]
-      @type       = attrs[:type].to_sym
-      @volume     = attrs[:volume].to_d
-      @price      = attrs[:price].to_d
-      @market     = attrs[:market]
+      super
+      @price = attrs[:price].to_d
 
       raise OrderError.new(self, 'Order is not valid') unless valid?(attrs)
     end
@@ -33,7 +28,7 @@ module Matching
       [trade_price, trade_volume, trade_funds]
     end
 
-    def fill(trade_price, trade_volume, trade_funds)
+    def fill(_trade_price, trade_volume, _trade_funds)
       raise NotEnoughVolume if trade_volume > @volume
       @volume -= trade_volume
     end
@@ -54,7 +49,7 @@ module Matching
       "%d/$%s/%s" % [id, price.to_s('F'), volume.to_s('F')]
     end
 
-    def valid?(attrs)
+    def valid?(_attrs)
       type.in?(%i[ask bid]) && \
         id.present? && \
         timestamp.present? && \
@@ -63,12 +58,12 @@ module Matching
     end
 
     def attributes
-      { id: @id,
+      { id:        @id,
         timestamp: @timestamp,
-        type: @type,
-        volume: @volume,
-        price: @price,
-        market: @market,
+        type:      @type,
+        volume:    @volume,
+        price:     @price,
+        market:    @market,
         ord_type: 'limit' }
     end
   end

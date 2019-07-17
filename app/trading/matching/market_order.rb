@@ -4,18 +4,13 @@
 require_relative 'constants'
 
 module Matching
-  class MarketOrder < AbstractOrder
+  class MarketOrder < BaseOrder
 
-    attr :id, :timestamp, :type, :locked, :market
-    attr_accessor :volume
+    attr_reader :locked
 
     def initialize(attrs)
-      @id         = attrs[:id]
-      @timestamp  = attrs[:timestamp]
-      @type       = attrs[:type].to_sym
-      @locked     = attrs[:locked].to_d
-      @volume     = attrs[:volume].to_d
-      @market     = attrs[:market]
+      super
+      @locked = attrs[:locked].to_d
 
       raise OrderError.new(self, 'Order is not valid') unless valid?(attrs)
     end
@@ -28,13 +23,15 @@ module Matching
       trade_price  = counter_order.price
       trade_volume = [volume, counter_order.volume].min
       trade_funds  = trade_price * trade_volume
-binding.pry
-      return if trade_funds > locked
+
+      # If buy order is out of locked. Which means that order can't fulfill in
+      # current price point because locked run out.
+      return if bid? && trade_funds > locked
 
       [trade_price, trade_volume, trade_funds]
     end
 
-    def fill(trade_price, trade_volume, trade_funds)
+    def fill(_trade_price, trade_volume, trade_funds)
       raise NotEnoughVolume if trade_volume > @volume
       @volume -= trade_volume
 
@@ -61,13 +58,13 @@ binding.pry
     end
 
     def attributes
-      { id: @id,
+      { id:        @id,
         timestamp: @timestamp,
-        type: @type,
-        locked: @locked,
-        volume: @volume,
-        market: @market,
-        ord_type: 'market' }
+        type:      @type,
+        locked:    @locked,
+        volume:    @volume,
+        market:    @market,
+        ord_type:  'market' }
     end
   end
 end

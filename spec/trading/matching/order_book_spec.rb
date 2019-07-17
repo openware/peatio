@@ -107,7 +107,7 @@ describe Matching::OrderBook do
     it 'should return order in book' do
       o1 = Matching.mock_limit_order(type: :ask, price: '1.0'.to_d)
       o2 = o1.dup
-      o1.volume = '12345'.to_d
+      o1.instance_variable_set(:@volume, '12345'.to_d)
       subject.add o1
       o = subject.remove o2
       expect(o.volume).to eq '12345'.to_d
