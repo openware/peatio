@@ -34,7 +34,7 @@ class Market < ApplicationRecord
   # sale - user can't view but can trade with market orders.
   # presale - user can't view and trade. Admin can trade.
 
-  attr_readonly :base_unit, :quote_unit, :amount_precision, :price_precision
+  attr_readonly :base_unit, :quote_unit
   delegate :bids, :asks, :trades, :ticker, :h24_volume, :avg_h24_price,
            to: :global
 
