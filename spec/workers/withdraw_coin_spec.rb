@@ -125,4 +125,28 @@ describe Workers::AMQP::WithdrawCoin do
       expect(processing_withdrawal.txid).to eq('hash-1')
     end
   end
+
+  context 'marks withdraw as undefined on Faraday::TimeoutError error' do
+    before do
+      WalletService.any_instance
+                   .expects(:load_balance!)
+                   .returns(withdrawal.amount)
+
+      Bitcoin::Client.any_instance
+                   .expects(:connection)
+                   .raises(Faraday::TimeoutError.new)
+    end
+
+    subject { Workers::AMQP::WithdrawCoin.new.process(processing_withdrawal.as_json) }
+
+    it 'sets undefined state after processing withdrawal' do
+      expect(subject).to be_truthy
+      expect(processing_withdrawal.reload.undefined?).to be_truthy
+    end
+
+    it 'doesn\'t retry on time-out error' do
+      expect(Workers::AMQP::WithdrawCoin.new.process(processing_withdrawal.as_json)).to be_truthy
+      expect(processing_withdrawal.reload.undefined?).to be_truthy
+    end
+  end
 end

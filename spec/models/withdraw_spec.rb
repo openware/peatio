@@ -220,6 +220,17 @@ describe Withdraw do
         subject.process!
         expect(subject.processing?).to be true
       end
+
+      it 'transitions to :undefined after calling #undefine from :processing' do
+        subject.process!
+        expect(subject.processing?).to be true
+
+        expect { subject.undefine! }.to_not change { subject.account.amount }
+        expect(subject.undefined?).to be true
+
+        subject.process!
+        expect(subject.processing?).to be true
+      end
     end
 
     context :cancel do
@@ -464,6 +475,33 @@ describe Withdraw do
         expect(subject.may_process?).to be false
         expect { subject.fail! }.to_not change { subject.account.amount }
         expect(subject.failed?).to be true
+      end
+    end
+
+    context :undefined do
+      before do
+        subject.submit!
+        subject.accept!
+        subject.process!
+        subject.undefine!
+      end
+
+      it 'transitions to :processing after calling #process from :undefined' do
+        subject.expects(:send_coins!)
+        expect { subject.process! }.to_not change { subject.account.amount }
+
+        expect(subject.attempts).to eq 2
+        expect(subject.processing?).to be true
+      end
+
+      it 'transitions to :failed after calling #fail from :undefined' do
+        expect { subject.fail! }.not_to change { subject.account.amount }
+        expect(subject.failed?).to be true
+      end
+
+      it 'transitions to :succeed after calling #sucess from :undefined' do
+        expect { subject.success! }.to change { subject.account.amount }
+        expect(subject.succeed?).to be true
       end
     end
   end

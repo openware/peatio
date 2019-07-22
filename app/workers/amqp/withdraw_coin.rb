@@ -77,22 +77,28 @@ module Workers
           withdraw.dispatch
           withdraw.save!
 
-          @logger.warn id: withdraw.id, message: 'OK.'
+          @logger.warn id: withdraw.id, message: 'Withdrawal has processed'
 
-        rescue Exception => e
-          begin
-            @logger.error id: withdraw.id,
-                          message: 'Failed to process withdraw. See exception details below.'
+        rescue StandardError => e
+          # TODO: Rescue {Plugin}::Client::ServerError after update in each plugin.
+          if e.is_a?(Peatio::Wallet::ClientError) && e.cause.cause.is_a?(Faraday::TimeoutError)
+            @logger.warn id: withdraw.id, message: 'Withdrawal status is undefined. Admin should check withdraw state manually'
             report_exception(e)
-            @logger.warn id: withdraw.id,
-                         message: 'Setting withdraw state to failed.'
-          ensure
+            withdraw.undefine!
+          else
+            @logger.error id: withdraw.id,
+                          message: 'Failed to process withdrawal. See exception details below.'
+            report_exception(e)
+
             if withdraw.may_process?
+              @logger.warn id: withdraw.id,
+                           message: 'Processing withdrawal again.'
               withdraw.process!
             else
               withdraw.fail!
+              @logger.warn id: withdraw.id,
+                           message: 'Setting withdrawal state to failed.'
             end
-            @logger.warn id: withdraw.id, message: 'OK.'
           end
         end
       end

@@ -48,6 +48,7 @@ class Withdraw < ApplicationRecord
     state :succeed
     state :failed
     state :confirming
+    state :undefined
 
     event :submit do
       transitions from: :prepared, to: :submitted
@@ -80,7 +81,7 @@ class Withdraw < ApplicationRecord
     end
 
     event :process do
-      transitions from: %i[processing accepted skipped], to: :processing, if: :processable?
+      transitions from: %i[processing accepted skipped undefined], to: :processing, if: :processable?
       after do
         update!(attempts: self.attempts + 1)
         send_coins!
@@ -106,10 +107,14 @@ class Withdraw < ApplicationRecord
     end
 
     event :success do
-      transitions from: :confirming, to: :succeed
-      after do
-        unlock_and_sub_funds
-        record_complete_operations!
+      transitions from: %i[confirming undefined], to: :succeed do
+        guard do
+          fiat? || txid?
+        end
+        after do
+          unlock_and_sub_funds
+          record_complete_operations!
+        end
       end
     end
 
@@ -118,11 +123,16 @@ class Withdraw < ApplicationRecord
     end
 
     event :fail do
-      transitions from: %i[processing confirming], to: :failed
+      transitions from: %i[processing confirming undefined], to: :failed
       after do
         unlock_funds
         record_cancel_operations!
       end
+    end
+
+    # TODO: Find better name.
+    event :undefine do
+      transitions from: :processing, to: :undefined
     end
   end
 
