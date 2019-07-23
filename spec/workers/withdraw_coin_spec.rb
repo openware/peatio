@@ -78,10 +78,21 @@ describe Workers::AMQP::WithdrawCoin do
                     .returns(withdrawal.amount * 0.9)
     end
 
+    subject { Workers::AMQP::WithdrawCoin.new.process(processing_withdrawal.as_json) }
+
     it 'returns nil and skip withdrawal' do
-      expect(Workers::AMQP::WithdrawCoin.new.process(processing_withdrawal.as_json)).to be(true)
+      expect(subject).to be(true)
       expect(processing_withdrawal.reload.skipped?).to be_truthy
     end
+
+    it 'doesnt change attempts after call process from skipped state' do
+      expect(subject).to be(true)
+      expect(processing_withdrawal.reload.skipped?).to be_truthy
+      processing_withdrawal.process!
+      expect(processing_withdrawal.reload.attempts).to eq 1
+    end
+
+
   end
 
   context 'wallet balance is sufficient but build_withdrawal! raises error' do

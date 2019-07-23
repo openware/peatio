@@ -82,7 +82,7 @@ class Withdraw < ApplicationRecord
     event :process do
       transitions from: %i[processing accepted skipped], to: :processing, if: :processable?
       after do
-        update!(attempts: self.attempts + 1)
+        update!(attempts: self.attempts + 1) unless aasm_state_before_last_save == 'skipped'
         send_coins!
       end
     end
