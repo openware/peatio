@@ -8,6 +8,13 @@ class Trade < ApplicationRecord
 
   enumerize :trend, in: { up: 1, down: 0 }
 
+  # TODO: Implement daemon which will split fees.
+  # pending - trade has been created, funds have been moved to locked accounts,
+  # fee has not charged yet.
+  # done - trade has been created, funds have been moved to main accounts,
+  # fee has been charged.
+  enumerize :state, in: { pending: 0, done: 1 }
+
   belongs_to :ask, class_name: 'OrderAsk', foreign_key: :ask_id, required: true
   belongs_to :bid, class_name: 'OrderBid', foreign_key: :bid_id, required: true
   belongs_to :ask_member, class_name: 'Member', foreign_key: :ask_member_id, required: true
@@ -157,7 +164,7 @@ class Trade < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20190213104708
+# Schema version: 20190730091236
 #
 # Table name: trades
 #
@@ -171,6 +178,7 @@ end
 #  ask_member_id :integer          not null
 #  bid_member_id :integer          not null
 #  funds         :decimal(32, 16)  not null
+#  state         :integer          not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #

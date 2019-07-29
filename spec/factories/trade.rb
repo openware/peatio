@@ -13,6 +13,7 @@ FactoryBot.define do
       ask_member { ask.member }
       bid_member { bid.member }
       trend { %w[up down].sample }
+      state { :done }
     end
 
     trait :btceth do
@@ -25,6 +26,7 @@ FactoryBot.define do
       ask_member { ask.member }
       bid_member { bid.member }
       trend { %w[up down].sample }
+      state { :done }
     end
 
     # Create liability history for orders by passing with_deposit_liability trait.

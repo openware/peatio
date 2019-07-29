@@ -77,6 +77,7 @@ module Matching
           volume:        @volume,
           funds:         @funds,
           market:        @market,
+          state:         :done,
           trend:         _trend
 
         strike(@trade, @ask, accounts_table["#{@ask.ask}:#{@ask.member_id}"], accounts_table["#{@ask.bid}:#{@ask.member_id}"])

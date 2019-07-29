@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_25_131843) do
+ActiveRecord::Schema.define(version: 2019_07_30_091236) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -215,6 +215,18 @@ ActiveRecord::Schema.define(version: 2019_07_25_131843) do
     t.index ["currency_id", "address"], name: "index_payment_addresses_on_currency_id_and_address", unique: true
   end
 
+  create_table "rev_shares", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.integer "member_id", null: false
+    t.integer "parent_id", null: false
+    t.integer "parts_per_ten_thousand", limit: 2, null: false, unsigned: true
+    t.integer "state", limit: 1, default: 0, null: false, unsigned: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id", "state"], name: "index_rev_shares_on_member_id_and_state"
+    t.index ["member_id"], name: "index_rev_shares_on_member_id"
+    t.index ["state"], name: "index_rev_shares_on_state"
+  end
+
   create_table "revenues", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
@@ -239,6 +251,7 @@ ActiveRecord::Schema.define(version: 2019_07_25_131843) do
     t.integer "ask_member_id", null: false
     t.integer "bid_member_id", null: false
     t.decimal "funds", precision: 32, scale: 16, null: false
+    t.integer "state", limit: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["ask_id"], name: "index_trades_on_ask_id"
