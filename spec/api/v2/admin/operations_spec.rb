@@ -53,22 +53,6 @@ describe API::V2::Admin::Operations, type: :request do
         expect(result.map { |a| a['id'] }).to match_array expected.map { |e| e.id }
       end
 
-      it 'fileters by maximum debit' do
-        api_get '/api/v2/admin/assets', token: token, params: { debit_to: 100.0 }
-        result = JSON.parse(response.body)
-        expected = assets.select { |l| l.debit < 100.0.to_d }
-
-        expect(result.map { |a| a['id'] }).to match_array expected.map { |e| e.id }
-      end
-
-      it 'filters by minimum debit' do
-        api_get '/api/v2/admin/assets', token: token, params: { debit_from: 100.0 }
-        result = JSON.parse(response.body)
-        expected = assets.select { |l| l.debit >= 100.0.to_d }
-
-        expect(result.map { |a| a['id'] }).to match_array expected.map { |e| e.id }
-      end
-
       it 'orders by debit ascending' do
         api_get '/api/v2/admin/assets', token: token, params: { order_by: 'debit', ordering: 'asc' }
         result = JSON.parse(response.body)
@@ -175,22 +159,6 @@ describe API::V2::Admin::Operations, type: :request do
         api_get '/api/v2/admin/liabilities', token: token, params: { uid: member.uid }
         result = JSON.parse(response.body)
         expected = liabilities.select { |l| l.member.uid == member.uid }
-
-        expect(result.map { |a| a['id'] }).to match_array expected.map { |e| e.id }
-      end
-
-      it 'fileters by maximum credit' do
-        api_get '/api/v2/admin/liabilities', token: token, params: { credit_to: 100.0 }
-        result = JSON.parse(response.body)
-        expected = liabilities.select { |l| l.credit < 100.0.to_d }
-
-        expect(result.map { |a| a['id'] }).to match_array expected.map { |e| e.id }
-      end
-
-      it 'filters by minimum credit' do
-        api_get '/api/v2/admin/liabilities', token: token, params: { credit_from: 100.0 }
-        result = JSON.parse(response.body)
-        expected = liabilities.select { |l| l.credit >= 100.0.to_d }
 
         expect(result.map { |a| a['id'] }).to match_array expected.map { |e| e.id }
       end

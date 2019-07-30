@@ -97,7 +97,6 @@ describe API::V2::Admin::Wallets, type: :request do
       expect(response).to include_api_error('admin.wallet.missing_address')
       expect(response).to include_api_error('admin.wallet.missing_blockchain_key')
       expect(response).to include_api_error('admin.wallet.missing_gateway')
-      expect(response).to include_api_error('admin.wallet.missing_settings')
     end
 
     it 'validate status' do
@@ -122,10 +121,10 @@ describe API::V2::Admin::Wallets, type: :request do
     end
 
     it 'validate currency_id' do
-      api_post '/api/v2/admin/wallets/update', params: { name: 'Test', kind: 'deposit', address: 'blank', blockchain_key: 'btc-testnet', gateway: 'geth', settings: { uri: 'http://127.0.0.1:18332'}, currency_id: 'test' }, token: token
+      api_post '/api/v2/admin/wallets/update', params: { id: 1, name: 'Test', kind: 'deposit', address: 'blank', blockchain_key: 'btc-testnet', gateway: 'geth', settings: { uri: 'http://127.0.0.1:18332'}, currency: 'test' }, token: token
 
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('admin.wallet.currency_id_doesnt_exist')
+      expect(response).to include_api_error('admin.currency.doesnt_exist')
     end
 
     it 'return error in case of not permitted ability' do
@@ -174,10 +173,10 @@ describe API::V2::Admin::Wallets, type: :request do
     end
 
     it 'validate currency_id' do
-      api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, currency_id: 'test' }, token: token
+      api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, currency: 'test' }, token: token
 
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('admin.wallet.currency_id_doesnt_exist')
+      expect(response).to include_api_error('admin.currency.doesnt_exist')
     end
 
     it 'checked required params' do

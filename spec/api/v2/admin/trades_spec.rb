@@ -57,12 +57,12 @@ describe API::V2::Admin::Trades, type: :request do
 
       it 'validates limit' do
         api_get'/api/v2/admin/trades', token: token, params: { limit: 'meow' }
-        expect(response).to include_api_error 'admin.trade.non_integer_limit'
+        expect(response).to include_api_error 'admin.pagination.non_integer_limit'
       end
 
       it 'validates page' do
         api_get'/api/v2/admin/trades', token: token, params: { page: 'meow' }
-        expect(response).to include_api_error 'admin.trade.non_integer_page'
+        expect(response).to include_api_error 'admin.pagination.non_integer_page'
       end
 
       it 'first 5 trades ordered by id' do
@@ -124,79 +124,6 @@ describe API::V2::Admin::Trades, type: :request do
         end
       end
 
-      context 'with price' do
-        it 'validates minimum price' do
-          api_get'/api/v2/admin/trades', token: token, params: { price_from: 'meow' }
-          expect(response).to include_api_error 'admin.trade.non_decimal_price'
-        end
-
-        it 'validates maximum price' do
-          api_get'/api/v2/admin/trades', token: token, params: { price_to: 'meow' }
-          expect(response).to include_api_error 'admin.trade.non_decimal_price'
-        end
-
-        it 'with minimum price' do
-          api_get'/api/v2/admin/trades', token: token, params: { price_from: 10 }
-          result = JSON.parse(response.body)
-          expected = trades.select { |t| t.price >= 10 }
-
-          expect(result.length).to eq 2
-          expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
-        end
-
-        it 'with maximum price' do
-          api_get'/api/v2/admin/trades', token: token, params: { price_to: 10 }
-          result = JSON.parse(response.body)
-          expected = trades.select { |t| t.price < 10 }
-
-          expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
-        end
-
-        it 'with minimum and maximum prices' do
-          api_get'/api/v2/admin/trades', token: token, params: { price_from: 5, price_to: 20 }
-          result = JSON.parse(response.body)
-          expected = trades.select { |t| t.price < 20.to_d && t.price >= 5.to_d }
-
-          expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
-        end
-      end
-
-      context 'with volume' do
-        it 'validates minimum volume' do
-          api_get'/api/v2/admin/trades', token: token, params: { volume_from: 'meow' }
-          expect(response).to include_api_error 'admin.trade.non_decimal_volume'
-        end
-
-        it 'validates maximum volume' do
-          api_get'/api/v2/admin/trades', token: token, params: { volume_to: 'meow' }
-          expect(response).to include_api_error 'admin.trade.non_decimal_volume'
-        end
-
-        it 'with minimum volume' do
-          api_get'/api/v2/admin/trades', token: token, params: { volume_from: 10 }
-          result = JSON.parse(response.body)
-          expected = trades.select { |t| t.volume >= 10 }
-
-          expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
-        end
-
-        it 'with maximum volume' do
-          api_get'/api/v2/admin/trades', token: token, params: { volume_to: 10 }
-          result = JSON.parse(response.body)
-          expected = trades.select { |t| t.volume < 10 }
-
-          expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
-        end
-
-        it 'with minimum and maximum volumes' do
-          api_get'/api/v2/admin/trades', token: token, params: { volume_from: 5, volume_to: 20 }
-          result = JSON.parse(response.body)
-          expected = trades.select { |t| t.volume < 20.to_d && t.volume >= 5.to_d }
-
-          expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
-        end
-      end
-
       context 'with uid' do
         it 'returns orders for specific user (both maker and taker sides)' do
           api_get'/api/v2/admin/trades', token: token, params: { uid: member.uid }
@@ -220,12 +147,12 @@ describe API::V2::Admin::Trades, type: :request do
       context 'with timestamps' do
         it 'validates created_at_from' do
           api_get'/api/v2/admin/trades', token: token, params: { created_at_from: 'yesterday' }
-          expect(response).to include_api_error 'admin.trade.non_integer_created_at_from'
+          expect(response).to include_api_error 'admin.filter.non_integer_created_at_from'
         end
 
         it 'validates created_at_to' do
           api_get'/api/v2/admin/trades', token: token, params: { created_at_to: 'today' }
-          expect(response).to include_api_error 'admin.trade.non_integer_created_at_to'
+          expect(response).to include_api_error 'admin.filter.non_integer_created_at_to'
         end
 
         it 'returns trades created after specidfied date' do

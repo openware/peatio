@@ -5,12 +5,12 @@ module API
   module V2
     module Admin
       module Entities
-        class Blockchain < Base
+        class Blockchain < API::V2::Entities::Base
           expose(
             :id,
             documentation:{
               type: Integer,
-              desc: 'Unique blockchain id.'
+              desc: 'Unique blockchain identifier in database.'
             }
           )
 
@@ -18,7 +18,7 @@ module API
             :key,
             documentation:{
               type: String,
-              desc: 'Unique blockchain key.'
+              desc: 'Unique key to identify blockchain.'
             }
           )
 
@@ -26,7 +26,7 @@ module API
             :name,
             documentation:{
               type: String,
-              desc: 'Unique blockchain name.'
+              desc: 'A name to identify blockchain.'
             }
           )
 
@@ -34,7 +34,7 @@ module API
             :client,
             documentation:{
               type: String,
-              desc: 'Unique blockchain client.'
+              desc: 'Integrated blockchain client.'
             }
           )
 
@@ -55,18 +55,10 @@ module API
           )
 
           expose(
-            :step,
-            documentation:{
-              type: Integer,
-              desc: 'Blockchain step.'
-            }
-          )
-
-          expose(
             :explorer_address,
             documentation:{
               type: String,
-              desc: 'Blockchain explorer address.'
+              desc: 'Blockchain explorer address template.'
             }
           )
 
@@ -74,7 +66,7 @@ module API
             :explorer_transaction,
             documentation:{
               type: String,
-              desc: 'Blockchain explorer transaction.'
+              desc: 'Blockchain explorer transaction template.'
             }
           )
 
@@ -82,7 +74,7 @@ module API
             :min_confirmations,
             documentation:{
               type: Integer,
-              desc: 'Blockchain min confirmations.'
+              desc: 'Minimum number of confirmations.'
             }
           )
 

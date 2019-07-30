@@ -5,22 +5,27 @@ module API
   module V2
     module Admin
       class Operations < Grape::API
-        helpers API::V2::Admin::OperationParams
-        helpers API::V2::Admin::ParamsHelpers
+        helpers ::API::V2::Admin::Helpers
         helpers do
+          params :get_operations_params do
+            optional :reference_type,
+                     desc: 'The reference type for which operation was created.'
+            optional :rid,
+                     type: Integer,
+                     desc: 'The unique id of operation\'s reference, for which operation was created.'
+            optional :code,
+                     type: Integer,
+                     desc: 'Opeartion\'s code.'
+            use :currency
+            use :date_picker, keys: %w[created_at]
+          end
+
           def ransack_params
-            {
-              currency_id_eq: params[:currency],
-              reference_type_eq: params[:reference_type],
-              reference_id_eq: params[:rid],
-              code_eq: params[:code],
-              credit_gteq: params[:credit_from],
-              credit_lt: params[:credit_to],
-              debit_gteq: params[:debit_from],
-              debit_lt: params[:debit_to],
-              created_at_gteq: time_param(params[:created_at_from]),
-              created_at_lt: time_param(params[:created_at_to]),
-            }
+            Helpers::RansackBuilder.new(params)
+              .eq(:code, :reference_type)
+              .map(currency_id: :currency, reference_id: :rid)
+              .date(:created_at)
+              .build
           end
         end
 
@@ -35,6 +40,7 @@ module API
           end
           params do
             use :get_operations_params
+            use :pagination
           end
           get op_type_plural do
             klass = ::Operations.const_get(op_type.capitalize)
@@ -56,9 +62,8 @@ module API
           end
           params do
             use :get_operations_params
-            optional :uid,
-                     type: String,
-                     desc: 'The user ID for operations filtering.'
+            use :pagination
+            use :uid
           end
           get op_type_plural do
             klass = ::Operations.const_get(op_type.capitalize)
