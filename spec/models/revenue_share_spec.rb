@@ -5,13 +5,13 @@ describe RevenueShare, 'Attributes' do
 
   subject { create(:revenue_share) }
 
-  describe '#percentage' do
+  describe '#percent' do
     it 'divide parts per ten thousand by 100' do
       expect(subject.percent).to eq(subject.pptt.to_d / 100)
     end
   end
 
-  describe '#percentage=' do
+  describe '#percent=' do
 
     let(:new_percent) { generate(:percent) }
 
@@ -19,6 +19,26 @@ describe RevenueShare, 'Attributes' do
       subject.percent = new_percent
       expect(subject.percent).to eq(new_percent)
       expect(subject.pptt).to eq(new_percent * 100)
+    end
+
+    it 'symbol,nil,Time value types' do
+      [:percent, nil, Time.now].each do |percent_value|
+        subject.percent = percent_value
+        expect(subject.percent).to be_nil
+        expect(subject.pptt).to be_nil
+      end
+    end
+
+    it 'string type' do
+      subject.percent = 'percent'
+      expect(subject.percent).to eq(0.to_d)
+      expect(subject.pptt).to eq(0.to_d)
+    end
+
+    it 'decimal type' do
+      subject.percent = 2.75.to_d
+      expect(subject.percent).to eq(2.75.to_d)
+      expect(subject.pptt).to eq(275)
     end
   end
 end

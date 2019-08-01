@@ -98,12 +98,22 @@ class RevenueShare < ApplicationRecord
 
   # == Instance Methods =====================================================
 
+  # We are trying to follow ActiveModel::Type::Decimal casting behaviour for
+  # percent.
   def percent=(p)
-    self.pptt = (p * PER_TEN_THOUSAND_DENOMINATOR / PERCENT_DENOMINATOR).to_i
+    if p.is_a?(Numeric) || p.is_a?(String)
+      self.pptt = (p.to_d * PER_TEN_THOUSAND_DENOMINATOR / PERCENT_DENOMINATOR).to_i
+    else
+      self.pptt = nil
+    end
   end
 
   def percent
-    pptt.to_d / PER_TEN_THOUSAND_DENOMINATOR * PERCENT_DENOMINATOR
+    if pptt.is_a?(Numeric)
+      pptt.to_d / PER_TEN_THOUSAND_DENOMINATOR * PERCENT_DENOMINATOR
+    else
+      nil
+    end
   end
 end
 
