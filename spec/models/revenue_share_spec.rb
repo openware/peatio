@@ -7,7 +7,7 @@ describe RevenueShare, 'Attributes' do
 
   describe '#percentage' do
     it 'divide parts per ten thousand by 100' do
-      expect(subject.percent).to eq(subject.parts_per_ten_thousand.to_d / 100)
+      expect(subject.percent).to eq(subject.pptt.to_d / 100)
     end
   end
 
@@ -18,7 +18,7 @@ describe RevenueShare, 'Attributes' do
     it 'multiply percent by 100' do
       subject.percent = new_percent
       expect(subject.percent).to eq(new_percent)
-      expect(subject.parts_per_ten_thousand).to eq(new_percent * 100)
+      expect(subject.pptt).to eq(new_percent * 100)
     end
   end
 end

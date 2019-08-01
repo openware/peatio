@@ -218,7 +218,7 @@ ActiveRecord::Schema.define(version: 2019_07_30_091236) do
   create_table "revenue_shares", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
     t.integer "parent_id", null: false
-    t.integer "parts_per_ten_thousand", limit: 2, null: false, unsigned: true
+    t.integer "pptt", limit: 2, null: false, unsigned: true
     t.integer "state", limit: 1, default: 0, null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
