@@ -1,8 +1,8 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-# RevShare (full revenue share) - model which provides functionality of trading
-# revenue distribution between members.
+# RevenueShare - model which provides functionality for revenue distribution
+# between members.
 #
 # E.g
 # +-----------+-----------+------------------------+-------+---------------------+---------------------+
@@ -26,7 +26,7 @@
 #   0% (state is disabled)   of trading fees will be paid to member with id 6.
 #   100% (100% - 0% = 100%)  of trading fees will be paid to platform.
 #
-class RevShare < ApplicationRecord
+class RevenueShare < ApplicationRecord
   # == Constants ============================================================
 
   extend Enumerize
@@ -107,7 +107,7 @@ end
 # == Schema Information
 # Schema version: 20190730091236
 #
-# Table name: rev_shares
+# Table name: revenue_shares
 #
 #  id                     :bigint           not null, primary key
 #  member_id              :integer          not null
@@ -119,7 +119,7 @@ end
 #
 # Indexes
 #
-#  index_rev_shares_on_member_id            (member_id)
-#  index_rev_shares_on_member_id_and_state  (member_id,state)
-#  index_rev_shares_on_state                (state)
+#  index_revenue_shares_on_member_id            (member_id)
+#  index_revenue_shares_on_member_id_and_state  (member_id,state)
+#  index_revenue_shares_on_state                (state)
 #

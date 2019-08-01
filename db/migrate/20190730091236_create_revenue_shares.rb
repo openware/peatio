@@ -1,6 +1,6 @@
-class CreateRevShares < ActiveRecord::Migration[5.2]
+class CreateRevenueShares < ActiveRecord::Migration[5.2]
   def change
-    create_table :rev_shares do |t|
+    create_table :revenue_shares do |t|
       t.integer :member_id, null: false, index: true, foreign_key: true
       t.integer :parent_id, null: false, foreign_key: true
 
@@ -10,6 +10,6 @@ class CreateRevShares < ActiveRecord::Migration[5.2]
       t.timestamps
 
     end
-    add_index :rev_shares, %i[member_id state]
+    add_index :revenue_shares, %i[member_id state]
   end
 end

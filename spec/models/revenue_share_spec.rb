@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-describe RevShare, 'Attributes' do
+describe RevenueShare, 'Attributes' do
 
   subject { create(:rev_share) }
 
@@ -23,7 +23,7 @@ describe RevShare, 'Attributes' do
   end
 end
 
-describe RevShare, 'Validations' do
+describe RevenueShare, 'Validations' do
 
   subject { build(:rev_share) }
 
