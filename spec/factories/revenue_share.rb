@@ -6,7 +6,7 @@ FactoryBot.define do
     Kernel.rand(1..10000).to_d / 100
   end
 
-  factory :rev_share do
+  factory :revenue_share do
     member  { create(:member) }
     parent  { create(:member) }
     percent { generate(:percent) }

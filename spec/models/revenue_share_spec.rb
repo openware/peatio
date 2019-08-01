@@ -3,7 +3,7 @@
 
 describe RevenueShare, 'Attributes' do
 
-  subject { create(:rev_share) }
+  subject { create(:revenue_share) }
 
   describe '#percentage' do
     it 'divide parts per ten thousand by 100' do
@@ -25,7 +25,7 @@ end
 
 describe RevenueShare, 'Validations' do
 
-  subject { build(:rev_share) }
+  subject { build(:revenue_share) }
 
   describe 'percent numerically' do
     it 'greater than 0' do
@@ -47,7 +47,7 @@ describe RevenueShare, 'Validations' do
       end
 
       it '100 minus sum of active percents for member if active' do
-        create(:rev_share, member: subject.member, percent: 94.5)
+        create(:revenue_share, member: subject.member, percent: 94.5)
 
         subject.percent = 6
         expect(subject.valid?).to be_falsey
