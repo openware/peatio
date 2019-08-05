@@ -32,6 +32,7 @@ module API
           use :currency_type
           use :date_picker, keys: %w[updated_at created_at completed_at]
           use :pagination
+          use :ordering
         end
         get '/deposits' do
           authorize! :read, Deposit
@@ -39,7 +40,6 @@ module API
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:id, :txid, :tid, :address)
                              .map(aasm_state: :state, member_uid: :uid, currency_id: :currency)
-                             .date(:created_at, :updated_at, :completed_at)
                              .build(type_eq: params[:type].present? ? "Deposits::#{params[:type]}" : nil)
 
           search = Deposit.ransack(ransack_params)

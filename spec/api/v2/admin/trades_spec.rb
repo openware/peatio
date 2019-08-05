@@ -146,17 +146,17 @@ describe API::V2::Admin::Trades, type: :request do
 
       context 'with timestamps' do
         it 'validates created_at_from' do
-          api_get'/api/v2/admin/trades', token: token, params: { created_at_from: 'yesterday' }
-          expect(response).to include_api_error 'admin.filter.non_integer_created_at_from'
+          api_get'/api/v2/admin/trades', token: token, params: { from: 'yesterday' }
+          expect(response).to include_api_error 'admin.filter.non_integer_range_from'
         end
 
         it 'validates created_at_to' do
-          api_get'/api/v2/admin/trades', token: token, params: { created_at_to: 'today' }
-          expect(response).to include_api_error 'admin.filter.non_integer_created_at_to'
+          api_get'/api/v2/admin/trades', token: token, params: { to: 'today' }
+          expect(response).to include_api_error 'admin.filter.non_integer_range_to'
         end
 
         it 'returns trades created after specidfied date' do
-          api_get'/api/v2/admin/trades', token: token, params: { created_at_from: 4.days.ago.to_i }
+          api_get'/api/v2/admin/trades', token: token, params: { from: 4.days.ago.to_i }
 
           result = JSON.parse(response.body)
           expected = trades.select { |t| t.created_at >= 4.days.ago }
@@ -165,7 +165,7 @@ describe API::V2::Admin::Trades, type: :request do
         end
 
         it 'return trades created before specidfied date' do
-          api_get'/api/v2/admin/trades', token: token, params: { created_at_to: 2.days.ago.to_i }
+          api_get'/api/v2/admin/trades', token: token, params: { to: 2.days.ago.to_i }
 
           result = JSON.parse(response.body)
           expected = trades.select { |t| t.created_at < 2.days.ago }
@@ -174,7 +174,7 @@ describe API::V2::Admin::Trades, type: :request do
         end
 
         it 'returns trades created after and before specidfied dates' do
-          api_get'/api/v2/admin/trades', token: token, params: { created_at_from: 4.days.ago.to_i, created_at_to: 2.days.ago.to_i }
+          api_get'/api/v2/admin/trades', token: token, params: { from: 4.days.ago.to_i, to: 2.days.ago.to_i }
           result = JSON.parse(response.body)
           expected = trades.select { |t| t.created_at >= 4.days.ago && t.created_at < 2.days.ago }
 

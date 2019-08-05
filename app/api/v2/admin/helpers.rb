@@ -8,35 +8,32 @@ module API
         extend ::Grape::API::Helpers
 
         class RansackBuilder
+          # RansackBuilder creates a hash in a format ransack accepts
+          # eq(:column) generetes a pair column_eq: params[:column]
+          # map(:column1 => :column2) generates a pair column1_eq: params[:column2]
+          # build returns prepared hash and merges additional selectors if specified
+
           def initialize(params)
             @params = params
             @build = {}
           end
 
           def build(opt = {})
+            if @params[:range]
+              @build.merge!("#{@params[:range]}_at_gteq" => Time.at(@params[:from])) if @params[:from]
+              @build.merge!("#{@params[:range]}_at_lt" => Time.at(@params[:to])) if @params[:to]
+            end
             @build.merge!(opt)
           end
 
           def map(opt)
-            opt.each { |k, v| @build.merge!("#{k}_eq".to_sym => @params[v]) }
-            self
-          end
-
-          def date(*keys)
-            keys.each do |k|
-              @build.merge!("#{k}_gteq".to_sym => time_param(@params["#{k}_from"]))
-              @build.merge!("#{k}_lt".to_sym => time_param(@params["#{k}_to"]))
-            end
+            opt.each { |k, v| @build.merge!("#{k}_eq" => @params[v]) }
             self
           end
 
           def eq(*keys)
-            keys.each { |k| @build.merge!("#{k}_eq".to_sym => @params[k]) }
+            keys.each { |k| @build.merge!("#{k}_eq" => @params[k]) }
             self
-          end
-
-          def time_param(param)
-            param.present? ? Time.at(param) : nil
           end
         end
 
@@ -70,6 +67,9 @@ module API
                    allow_blank: false,
                    default: 1,
                    desc: 'Specify the page of paginated results.'
+        end
+
+        params :ordering do
           optional :ordering,
                    values: { value: %w(asc desc), message: 'admin.pagination.invalid_ordering' },
                    default: 'asc',
@@ -80,16 +80,18 @@ module API
         end
 
         params :date_picker do |options|
-          options[:keys].each do |key|
-            optional "#{key}_from",
-                     type: { value: Integer, message: "admin.filter.non_integer_#{key}_from" },
-                     allow_blank: { value: false, message: "admin.filter.empty_#{key}_from" },
-                     desc: "If set, only entities with #{key} greater or equal then will be returned."
-            optional "#{key}_to",
-                     type: { value: Integer, message: "admin.filter.non_integer_#{key}_to" },
-                     allow_blank: { value: false, message: "admin.filter.empty_#{key}_to" },
-                     desc: "If set, only withdraws with #{key} less then will be returned."
-          end
+          optional :range,
+                   default: 'created',
+                   values: { value: -> { %w[created updated completed] } },
+                   desc: 'Date range picker, defaults to \'created\'.'
+          optional :from,
+                   type: { value: Integer, message: 'admin.filter.non_integer_range_from' },
+                   desc: 'An integer represents the seconds elapsed since Unix epoch.'\
+                     'If set, only entities FROM the time will be retrieved.'
+          optional :to,
+                   type: { value: Integer, message: 'admin.filter.non_integer_range_to' },
+                   desc: 'An integer represents the seconds elapsed since Unix epoch.'\
+                     'If set, only entities BEFORE the time will be retrieved.'
         end
       end
     end

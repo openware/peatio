@@ -24,7 +24,6 @@ module API
             Helpers::RansackBuilder.new(params)
               .eq(:code, :reference_type)
               .map(currency_id: :currency, reference_id: :rid)
-              .date(:created_at)
               .build
           end
         end
@@ -41,6 +40,7 @@ module API
           params do
             use :get_operations_params
             use :pagination
+            use :ordering
           end
           get op_type_plural do
             klass = ::Operations.const_get(op_type.capitalize)
@@ -61,9 +61,10 @@ module API
             success API::V2::Admin::Entities::Operation
           end
           params do
+            use :uid
             use :get_operations_params
             use :pagination
-            use :uid
+            use :ordering
           end
           get op_type_plural do
             klass = ::Operations.const_get(op_type.capitalize)

@@ -36,6 +36,7 @@ module API
           use :uid
           use :date_picker, keys: %w[updated_at created_at]
           use :pagination
+          use :ordering
         end
         get '/orders' do
           authorize! :read, Order
@@ -43,7 +44,6 @@ module API
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:price, :origin_volume, :ord_type)
                              .map(market_id: :market, member_uid: :uid, member_email: :email)
-                             .date(:created_at, :updated_at)
                              .build({
                                 state_eq: params[:state].present? ? Order::STATES[params[:state].to_sym] : nil,
                                 type_eq: params[:type].present? ? "Order#{params[:type].capitalize}" : nil,

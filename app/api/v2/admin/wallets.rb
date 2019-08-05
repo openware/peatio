@@ -7,23 +7,44 @@ module API
       class Wallets < Grape::API
         helpers ::API::V2::Admin::Helpers
         helpers do
-          params :wallet_params do
-            optional :settings,
-                     type: { value: JSON, message: 'admin.wallet.non_json_settings' },
-                     desc: -> { API::V2::Admin::Entities::Wallet.documentation[:settings][:desc] }
-            optional :nsig,
-                     type: { value: Integer, message: 'admin.wallet.non_integer_nsig' },
-                     desc: -> { API::V2::Admin::Entities::Wallet.documentation[:nsig][:desc] }
-            optional :max_balance,
-                     type: { value: BigDecimal, message: 'admin.blockchain.non_decimal_max_balance' },
-                     values: { value: -> (p){ p >= 0 }, message: 'admin.wallet.invalid_max_balance' },
-                     desc: -> { API::V2::Admin::Entities::Wallet.documentation[:max_balance][:desc] }
-            optional :parent,
-                     type: { value: String, message: 'admin.wallet.non_string_parent'},
-                     desc: -> { API::V2::Admin::Entities::Wallet.documentation[:parent][:desc] }
-            optional :status,
-                     values: { value: %w(active disabled), message: 'admin.wallet.invalid_status' },
-                     desc: -> { API::V2::Admin::Entities::Wallet.documentation[:status][:desc] }
+          OPTIONAL_WALLET_PARAMS = {
+            settings: {
+              type: { value: JSON, message: 'admin.wallet.non_json_settings' },
+              default: {},
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:settings][:desc] }
+            },
+            nsig: {
+              type: { value: Integer, message: 'admin.wallet.non_integer_nsig' },
+              default: 1,
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:nsig][:desc] }
+            },
+            max_balance: {
+              type: { value: BigDecimal, message: 'admin.blockchain.non_decimal_max_balance' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.wallet.invalid_max_balance' },
+              default: 0.0,
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:max_balance][:desc] }
+            },
+            parent: {
+              type: { value: String, message: 'admin.wallet.non_string_parent'},
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:parent][:desc] }
+            },
+            status: {
+              values: { value: %w(active disabled), message: 'admin.wallet.invalid_status' },
+              default: 'active',
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:status][:desc] }
+            },
+          }
+
+          params :create_wallet_params do
+            OPTIONAL_WALLET_PARAMS.each do |key, params|
+              optional key, params
+            end
+          end
+
+          params :update_wallet_params do
+            OPTIONAL_WALLET_PARAMS.each do |key, params|
+              optional key, params.except(:default)
+            end
           end
         end
 
@@ -32,6 +53,7 @@ module API
           success: API::V2::Admin::Entities::Wallet
         params do
           use :pagination
+          use :ordering
         end
         get '/wallets' do
           authorize! :read, Wallet
@@ -59,7 +81,7 @@ module API
           success API::V2::Admin::Entities::Wallet
         end
         params do
-          use :wallet_params
+          use :create_wallet_params
           requires :blockchain_key,
                    values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.wallet.blockchain_key_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:blockchain_key][:desc] }
@@ -80,14 +102,7 @@ module API
         post '/wallets/new' do
           authorize! :create, Wallet
 
-          wallet_params = {
-            settings: {},
-            nsig: 1,
-            max_balance: 0.0,
-            status: 'active',
-          }.merge(declared(params, include_missing: false))
-
-          wallet = Wallet.new(wallet_params)
+          wallet = Wallet.new(declared(params))
           if wallet.save
             present wallet, with: API::V2::Admin::Entities::Wallet
             status 201
@@ -101,7 +116,7 @@ module API
           success API::V2::Admin::Entities::Wallet
         end
         params do
-          use :wallet_params
+          use :update_wallet_params
           requires :id,
                    type: { value: Integer, message: 'admin.wallet.non_integer_id' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:id][:desc] }

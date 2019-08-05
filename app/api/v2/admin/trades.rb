@@ -20,13 +20,13 @@ module API
           use :uid
           use :date_picker, keys: %w[created_at]
           use :pagination
+          use :ordering
         end
         get '/trades' do
           authorize! :read, Trade
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .map(market_id: :market)
-                             .date(:created_at)
                              .build(g: [
                                { ask_member_uid_eq: params[:uid], bid_member_uid_eq: params[:uid], m: 'or' },
                                { ask_id_eq: params[:order_id], bid_id_eq: params[:order_id], m: 'or' },

@@ -7,29 +7,53 @@ module API
       class Markets < Grape::API
         helpers ::API::V2::Admin::Helpers
         helpers do
-          params :market_params do
-            optional :ask_fee,
-                     type: { value: BigDecimal, message: 'admin.market.non_decimal_ask_fee' },
-                     values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_ask_fee' },
-                     desc: -> { API::V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
-            optional :bid_fee,
-                     type: { value: BigDecimal, message: 'admin.market.non_decimal_bid_fee' },
-                     values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_bid_fee' },
-                     desc: -> { API::V2::Admin::Entities::Market.documentation[:bid_fee][:desc] }
-            optional :max_price,
-                     type: { value: BigDecimal, message: 'admin.market.non_decimal_max_price' },
-                     values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_max_price' },
-                     desc: -> { API::V2::Admin::Entities::Market.documentation[:max_price][:desc] }
-            optional :min_amount,
-                     type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
-                     values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_amount' },
-                     desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
-            optional :position,
-                     type: { value: Integer, message: 'admin.market.non_integer_position' },
-                     desc: -> { API::V2::Admin::Entities::Market.documentation[:position][:desc] }
-            optional :state,
-                     values: { value: ::Market::STATES, message: 'admin.market.invalid_state' },
-                     desc: -> { API::V2::Admin::Entities::Market.documentation[:state][:desc] }
+          OPTIONAL_MARKET_PARAMS = {
+            ask_fee: {
+              type: { value: BigDecimal, message: 'admin.market.non_decimal_ask_fee' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_ask_fee' },
+              default: 0.0,
+              desc: -> { API::V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
+            },
+            bid_fee: {
+              type: { value: BigDecimal, message: 'admin.market.non_decimal_bid_fee' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_bid_fee' },
+              default: 0.0,
+              desc: -> { API::V2::Admin::Entities::Market.documentation[:bid_fee][:desc] }
+            },
+            max_price: {
+              type: { value: BigDecimal, message: 'admin.market.non_decimal_max_price' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_max_price' },
+              default: 0.0,
+              desc: -> { API::V2::Admin::Entities::Market.documentation[:max_price][:desc] }
+            },
+            min_amount: {
+              type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_amount' },
+              default: 0.0,
+              desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
+            },
+            position: {
+              type: { value: Integer, message: 'admin.market.non_integer_position' },
+              default: 0,
+              desc: -> { API::V2::Admin::Entities::Market.documentation[:position][:desc] }
+            },
+            state: {
+              values: { value: ::Market::STATES, message: 'admin.market.invalid_state' },
+              default: 'enabled',
+              desc: -> { API::V2::Admin::Entities::Market.documentation[:state][:desc] }
+            },
+          }
+
+          params :create_market_params do
+            OPTIONAL_MARKET_PARAMS.each do |key, params|
+              optional key, params
+            end
+          end
+
+          params :update_market_params do
+            OPTIONAL_MARKET_PARAMS.each do |key, params|
+              optional key, params.except(:default)
+            end
           end
         end
 
@@ -38,6 +62,7 @@ module API
           success: API::V2::Admin::Entities::Market
         params do
           use :pagination
+          use :ordering
         end
         get '/markets' do
           authorize! :read, ::Market
@@ -65,7 +90,7 @@ module API
           success API::V2::Admin::Entities::Market
         end
         params do
-          use :market_params
+          use :create_market_params
           requires :base_unit,
                    values: { value: -> { ::Currency.ids }, message: 'admin.market.currency_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:base_unit][:desc] }
@@ -74,33 +99,24 @@ module API
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:quote_unit][:desc] }
           requires :amount_precision,
                    type: { value: Integer, message: 'admin.market.non_integer_amount_precision' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_amount_precision' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.market.invalid_amount_precision' },
                    default: 0,
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:amount_precision][:desc] }
           requires :price_precision,
                    type: { value: Integer, message: 'admin.market.non_integer_price_precision' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_price_precision' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.market.invalid_price_precision' },
                    default: 0,
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:price_precision][:desc] }
           requires :min_price,
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_min_price' },
-                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_price' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.market.invalid_min_price' },
                    default: 0.0,
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:min_price][:desc] }
         end
         post '/markets/new' do
           authorize! :create, ::Market
 
-          market_params = {
-            ask_fee: 0.0,
-            bid_fee: 0.0,
-            max_price: 0.0,
-            min_amount: 0.0,
-            position: 0,
-            state: 'enabled',
-          }.merge(declared(params, include_missing: false))
-
-          market = ::Market.new(market_params)
+          market = ::Market.new(declared(params))
           if market.save
             present market, with: API::V2::Admin::Entities::Market
             status 201
@@ -114,7 +130,7 @@ module API
           success API::V2::Admin::Entities::Market
         end
         params do
-          use :market_params
+          use :update_market_params
           requires :id,
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:id][:desc] }
           optional :min_price,

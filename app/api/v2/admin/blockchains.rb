@@ -12,6 +12,7 @@ module API
           success: API::V2::Admin::Entities::Blockchain
         params do
           use :pagination
+          use :ordering
         end
         get '/blockchains' do
           authorize! :read, Blockchain
@@ -40,10 +41,10 @@ module API
         end
         params do
           requires :key,
-                   values: { value: -> (v) { v.length < 255 }, message: 'admin.blockchain.key_too_long' },
+                   values: { value: -> (v){ v && v.length < 255 }, message: 'admin.blockchain.key_too_long' },
                    desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:key][:desc] }
           requires :name,
-                   values: { value: -> (v) { v.length < 255 }, message: 'admin.blockchain.name_too_long' },
+                   values: { value: -> (v){ v && v.length < 255 }, message: 'admin.blockchain.name_too_long' },
                    desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:name][:desc] }
           requires :client,
                    values: { value: -> { ::Blockchain.clients.map(&:to_s) }, message: 'admin.blockchain.invalid_client' },
@@ -89,10 +90,10 @@ module API
                    type: { value: Integer, message: 'admin.blockchain.non_integer_id' },
                    desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:id][:desc] }
           optional :key,
-                   values: { value: -> (v) { v.length < 255 }, message: 'admin.blockchain.key_too_long' },
+                   values: { value: -> (v){ v.length < 255 }, message: 'admin.blockchain.key_too_long' },
                    desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:key][:desc] }
           optional :name,
-                   values: { value: -> (v) { v.length < 255 }, message: 'admin.blockchain.name_too_long' },
+                   values: { value: -> (v){ v.length < 255 }, message: 'admin.blockchain.name_too_long' },
                    desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:name][:desc] }
           optional :client,
                    values: { value: -> { ::Blockchain.clients.map(&:to_s) }, message: 'admin.blockchain.invalid_client' },

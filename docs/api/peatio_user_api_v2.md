@@ -516,6 +516,35 @@ Get information of specified order.
 | ---- | ----------- | ------ |
 | 200 | Get information of specified order. | [Order](#order) |
 
+### /admin/members
+
+#### GET
+##### Description:
+
+Get all members, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| state | query | Filter order by state. | No | string |
+| role | query |  | No | string |
+| email | query | Member email. | No | string |
+| uid | query | Member UID. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all members, result is paginated. | [ [Member](#member) ] |
+
 ### /admin/liabilities
 
 #### GET
@@ -527,17 +556,18 @@ Returns liabilities as a paginated collection.
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
+| uid | query | Member UID. | No | string |
 | reference_type | query | The reference type for which operation was created. | No | string |
 | rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
 | code | query | Opeartion's code. | No | integer |
 | currency | query | Deposit currency id. | No | string |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
 | order_by | query | Name of the field, which result will be ordered by. | No | string |
-| uid | query | Member UID. | No | string |
 
 ##### Responses
 
@@ -560,8 +590,9 @@ Returns revenues as a paginated collection.
 | rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
 | code | query | Opeartion's code. | No | integer |
 | currency | query | Deposit currency id. | No | string |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -588,8 +619,9 @@ Returns expenses as a paginated collection.
 | rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
 | code | query | Opeartion's code. | No | integer |
 | currency | query | Deposit currency id. | No | string |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -616,8 +648,9 @@ Returns assets as a paginated collection.
 | rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
 | code | query | Opeartion's code. | No | integer |
 | currency | query | Deposit currency id. | No | string |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -643,8 +676,9 @@ Get all trades, result is paginated.
 | market | query | Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets. | No | string |
 | order_id | query | Unique order id. | No | integer |
 | uid | query | Member UID. | No | string |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -677,12 +711,9 @@ Get all withdraws, result is paginated.
 | uid | query | Member UID. | No | string |
 | currency | query | Deposit currency id. | No | string |
 | type | query | Currency type | No | string |
-| updated_at_from | query | If set, only entities with updated_at greater or equal then will be returned. | No | integer |
-| updated_at_to | query | If set, only withdraws with updated_at less then will be returned. | No | integer |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
-| completed_at_from | query | If set, only entities with completed_at greater or equal then will be returned. | No | integer |
-| completed_at_to | query | If set, only withdraws with completed_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -713,12 +744,9 @@ Get all deposits, result is paginated.
 | uid | query | Member UID. | No | string |
 | currency | query | Deposit currency id. | No | string |
 | type | query | Currency type | No | string |
-| updated_at_from | query | If set, only entities with updated_at greater or equal then will be returned. | No | integer |
-| updated_at_to | query | If set, only withdraws with updated_at less then will be returned. | No | integer |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
-| completed_at_from | query | If set, only entities with completed_at greater or equal then will be returned. | No | integer |
-| completed_at_to | query | If set, only withdraws with completed_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -1027,11 +1055,11 @@ Get list of currencies
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
+| type | query | Currency type | No | string |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
 | order_by | query | Name of the field, which result will be ordered by. | No | string |
-| type | query | Currency type | No | string |
 
 ##### Responses
 
@@ -1154,10 +1182,9 @@ Get all orders, result is paginated.
 | type | query | Filter order by type. | No | string |
 | email | query | Member email. | No | string |
 | uid | query | Member UID. | No | string |
-| updated_at_from | query | If set, only entities with updated_at greater or equal then will be returned. | No | integer |
-| updated_at_to | query | If set, only withdraws with updated_at less then will be returned. | No | integer |
-| created_at_from | query | If set, only entities with created_at greater or equal then will be returned. | No | integer |
-| created_at_to | query | If set, only withdraws with created_at less then will be returned. | No | integer |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
@@ -1306,6 +1333,22 @@ List your withdraws as paginated collection.
 | updated_at | string | The datetimes for the withdrawal. | No |
 | done_at | string | The datetime when withdraw was completed | No |
 
+#### Member
+
+Get all members, result is paginated.
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| uid | string | Member UID. | No |
+| email | string | Member email. | No |
+| accounts | [ [Account](#account) ] | Member accounts. | No |
+| id | integer | Unique member identifier in database. | No |
+| level | integer | Member's level. | No |
+| role | string | Member's role. | No |
+| state | string | Member's state. | No |
+| created_at | string | Member created time in iso8601 format. | No |
+| updated_at | string | Member updated time in iso8601 format. | No |
+
 #### Operation
 
 Returns assets as a paginated collection.
@@ -1361,11 +1404,3 @@ Get all blockchains, result is paginated.
 | status | string | Blockchain status (active/disabled). | No |
 | created_at | string | Blockchain created time in iso8601 format. | No |
 | updated_at | string | Blockchain updated time in iso8601 format. | No |
-
-#### Member
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| uid | string | Member UID. | No |
-| email | string | Member email. | No |
-| accounts | [ [Account](#account) ] | Member accounts. | No |

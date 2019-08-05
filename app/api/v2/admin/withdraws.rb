@@ -38,6 +38,7 @@ module API
           use :currency_type
           use :date_picker, keys: %w[updated_at created_at completed_at]
           use :pagination
+          use :ordering
         end
         get '/withdraws' do
           authorize! :read, Withdraw
@@ -45,7 +46,6 @@ module API
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:id, :txid, :rid, :tid)
                              .map(aasm_state: :state, member_uid: :uid, account_id: :account, currencie_id: :currency)
-                             .date(:created_at, :updated_at, :completed_at)
                              .build(type_eq: params[:type].present? ? "Withdraws::#{params[:type]}" : nil)
 
           search = Withdraw.ransack(ransack_params)
