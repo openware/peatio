@@ -15,6 +15,8 @@ module API
         mount Admin::Deposits
         mount Admin::Withdraws
         mount Admin::Trades
+        mount Admin::Operations
+        mount Admin::Members
       end
     end
   end

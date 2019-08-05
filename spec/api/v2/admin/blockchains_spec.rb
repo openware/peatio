@@ -79,35 +79,47 @@ describe API::V2::Admin::Blockchains, type: :request do
 
   describe 'POST /api/v2/admin/blockchains/new' do
     it 'creates new blockchain' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'geth',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
       expect(result['key']).to eq 'test-blockchain'
     end
 
-    it 'validate step param' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: -2 }
-      expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.blockchain.non_positive_step')
+    it 'long blockchain key' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: Faker::String.random(1024), name: 'Test', client: 'geth',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
+      expect(response).not_to be_successful
+      expect(response).to include_api_error('admin.blockchain.key_too_long')
+    end
+
+    it 'long blockchain name' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: Faker::String.random(24), name: Faker::String.random(1024), client: 'geth',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
+      expect(response).not_to be_successful
+      expect(response).to include_api_error('admin.blockchain.name_too_long')
     end
 
     it 'validate height param' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: -123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'geth',server: 'http://127.0.0.1', height: -123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.blockchain.non_positive_height')
     end
 
     it 'validate min_confirmations param' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: -6, step: 2 }
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'geth',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: -6, step: 2 }
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.blockchain.non_positive_min_confirmations')
     end
 
     it 'validate status param' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'actived', min_confirmations: 6, step: 2 }
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'geth',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'actived', min_confirmations: 6, step: 2 }
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.blockchain.invalid_status')
+    end
+
+    it 'validate client param' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'gezz',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      expect(response).to have_http_status 422
+      expect(response).to include_api_error('admin.blockchain.invalid_client')
     end
 
     it 'checked required params' do
@@ -124,7 +136,7 @@ describe API::V2::Admin::Blockchains, type: :request do
     end
 
     it 'return error in case of not permitted ability' do
-      api_post '/api/v2/admin/blockchains/new', token: level_3_member_token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      api_post '/api/v2/admin/blockchains/new', token: level_3_member_token, params: { key: 'test-blockchain', name: 'Test', client: 'geth', server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
     end
@@ -139,8 +151,20 @@ describe API::V2::Admin::Blockchains, type: :request do
       expect(result['key']).to eq 'test-blockchain'
     end
 
+    it 'long blockchain key' do
+      api_post '/api/v2/admin/blockchains/update', token: token, params: { key: Faker::String.random(1024) }
+      expect(response).not_to be_successful
+      expect(response).to include_api_error('admin.blockchain.key_too_long')
+    end
+
+    it 'long blockchain name' do
+      api_post '/api/v2/admin/blockchains/update', token: token, params: { name: Faker::String.random(1024) }
+      expect(response).not_to be_successful
+      expect(response).to include_api_error('admin.blockchain.name_too_long')
+    end
+
     it 'validate height param' do
-      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'test',server: 'http://127.0.0.1', height: -123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
+      api_post '/api/v2/admin/blockchains/update', token: token, params: { height: -123333 }
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.blockchain.non_positive_height')
     end
@@ -152,7 +176,7 @@ describe API::V2::Admin::Blockchains, type: :request do
     end
 
     it 'return error in case of not permitted ability' do
-      api_post '/api/v2/admin/blockchains/update', token: level_3_member_token, params: { key: 'test-blockchain', id: Blockchain.first.id }
+      api_post '/api/v2/admin/blockchains/update', token: level_3_member_token, params: { id: Blockchain.first.id }
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
     end

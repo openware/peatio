@@ -7,7 +7,7 @@ module API
       extend Memoist
 
       def authorize!(*args)
-        current_user or raise Peatio::Auth::Error
+        current_user || raise(Peatio::Auth::Error)
 
         begin
           Abilities.new(current_user).authorize!(*args)
@@ -17,7 +17,7 @@ module API
       end
 
       def authenticate!
-        current_user or raise Peatio::Auth::Error
+        current_user || raise(Peatio::Auth::Error)
       end
 
       def set_ets_context!

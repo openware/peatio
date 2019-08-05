@@ -69,7 +69,7 @@ describe API::V2::Admin::Deposits, type: :request do
 
     context 'filtering' do
       it 'by member' do
-        api_get url, token: token, params: { member: level_3_member.id }
+        api_get url, token: token, params: { uid: level_3_member.uid }
 
         actual = JSON.parse(response.body)
         expected = (coin_deposits + fiat_deposits).select { |d| d.member_id == level_3_member.id }
@@ -95,106 +95,86 @@ describe API::V2::Admin::Deposits, type: :request do
         expect(actual.map { |a| a['member'] }).to match_array expected.map(&:member_id)
         expect(actual.map { |a| a['type'] }).to all eq 'coin'
       end
-
-      it 'with upper amount bound' do
-        api_get url, token: token, params: { amount_to: 20 }
-
-        actual = JSON.parse(response.body)
-        expected = (coin_deposits + fiat_deposits).select { |d| d.amount <= 20 }
-
-        expect(actual.length).to eq expected.length
-        expect(actual.map { |a| a['id'] }).to match_array expected.map(&:id)
-      end
-
-      it 'with lower amount bound' do
-        api_get url, token: token, params: { amount_from: 20 }
-
-        actual = JSON.parse(response.body)
-        expected = (coin_deposits + fiat_deposits).select { |d| d.amount >= 20 }
-
-        expect(actual.length).to eq expected.length
-        expect(actual.map { |a| a['id'] }).to match_array expected.map(&:id)
-      end
     end
   end
 
-  describe 'POST /api/v2/admin/deposits/update' do
-    let(:url) { '/api/v2/admin/deposits/update' }
-    let(:fiat) { fiat_deposits.first }
-    let!(:coin) { create(:deposit, :deposit_trst, aasm_state: :accepted) }
+  # describe 'POST /api/v2/admin/deposits/update' do
+  #   let(:url) { '/api/v2/admin/deposits/update' }
+  #   let(:fiat) { fiat_deposits.first }
+  #   let!(:coin) { create(:deposit, :deposit_trst, aasm_state: :accepted) }
 
-    context 'validates params' do
-      it 'does not pass unsupported action' do
-        api_post url, token: token, params: { action: 'illegal', id: fiat.id }
+  #   context 'validates params' do
+  #     it 'does not pass unsupported action' do
+  #       api_post url, token: token, params: { action: 'illegal', id: fiat.id }
 
-        expect(response.status).to eq 422
-        expect(response).to include_api_error('admin.deposit.invalid_action')
-      end
+  #       expect(response.status).to eq 422
+  #       expect(response).to include_api_error('admin.deposit.invalid_action')
+  #     end
 
-      it 'passes supported action for coin' do
-        api_post url, token: token, params: { action: 'collect', id: coin.id }
+  #     it 'passes supported action for coin' do
+  #       api_post url, token: token, params: { action: 'collect', id: coin.id }
 
-        expect(response).not_to include_api_error('admin.deposit.invalid_action')
-      end
+  #       expect(response).not_to include_api_error('admin.deposit.invalid_action')
+  #     end
 
-      it 'passes supported action for fiat' do
-        api_post url, token: token, params: { action: 'reject', id: fiat.id }
+  #     it 'passes supported action for fiat' do
+  #       api_post url, token: token, params: { action: 'reject', id: fiat.id }
 
-        expect(response).not_to include_api_error('admin.deposit.invalid_action')
-      end
+  #       expect(response).not_to include_api_error('admin.deposit.invalid_action')
+  #     end
 
-      it 'does not pass fiat action for coin' do
-        api_post url, token: token, params: { action: 'reject', id: coin.id }
+  #     it 'does not pass fiat action for coin' do
+  #       api_post url, token: token, params: { action: 'reject', id: coin.id }
 
-        expect(response.status).to eq 422
-        expect(response).to include_api_error('admin.deposit.invalid_action')
-      end
+  #       expect(response.status).to eq 422
+  #       expect(response).to include_api_error('admin.deposit.invalid_action')
+  #     end
 
-      it 'does not pass coin action for fiat' do
-        api_post url, token: token, params: { action: 'collect_fee', id: fiat.id }
+  #     it 'does not pass coin action for fiat' do
+  #       api_post url, token: token, params: { action: 'collect_fee', id: fiat.id }
 
-        expect(response.status).to eq 422
-        expect(response).to include_api_error('admin.deposit.invalid_action')
-      end
-    end
+  #       expect(response.status).to eq 422
+  #       expect(response).to include_api_error('admin.deposit.invalid_action')
+  #     end
+  #   end
 
-    context 'updates deposit' do
-      it 'accept fiat' do
-        api_post url, token: token, params: { action: 'accept', id: fiat.id }
+  #   context 'updates deposit' do
+  #     it 'accept fiat' do
+  #       api_post url, token: token, params: { action: 'accept', id: fiat.id }
 
-        fiat.reload
+  #       fiat.reload
 
-        expect(fiat.aasm_state).to eq('accepted')
-      end
+  #       expect(fiat.aasm_state).to eq('accepted')
+  #     end
 
-      it 'accept coin' do
-        api_post url, token: token, params: { action: 'accept', id: coin.id }
+  #     it 'accept coin' do
+  #       api_post url, token: token, params: { action: 'accept', id: coin.id }
 
-        coin.reload
+  #       coin.reload
 
-        expect(coin.aasm_state).to eq('accepted')
-      end
+  #       expect(coin.aasm_state).to eq('accepted')
+  #     end
 
-      it 'reject fiat' do
-        api_post url, token: token, params: { action: 'reject', id: fiat.id }
+  #     it 'reject fiat' do
+  #       api_post url, token: token, params: { action: 'reject', id: fiat.id }
 
-        fiat.reload
+  #       fiat.reload
 
-        expect(fiat.aasm_state).to eq('rejected')
-      end
+  #       expect(fiat.aasm_state).to eq('rejected')
+  #     end
 
-      it 'collect_fee coin' do
-        AMQPQueue.expects(:enqueue).with(:deposit_collection_fees, id: coin.id)
+  #     it 'collect_fee coin' do
+  #       AMQPQueue.expects(:enqueue).with(:deposit_collection_fees, id: coin.id)
 
-        api_post url, token: token, params: { action: 'collect_fee', id: coin.id }
-      end
+  #       api_post url, token: token, params: { action: 'collect_fee', id: coin.id }
+  #     end
 
-      it 'collect coin' do
-        Deposit.any_instance.stubs(:may_dispatch? => true)
-        AMQPQueue.expects(:enqueue).with(:deposit_collection, id: coin.id)
+  #     it 'collect coin' do
+  #       Deposit.any_instance.stubs(:may_dispatch? => true)
+  #       AMQPQueue.expects(:enqueue).with(:deposit_collection, id: coin.id)
 
-        api_post url, token: token, params: { action: 'collect', id: coin.id }
-      end
-    end
-  end
+  #       api_post url, token: token, params: { action: 'collect', id: coin.id }
+  #     end
+  #   end
+  # end
 end

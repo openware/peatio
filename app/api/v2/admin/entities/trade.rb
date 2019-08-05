@@ -5,56 +5,9 @@ module API
   module V2
     module Admin
       module Entities
-        class Trade < Base
-          expose(
-            :id,
-            documentation: {
-              type: String,
-              desc: 'Trade ID.'
-            }
-          )
-
-          expose(
-            :price,
-            documentation: {
-              type: BigDecimal,
-              desc: 'Trade price.'
-            }
-          )
-
-          expose(
-            :volume,
-            documentation: {
-              type: BigDecimal,
-              desc: 'Trade volume.'
-            }
-          )
-
-          expose(
-            :funds,
-            documentation: {
-              type: BigDecimal,
-              desc: 'Trade funds.'
-            }
-          )
-
-          expose(
-            :market_id,
-            as: :market,
-            documentation: {
-              type: String,
-              desc: 'Trade market id.'
-            }
-          )
-
-          expose(
-            :created_at,
-            format_with: :iso8601,
-            documentation: {
-              type: String,
-              desc: 'Trade create time in iso8601 format.'
-            }
-          )
+        class Trade < API::V2::Entities::Trade
+          unexpose(:side)
+          unexpose(:order_id)
 
           expose(
             :ask_id,
@@ -96,7 +49,7 @@ module API
             :taker_type,
             documentation: {
               type: String,
-              desc: 'Trade maker order type (sell or buy).'
+              desc: 'Trade taker order type (sell or buy).'
             }
           ) do |trade, _options|
               trade.ask_id > trade.bid_id ? :sell : :buy

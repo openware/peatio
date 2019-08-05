@@ -11,6 +11,7 @@ class Blockchain < ApplicationRecord
             :min_confirmations,
             numericality: { greater_than_or_equal_to: 1, only_integer: true }
   validates :server, url: { allow_blank: true }
+  validates :client, inclusion: { in: -> (_) { clients.map(&:to_s) } }
 
   scope :active,   -> { where(status: :active) }
 

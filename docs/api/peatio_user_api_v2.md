@@ -477,7 +477,7 @@ Create a Sell/Buy order.
 #### GET
 ##### Description:
 
-Get your orders, results is paginated.
+Get your orders, result is paginated.
 
 ##### Parameters
 
@@ -495,7 +495,7 @@ Get your orders, results is paginated.
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
-| 200 | Get your orders, results is paginated. | [ [Order](#order) ] |
+| 200 | Get your orders, result is paginated. | [ [Order](#order) ] |
 
 ### /market/orders/{id}
 
@@ -516,12 +516,692 @@ Get information of specified order.
 | ---- | ----------- | ------ |
 | 200 | Get information of specified order. | [Order](#order) |
 
+### /admin/members
+
+#### GET
+##### Description:
+
+Get all members, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| state | query | Filter order by state. | No | string |
+| role | query |  | No | string |
+| email | query | Member email. | No | string |
+| uid | query | Member UID. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all members, result is paginated. | [ [Member](#member) ] |
+
+### /admin/liabilities
+
+#### GET
+##### Description:
+
+Returns liabilities as a paginated collection.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| uid | query | Member UID. | No | string |
+| reference_type | query | The reference type for which operation was created. | No | string |
+| rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
+| code | query | Opeartion's code. | No | integer |
+| currency | query | Deposit currency id. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Returns liabilities as a paginated collection. | [Operation](#operation) |
+
+### /admin/revenues
+
+#### GET
+##### Description:
+
+Returns revenues as a paginated collection.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| reference_type | query | The reference type for which operation was created. | No | string |
+| rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
+| code | query | Opeartion's code. | No | integer |
+| currency | query | Deposit currency id. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Returns revenues as a paginated collection. | [Operation](#operation) |
+
+### /admin/expenses
+
+#### GET
+##### Description:
+
+Returns expenses as a paginated collection.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| reference_type | query | The reference type for which operation was created. | No | string |
+| rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
+| code | query | Opeartion's code. | No | integer |
+| currency | query | Deposit currency id. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Returns expenses as a paginated collection. | [Operation](#operation) |
+
+### /admin/assets
+
+#### GET
+##### Description:
+
+Returns assets as a paginated collection.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| reference_type | query | The reference type for which operation was created. | No | string |
+| rid | query | The unique id of operation's reference, for which operation was created. | No | integer |
+| code | query | Opeartion's code. | No | integer |
+| currency | query | Deposit currency id. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Returns assets as a paginated collection. | [Operation](#operation) |
+
+### /admin/trades
+
+#### GET
+##### Description:
+
+Get all trades, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| market | query | Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets. | No | string |
+| order_id | query | Unique order id. | No | integer |
+| uid | query | Member UID. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all trades, result is paginated. | [ [Trade](#trade) ] |
+
+### /admin/withdraws
+
+#### GET
+##### Description:
+
+Get all withdraws, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| state | query | The withdrawal state. | No | string |
+| account | query | The account code. | No | integer |
+| id | query | The withdrawal id. | No | integer |
+| txid | query | The withdrawal transaction id. | No | string |
+| tid | query | Withdraw tid. | No | string |
+| confirmations | query | Number of confirmations. | No | integer |
+| rid | query | The beneficiary ID or wallet address on the Blockchain. | No | string |
+| uid | query | Member UID. | No | string |
+| currency | query | Deposit currency id. | No | string |
+| type | query | Currency type | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all withdraws, result is paginated. | [ [Deposit](#deposit) ] |
+
+### /admin/deposits
+
+#### GET
+##### Description:
+
+Get all deposits, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| state | query | Deposit state. | No | string |
+| id | query | Unique deposit id. | No | integer |
+| txid | query | Deposit transaction id. | No | string |
+| address | query | Deposit blockchain address. | No | string |
+| tid | query | Deposit tid. | No | string |
+| uid | query | Member UID. | No | string |
+| currency | query | Deposit currency id. | No | string |
+| type | query | Currency type | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all deposits, result is paginated. | [ [Deposit](#deposit) ] |
+
+### /admin/wallets/update
+
+#### POST
+##### Description:
+
+Update wallet.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| settings | formData | Wallet settings. | No | json |
+| nsig | formData | Wallet number of signatures. | No | integer |
+| max_balance | formData | Wallet max balance. | No | double |
+| parent | formData | Wallet parent. | No | string |
+| status | formData | Wallet status (active/disabled). | No | string |
+| id | formData | Unique wallet identifier in database. | Yes | integer |
+| blockchain_key | formData | Wallet blockchain key. | No | string |
+| name | formData | Wallet name. | No | string |
+| address | formData | Wallet address. | No | string |
+| kind | formData | Kind of wallet 'deposit','fee','hot','warm' or 'cold'. | No | string |
+| gateway | formData | Wallet gateway. | No | string |
+| currency | formData | Deposit currency id. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Update wallet. | [Wallet](#wallet) |
+
+### /admin/wallets/new
+
+#### POST
+##### Description:
+
+Creates new wallet.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| settings | formData | Wallet settings. | No | json |
+| nsig | formData | Wallet number of signatures. | No | integer |
+| max_balance | formData | Wallet max balance. | No | double |
+| parent | formData | Wallet parent. | No | string |
+| status | formData | Wallet status (active/disabled). | No | string |
+| blockchain_key | formData | Wallet blockchain key. | Yes | string |
+| name | formData | Wallet name. | Yes | string |
+| address | formData | Wallet address. | Yes | string |
+| currency_id | formData | Wallet currency id. | Yes | string |
+| kind | formData | Kind of wallet 'deposit','fee','hot','warm' or 'cold'. | Yes | string |
+| gateway | formData | Wallet gateway. | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Creates new wallet. | [Wallet](#wallet) |
+
+### /admin/wallets/{id}
+
+#### GET
+##### Description:
+
+Get a wallet.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path | Unique wallet identifier in database. | Yes | integer |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get a wallet. | [Wallet](#wallet) |
+
+### /admin/wallets
+
+#### GET
+##### Description:
+
+Get all wallets, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all wallets, result is paginated. | [ [Wallet](#wallet) ] |
+
+### /admin/markets/update
+
+#### POST
+##### Description:
+
+Update market.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| ask_fee | formData | Market ask fee. | No | double |
+| bid_fee | formData | Market bid fee. | No | double |
+| max_price | formData | Maximum order price. | No | double |
+| min_amount | formData | Minimum order amount. | No | double |
+| position | formData | Market position. | No | integer |
+| state | formData | Market state defines if user can see/trade on current market. | No | string |
+| id | formData | Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets. | Yes | string |
+| min_price | formData | Minimum order price. | No | double |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Update market. | [Market](#market) |
+
+### /admin/markets/new
+
+#### POST
+##### Description:
+
+Create new market.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| ask_fee | formData | Market ask fee. | No | double |
+| bid_fee | formData | Market bid fee. | No | double |
+| max_price | formData | Maximum order price. | No | double |
+| min_amount | formData | Minimum order amount. | No | double |
+| position | formData | Market position. | No | integer |
+| state | formData | Market state defines if user can see/trade on current market. | No | string |
+| base_unit | formData | Market Base unit. | Yes | string |
+| quote_unit | formData | Market Quote unit. | Yes | string |
+| amount_precision | formData | Precision for order amount. | Yes | integer |
+| price_precision | formData | Precision for order price. | Yes | integer |
+| min_price | formData | Minimum order price. | Yes | double |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Create new market. | [Market](#market) |
+
+### /admin/markets/{id}
+
+#### GET
+##### Description:
+
+Get market.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path | Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets. | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get market. | [Market](#market) |
+
+### /admin/markets
+
+#### GET
+##### Description:
+
+Get all markets, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all markets, result is paginated. | [ [Market](#market) ] |
+
+### /admin/currencies/update
+
+#### POST
+##### Description:
+
+Update currency.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| name | formData | Currency name | No | string |
+| deposit_fee | formData | Currency deposit fee | No | double |
+| min_deposit_amount | formData | Currency deposit fee | No | double |
+| min_collection_amount | formData | Minimal collection amount. | No | double |
+| withdraw_fee | formData | Currency withdraw fee | No | double |
+| min_withdraw_amount | formData | Minimal withdraw amount | No | double |
+| withdraw_limit_24h | formData | Currency 24h withdraw limit | No | double |
+| withdraw_limit_72h | formData | Currency 72h withdraw limit | No | double |
+| position | formData | Currency position. | No | integer |
+| options | formData | Currency options. | No | json |
+| enabled | formData | Currency display status (enabled/disabled). | No | boolean |
+| base_factor | formData | Currency base factor | No | integer |
+| precision | formData | Currency precision | No | integer |
+| icon_url | formData | Currency icon | No | string |
+| code | formData | Unique currency code. | Yes | string |
+| symbol | formData | Currency symbol | No | string |
+| blockchain_key | formData | Associated blockchain key which will perform transactions synchronization for currency. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Update currency. | [Currency](#currency) |
+
+### /admin/currencies/new
+
+#### POST
+##### Description:
+
+Create new currency.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| name | formData | Currency name | No | string |
+| deposit_fee | formData | Currency deposit fee | No | double |
+| min_deposit_amount | formData | Currency deposit fee | No | double |
+| min_collection_amount | formData | Minimal collection amount. | No | double |
+| withdraw_fee | formData | Currency withdraw fee | No | double |
+| min_withdraw_amount | formData | Minimal withdraw amount | No | double |
+| withdraw_limit_24h | formData | Currency 24h withdraw limit | No | double |
+| withdraw_limit_72h | formData | Currency 72h withdraw limit | No | double |
+| position | formData | Currency position. | No | integer |
+| options | formData | Currency options. | No | json |
+| enabled | formData | Currency display status (enabled/disabled). | No | boolean |
+| base_factor | formData | Currency base factor | No | integer |
+| precision | formData | Currency precision | No | integer |
+| icon_url | formData | Currency icon | No | string |
+| code | formData | Unique currency code. | Yes | string |
+| symbol | formData | Currency symbol | Yes | string |
+| type | formData | Currency type | No | string |
+| blockchain_key | formData | Associated blockchain key which will perform transactions synchronization for currency. | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Create new currency. | [Currency](#currency) |
+
+### /admin/currencies/{code}
+
+#### GET
+##### Description:
+
+Get a currency.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| code | path | Unique currency code. | Yes | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get a currency. | [Currency](#currency) |
+
+### /admin/currencies
+
+#### GET
+##### Description:
+
+Get list of currencies
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| type | query | Currency type | No | string |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get list of currencies | [ [Currency](#currency) ] |
+
+### /admin/blockchains/update
+
+#### POST
+##### Description:
+
+Update blockchain.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | formData | Unique blockchain identifier in database. | Yes | integer |
+| key | formData | Unique key to identify blockchain. | No | string |
+| name | formData | A name to identify blockchain. | No | string |
+| client | formData | Integrated blockchain client. | No | string |
+| server | formData | Blockchain server url. | No | string |
+| height | formData | The number of blocks preceding a particular block on blockchain. | No | integer |
+| explorer_transaction | formData | Blockchain explorer transaction template. | No | string |
+| explorer_address | formData | Blockchain explorer address template. | No | string |
+| status | formData | Blockchain status (active/disabled). | No | string |
+| min_confirmations | formData | Minimum number of confirmations. | No | integer |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Update blockchain. | [Blockchain](#blockchain) |
+
+### /admin/blockchains/new
+
+#### POST
+##### Description:
+
+Create new blockchain.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| key | formData | Unique key to identify blockchain. | Yes | string |
+| name | formData | A name to identify blockchain. | Yes | string |
+| client | formData | Integrated blockchain client. | Yes | string |
+| server | formData | Blockchain server url. | Yes | string |
+| height | formData | The number of blocks preceding a particular block on blockchain. | Yes | integer |
+| explorer_transaction | formData | Blockchain explorer transaction template. | Yes | string |
+| explorer_address | formData | Blockchain explorer address template. | Yes | string |
+| status | formData | Blockchain status (active/disabled). | No | string |
+| min_confirmations | formData | Minimum number of confirmations. | No | integer |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 201 | Create new blockchain. | [Blockchain](#blockchain) |
+
+### /admin/blockchains/{id}
+
+#### GET
+##### Description:
+
+Get a blockchain.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path | Unique blockchain identifier in database. | Yes | integer |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get a blockchain. | [Blockchain](#blockchain) |
+
+### /admin/blockchains
+
+#### GET
+##### Description:
+
+Get all blockchains, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all blockchains, result is paginated. | [ [Blockchain](#blockchain) ] |
+
+### /admin/orders
+
+#### GET
+##### Description:
+
+Get all orders, result is paginated.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| market | query | Unique market id. It's always in the form of xxxyyy,where xxx is the base currency code, yyy is the quotecurrency code, e.g. 'btcusd'. All available markets canbe found at /api/v2/markets. | No | string |
+| state | query | Filter order by state. | No | string |
+| ord_type | query | Filter order by ord_type. | No | string |
+| price | query | Price for each unit. e.g.If you want to sell/buy 1 btc at 3000 usd, the price is '3000.0' | No | double |
+| origin_volume | query | The amount user want to sell/buy.An order could be partially executed,e.g. an order sell 5 btc can be matched with a buy 3 btc order,left 2 btc to be sold; in this case the order's volume would be '5.0',its remaining_volume would be '2.0', its executed volume is '3.0'. | No | double |
+| type | query | Filter order by type. | No | string |
+| email | query | Member email. | No | string |
+| uid | query | Member UID. | No | string |
+| range | query | Date range picker, defaults to 'created'. | No | string |
+| from | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities FROM the time will be retrieved. | No | integer |
+| to | query | An integer represents the seconds elapsed since Unix epoch.If set, only entities BEFORE the time will be retrieved. | No | integer |
+| limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
+| page | query | Specify the page of paginated results. | No | integer |
+| ordering | query | If set, returned values will be sorted in specific order, defaults to 'asc'. | No | string |
+| order_by | query | Name of the field, which result will be ordered by. | No | string |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 200 | Get all orders, result is paginated. | [ [Order](#order) ] |
+
 ### Models
 
 
 #### Trade
 
-Get your executed trades. Trades are sorted in reverse creation order.
+Get all trades, result is paginated.
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -546,7 +1226,7 @@ Get the order book of specified market.
 
 #### Order
 
-Get your orders, results is paginated.
+Get all orders, result is paginated.
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -567,7 +1247,7 @@ Get your orders, results is paginated.
 
 #### Market
 
-Get all available markets.
+Get all markets, result is paginated.
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -586,7 +1266,7 @@ Get all available markets.
 
 #### Currency
 
-Get a currency
+Get list of currencies
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -619,7 +1299,7 @@ Get list of user accounts
 
 #### Deposit
 
-Get your deposits history.
+Get all deposits, result is paginated.
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -627,11 +1307,11 @@ Get your deposits history.
 | currency | string | Deposit currency id. | No |
 | amount | double | Deposit amount. | No |
 | fee | double | Deposit fee. | No |
-| txid | string | Deposit transaction id. | No |
+| blockchain_txid | string | Deposit transaction id. | No |
 | confirmations | integer | Number of deposit confirmations. | No |
 | state | string | Deposit state. | No |
 | created_at | string | The datetime when deposit was created. | No |
-| completed_at | string | The datetime when deposit was completed.. | No |
+| done_at | string | The datetime when deposit was completed.. | No |
 
 #### Withdraw
 
@@ -655,8 +1335,72 @@ List your withdraws as paginated collection.
 
 #### Member
 
+Get all members, result is paginated.
+
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | uid | string | Member UID. | No |
 | email | string | Member email. | No |
 | accounts | [ [Account](#account) ] | Member accounts. | No |
+| id | integer | Unique member identifier in database. | No |
+| level | integer | Member's level. | No |
+| role | string | Member's role. | No |
+| state | string | Member's state. | No |
+| created_at | string | Member created time in iso8601 format. | No |
+| updated_at | string | Member updated time in iso8601 format. | No |
+
+#### Operation
+
+Returns assets as a paginated collection.
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| code | string | The Account code which this operation related to. | No |
+| currency | string | Operation currency ID. | No |
+| credit | string | Operation credit amount. | No |
+| debit | string | Operation debit amount. | No |
+| uid | string | The shared user ID. | No |
+| reference_type | string | The type of operations. | No |
+| created_at | string | The datetime when operation was created. | No |
+| id | integer | Unique operation identifier in database. | No |
+| rid | string | The id of operation reference. | No |
+
+#### Wallet
+
+Get all wallets, result is paginated.
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | integer | Unique wallet identifier in database. | No |
+| name | string | Wallet name. | No |
+| kind | string | Kind of wallet 'deposit','fee','hot','warm' or 'cold'. | No |
+| currency_id | string | Wallet currency id. | No |
+| address | string | Wallet address. | No |
+| gateway | string | Wallet gateway. | No |
+| nsig | integer | Wallet number of signatures. | No |
+| max_balance | double | Wallet max balance. | No |
+| parent | integer | Wallet parent. | No |
+| blockchain_key | string | Wallet blockchain key. | No |
+| status | string | Wallet status (active/disabled). | No |
+| settings | json | Wallet settings. | No |
+| created_at | string | Wallet created time in iso8601 format. | No |
+| updated_at | string | Wallet updated time in iso8601 format. | No |
+
+#### Blockchain
+
+Get all blockchains, result is paginated.
+
+| Name | Type | Description | Required |
+| ---- | ---- | ----------- | -------- |
+| id | integer | Unique blockchain identifier in database. | No |
+| key | string | Unique key to identify blockchain. | No |
+| name | string | A name to identify blockchain. | No |
+| client | string | Integrated blockchain client. | No |
+| server | string | Blockchain server url. | No |
+| height | integer | The number of blocks preceding a particular block on blockchain. | No |
+| explorer_address | string | Blockchain explorer address template. | No |
+| explorer_transaction | string | Blockchain explorer transaction template. | No |
+| min_confirmations | integer | Minimum number of confirmations. | No |
+| status | string | Blockchain status (active/disabled). | No |
+| created_at | string | Blockchain created time in iso8601 format. | No |
+| updated_at | string | Blockchain updated time in iso8601 format. | No |

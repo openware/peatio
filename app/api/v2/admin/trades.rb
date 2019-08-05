@@ -5,31 +5,32 @@ module API
   module V2
     module Admin
       class Trades < Grape::API
-        helpers API::V2::Admin::TradeParams
-        helpers API::V2::Admin::ParamsHelpers
+        helpers ::API::V2::Admin::Helpers
 
         desc 'Get all trades, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Trade
         params do
-          use :trade_params
+          optional :market,
+                   values: { value: -> { ::Market.enabled.ids }, message: 'admin.market.doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:id][:desc] }
+          optional :order_id,
+                   type: Integer,
+                   desc: -> { API::V2::Entities::Order.documentation[:id][:desc] }
+          use :uid
+          use :date_picker, keys: %w[created_at]
+          use :pagination
+          use :ordering
         end
         get '/trades' do
           authorize! :read, Trade
 
-          ransack_params = {
-            price_gteq: params[:price_from],
-            price_lt: params[:price_to],
-            volume_gteq: params[:volume_from],
-            volume_lt: params[:volume_to],
-            market_id_eq: params[:market],
-            created_at_gteq: time_param(params[:created_at_from]),
-            created_at_lt: time_param(params[:created_at_to]),
-            g: [
-              { ask_member_uid_eq: params[:uid], bid_member_uid_eq: params[:uid], m: 'or' },
-              { ask_id_eq: params[:order_id], bid_id_eq: params[:order_id], m: 'or' },
-            ],
-          }
+          ransack_params = Helpers::RansackBuilder.new(params)
+                             .map(market_id: :market)
+                             .build(g: [
+                               { ask_member_uid_eq: params[:uid], bid_member_uid_eq: params[:uid], m: 'or' },
+                               { ask_id_eq: params[:order_id], bid_id_eq: params[:order_id], m: 'or' },
+                             ])
 
           search = Trade.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"

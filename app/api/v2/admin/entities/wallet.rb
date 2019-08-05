@@ -5,13 +5,12 @@ module API
   module V2
     module Admin
       module Entities
-        class Wallet < Base
-
+        class Wallet < API::V2::Entities::Base
           expose(
             :id,
             documentation:{
               type: Integer,
-              desc: 'Unique wallet id.'
+              desc: 'Unique wallet identifier in database.'
             }
           )
 

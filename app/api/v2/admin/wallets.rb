@@ -5,36 +5,60 @@ module API
   module V2
     module Admin
       class Wallets < Grape::API
-        helpers ::API::V2::Admin::WalletParams
+        helpers ::API::V2::Admin::Helpers
+        helpers do
+          OPTIONAL_WALLET_PARAMS = {
+            settings: {
+              type: { value: JSON, message: 'admin.wallet.non_json_settings' },
+              default: {},
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:settings][:desc] }
+            },
+            nsig: {
+              type: { value: Integer, message: 'admin.wallet.non_integer_nsig' },
+              default: 1,
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:nsig][:desc] }
+            },
+            max_balance: {
+              type: { value: BigDecimal, message: 'admin.blockchain.non_decimal_max_balance' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.wallet.invalid_max_balance' },
+              default: 0.0,
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:max_balance][:desc] }
+            },
+            parent: {
+              type: { value: String, message: 'admin.wallet.non_string_parent'},
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:parent][:desc] }
+            },
+            status: {
+              values: { value: %w(active disabled), message: 'admin.wallet.invalid_status' },
+              default: 'active',
+              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:status][:desc] }
+            },
+          }
+
+          params :create_wallet_params do
+            OPTIONAL_WALLET_PARAMS.each do |key, params|
+              optional key, params
+            end
+          end
+
+          params :update_wallet_params do
+            OPTIONAL_WALLET_PARAMS.each do |key, params|
+              optional key, params.except(:default)
+            end
+          end
+        end
 
         desc 'Get all wallets, result is paginated.',
           is_array: true,
-          uccess: API::V2::Admin::Entities::Wallet
+          success: API::V2::Admin::Entities::Wallet
         params do
-          optional :limit,
-                   type: { value: Integer, message: 'admin.wallet.non_integer_limit' },
-                   values: { value: 1..1000, message: 'admin.wallet.invalid_limit' },
-                   default: 100,
-                   desc: 'Limit the number of returned wallets. Default to 100.'
-          optional :page,
-                   type: { value: Integer, message: 'admin.wallet.non_integer_page' },
-                   allow_blank: false,
-                   default: 1,
-                   desc: 'Specify the page of paginated results.'
-          optional :ordering,
-                   type: String,
-                   values: { value: %w(asc desc), message: 'admin.wallet.invalid_ordering' },
-                   default: 'asc',
-                   desc: 'If set, returned wallets will be sorted in specific order, default to \'desc\'.'
-          optional :order_by,
-                   default: 'id',
-                   type: String,
-                   desc: 'Name of the field, which will be ordered by'
+          use :pagination
+          use :ordering
         end
         get '/wallets' do
           authorize! :read, Wallet
 
-          search = Wallet.ransack()
+          search = Wallet.ransack
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Wallet
         end
@@ -58,6 +82,22 @@ module API
         end
         params do
           use :create_wallet_params
+          requires :blockchain_key,
+                   values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.wallet.blockchain_key_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:blockchain_key][:desc] }
+          requires :name,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:name][:desc] }
+          requires :address,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
+          requires :currency_id,
+                   values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_id_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency_id][:desc] }
+          requires :kind,
+                   values: { value: ::Wallet.kind.values, message: 'admin.wallet.invalid_kind' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
+          requires :gateway,
+                   values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
         end
         post '/wallets/new' do
           authorize! :create, Wallet
@@ -77,6 +117,23 @@ module API
         end
         params do
           use :update_wallet_params
+          requires :id,
+                   type: { value: Integer, message: 'admin.wallet.non_integer_id' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:id][:desc] }
+          optional :blockchain_key,
+                   values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.wallet.blockchain_key_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:blockchain_key][:desc] }
+          optional :name,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:name][:desc] }
+          optional :address,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
+          optional :kind,
+                   values: { value: ::Wallet.kind.values, message: 'admin.wallet.invalid_kind' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
+          optional :gateway,
+                   values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
+          use :currency
         end
         post '/wallets/update' do
           authorize! :write, Wallet

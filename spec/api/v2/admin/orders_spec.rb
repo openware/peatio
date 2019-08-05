@@ -31,7 +31,7 @@ describe API::V2::Admin::Orders, type: :request do
     it 'validates limit param' do
       api_get '/api/v2/admin/orders', params: { market: 'btcusd', limit: -1 }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('admin.order.invalid_limit')
+      expect(response).to include_api_error('admin.pagination.invalid_limit')
     end
 
     it 'validates price param' do
@@ -49,7 +49,7 @@ describe API::V2::Admin::Orders, type: :request do
     it 'validates page param' do
       api_get '/api/v2/admin/orders', params: { market: 'btcusd', limit: 2, page: "page 2" }, token: token
       expect(response.code).to eq '422'
-      expect(response).to include_api_error('admin.order.non_integer_page')
+      expect(response).to include_api_error('admin.pagination.non_integer_page')
     end
 
     it 'validates ord_type param' do
@@ -154,7 +154,7 @@ describe API::V2::Admin::Orders, type: :request do
     end
 
     it 'returns orders for updated time range' do
-      api_get '/api/v2/admin/orders', params: { updated_at_from: 1548224524, updated_at_to: 1548244524, created_at_from: 1548224524}, token: token
+      api_get '/api/v2/admin/orders', params: { range: 'updated', from: 1548224524, to: 1548244524 }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
