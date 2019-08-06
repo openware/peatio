@@ -3,9 +3,9 @@
     "title": "Peatio User API v2",
     "description": "API for Peatio application.",
     "contact": {
-      "name": "peatio.tech",
-      "email": "hello@peatio.tech",
-      "url": "https://www.peatio.tech"
+      "name": "openware.com",
+      "email": "hello@openware.com",
+      "url": "https://www.openware.com"
     },
     "license": {
       "url": "https://github.com/rubykube/peatio/blob/master/LICENSE.md"
@@ -1131,7 +1131,7 @@
         "operationId": "postMarketOrders"
       },
       "get": {
-        "description": "Get your orders, results is paginated.",
+        "description": "Get your orders, result is paginated.",
         "produces": [
           "application/json"
         ],
@@ -1222,7 +1222,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Get your orders, results is paginated.",
+            "description": "Get your orders, result is paginated.",
             "schema": {
               "type": "array",
               "items": {
@@ -1405,7 +1405,7 @@
           "description": "Trades wiht this order."
         }
       },
-      "description": "Get your orders, results is paginated."
+      "description": "Get your orders, result is paginated."
     },
     "Market": {
       "type": "object",
@@ -1595,7 +1595,7 @@
           "format": "double",
           "description": "Deposit fee."
         },
-        "txid": {
+        "blockchain_txid": {
           "type": "string",
           "description": "Deposit transaction id."
         },
@@ -1612,7 +1612,7 @@
           "type": "string",
           "description": "The datetime when deposit was created."
         },
-        "completed_at": {
+        "done_at": {
           "type": "string",
           "description": "The datetime when deposit was completed.."
         }
