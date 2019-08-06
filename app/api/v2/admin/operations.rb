@@ -17,7 +17,7 @@ module API
                      type: Integer,
                      desc: 'Opeartion\'s code.'
             use :currency
-            use :date_picker, keys: %w[created_at]
+            use :date_picker
           end
 
           def ransack_params

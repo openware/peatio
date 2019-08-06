@@ -18,7 +18,7 @@ module API
           optional :email,
                    desc: -> { API::V2::Entities::Member.documentation[:email][:desc] }
           use :uid
-          use :date_picker, keys: %w[updated_at created_at]
+          use :date_picker
           use :pagination
           use :ordering
         end

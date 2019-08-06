@@ -40,7 +40,7 @@ bundle exec rails db:migrate
 bundle exec rails db:seed
 
 npm i -g swagger-markdown
-npm i -g prettyjson-cli
+sudo apt-get install jq
 bundle exec rails s -d
 while [ ! -f tmp/pids/server.pid ]
 do
@@ -51,5 +51,5 @@ curl http://localhost:3000/api/v2/swagger > tmp/swagger.json
 curl http://localhost:3000/api/v2/management/swagger > tmp/peatio_management_api_v2_swagger.json
 swagger-markdown -i tmp/swagger.json -o ./docs/api/peatio_user_api_v2.md
 swagger-markdown -i tmp/peatio_management_api_v2_swagger.json -o ./docs/api/peatio_management_api_v2.md
-cat tmp/swagger.json | prettyjson > docs/api/swagger.json
+cat tmp/swagger.json | jq > docs/api/swagger.json
 kill $(cat tmp/pids/server.pid)

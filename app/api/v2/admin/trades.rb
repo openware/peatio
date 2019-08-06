@@ -18,7 +18,7 @@ module API
                    type: Integer,
                    desc: -> { API::V2::Entities::Order.documentation[:id][:desc] }
           use :uid
-          use :date_picker, keys: %w[created_at]
+          use :date_picker
           use :pagination
           use :ordering
         end

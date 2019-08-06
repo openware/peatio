@@ -30,7 +30,7 @@ module API
           use :uid
           use :currency
           use :currency_type
-          use :date_picker, keys: %w[updated_at created_at completed_at]
+          use :date_picker
           use :pagination
           use :ordering
         end
