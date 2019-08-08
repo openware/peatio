@@ -6,7 +6,7 @@ module API
       class Mount < Grape::API
         PREFIX = '/admin'
 
-        before { authenticate! }
+        before { authenticate! unless request.path == '/api/v2/admin/swagger' }
 
         mount Admin::Orders
         mount Admin::Blockchains
