@@ -23,7 +23,8 @@ module API
           def ransack_params
             Helpers::RansackBuilder.new(params)
               .eq(:code, :reference_type)
-              .map(currency_id: :currency, reference_id: :rid)
+              .translate(:currency => :currency_id, :rid => :reference_id)
+              .with_daterange
               .build
           end
         end

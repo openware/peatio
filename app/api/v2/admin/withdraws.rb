@@ -45,8 +45,10 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:id, :txid, :rid, :tid)
-                             .map(aasm_state: :state, member_uid: :uid, account_id: :account, currencie_id: :currency)
-                             .build(type_eq: params[:type].present? ? "Withdraws::#{params[:type]}" : nil)
+                             .translate(:state => :aasm_state, :uid => :member_uid, :account => :account_id, :currency => :currencie_id)
+                             .with_daterange
+                             .merge(type_eq: params[:type].present? ? "Withdraws::#{params[:type]}" : nil)
+                             .build
 
           search = Withdraw.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"

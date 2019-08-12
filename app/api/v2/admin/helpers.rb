@@ -10,24 +10,30 @@ module API
         class RansackBuilder
           # RansackBuilder creates a hash in a format ransack accepts
           # eq(:column) generetes a pair column_eq: params[:column]
-          # map(:column1 => :column2) generates a pair column1_eq: params[:column2]
-          # build returns prepared hash and merges additional selectors if specified
+          # translate(:column1 => :column2) generates a pair column2_eq: params[:column1]
+          # merge allows to append additional selectors in
+          # build returns prepared hash
+
+          attr_reader :build
 
           def initialize(params)
             @params = params
             @build = {}
           end
 
-          def build(opt = {})
-            if @params[:range]
-              @build.merge!("#{@params[:range]}_at_gteq" => Time.at(@params[:from])) if @params[:from]
-              @build.merge!("#{@params[:range]}_at_lt" => Time.at(@params[:to])) if @params[:to]
-            end
+          def merge(opt)
             @build.merge!(opt)
+            self
           end
 
-          def map(opt)
-            opt.each { |k, v| @build.merge!("#{k}_eq" => @params[v]) }
+          def with_daterange
+            @build.merge!("#{@params[:range]}_at_gteq" => Time.at(@params[:from])) if @params[:from]
+            @build.merge!("#{@params[:range]}_at_lt" => Time.at(@params[:to])) if @params[:to]
+            self
+          end
+
+          def translate(opt)
+            opt.each { |k, v| @build.merge!("#{v}_eq" => @params[k]) }
             self
           end
 

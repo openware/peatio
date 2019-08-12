@@ -27,6 +27,7 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:uid, :email, :state, :role)
+                             .with_daterange
                              .build
 
           search = Member.ransack(ransack_params)

@@ -39,8 +39,10 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:id, :txid, :tid, :address)
-                             .map(aasm_state: :state, member_uid: :uid, currency_id: :currency)
-                             .build(type_eq: params[:type].present? ? "Deposits::#{params[:type]}" : nil)
+                             .translate(:state => :aasm_state, :uid => :member_uid, :currency => :currency_id)
+                             .with_daterange
+                             .merge(type_eq: params[:type].present? ? "Deposits::#{params[:type]}" : nil)
+                             .build
 
           search = Deposit.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"

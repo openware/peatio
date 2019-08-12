@@ -26,11 +26,12 @@ module API
           authorize! :read, Trade
 
           ransack_params = Helpers::RansackBuilder.new(params)
-                             .map(market_id: :market)
-                             .build(g: [
+                             .translate(:market => :market_id)
+                             .with_daterange
+                             .merge(g: [
                                { ask_member_uid_eq: params[:uid], bid_member_uid_eq: params[:uid], m: 'or' },
                                { ask_id_eq: params[:order_id], bid_id_eq: params[:order_id], m: 'or' },
-                             ])
+                             ]).build
 
           search = Trade.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"

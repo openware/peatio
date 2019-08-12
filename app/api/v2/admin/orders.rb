@@ -43,11 +43,12 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:price, :origin_volume, :ord_type)
-                             .map(market_id: :market, member_uid: :uid, member_email: :email)
-                             .build({
+                             .translate(:market => :market_id, :uid => :member_uid, :email => :member_email)
+                             .with_daterange
+                             .merge({
                                 state_eq: params[:state].present? ? Order::STATES[params[:state].to_sym] : nil,
                                 type_eq: params[:type].present? ? "Order#{params[:type].capitalize}" : nil,
-                             })
+                             }).build
 
           search = Order.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
