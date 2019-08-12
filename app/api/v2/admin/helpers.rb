@@ -58,7 +58,7 @@ module API
 
         params :uid do
           optional :uid,
-                   values:  { value: -> (v) {Member.find_by(uid: v) }, message: 'admin.user.doesnt_exist' },
+                   values:  { value: -> (v) { Member.exists?(uid: v) }, message: 'admin.user.doesnt_exist' },
                    desc: -> { API::V2::Entities::Member.documentation[:uid][:desc] }
         end
 

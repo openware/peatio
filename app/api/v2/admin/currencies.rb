@@ -7,6 +7,8 @@ module API
       class Currencies < Grape::API
         helpers ::API::V2::Admin::Helpers
         helpers do
+          # Collection of shared params, used to
+          # generate required/optional Grape params.
           OPTIONAL_CURRENCY_PARAMS = {
             name: { desc: -> { API::V2::Admin::Entities::Currency.documentation[:name][:desc] } },
             deposit_fee: {

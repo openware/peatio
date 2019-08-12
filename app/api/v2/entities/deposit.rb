@@ -41,7 +41,6 @@ module API
 
         expose(
           :txid,
-          as: :blockchain_txid,
           documentation: {
             type: String,
             desc: 'Deposit transaction id.'
@@ -77,7 +76,6 @@ module API
 
         expose(
           :completed_at,
-          as: :done_at,
           format_with: :iso8601,
           documentation: {
             type: String,

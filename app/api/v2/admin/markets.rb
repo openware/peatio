@@ -7,6 +7,8 @@ module API
       class Markets < Grape::API
         helpers ::API::V2::Admin::Helpers
         helpers do
+          # Collection of shared params, used to
+          # generate required/optional Grape params.
           OPTIONAL_MARKET_PARAMS = {
             ask_fee: {
               type: { value: BigDecimal, message: 'admin.market.non_decimal_ask_fee' },
