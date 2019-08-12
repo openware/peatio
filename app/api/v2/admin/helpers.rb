@@ -85,7 +85,7 @@ module API
                    desc: 'Name of the field, which result will be ordered by.'
         end
 
-        params :date_picker do |options|
+        params :date_picker do
           optional :range,
                    default: 'created',
                    values: { value: -> { %w[created updated completed] } },
