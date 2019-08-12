@@ -16,7 +16,7 @@ describe API::V2::Admin::Wallets, type: :request do
 
       result = JSON.parse(response.body)
       expect(result.fetch('id')).to eq wallet.id
-      expect(result.fetch('currency_id')).to eq wallet.currency_id
+      expect(result.fetch('currency')).to eq wallet.currency_id
       expect(result.fetch('address')).to eq wallet.address
     end
 
@@ -48,7 +48,7 @@ describe API::V2::Admin::Wallets, type: :request do
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
-      expect(result.first['currency_id']).to eq 'btc'
+      expect(result.first['currency']).to eq 'btc'
     end
 
     it 'returns paginated wallets' do
@@ -75,6 +75,35 @@ describe API::V2::Admin::Wallets, type: :request do
       api_get "/api/v2/admin/wallets", token: level_3_member_token
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
+    end
+
+    context 'filtering' do
+      it 'filters by blockchain key' do
+        api_get "/api/v2/admin/wallets", token: token, params: { blockchain_key: "eth-rinkeby" }
+
+        result = JSON.parse(response.body)
+
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["blockchain_key"]}).to all eq "eth-rinkeby"
+      end
+
+      it 'filters by kind'do
+        api_get "/api/v2/admin/wallets", token: token, params: { kind: "deposit" }
+
+        result = JSON.parse(response.body)
+
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["kind"]}).to all eq "deposit"
+      end
+
+      it 'filters by currency'do
+        api_get "/api/v2/admin/wallets", token: token, params: { currency: "eth" }
+
+        result = JSON.parse(response.body)
+
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["currency"]}).to all eq "eth"
+      end
     end
   end
 

@@ -54,13 +54,26 @@ module API
           is_array: true,
           success: API::V2::Admin::Entities::Wallet
         params do
+          optional :blockchain_key,
+                   values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.currency.blockchain_key_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:blockchain_key][:desc] }
+          optional :kind,
+                   values: { value: -> { Wallet.kind.values }, message: 'admin.wallet.invalid_kind' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
+          use :currency
           use :pagination
           use :ordering
         end
         get '/wallets' do
           authorize! :read, Wallet
 
-          search = Wallet.ransack
+          ransack_params = Helpers::RansackBuilder.new(params)
+                             .eq(:blockchain_key)
+                             .translate(:currency => :currency_id)
+                             .merge(kind_eq: params[:kind].present? ? Wallet.kinds[params[:kind].to_sym] : nil)
+                             .build
+
+          search = Wallet.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Wallet
         end

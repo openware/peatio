@@ -32,9 +32,10 @@ module API
 
           expose(
             :currency_id,
+            as: :currency,
             documentation: {
                 type: String,
-                desc: 'Wallet currency id.'
+                desc: 'Wallet currency code.'
             }
           )
 
