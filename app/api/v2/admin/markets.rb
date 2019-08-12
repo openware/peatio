@@ -10,13 +10,13 @@ module API
           # Collection of shared params, used to
           # generate required/optional Grape params.
           OPTIONAL_MARKET_PARAMS = {
-            ask_fee: {
+            quote_currency_fee: {
               type: { value: BigDecimal, message: 'admin.market.non_decimal_ask_fee' },
               values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_ask_fee' },
               default: 0.0,
               desc: -> { API::V2::Admin::Entities::Market.documentation[:ask_fee][:desc] }
             },
-            bid_fee: {
+            base_currency_fee: {
               type: { value: BigDecimal, message: 'admin.market.non_decimal_bid_fee' },
               values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_bid_fee' },
               default: 0.0,
@@ -93,10 +93,10 @@ module API
         end
         params do
           use :create_market_params
-          requires :base_unit,
+          requires :base_currency,
                    values: { value: -> { ::Currency.ids }, message: 'admin.market.currency_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:base_unit][:desc] }
-          requires :quote_unit,
+          requires :quote_currency,
                    values: { value: -> { ::Currency.ids }, message: 'admin.market.currency_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:quote_unit][:desc] }
           requires :amount_precision,

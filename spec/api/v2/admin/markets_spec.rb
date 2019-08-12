@@ -16,8 +16,8 @@ describe API::V2::Admin::Markets, type: :request do
 
       result = JSON.parse(response.body)
       expect(result.fetch('id')).to eq market.id
-      expect(result.fetch('base_unit')).to eq market.base_unit
-      expect(result.fetch('quote_unit')).to eq market.quote_unit
+      expect(result.fetch('base_unit')).to eq market.base_currency
+      expect(result.fetch('quote_unit')).to eq market.quote_currency
     end
 
     it 'returns error in case of invalid id' do
@@ -44,7 +44,7 @@ describe API::V2::Admin::Markets, type: :request do
     end
 
     it 'returns markets by ascending order' do
-      api_get '/api/v2/admin/markets', params: { ordering: 'asc', order_by: 'quote_unit'}, token: token
+      api_get '/api/v2/admin/markets', params: { ordering: 'asc', order_by: 'quote_currency'}, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
@@ -80,8 +80,8 @@ describe API::V2::Admin::Markets, type: :request do
   describe 'POST /api/v2/admin/markets/new' do
     let(:valid_params) do
       {
-        base_unit: 'trst',
-        quote_unit: 'btc',
+        base_currency: 'trst',
+        quote_currency: 'btc',
         price_precision: 2,
         amount_precision: 2,
         min_price: 0.01,
@@ -97,15 +97,15 @@ describe API::V2::Admin::Markets, type: :request do
       expect(result['id']).to eq 'trstbtc'
     end
 
-    it 'validate base_unit param' do
-      api_post '/api/v2/admin/markets/new', token: token, params: valid_params.merge(base_unit: 'test')
+    it 'validate base_currency param' do
+      api_post '/api/v2/admin/markets/new', token: token, params: valid_params.merge(base_currency: 'test')
 
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.market.currency_doesnt_exist')
     end
 
-    it 'validate quote_unit param' do
-      api_post '/api/v2/admin/markets/new', token: token, params: valid_params.merge(quote_unit: 'test')
+    it 'validate quote_currency param' do
+      api_post '/api/v2/admin/markets/new', token: token, params: valid_params.merge(quote_currency: 'test')
 
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.market.currency_doesnt_exist')
@@ -122,8 +122,8 @@ describe API::V2::Admin::Markets, type: :request do
       api_post '/api/v2/admin/markets/new', params: { }, token: token
 
       expect(response).to have_http_status 422
-      expect(response).to include_api_error('admin.market.missing_base_unit')
-      expect(response).to include_api_error('admin.market.missing_quote_unit')
+      expect(response).to include_api_error('admin.market.missing_base_currency')
+      expect(response).to include_api_error('admin.market.missing_quote_currency')
     end
 
     it 'return error in case of not permitted ability' do
@@ -136,7 +136,7 @@ describe API::V2::Admin::Markets, type: :request do
 
   describe 'POST /api/v2/admin/markets/update' do
     it 'update market' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.id, bid_fee: 0.4 }, token: token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.id, base_currency_fee: 0.4 }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
