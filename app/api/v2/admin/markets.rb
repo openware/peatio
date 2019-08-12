@@ -69,9 +69,8 @@ module API
         get '/markets' do
           authorize! :read, ::Market
 
-          search = ::Market.ransack
-          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
-          present paginate(search.result), with: API::V2::Admin::Entities::Market
+          result = ::Market.order(params[:order_by] => params[:ordering])
+          present paginate(result), with: API::V2::Admin::Entities::Market
         end
 
         desc 'Get market.' do

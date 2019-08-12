@@ -17,9 +17,8 @@ module API
         get '/blockchains' do
           authorize! :read, Blockchain
 
-          search = Blockchain.ransack
-          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
-          present paginate(search.result), with: API::V2::Admin::Entities::Blockchain
+          result = Blockchain.order(params[:order_by] => params[:ordering])
+          present paginate(result), with: API::V2::Admin::Entities::Blockchain
         end
 
         desc 'Get a blockchain.' do
