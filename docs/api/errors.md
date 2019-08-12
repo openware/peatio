@@ -2,11 +2,12 @@
 
 ## Shared errors
 
-| Code                    | Description                         |
-| ----------------------- | ----------------------------------- |
-| `jwt.decode_and_verify` | Impossible to decode and verify JWT |
-| `record.not_found`      | Record Not found                    |
-| `server.internal_error` | Internal Server Error               |
+| Code                        | Description                         |
+| --------------------------- | ----------------------------------- |
+| `jwt.decode_and_verify`     | Impossible to decode and verify JWT |
+| `record.not_found`          | Record Not found                    |
+| `server.internal_error`     | Internal Server Error               |
+| `server.method_not_allowed` | Request method not allowed          |
 
 ## Account module
 
