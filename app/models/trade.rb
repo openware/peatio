@@ -37,6 +37,20 @@ class Trade < ApplicationRecord
       trade = with_market(market).order(id: :desc).limit(1).first
       trade ? trade.price : 0
     end
+
+    def to_csv
+      attributes = %w[id price volume ask_id bid_id market_id ask_member_id bid_member_id funds created_at updated_at]
+
+      CSV.generate(headers: true) do |csv|
+        csv << attributes
+
+        all.each do |trade|
+          data = attributes[0...-2].map { |attr| trade.send(attr) }
+          data += attributes[-2..-1].map { |attr| trade.send(attr).to_i }
+          csv << data
+        end
+      end
+    end
   end
 
   # == Instance Methods =====================================================

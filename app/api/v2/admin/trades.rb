@@ -1,6 +1,8 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+require 'csv'
+
 module API
   module V2
     module Admin
@@ -35,7 +37,12 @@ module API
 
           search = Trade.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
-          present paginate(search.result), with: API::V2::Admin::Entities::Trade
+
+          if params[:format] == 'csv'
+            search.result
+          else
+            present paginate(search.result), with: API::V2::Admin::Entities::Trade
+          end
         end
       end
     end

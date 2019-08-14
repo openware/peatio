@@ -8,6 +8,15 @@ module API
 
         before { authenticate! unless request.path == '/api/v2/admin/swagger' }
 
+        class CSVFormatter
+          def self.call(object, env)
+            object.to_csv
+          end
+        end
+
+        content_type :csv, 'text/csv'
+        formatter :csv, CSVFormatter
+
         mount Admin::Orders
         mount Admin::Blockchains
         mount Admin::Currencies

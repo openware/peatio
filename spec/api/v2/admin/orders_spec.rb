@@ -85,8 +85,8 @@ describe API::V2::Admin::Orders, type: :request do
       expect(result.map{|r| r['ord_type']}).to all eq 'limit'
     end
 
-    it 'returns orders with type sell' do
-      api_get '/api/v2/admin/orders', params: { type: 'sell' }, token: token
+    it 'returns orders with type ask' do
+      api_get '/api/v2/admin/orders', params: { type: 'ask' }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful

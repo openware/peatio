@@ -29,7 +29,7 @@ module API
                    values: { value: -> (p){ p.try(:positive?) }, message: 'admin.order.non_positive_origin_volume' },
                    desc: -> { API::V2::Admin::Entities::Order.documentation[:origin_volume][:desc] }
           optional :type,
-                   values: { value: %w(buy sell), message: 'admin.order.invalid_type' },
+                   values: { value: %w(bid ask), message: 'admin.order.invalid_type' },
                    desc: 'Filter order by type.'
           optional :email,
                    desc: -> { API::V2::Entities::Member.documentation[:email][:desc] }
@@ -52,7 +52,12 @@ module API
 
           search = Order.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
-          present paginate(search.result), with: API::V2::Admin::Entities::Order
+
+          if params[:format] == 'csv'
+            search.result
+          else
+            present paginate(search.result), with: API::V2::Admin::Entities::Order
+          end
         end
       end
     end
