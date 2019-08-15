@@ -69,7 +69,7 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:blockchain_key)
-                             .translate(:currency => :currency_id)
+                             .translate(currency: :currency_id)
                              .merge(kind_eq: params[:kind].present? ? Wallet.kinds[params[:kind].to_sym] : nil)
                              .build
 

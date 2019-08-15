@@ -28,7 +28,7 @@ module API
           authorize! :read, Trade
 
           ransack_params = Helpers::RansackBuilder.new(params)
-                             .translate(:market => :market_id)
+                             .translate(market: :market_id)
                              .with_daterange
                              .merge(g: [
                                { maker_uid_eq: params[:uid], taker_uid_eq: params[:uid], m: 'or' },

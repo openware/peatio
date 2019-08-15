@@ -41,7 +41,7 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:id, :txid, :rid, :tid)
-                             .translate(:state => :aasm_state, :uid => :member_uid, :account => :account_id, :currency => :currency_id)
+                             .translate(state: :aasm_state, uid: :member_uid, account: :account_id, currency: :currency_id)
                              .with_daterange
                              .merge(type_eq: params[:type].present? ? "Withdraws::#{params[:type]}" : nil)
                              .build

@@ -43,7 +43,7 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:price, :origin_volume, :ord_type)
-                             .translate(:market => :market_id, :uid => :member_uid, :email => :member_email)
+                             .translate(market: :market_id, uid: :member_uid, email: :member_email)
                              .with_daterange
                              .merge({
                                 state_eq: params[:state].present? ? Order::STATES[params[:state].to_sym] : nil,

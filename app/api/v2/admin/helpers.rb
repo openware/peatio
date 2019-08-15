@@ -28,7 +28,7 @@ module API
 
           def with_daterange
             @build.merge!("#{@params[:range]}_at_gteq" => Time.at(@params[:from])) if @params[:from]
-            @build.merge!("#{@params[:range]}_at_lt" => Time.at(@params[:to])) if @params[:to]
+            @build.merge!("#{@params[:range]}_at_lteq" => Time.at(@params[:to])) if @params[:to]
             self
           end
 

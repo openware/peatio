@@ -158,7 +158,7 @@ describe API::V2::Admin::Orders, type: :request do
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
-      expect(result.size).to eq 2
+      expect(result.size).to eq 3
     end
 
     it 'return error in case of not permitted ability' do
