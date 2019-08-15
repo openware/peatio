@@ -9,6 +9,8 @@ module API
       class Trades < Grape::API
         helpers ::API::V2::Admin::Helpers
 
+        content_type :csv, 'text/csv'
+
         desc 'Get all trades, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Trade

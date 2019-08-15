@@ -7,6 +7,8 @@ module API
       class Orders < Grape::API
         helpers ::API::V2::Admin::Helpers
 
+        content_type :csv, 'text/csv'
+
         desc 'Get all orders, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Order

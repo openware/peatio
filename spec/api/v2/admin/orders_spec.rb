@@ -154,7 +154,7 @@ describe API::V2::Admin::Orders, type: :request do
     end
 
     it 'returns orders for updated time range' do
-      api_get '/api/v2/admin/orders', params: { range: 'updated', from: 1548224524, to: 1548244524 }, token: token
+      api_get '/api/v2/admin/orders', params: { range: 'updated', from: Time.at(1548224524).iso8601, to: Time.at(1548244524).iso8601 }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful

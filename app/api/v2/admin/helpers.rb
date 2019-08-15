@@ -27,8 +27,8 @@ module API
           end
 
           def with_daterange
-            @build.merge!("#{@params[:range]}_at_gteq" => Time.at(@params[:from])) if @params[:from]
-            @build.merge!("#{@params[:range]}_at_lteq" => Time.at(@params[:to])) if @params[:to]
+            @build.merge!("#{@params[:range]}_at_gteq" => @params[:from])
+            @build.merge!("#{@params[:range]}_at_lteq" => @params[:to])
             self
           end
 
@@ -91,11 +91,11 @@ module API
                    values: { value: -> { %w[created updated completed] } },
                    desc: 'Date range picker, defaults to \'created\'.'
           optional :from,
-                   type: { value: Integer, message: 'admin.filter.non_integer_range_from' },
+                   type: { value: Time, message: 'admin.filter.range_from_invalid' },
                    desc: 'An integer represents the seconds elapsed since Unix epoch.'\
                      'If set, only entities FROM the time will be retrieved.'
           optional :to,
-                   type: { value: Integer, message: 'admin.filter.non_integer_range_to' },
+                   type: { value: Time, message: 'admin.filter.range_to_invalid' },
                    desc: 'An integer represents the seconds elapsed since Unix epoch.'\
                      'If set, only entities BEFORE the time will be retrieved.'
         end

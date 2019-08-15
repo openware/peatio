@@ -88,7 +88,7 @@ describe API::V2::Admin::Operations, type: :request do
       end
 
       it 'fileters by created_at_to' do
-        api_get '/api/v2/admin/expenses', token: token, params: { range: 'created', to: 3.days.ago.to_i }
+        api_get '/api/v2/admin/expenses', token: token, params: { range: 'created', to: 3.days.ago }
         result = JSON.parse(response.body)
         expected = expenses.select { |l| l.created_at < 3.days.ago }
 
@@ -96,7 +96,7 @@ describe API::V2::Admin::Operations, type: :request do
       end
 
       it 'filters by created_at_from' do
-        api_get '/api/v2/admin/expenses', token: token, params: { range: 'created', from: 3.days.ago.to_i }
+        api_get '/api/v2/admin/expenses', token: token, params: { range: 'created', from: 3.days.ago }
         result = JSON.parse(response.body)
         expected = expenses.select { |l| l.created_at >= 3.days.ago }
 

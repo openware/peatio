@@ -46,7 +46,7 @@ class Trade < ApplicationRecord
 
         all.each do |trade|
           data = attributes[0...-2].map { |attr| trade.send(attr) }
-          data += attributes[-2..-1].map { |attr| trade.send(attr).to_i }
+          data += attributes[-2..-1].map { |attr| trade.send(attr).iso8601 }
           csv << data
         end
       end
