@@ -129,16 +129,25 @@ describe API::V2::Admin::Blockchains, type: :request do
       expect(response).to include_api_error('admin.blockchain.missing_key')
       expect(response).to include_api_error('admin.blockchain.missing_name')
       expect(response).to include_api_error('admin.blockchain.missing_client')
-      expect(response).to include_api_error('admin.blockchain.missing_server')
       expect(response).to include_api_error('admin.blockchain.missing_height')
-      expect(response).to include_api_error('admin.blockchain.missing_explorer_transaction')
-      expect(response).to include_api_error('admin.blockchain.missing_explorer_address')
+    end
+
+    it 'validates server' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: 'test-blockchain', name: 'Test', client: 'geth',server: 'not_a_url', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
+
+      expect(response).to have_http_status 422
+      expect(response).to include_api_error('admin.blockchain.invalid_server')
     end
 
     it 'return error in case of not permitted ability' do
       api_post '/api/v2/admin/blockchains/new', token: level_3_member_token, params: { key: 'test-blockchain', name: 'Test', client: 'geth', server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test', status: 'active', min_confirmations: 6, step: 2 }
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
+    end
+
+    it 'key already exists' do
+      api_post '/api/v2/admin/blockchains/new', token: token, params: { key: Blockchain.first.key, name: 'Test', client: 'geth',server: 'http://127.0.0.1', height: 123333, explorer_transaction: 'test', explorer_address: 'test'}
+      expect(response.status).to eq 422
     end
   end
 
