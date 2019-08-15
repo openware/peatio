@@ -18,10 +18,10 @@ module API
               desc: -> { API::V2::Admin::Entities::Currency.documentation[:deposit_fee][:desc] }
             },
             min_deposit_amount: {
-              type: { value: BigDecimal, message: 'admin.currency.non_decimal_deposit_fee' },
-              values: { value: -> (p){ p >= 0 }, message: 'admin.currency.invalid_deposit_fee' },
+              type: { value: BigDecimal, message: 'admin.currency.min_deposit_amount' },
+              values: { value: -> (p){ p >= 0 }, message: 'admin.currency.min_deposit_amount' },
               default: 0.0,
-              desc: -> { API::V2::Admin::Entities::Currency.documentation[:deposit_fee][:desc] }
+              desc: -> { API::V2::Admin::Entities::Currency.documentation[:min_deposit_amount][:desc] }
             },
             min_collection_amount: {
               type: { value: BigDecimal, message: 'admin.currency.non_decimal_min_collection_amount' },
@@ -68,10 +68,11 @@ module API
               default: true,
               desc: -> { API::V2::Admin::Entities::Currency.documentation[:enabled][:desc] }
             },
-            base_factor: {
-              type: { value: Integer, message: 'admin.currency.non_integer_base_factor' },
-              default: 1,
-              desc: -> { API::V2::Admin::Entities::Currency.documentation[:base_factor][:desc] }
+            subunits: {
+              type: { value: Integer, message: 'admin.currency.non_integer_subunits' },
+              values: { value: (0..18), message: 'admin.currency.invalid_subunits' },
+              default: 0,
+              desc: 'Fraction of the basic monetary unit.'
             },
             precision: {
               type: { value: Integer, message: 'admin.currency.non_integer_base_precision' },
@@ -148,7 +149,8 @@ module API
         post '/currencies/new' do
           authorize! :create, Currency
 
-          currency = Currency.new(declared(params))
+          currency = Currency.new(declared(params).except(:subunits))
+          currency.subunits = params[:subunits]
           if currency.save
             present currency, with: API::V2::Admin::Entities::Currency
             status 201
@@ -176,7 +178,8 @@ module API
           authorize! :write, Currency
 
           currency = Currency.find(params[:code])
-          if currency.update(declared(params, include_missing: false))
+          currency.subunits = params[:subunits] if params[:subunits]
+          if currency.update(declared(params, include_missing: false).except(:subunits))
             present currency, with: API::V2::Admin::Entities::Currency
           else
             body errors: currency.errors.full_messages

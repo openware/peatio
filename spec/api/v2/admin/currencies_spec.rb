@@ -213,14 +213,49 @@ describe API::V2::Admin::Currencies, type: :request do
     end
 
     it 'validate enabled param' do
-      api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, enabled: '123'}, token: token
+      api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, enabled: '123' }, token: token
 
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.currency.non_boolean_enabled')
     end
 
+    it 'validates neagtive precision' do
+      expect {
+        api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, enabled: '123' }, token: token
+      }.not_to change { Currency.first }
+
+      expect(response).not_to be_successful
+      expect(response.status).to eq 422
+    end
+
+    it 'verifies subunits >= 0' do
+      api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, subunits: -1 }, token: token
+
+      expect(response).to include_api_error 'admin.currency.invalid_subunits'
+      expect(response).not_to be_successful
+    end
+
+    it 'verifies subunits <= 18' do
+      api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, subunits: 19 }, token: token
+
+      expect(response).to include_api_error 'admin.currency.invalid_subunits'
+      expect(response).not_to be_successful
+    end
+
+    it 'updates base_factor to 1' do
+      expect {
+        api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, subunits: 0 }, token: token
+      }.to change { Currency.first.base_factor }.to 1
+    end
+
+    it 'updates base_factor to 1_000_000_000_000_000_000' do
+      expect {
+        api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, subunits: 18 }, token: token
+      }.to change { Currency.first.base_factor }.to 1_000_000_000_000_000_000
+    end
+
     it 'validate options param' do
-      api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, options: 'test'}, token: token
+      api_post '/api/v2/admin/currencies/update', params: { code: Currency.first.id, options: 'test' }, token: token
 
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.currency.non_json_options')
