@@ -71,6 +71,10 @@ class BlockchainService
       return
     end
 
+    # Fetch transaction from a blockchain that has `pending` status.
+    transaction = adapter.fetch_transaction(transaction) if @adapter.respond_to?(:fetch_transaction) && transaction.status.pending?
+    return unless transaction.status.success?
+
     # TODO: Rewrite this guard clause
     return unless PaymentAddress.exists?(currency_id: transaction.currency_id, address: transaction.to_address)
 
@@ -107,6 +111,8 @@ class BlockchainService
 
     withdrawal.update_column(:block_number, transaction.block_number)
 
+    # Fetch transaction from a blockchain that has `pending` status.
+    transaction = adapter.fetch_transaction(transaction) if @adapter.respond_to?(:fetch_transaction) && transaction.status.pending?
     if transaction.status.failed?
       withdrawal.fail!
     elsif transaction.status.success? && withdrawal.confirmations >= @blockchain.min_confirmations
