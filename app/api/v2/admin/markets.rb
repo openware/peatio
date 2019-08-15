@@ -28,12 +28,6 @@ module API
               default: 0.0,
               desc: -> { API::V2::Admin::Entities::Market.documentation[:max_price][:desc] }
             },
-            min_amount: {
-              type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
-              values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_amount' },
-              default: 0.0,
-              desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
-            },
             position: {
               type: { value: Integer, message: 'admin.market.non_integer_position' },
               default: 0,
@@ -113,6 +107,11 @@ module API
                    values: { value: -> (p){ p && p >= 0 }, message: 'admin.market.invalid_min_price' },
                    default: 0.0,
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:min_price][:desc] }
+          requires :min_amount,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.market.invalid_min_amount' },
+                   default: 0.0,
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
         end
         post '/markets/new' do
           authorize! :create, ::Market
@@ -138,6 +137,11 @@ module API
                    type: { value: BigDecimal, message: 'admin.market.non_decimal_min_price' },
                    values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_price' },
                    desc: -> { API::V2::Admin::Entities::Market.documentation[:min_price][:desc] }
+          optional :min_amount,
+                   type: { value: BigDecimal, message: 'admin.market.non_decimal_min_amount' },
+                   values: { value: -> (p){ p >= 0 }, message: 'admin.market.invalid_min_amount' },
+                   desc: -> { API::V2::Admin::Entities::Market.documentation[:min_amount][:desc] }
+
         end
         post '/markets/update' do
           authorize! :write, ::Market
