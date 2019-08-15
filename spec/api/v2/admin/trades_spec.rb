@@ -12,18 +12,18 @@ describe API::V2::Admin::Trades, type: :request do
   describe 'GET /api/v2/admin/trades' do
     let!(:trades) do
       [
-        create(:trade, :btcusd, price: 12.0.to_d, volume: 12.0, created_at: 3.days.ago),
-        create(:trade, :btcusd, price: 3.0.to_d, volume: 3.0, created_at: 5.days.ago),
-        create(:trade, :btcusd, price: 25.0.to_d, volume: 25.0, created_at: 1.days.ago, ask_member: member),
-        create(:trade, :btcusd, price: 6.0.to_d, volume: 6.0, created_at: 5.days.ago, bid_member: member),
-        create(:trade, :btcusd, price: 5.0.to_d, volume: 5.0, created_at: 5.days.ago, bid_member: member),
+        create(:trade, :btcusd, price: 12.0, amount: 2.0, created_at: 3.days.ago),
+        create(:trade, :btcusd, price: 3.0, amount: 13.0, created_at: 5.days.ago),
+        create(:trade, :btcusd, price: 25.0, amount: 5.0, created_at: 1.days.ago, maker: member),
+        create(:trade, :btcusd, price: 6.0, amount: 5.0, created_at: 5.days.ago, taker: member),
+        create(:trade, :btcusd, price: 5.0, amount: 6.0, created_at: 5.days.ago, taker: member),
       ]
     end
 
     it 'entity provides correct fields' do
       api_get'/api/v2/admin/trades', token: token, params: { limit: 5 }
       result = JSON.parse(response.body).first
-      keys = %w[id volume price funds ask_id bid_id created_at ask_member_uid bid_member_uid taker_type market]
+      keys = %w[id amount price total maker_order_id taker_order_id created_at maker_uid taker_uid taker_type market]
 
       expect(result.keys).to match_array keys
       expect(result.values).not_to include nil
@@ -97,10 +97,10 @@ describe API::V2::Admin::Trades, type: :request do
         expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
       end
 
-      it 'orders by volume descending' do
-        api_get'/api/v2/admin/trades', token: token, params: { order_by: 'price', ordering: 'asc' }
+      it 'orders by amount descending' do
+        api_get'/api/v2/admin/trades', token: token, params: { order_by: 'amount', ordering: 'asc' }
         result = JSON.parse(response.body)
-        expected = trades.sort { |a, b| b.volume <=> a.volume }
+        expected = trades.sort { |a, b| b.amount <=> a.amount }
 
         expect(result.map { |t| t['id'] }).to match_array expected.map(&:id)
       end

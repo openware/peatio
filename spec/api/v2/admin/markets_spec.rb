@@ -136,14 +136,14 @@ describe API::V2::Admin::Markets, type: :request do
 
   describe 'POST /api/v2/admin/markets/update' do
     it 'update market' do
-      api_post '/api/v2/admin/markets/update', params: { id: Market.first.id, base_currency_fee: 0.4 }, token: token
+      api_post '/api/v2/admin/markets/update', params: { id: Market.first.id, taker_fee: 0.4 }, token: token
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
-      expect(result['bid_fee']).to eq '0.4'
+      expect(result['taker_fee']).to eq '0.4'
     end
 
-    it 'checked required params' do
+    it 'checkes required params' do
       api_post '/api/v2/admin/markets/update', params: { }, token: token
 
       expect(response).to have_http_status 422

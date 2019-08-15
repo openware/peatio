@@ -31,8 +31,8 @@ module API
                              .translate(:market => :market_id)
                              .with_daterange
                              .merge(g: [
-                               { ask_member_uid_eq: params[:uid], bid_member_uid_eq: params[:uid], m: 'or' },
-                               { ask_id_eq: params[:order_id], bid_id_eq: params[:order_id], m: 'or' },
+                               { maker_uid_eq: params[:uid], taker_uid_eq: params[:uid], m: 'or' },
+                               { maker_order_id_eq: params[:order_id], taker_order_id_eq: params[:order_id], m: 'or' },
                              ]).build
 
           search = Trade.ransack(ransack_params)

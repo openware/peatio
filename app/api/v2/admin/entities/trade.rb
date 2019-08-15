@@ -10,49 +10,39 @@ module API
           unexpose(:order_id)
 
           expose(
-            :ask_id,
+            :maker_order_id,
             documentation: {
               type: String,
-              desc: 'Trade ask order id.'
+              desc: 'Trade maker order id.'
             }
           )
 
           expose(
-            :bid_id,
+            :taker_order_id,
             documentation: {
               type: String,
-              desc: 'Trade bid order id.'
+              desc: 'Trade taker order id.'
             }
           )
 
           expose(
-            :ask_member_uid,
+            :maker_uid,
             documentation: {
               type: String,
-              desc: 'Trade ask member uid.'
+              desc: 'Trade maker member uid.'
             }
           ) do |trade|
-              trade.ask.member.uid
+              trade.maker.uid
           end
 
           expose(
-            :bid_member_uid,
+            :taker_uid,
             documentation: {
               type: String,
-              desc: 'Trade bid member uid.'
+              desc: 'Trade taker member uid.'
             }
           ) do |trade|
-            trade.bid.member.uid
-          end
-
-          expose(
-            :taker_type,
-            documentation: {
-              type: String,
-              desc: 'Trade taker order type (sell or buy).'
-            }
-          ) do |trade, _options|
-              trade.ask_id > trade.bid_id ? :sell : :buy
+            trade.taker.uid
           end
         end
       end
