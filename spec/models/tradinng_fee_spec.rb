@@ -23,6 +23,18 @@ end
 describe TradingFee, 'Validations' do
   before(:each) { TradingFee.delete_all }
 
+  context 'group presence' do
+    context 'nil group' do
+      subject { build(:trading_fee, market_id: :btceth, group: nil) }
+      it { expect(subject.valid?).to be_falsey }
+    end
+
+    context 'empty string group' do
+      subject { build(:trading_fee, market_id: :btceth, group: '') }
+      it { expect(subject.valid?).to be_falsey }
+    end
+  end
+
   context 'group uniqueness' do
     context 'different markets' do
       before { create(:trading_fee, market_id: :btcusd, group: 'vip-1') }
@@ -94,6 +106,18 @@ describe TradingFee, 'Validations' do
     context 'valid trading_fee' do
       subject { build(:trading_fee, maker: 0.1, taker: 0.2) }
       it { expect(subject.valid?).to be_truthy }
+    end
+  end
+
+  context 'market_id presence' do
+    context 'nil group' do
+      subject { build(:trading_fee, market_id: nil) }
+      it { expect(subject.valid?).to be_falsey }
+    end
+
+    context 'empty string group' do
+      subject { build(:trading_fee, market_id: '') }
+      it { expect(subject.valid?).to be_falsey }
     end
   end
 

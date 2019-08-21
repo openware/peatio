@@ -56,7 +56,9 @@ class TradingFee < ApplicationRecord
 
   # == Validations ==========================================================
 
-  validates :group, uniqueness: { scope: :market_id }
+  validates :group,
+            presence: true,
+            uniqueness: { scope: :market_id }
 
   validates :maker,
             :taker,
@@ -65,8 +67,8 @@ class TradingFee < ApplicationRecord
                             less_than_or_equal_to: MAX_FEE }
 
   validates :market_id,
-            inclusion: { in: ->(_fs){ Market.ids.push(ANY) } },
-            if: ->(fs){ fs.market_id.present? }
+            presence: true,
+            inclusion: { in: ->(_fs){ Market.ids.append(ANY) } }
 
   validates :maker, :taker, precision: { less_than_or_eq_to: FEE_PRECISION }
 
@@ -78,12 +80,12 @@ class TradingFee < ApplicationRecord
 
   class << self
 
-    # Get trading fee schedule for specific order that based on member group and market_id.
+    # Get trading fee for specific order that based on member group and market_id.
     # TradingFee record selected with the next priorities:
     #  1. both group and market_id match
     #  2. group match
     #  3. market_id match
-    #  4. both group and market_id are nil
+    #  4. both group and market_id are 'any'
     #  5. default (zero fees)
     def for(group:, market_id:)
       TradingFee
@@ -94,9 +96,9 @@ class TradingFee < ApplicationRecord
 
   # == Instance Methods =====================================================
 
-  # Filter to get the most suitable trading fee schedule
-  # Method defines weight of trading_fee record in fee schedule.
-  # Group match has greater weight then market_id.
+  # Trading fee suitability expressed in weight.
+  # Trading fee with the greatest weight selected.
+  # Group match has greater weight then market_id match.
   # E.g. Order for member with group 'vip-0' and market_id 'btcusd'
   # (group == 'vip-0' && market_id == 'btcusd') >
   # (group == 'vip-0' && market_id == 'any') >
