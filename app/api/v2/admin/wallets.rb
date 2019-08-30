@@ -64,7 +64,7 @@ module API
                              .merge(kind_eq: params[:kind].present? ? Wallet.kinds[params[:kind].to_sym] : nil)
                              .build
 
-          search = Wallet.ransack(ransack_params)
+          search = ::Wallet.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Wallet
         end
@@ -76,7 +76,7 @@ module API
 
         desc 'List wallet gateways.'
         get '/wallets/gateways' do
-          Wallet.gateways.map(&:to_s)
+          ::Wallet.gateways.map(&:to_s)
         end
 
         desc 'Get a wallet.' do
@@ -90,7 +90,7 @@ module API
         get '/wallets/:id' do
           authorize! :read, Wallet
 
-          present Wallet.find(params[:id]), with: API::V2::Admin::Entities::Wallet
+          present ::Wallet.find(params[:id]), with: API::V2::Admin::Entities::Wallet
         end
 
         desc 'Creates new wallet.' do
@@ -106,8 +106,8 @@ module API
           requires :address,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
           requires :currency,
-                   type: { value: ::Currency, message: 'admin.wallet.currency_doesnt_exist' },
-                   coerce_with: ->(c) { ::Currency.find_by(code: c) || {} },
+                   values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_doesnt_exist' },
+                   as: :currency_id,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
           requires :kind,
                    values: { value: ::Wallet.kind.values, message: 'admin.wallet.invalid_kind' },
@@ -119,7 +119,7 @@ module API
         post '/wallets/new' do
           authorize! :create, Wallet
 
-          wallet = Wallet.new(declared(params).merge(nsig: 1))
+          wallet = ::Wallet.new(declared(params).merge(nsig: 1))
           if wallet.save
             present wallet, with: API::V2::Admin::Entities::Wallet
             status 201
@@ -151,14 +151,14 @@ module API
                    values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
           optional :currency,
-                    type: { value: ::Currency, message: 'admin.wallet.currency_doesnt_exist' },
-                    coerce_with: ->(c) { ::Currency.find_by(code: c) || {} },
-                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
+                   values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_doesnt_exist' },
+                   as: :currency_id,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
         end
         post '/wallets/update' do
           authorize! :write, Wallet
 
-          wallet = Wallet.find(params[:id])
+          wallet = ::Wallet.find(params[:id])
           if wallet.update(declared(params, include_missing: false))
             present wallet, with: API::V2::Admin::Entities::Wallet
           else

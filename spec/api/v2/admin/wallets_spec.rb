@@ -110,14 +110,14 @@ describe API::V2::Admin::Wallets, type: :request do
   describe 'GET /api/v2/admin/wallets/kinds' do
     it 'list kinds' do
       api_get '/api/v2/admin/wallets/kinds', token: token
-      exepct(response).to be_successful
+      expect(response).to be_successful
     end
   end
 
   describe 'GET /api/v2/admin/wallets/gateways' do
     it 'list gateways' do
       api_get '/api/v2/admin/wallets/gateways', token: token
-      exepct(response).to be_successful
+      expect(response).to be_successful
     end
   end
 
@@ -185,6 +185,14 @@ describe API::V2::Admin::Wallets, type: :request do
 
       expect(response).to be_successful
       expect(result['gateway']).to eq 'geth'
+    end
+
+    it 'update currency' do
+      api_post '/api/v2/admin/wallets/update', params: { id: Wallet.first.id, currency: 'btc' }, token: token
+      result = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(result['currency']).to eq 'btc'
     end
 
     it 'validate blockchain_key' do
