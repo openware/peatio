@@ -69,6 +69,16 @@ module API
           present paginate(search.result), with: API::V2::Admin::Entities::Wallet
         end
 
+        desc 'List wallet kinds.'
+        get '/wallets/kinds' do
+          ::Wallet.kind.values
+        end
+
+        desc 'List wallet gateways.'
+        get '/wallets/gateways' do
+          Wallet.gateways.map(&:to_s)
+        end
+
         desc 'Get a wallet.' do
           success API::V2::Admin::Entities::Wallet
         end

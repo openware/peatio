@@ -107,6 +107,20 @@ describe API::V2::Admin::Wallets, type: :request do
     end
   end
 
+  describe 'GET /api/v2/admin/wallets/kinds' do
+    it 'list kinds' do
+      api_get '/api/v2/admin/wallets/kinds', token: token
+      exepct(response).to be_successful
+    end
+  end
+
+  describe 'GET /api/v2/admin/wallets/gateways' do
+    it 'list gateways' do
+      api_get '/api/v2/admin/wallets/gateways', token: token
+      exepct(response).to be_successful
+    end
+  end
+
   describe 'POST /api/v2/admin/wallets/new' do
     it 'create wallet' do
       api_post '/api/v2/admin/wallets/new', params: { name: 'Test', kind: 'deposit', currency: 'eth', address: 'blank', blockchain_key: 'btc-testnet', gateway: 'geth', settings: { uri: 'http://127.0.0.1:18332'}}, token: token
