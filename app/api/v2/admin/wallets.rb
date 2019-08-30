@@ -15,20 +15,11 @@ module API
               default: {},
               desc: -> { API::V2::Admin::Entities::Wallet.documentation[:settings][:desc] }
             },
-            nsig: {
-              type: { value: Integer, message: 'admin.wallet.non_integer_nsig' },
-              default: 1,
-              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:nsig][:desc] }
-            },
             max_balance: {
               type: { value: BigDecimal, message: 'admin.blockchain.non_decimal_max_balance' },
               values: { value: -> (p){ p >= 0 }, message: 'admin.wallet.invalid_max_balance' },
               default: 0.0,
               desc: -> { API::V2::Admin::Entities::Wallet.documentation[:max_balance][:desc] }
-            },
-            parent: {
-              type: { value: String, message: 'admin.wallet.non_string_parent'},
-              desc: -> { API::V2::Admin::Entities::Wallet.documentation[:parent][:desc] }
             },
             status: {
               values: { value: %w(active disabled), message: 'admin.wallet.invalid_status' },
@@ -118,7 +109,7 @@ module API
         post '/wallets/new' do
           authorize! :create, Wallet
 
-          wallet = Wallet.new(declared(params))
+          wallet = Wallet.new(declared(params).merge(nsig: 1))
           if wallet.save
             present wallet, with: API::V2::Admin::Entities::Wallet
             status 201
