@@ -104,8 +104,9 @@ module API
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:name][:desc] }
           requires :address,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
-          requires :currency_id,
-                   values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_id_doesnt_exist' },
+          requires :currency,
+                   type: { value: ::Currency, message: 'admin.wallet.currency_doesnt_exist' },
+                   coerce_with: ->(c) { ::Currency.find_by(code: c) || {} },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
           requires :kind,
                    values: { value: ::Wallet.kind.values, message: 'admin.wallet.invalid_kind' },
@@ -148,7 +149,10 @@ module API
           optional :gateway,
                    values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
-          use :currency
+          optional :currency,
+                    type: { value: ::Currency, message: 'admin.wallet.currency_doesnt_exist' },
+                    coerce_with: ->(c) { ::Currency.find_by(code: c) || {} },
+                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
         end
         post '/wallets/update' do
           authorize! :write, Wallet
