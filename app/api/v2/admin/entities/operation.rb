@@ -59,7 +59,7 @@ module API
             :account_kind,
             documentation: {
               type: String,
-              desc: 'Operation\'s account type (locked or main).'
+              desc: 'Operation\'s account kind (locked or main).'
             }
           ) { |operation| operation.account.kind }
 

@@ -7,9 +7,6 @@ module API
       class Withdraws < Grape::API
         helpers ::API::V2::Admin::Helpers
 
-        COIN_ACTIONS = %w(process load approve fail)
-        FIAT_ACTIONS = %w(accept reject)
-
         desc 'Get all withdraws, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Deposit
@@ -55,7 +52,7 @@ module API
           present paginate(search.result), with: API::V2::Admin::Entities::Withdraw
         end
 
-        desc 'Update withdraw.',
+        desc 'Take an action on the withdrawal.',
           success: API::V2::Admin::Entities::Withdraw
         params do
           requires :id,
@@ -63,61 +60,38 @@ module API
                    desc: -> { API::V2::Admin::Entities::Withdraw.documentation[:id][:desc] }
           requires :action,
                    type: String,
-                   values: { value: -> { COIN_ACTIONS | FIAT_ACTIONS }, message: 'admin.withdraw.invalid_action' },
-                   desc: "Action to perform on withdraw. Valid actions for coin are #{COIN_ACTIONS}."\
-                         "Valid actions for fiat are #{FIAT_ACTIONS}."
-          optional :txid,
-                 type: String,
-                 desc: -> { API::V2::Admin::Entities::Withdraw.documentation[:blockchain_txid][:desc] }
+                   values: { value: -> { ::Withdraw.aasm.events.map(&:name).map(&:to_s) }, message: 'admin.withdraw.invalid_action' },
+                   desc: "Valid actions are #{::Withdraw.aasm.events.map(&:name)}."
+          given action: ->(action) { %w[load dispatch success].include?(action) } do
+            optional :txid,
+                     type: String,
+                     desc: -> { API::V2::Admin::Entities::Withdraw.documentation[:blockchain_txid][:desc] }
+          end
         end
-        post '/withdraws/update' do
+        post '/withdraws/actions' do
           authorize! :write, Withdraw
 
-          withdraw = Withdraw.find(params[:id])
+          declared_params = declared(params, include_missing: false)
 
-          if withdraw.fiat?
-            case params[:action]
-            when 'accept'
-              success = withdraw.transaction do
-                withdraw.accept!
-                withdraw.process!
-                withdraw.dispatch!
-                withdraw.success!
-              end
-              error!({ errors: ['admin.withdraw.cannot_accept'] }, 422) unless success
-            when 'reject'
-              error!({ errors: ['admin.withdraw.cannot_reject'] }, 422) unless withdraw.reject!
-            else
-              error!({ errors: ['admin.withdraw.invalid_action'] }, 422)
-            end
-          else
-            case params[:action]
-            when 'process'
-              success = withdraw.transaction do
-                withdraw.accept!
-                withdraw.process!
-              end
-              error!({ errors: ['admin.withdraw.cannot_process'] }, 422) unless success
-            when 'load'
-              success = withdraw.transaction do
-                withdraw.update!(txid: params[:txid]) if params[:txid].present?
-                withdraw.load!
-              end
-              error!({ errors: ['admin.withdraw.cannot_load'] }, 422) unless success
-            when 'approve'
-              success = withdraw.transaction do
-                withdraw.update!(txid: params[:txid]) if params[:txid].present?
-                withdraw.success!
-              end
-              error!({ errors: ['admin.withdraw.cannot_approve'] }, 422) unless success
-            when 'fail'
-              error!({ errors: ['admin.withdraw.cannot_fail'] }, 422) unless withdraw.fail!
-            else
-              error!({ errors: ['admin.withdraw.invalid_action'] }, 422)
-            end
+          withdraw = Withdraw.find(declared_params[:id])
+
+          if withdraw.fiat? && declared_params[:txid].present?
+            error!({ errors: ['admin.withdraw.redundant_txid'] }, 422)
           end
 
-          present withdraw.reload with: API::V2::Admin::Entities::Withdraw
+          transited = withdraw.transaction do
+            withdraw.update!(txid: declared_params[:txid]) if declared_params[:txid].present?
+            raise ActiveRecord::Rollback unless withdraw.public_send("#{declared_params[:action]}!")
+          rescue ActiveRecord::RecordInvalid
+            raise ActiveRecord::Rollback
+          end
+
+          if transited
+            present withdraw, with: API::V2::Admin::Entities::Withdraw
+          else
+            body errors: ["admin.withdraw.cannot_#{declared_params[:action]}"]
+            status 422
+          end
         end
       end
     end
