@@ -7,6 +7,9 @@ module API
       class Withdraws < Grape::API
         helpers ::API::V2::Admin::Helpers
 
+        COIN_ACTIONS = %w(process load approve fail)
+        FIAT_ACTIONS = %w(accept reject)
+
         desc 'Get all withdraws, result is paginated.',
           is_array: true,
           success: API::V2::Admin::Entities::Deposit
@@ -50,6 +53,71 @@ module API
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
 
           present paginate(search.result), with: API::V2::Admin::Entities::Withdraw
+        end
+
+        desc 'Update withdraw.',
+          success: API::V2::Admin::Entities::Withdraw
+        params do
+          requires :id,
+                   type: Integer,
+                   desc: -> { API::V2::Admin::Entities::Withdraw.documentation[:id][:desc] }
+          requires :action,
+                   type: String,
+                   values: { value: -> { COIN_ACTIONS | FIAT_ACTIONS }, message: 'admin.withdraw.invalid_action' },
+                   desc: "Action to perform on withdraw. Valid actions for coin are #{COIN_ACTIONS}."\
+                         "Valid actions for fiat are #{FIAT_ACTIONS}."
+          optional :txid,
+                 type: String,
+                 desc: -> { API::V2::Admin::Entities::Withdraw.documentation[:blockchain_txid][:desc] }
+        end
+        post '/withdraws/update' do
+          authorize! :write, Withdraw
+
+          withdraw = Withdraw.find(params[:id])
+
+          if withdraw.fiat?
+            case params[:action]
+            when 'accept'
+              success = withdraw.transaction do
+                withdraw.accept!
+                withdraw.process!
+                withdraw.dispatch!
+                withdraw.success!
+              end
+              error!({ errors: ['admin.withdraw.cannot_accept'] }, 422) unless success
+            when 'reject'
+              error!({ errors: ['admin.withdraw.cannot_reject'] }, 422) unless withdraw.reject!
+            else
+              error!({ errors: ['admin.withdraw.invalid_action'] }, 422)
+            end
+          else
+            case params[:action]
+            when 'process'
+              success = withdraw.transaction do
+                withdraw.accept!
+                withdraw.process!
+              end
+              error!({ errors: ['admin.withdraw.cannot_process'] }, 422) unless success
+            when 'load'
+              success = withdraw.transaction do
+                withdraw.update!(txid: params[:txid]) if params[:txid].present?
+                withdraw.load!
+              end
+              error!({ errors: ['admin.withdraw.cannot_load'] }, 422) unless success
+            when 'approve'
+              success = withdraw.transaction do
+                withdraw.update!(txid: params[:txid]) if params[:txid].present?
+                withdraw.success!
+              end
+              error!({ errors: ['admin.withdraw.cannot_approve'] }, 422) unless success
+            when 'fail'
+              error!({ errors: ['admin.withdraw.cannot_fail'] }, 422) unless withdraw.fail!
+            else
+              error!({ errors: ['admin.withdraw.invalid_action'] }, 422)
+            end
+          end
+
+          present withdraw.reload with: API::V2::Admin::Entities::Withdraw
         end
       end
     end
