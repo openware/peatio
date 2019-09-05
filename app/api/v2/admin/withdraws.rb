@@ -84,6 +84,8 @@ module API
             unless withdraw.public_send("#{declared_params[:action]}!")
               raise ActiveRecord::Rollback
             end
+          rescue StandardError
+            raise ActiveRecord::Rollback
           end
 
           if transited
