@@ -81,9 +81,9 @@ module API
 
           transited = withdraw.transaction do
             withdraw.update!(txid: declared_params[:txid]) if declared_params[:txid].present?
-            raise ActiveRecord::Rollback unless withdraw.public_send("#{declared_params[:action]}!")
-          rescue ActiveRecord::RecordInvalid
-            raise ActiveRecord::Rollback
+            unless withdraw.public_send("#{declared_params[:action]}!")
+              raise ActiveRecord::Rollback
+            end
           end
 
           if transited
