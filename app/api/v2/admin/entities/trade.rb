@@ -8,6 +8,9 @@ module API
         class Trade < API::V2::Entities::Trade
           unexpose(:side)
           unexpose(:order_id)
+          unexpose(:fee_currency)
+          unexpose(:fee)
+          unexpose(:fee_amount)
 
           expose(
             :maker_order_email,
@@ -43,12 +46,12 @@ module API
           ) { |trade| fee_amount(trade, trade.maker_order) }
 
           expose(
-            :maker_currency,
+            :maker_fee_currency,
             documentation: {
               type: String,
-              desc: 'Trade maker currency code.'
+              desc: 'Trade maker fee currency code.'
             }
-          ) { |trade| trade.maker_order.currency.code }
+          ) { |trade| fee_currency(trade.maker_order) }
 
           expose(
             :maker_order,
@@ -73,12 +76,12 @@ module API
           ) { |trade| trade.taker.uid }
 
           expose(
-            :taker_currency,
+            :taker_fee_currency,
             documentation: {
               type: String,
-              desc: 'Trade taker currency code.'
+              desc: 'Trade taker fee currency code.'
             }
-          ) { |trade| trade.taker_order.currency.code }
+          ) { |trade| fee_currency(trade.taker_order) }
 
           expose(
             :taker_fee,
@@ -102,10 +105,6 @@ module API
             using: API::V2::Admin::Entities::Order,
             if: ->(object, options) { options[:extended] }
           )
-
-          def fee_amount(trade, order)
-            trade.order_fee(order) * (order.side == 'buy' ? trade.amount : trade.total)
-          end
         end
       end
     end
