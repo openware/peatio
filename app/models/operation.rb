@@ -36,7 +36,6 @@ class Operation < ApplicationRecord
   end
 
   class << self
-
     def operation_type
       name.demodulize.downcase
     end

@@ -59,7 +59,7 @@ describe Transfer do
 
           it 'invalidates transfer' do
             expect(subject.valid?).to be_falsey
-            expect(subject).to include_ar_error(:base, /invalidates accounting equation for btc/)
+            expect(subject).to include_ar_error(:base, /invalidates accounting equation/)
           end
         end
 
@@ -71,7 +71,7 @@ describe Transfer do
 
           it 'invalidates transfer' do
             expect(subject.valid?).to be_falsey
-            expect(subject).to include_ar_error(:base, /invalidates accounting equation for btc, eth, usd/)
+            expect(subject).to include_ar_error(:base, /invalidates accounting equation/)
           end
         end
 
@@ -119,7 +119,7 @@ describe Transfer do
 
           it 'invalidates transfer' do
             expect(subject.valid?).to be_falsey
-            expect(subject).to include_ar_error(:base, /invalidates accounting equation for usd/)
+            expect(subject).to include_ar_error(:base, /invalidates accounting equation/)
           end
         end
       end

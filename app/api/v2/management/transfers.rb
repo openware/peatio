@@ -84,34 +84,7 @@ module API
           end
 
           present Transfer.create!(attrs), with: Entities::Transfer
-
-          # declared_params = declared(params)
-
-          # Transfer.transaction do
-          #   transfer = Transfer.create!(declared_params.slice(:key, :category, :description))
-          #   declared_params[:operations].map do |op_pair|
-          #     shared_params = { currency: op_pair[:currency],
-          #                       reference: transfer }
-
-          #     debit_params = op_pair[:account_src]
-          #                      .merge(debit: op_pair[:amount])
-          #                      .merge(shared_params)
-          #                      .compact
-
-
-          #     credit_params = op_pair[:account_dst]
-          #                      .merge(credit: op_pair[:amount])
-          #                      .merge(shared_params)
-          #                      .compact
-
-          #     create_operation!(debit_params)
-          #     create_operation!(credit_params)
-          #   end
-          # end
-
-          # present Transfer.find_by!(key: declared_params[:key]),
-          #         with: Entities::Transfer
-          status 200
+          status 201
         rescue ActiveRecord::RecordInvalid => e
           body errors: e.message
           status 422

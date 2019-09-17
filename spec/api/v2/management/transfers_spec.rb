@@ -69,7 +69,7 @@ describe API::V2::Management::Transfers, type: :request do
         request
       end
 
-      it { expect(response).to have_http_status(200) }
+      it { expect(response).to have_http_status(201) }
     end
 
     context 'empty operations' do
@@ -256,7 +256,7 @@ describe API::V2::Management::Transfers, type: :request do
 
       it do
         request
-        expect(response).to have_http_status 200
+        expect(response).to have_http_status 201
       end
 
       it 'returns transfer with operations' do
@@ -407,7 +407,7 @@ describe API::V2::Management::Transfers, type: :request do
 
       it do
         request
-        expect(response).to have_http_status 200
+        expect(response).to have_http_status 201
       end
 
       it 'returns transfer with liabilities' do

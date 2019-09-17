@@ -29,7 +29,9 @@ class Transfer < ApplicationRecord
 
   validates :key, uniqueness: true, presence: true
   validates :category, presence: true
-  validates_with AccountingEquationValidator
+  validate do
+    errors.add(:base, 'invalidates accounting equation') unless Operations.validate_accounting_equation(operations)
+  end
 
   # == Scopes ===============================================================
 
@@ -43,6 +45,10 @@ class Transfer < ApplicationRecord
 
   def update_legacy_balances
     liabilities.where.not(member_id: nil).find_each { |l| Operations.update_legacy_balance(l) }
+  end
+
+  def operations
+    assets + liabilities + revenues + expenses
   end
 end
 
