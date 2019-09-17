@@ -30,7 +30,13 @@ class Operation < ApplicationRecord
 
   self.abstract_class = true
 
+  # Returns operation amount with sign.
+  def amount
+    credit.zero? ? -debit : credit
+  end
+
   class << self
+
     def operation_type
       name.demodulize.downcase
     end

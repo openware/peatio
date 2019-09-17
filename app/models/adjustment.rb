@@ -34,6 +34,7 @@ class Adjustment < ApplicationRecord
   validates :validator, presence: { unless: :pending? }
   validates :category, inclusion: { in: CATEGORIES }
   validates :currency_id, inclusion: { in: ->(_) { Currency.codes } }
+  validates_with AccountingEquationValidator
 
   validate on: :create do
     errors.add(:prebuild_operations, 'are invalid') unless prebuild_operations.map(&:valid?).all?(true)

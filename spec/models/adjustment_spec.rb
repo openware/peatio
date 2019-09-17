@@ -26,6 +26,48 @@ describe Adjustment do
       expect(operations.map(&:valid?)).to be_truthy
       expect(operations.map(&:reference_type)).to all eq 'Adjustment'
     end
+
+    describe 'accounting equation' do
+      context 'single asset operation' do
+        subject { build(:adjustment, asset: build(:asset)) }
+
+        it 'invalidates transfer' do
+          expect(subject.valid?).to be_falsey
+          expect(subject).to include_ar_error(:base, /invalidates accounting equation/)
+        end
+      end
+
+      context 'different operations with invalid accounting sum' do
+        subject do
+          build(:adjustment,
+                asset: asset,
+                liability: liability)
+        end
+
+        let(:asset) { build(:asset, credit: 1, currency_id: :btc) }
+        let(:liability) { build(:liability, :with_member, credit: 5, currency_id: :btc) }
+
+        it 'invalidates transfer' do
+          expect(subject.valid?).to be_falsey
+          expect(subject).to include_ar_error(:base, /invalidates accounting equation for btc/)
+        end
+      end
+
+      context 'different operations with valid accounting sum' do
+        subject do
+          build(:adjustment,
+                asset: asset,
+                liability: liability)
+        end
+
+        let(:asset) { build(:asset, credit: 1, currency_id: :btc) }
+        let(:liability) { build(:liability, :with_member, credit: 1, currency_id: :btc) }
+
+        it 'invalidates transfer' do
+          expect(subject.valid?).to be_truthy
+        end
+      end
+    end
   end
 
   context '#prebuild_operations' do
