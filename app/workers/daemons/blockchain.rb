@@ -36,6 +36,8 @@ module Workers
             end
             logger.info {"Finished processing #{bc.name} blocks."}
           rescue StandardError => e
+            raise e if is_db_connection_error?(e)
+
             report_exception(e)
             logger.warn {"Error: #{e}. Sleeping for 10 seconds"}
             sleep(10)
