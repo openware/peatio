@@ -77,6 +77,11 @@ module API
           end
 
           currency = Currency.find(params[:currency])
+
+          unless currency.withdrawal_enabled?
+            error!({ errors: ['account.currency.withdrawal_disabled'] }, 422) 
+          end
+
           withdraw = "withdraws/#{currency.type}".camelize.constantize.new \
             beneficiary: beneficiary,
             sum:         params[:amount],

@@ -94,8 +94,8 @@ describe Account do
       currency = Currency.find(:eth)
       currency.transaction do
         # We have created 3 members so each of them has account for each currency.
-        expect{ currency.update_columns(enabled: false) }.to change { Account.enabled.count }.by(-3)
-        currency.update_columns(enabled: true)
+        expect{ currency.update_columns(visible: false) }.to change { Account.enabled.count }.by(-3)
+        currency.update_columns(visible: true)
       end
     end
   end

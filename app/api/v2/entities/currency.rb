@@ -63,6 +63,22 @@ module API
         )
 
         expose(
+          :deposit_enabled,
+          documentation: {
+            type: String,
+            desc: 'Currency deposit possibility status (true/false).'
+          }
+        )
+
+        expose(
+          :withdrawal_enabled,
+          documentation: {
+            type: String,
+            desc: 'Currency withdrawal possibility status (true/false).'
+          }
+        )
+
+        expose(
           :deposit_fee,
           documentation: {
             desc: 'Currency deposit fee',

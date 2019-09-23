@@ -36,7 +36,7 @@ describe API::V2::Account::Balances, type: :request do
     context 'disable currency' do
 
       before do
-        Currency.find(:eth).update(enabled: false)
+        Currency.find(:eth).update(visible: false)
         api_get '/api/v2/account/balances', token: token
       end
 
@@ -72,7 +72,7 @@ describe API::V2::Account::Balances, type: :request do
     context 'disable currency' do
 
       before do
-        Currency.find(:eth).update(enabled: false)
+        Currency.find(:eth).update(visible: false)
         api_get '/api/v2/account/balances/eth', token: token
       end
 

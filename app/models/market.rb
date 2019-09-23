@@ -81,11 +81,12 @@ class Market < ApplicationRecord
 
   validates :price_precision,
             numericality: {
-              less_than_or_equal_to: -> (_m) { FUNDS_PRECISION }
+              less_than_or_equal_to: ->(_m) { FUNDS_PRECISION }
             }
+
   validates :amount_precision,
             numericality: {
-              less_than_or_equal_to: -> (m) { FUNDS_PRECISION - m.price_precision }
+              less_than_or_equal_to: ->(m) { FUNDS_PRECISION - m.price_precision }
             }
 
   validates :base_currency, :quote_currency, inclusion: { in: -> (_) { Currency.codes } }
