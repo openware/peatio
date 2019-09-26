@@ -91,7 +91,7 @@ class Market < ApplicationRecord
 
   validates :base_currency, :quote_currency, inclusion: { in: -> (_) { Currency.codes } }
 
-  validate  :currencies_must_be_enabled, if: ->(m) { m.state.enabled? }
+  validate  :currencies_must_be_visible, if: ->(m) { m.state.enabled? }
 
   validates :min_price,
             presence: true,
@@ -177,9 +177,9 @@ class Market < ApplicationRecord
 
 private
 
-  def currencies_must_be_enabled
+  def currencies_must_be_visible
     %i[base_currency quote_currency].each do |unit|
-      errors.add(unit, 'is not enabled.') if Currency.lock.find_by_id(public_send(unit))&.disabled?
+      errors.add(unit, 'is not visible.') unless Currency.lock.find_by_id(public_send(unit))&.visible?
     end
   end
 end

@@ -106,7 +106,6 @@ ActiveRecord::Schema.define(version: 2019_09_23_085927) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["position"], name: "index_currencies_on_position"
-    t.index ["visible"], name: "index_currencies_on_enabled_and_code"
     t.index ["visible"], name: "index_currencies_on_visible"
   end
 

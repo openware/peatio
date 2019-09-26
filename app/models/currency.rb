@@ -59,7 +59,7 @@ class Currency < ApplicationRecord
 
   # == Scopes ===============================================================
 
-  scope :enabled, -> { where(visible: true) }
+  scope :visible, -> { where(visible: true) }
   scope :deposit_enabled, -> { where(deposit_enabled: true) }
   scope :withdrawal_enabled, -> { where(withdrawal_enabled: true) }
   scope :ordered, -> { order(position: :asc) }
@@ -151,10 +151,6 @@ class Currency < ApplicationRecord
       hot:      coin? ? balance : nil }
   end
 
-  def disabled?
-    !visible
-  end
-
   def is_erc20?
     erc20_contract_address.present?
   end
@@ -225,7 +221,6 @@ end
 #
 # Indexes
 #
-#  index_currencies_on_enabled_and_code  (visible)
-#  index_currencies_on_position          (position)
-#  index_currencies_on_visible           (visible)
+#  index_currencies_on_position  (position)
+#  index_currencies_on_visible   (visible)
 #

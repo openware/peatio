@@ -52,28 +52,28 @@ describe API::V2::Public::Currencies, type: :request do
   end
 
   describe 'GET /api/v2/public/currencies' do
-    it 'lists enabled currencies' do
+    it 'lists visible currencies' do
       get '/api/v2/public/currencies'
       expect(response).to be_successful
 
       result = JSON.parse(response.body)
-      expect(result.size).to eq Currency.enabled.size
+      expect(result.size).to eq Currency.visible.size
     end
 
-    it 'lists enabled coins' do
+    it 'lists visible coins' do
       get '/api/v2/public/currencies', params: { type: 'coin' }
       expect(response).to be_successful
 
       result = JSON.parse(response.body)
-      expect(result.size).to eq Currency.coins.enabled.size
+      expect(result.size).to eq Currency.coins.visible.size
     end
 
-    it 'lists enabled fiats' do
+    it 'lists visible fiats' do
       get '/api/v2/public/currencies', params: { type: 'fiat' }
       expect(response).to be_successful
 
       result = JSON.parse(response.body, symbolize_names: true)
-      expect(result.size).to eq Currency.fiats.enabled.size
+      expect(result.size).to eq Currency.fiats.visible.size
       expect(result.dig(0, :id)).to eq 'usd'
     end
 

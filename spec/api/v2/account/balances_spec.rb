@@ -42,7 +42,7 @@ describe API::V2::Account::Balances, type: :request do
 
       it 'returns only balances of enabled currencies' do
         result = JSON.parse(response.body)
-        expect(result.count).to eq Currency.enabled.count
+        expect(result.count).to eq Currency.visible.count
       end
 
     end

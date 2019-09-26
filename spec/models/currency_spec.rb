@@ -31,11 +31,11 @@ describe Currency do
   context 'scopes' do
     let(:currency) { Currency.find(:btc) }
 
-    context 'enabled' do
-      it 'changes enabled scope count' do
-        enabled = Currency.enabled.count
+    context 'visible' do
+      it 'changes visible scope count' do
+        visible = Currency.visible.count
         currency.update(visible: false)
-        expect(Currency.enabled.count).to eq(enabled - 1)
+        expect(Currency.visible.count).to eq(visible - 1)
       end
     end
 
