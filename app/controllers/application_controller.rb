@@ -1,10 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-require_dependency 'authorization/bearer'
-
 class ApplicationController < ActionController::Base
-  include Authorization::Bearer
   extend Memoist
 
   before_action :set_ets_context!, if: -> { defined?(Raven) }

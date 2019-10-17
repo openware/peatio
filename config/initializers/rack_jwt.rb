@@ -42,7 +42,7 @@ auth_args = {
   secret:   Rails.configuration.x.jwt_public_key,
   options:  verify_options,
   verify:   Rails.configuration.x.jwt_public_key.present?,
-  exclude:  %w(/public),
+  exclude:  %w(/public /management),
   on_error: on_error
 }
 
