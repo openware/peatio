@@ -55,9 +55,15 @@ module API
 
       def current_user
         # JWT authentication provides member email.
-        if env.key?('api_v2.authentic_member_email')
-          # TODO: UID should be used for member identify.
-          Member.find_by_email(env['api_v2.authentic_member_email'])
+        if env.key?('jwt.payload')
+          begin
+            Member.from_payload(env['jwt.payload'].symbolize_keys)
+              # Handle race conditions when creating member record.
+              # We do not handle race condition for update operations.
+              # http://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-find_or_create_by
+          rescue ActiveRecord::RecordNotUnique
+            retry
+          end
         end
       end
       memoize :current_user
