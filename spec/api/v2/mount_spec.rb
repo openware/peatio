@@ -4,7 +4,7 @@
 module API
   module V2
     class Mount
-      # Use /public namespace since rack-jwt exclude public authorization.
+      # Use /public namespace for skipping rack-jwt authorization.
       namespace :public do
         get('/null') { '' }
         get('/record-not-found') { raise ActiveRecord::RecordNotFound }

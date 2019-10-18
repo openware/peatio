@@ -54,10 +54,10 @@ module API
       end
 
       def current_user
-        # JWT authentication provides member email.
-        if env.key?('jwt.payload')
+        # jwt.payload provided by rack-jwt
+        if request.env.key?('jwt.payload')
           begin
-            Member.from_payload(env['jwt.payload'].symbolize_keys)
+            Member.from_payload(request.env['jwt.payload'].symbolize_keys)
               # Handle race conditions when creating member record.
               # We do not handle race condition for update operations.
               # http://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-find_or_create_by
