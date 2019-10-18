@@ -29,8 +29,10 @@ Rails.configuration.x.jwt_options = {
   }.compact.transform_values!(&:to_i)
 
   jwt_options.merge!(leeway_options)
-  # Set algorithm to none if public key was not provided.
-  # That is how rack-jwt h
+
+  # Set algorithm to 'none' if public key was not provided.
+  # Since rack-jwt requires public_key for all algorithms except 'none'
+  # Also using empty public key doesn't make sense unless you use 'none' algorithm.
   jwt_options[:algorithm] = 'none' if Rails.configuration.x.jwt_public_key.blank?
 end
 
