@@ -1,8 +1,9 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+# Require JWT initializer to setup JWT stuff.
 require_relative 'jwt'
-require 'rack/jwt'
+require 'jwt/rack'
 
 on_error = lambda do |_error|
   message = 'jwt.decode_and_verify'
@@ -20,4 +21,4 @@ auth_args = {
   on_error: on_error
 }
 
-Rails.application.config.middleware.use Rack::JWT::Auth, auth_args
+Rails.application.config.middleware.use JWT::Rack::Auth, auth_args

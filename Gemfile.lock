@@ -6,14 +6,6 @@ GIT
       rails (>= 4.1)
       vault (~> 0.5)
 
-GIT
-  remote: https://github.com/ysv/rack-jwt
-  revision: 880eb590c98c855b2c8c9b1b434ce57d595f75e8
-  specs:
-    rack-jwt (0.4.0)
-      jwt (~> 2.1.0)
-      rack
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -208,6 +200,9 @@ GEM
     jwt-multisig (1.0.0)
       activesupport (>= 4.0, < 6.0)
       jwt (~> 2.1)
+    jwt-rack (0.1.0)
+      jwt (~> 2.1.0)
+      rack
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.1.1)
@@ -488,6 +483,7 @@ DEPENDENCIES
   jquery-rails (~> 4.3.5)
   jwt (~> 2.1.0)
   jwt-multisig (~> 1.0.0)
+  jwt-rack (~> 0.1.0)
   kaminari (~> 1.1.1)
   listen (>= 3.0.5, < 3.2)
   memoist (~> 0.16.0)
@@ -505,7 +501,6 @@ DEPENDENCIES
   puma (~> 3.12.2)
   rack-attack (~> 5.4.2)
   rack-cors (~> 1.0.2)
-  rack-jwt!
   rails (~> 5.2.3)
   ransack (~> 2.1.1)
   rbtree (~> 0.4.2)
