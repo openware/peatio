@@ -1,7 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
-# Require JWT initializer to setup JWT stuff.
+# Require JWT initializer to configure JWT key & options.
 require_relative 'jwt'
 require 'jwt/rack'
 
