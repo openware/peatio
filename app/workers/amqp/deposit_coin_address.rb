@@ -29,8 +29,8 @@ module Workers
             result = wallet_service.create_address!(acc)
 
             pa.update!(address: result[:address],
-                      secret:  result[:secret],
-                      details: result.fetch(:details, {}).merge(pa.details))
+                       secret:  result[:secret],
+                       details: result.fetch(:details, {}).merge(pa.details))
           end
 
           # Enqueue address generation again if address is not provided.

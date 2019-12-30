@@ -8,8 +8,7 @@ module API
         def before
           return unless auth_by_jwt?
 
-          # TODO: UID should be used for member identify.
-          env['api_v2.authentic_member_email'] = \
+          env['api_v2.authentic_member_uid'] = \
             JWTAuthenticator.new(request.headers['Authorization']).authenticate
         end
       private

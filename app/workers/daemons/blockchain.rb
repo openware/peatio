@@ -4,7 +4,6 @@
 module Workers
   module Daemons
     class Blockchain < Base
-      # TODO: Start synchronization of blockchains created in run-time.
       def run
         lock(self.class, 0) { ::Blockchain.active.map { |b| Thread.new { process(b) } }.map(&:join) }
       end

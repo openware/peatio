@@ -12,7 +12,7 @@ module API
 
         def apply_rules!
           Rack::Attack.throttle 'Limit number of calls to API', limit: 6000, period: 5.minutes do |req|
-            req.env['api_v2.authentic_member_email']
+            req.env['api_v2.authentic_member_uid']
           end
         end
       end

@@ -60,6 +60,10 @@ gem 'vault', '~> 0.12', require: false
 gem 'vault-rails', git: 'http://github.com/rubykube/vault-rails'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'net-http-persistent', '~> 3.0.1'
+gem 'oj', '~> 3.10.0'
+gem 'concurrent-ruby-ext' # This gem works together with concurrent-ruby and improves performance of concurrency tools.
+                          # Leave version blank because it is controlled by concurrent-ruby gem.
+gem 'newrelic_rpm', '~> 6.7', require: false
 
 group :development, :test do
   gem 'irb'

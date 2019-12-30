@@ -2,8 +2,7 @@
 # frozen_string_literal: true
 
 class AMQPQueue
-
-  class <<self
+  class << self
     def connection
       @connection ||= Bunny.new(AMQPConfig.connect).tap do |conn|
         conn.start

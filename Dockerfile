@@ -40,7 +40,6 @@ RUN mkdir -p /opt/vendor/bundle \
 
 # Copy application sources.
 COPY . $APP_HOME
-# TODO: Use COPY --chown=app:app when Docker Hub will support it.
 RUN chown -R app:app $APP_HOME
 
 # Switch to application user.

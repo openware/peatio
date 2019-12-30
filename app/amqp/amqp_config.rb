@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class AMQPConfig
-  class <<self
+  class << self
     def data
       @data ||= Hashie::Mash.new(
         YAML.safe_load(
@@ -46,8 +46,13 @@ class AMQPConfig
 
     def queue(id)
       name = data[:queue][id][:name]
-      settings = { durable: data[:queue][id][:durable] }
-      [name, settings]
+      settings = data[:queue][id].slice("durable", "arguments", "auto_delete") # "slice" requires stringified keys.
+
+      if data[:queue][id][:max_length]
+        settings[:arguments]["x-max-length"] = data[:queue][id][:max_length]
+      end
+
+      [name, settings.deep_symbolize_keys]
     end
 
     def exchange(id)
@@ -55,6 +60,5 @@ class AMQPConfig
       name = data[:exchange][id][:name]
       [type, name]
     end
-
   end
 end

@@ -20,3 +20,19 @@ class << GrapeSwagger::DocMethods::ParseParams
     @parsed_param[:description] = description
   end
 end
+
+# Use optimized JSON in Grape.
+
+class Grape::Validations::Types::Json
+  class << self
+    attr_accessor :adapter
+  end
+
+  self.adapter = Oj
+
+  def coerce(input)
+    # Allow nulls and blank strings.
+    return if input.nil? || input =~ /^\s*$/
+    self.class.adapter.load(input).deep_symbolize_keys
+  end
+end
