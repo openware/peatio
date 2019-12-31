@@ -21,7 +21,8 @@ module API
         # @return [String, Member, NilClass]
         def authenticate
           payload, _header = authenticate!(@token)
-          fetch_member(payload).uid
+          fetch_member(payload)
+          Member.fetch_email(payload)
         rescue => e
           if Peatio::Auth::Error === e
             raise e
