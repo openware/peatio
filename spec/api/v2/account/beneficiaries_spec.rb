@@ -260,6 +260,63 @@ describe API::V2::Account::Beneficiaries, 'POST', type: :request do
         end
       end
 
+      context 'invalid character in address' do
+        before do
+          beneficiary_data[:data][:address] = "'" + Faker::Blockchain::Bitcoin.address
+        end
+        it do
+          api_post endpoint, params: beneficiary_data, token: token
+          expect(response.status).to eq 422
+          expect(response).to include_api_error('account.beneficiary.failed_to_create')
+        end
+      end
+
+      context 'duplicated address' do
+        context 'same currency' do
+          before do
+            create(:beneficiary,
+                   member: member,
+                   currency_id: beneficiary_data[:currency],
+                   data: {address: beneficiary_data.dig(:data, :address)})
+          end
+
+          it do
+            api_post endpoint, params: beneficiary_data, token: token
+            expect(response.status).to eq 422
+            expect(response).to include_api_error('account.beneficiary.duplicate_address')
+          end
+        end
+
+        context 'different currencies' do
+          before do
+            create(:beneficiary,
+                   member: member,
+                   currency_id: :eth,
+                   data: {address: beneficiary_data.dig(:data, :address)})
+          end
+
+          it do
+            api_post endpoint, params: beneficiary_data, token: token
+            expect(response.status).to eq 201
+          end
+        end
+
+        context 'truncates spaces in address' do
+          let(:address) { Faker::Blockchain::Bitcoin.address }
+
+          before do
+            beneficiary_data[:data][:address] = " " + address + " "
+          end
+          it do
+            api_post endpoint, params: beneficiary_data, token: token
+            expect(response.status).to eq 201
+
+            result = JSON.parse(response.body)
+            expect(Beneficiary.find(result['id']).data['address']).to eq(address)
+          end
+        end
+      end
+
       # TODO: Test nil full_name in data for both fiat and crypto.
     end
 
