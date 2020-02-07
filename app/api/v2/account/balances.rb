@@ -19,8 +19,13 @@ module API
           use :pagination
         end
         get '/balances' do
-          present paginate(current_user.accounts.visible.ordered),
-                  with: Entities::Account
+          if params[:not_empty] == "true"
+            present paginate(current_user.accounts.visible.ordered.where.not(balance: 0)),
+                    with: Entities::Account
+          else
+            present paginate(current_user.accounts.visible.ordered),
+                    with: Entities::Account
+          end
         end
 
         desc 'Get user account by currency' do
