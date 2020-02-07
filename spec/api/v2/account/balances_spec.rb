@@ -32,7 +32,7 @@ describe API::V2::Account::Balances, type: :request do
       end
     end
 
-    context 'not nil balances' do
+    context 'non zero balances' do
       before { api_get '/api/v2/account/balances', token: token, params: {not_empty: true} }
 
       it { expect(response).to have_http_status 200 }
@@ -40,9 +40,9 @@ describe API::V2::Account::Balances, type: :request do
       it 'returns current user balances' do
         result = JSON.parse(response.body)
         expect(result).to contain_exactly(
-                              { 'currency' => 'btc',  'balance' => '5.0',  'locked'  => '5.0' },
-                              { 'currency' => 'eth',  'balance' => '30.5', 'locked'  => '0.0' },
-                              )
+                            { 'currency' => 'btc',  'balance' => '5.0',  'locked'  => '5.0' },
+                            { 'currency' => 'eth',  'balance' => '30.5', 'locked'  => '0.0' },
+                            )
       end
     end
 
