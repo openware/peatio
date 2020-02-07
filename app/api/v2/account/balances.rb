@@ -18,12 +18,12 @@ module API
         params do
           use :pagination
           optional :not_empty,
-                   type: String,
-                   values: { value: ["true", "false"], message: 'not allowed'},
+                   type: { value: Boolean, message: 'account.balances.non_expected_value' },
+                   default: false,
                    desc: 'Filter non zero balances.'
         end
         get '/balances' do
-          if params[:not_empty] == "true"
+          if params[:not_empty]
             present paginate(current_user.accounts.visible.ordered.where('balance > 0 OR locked > 0')),
                     with: Entities::Account
           else
