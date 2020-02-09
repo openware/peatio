@@ -63,6 +63,17 @@ describe API::V2::Account::Balances, type: :request do
       end
     end
 
+    context 'use non_empty parameter == string' do
+      before { api_get '/api/v2/account/balances', token: token, params: {not_empty: "token"} }
+
+      it { expect(response).to have_http_status 422 }
+
+      it 'returns all balances' do
+        result = JSON.parse(response.body)
+        expect(result).to contain_exactly(["errors", ["account.balances.non_expected_value"]])
+      end
+    end
+
     context 'pagination' do
       before { api_get '/api/v2/account/balances', {token: token, params: {limit: 2} } }
 
