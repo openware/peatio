@@ -13,6 +13,7 @@ on_error = lambda do |_error|
   [401, headers, [body]]
 end
 
+# TODO: Fixme in jwt-rack handle api/v2// as api/v2.
 auth_args = {
   secret:   Rails.configuration.x.jwt_public_key,
   options:  Rails.configuration.x.jwt_options,
