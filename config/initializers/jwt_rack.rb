@@ -17,7 +17,8 @@ auth_args = {
   secret:   Rails.configuration.x.jwt_public_key,
   options:  Rails.configuration.x.jwt_options,
   verify:   Rails.configuration.x.jwt_public_key.present?,
-  exclude:  %w(/api/v2/public /api/v2/management /api/v2/swagger /api/v2/admin/swagger),
+  exclude:  %w(/api/v2/public /api/v2//public /api/v2/management /api/v2//management
+               /api/v2/swagger /api/v2//swagger /api/v2/admin/swagger /api/v2//admin/swagger),
   on_error: on_error
 }
 
