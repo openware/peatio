@@ -18,6 +18,10 @@ describe API::V2::Account::Balances, type: :request do
 
   describe 'GET api/v2/account/balances' do
 
+    before do
+      member.get_account('usd')
+    end
+
     context 'all balances' do
       before { api_get '/api/v2/account/balances', token: token }
 
@@ -26,18 +30,19 @@ describe API::V2::Account::Balances, type: :request do
       it 'returns current user balances' do
         result = JSON.parse(response.body)
         expect(result).to contain_exactly(
-                            { 'currency' => 'btc',  'balance' => '5.0',  'locked'  => '5.0' },
-                            { 'currency' => 'eth',  'balance' => '30.5', 'locked'  => '0.0' },
-                            )
+                              { 'currency' => 'btc',  'balance' => '5.0',  'locked'  => '5.0' },
+                              { 'currency' => 'eth',  'balance' => '30.5', 'locked'  => '0.0' },
+                              { 'currency' => 'usd',  'balance' => '0.0',  'locked'  => '0.0' },
+                              )
       end
     end
 
-    context 'use non_empty parameter == true' do
+    context 'use nonzero parameter == true' do
       before { api_get '/api/v2/account/balances', token: token, params: {nonzero: true} }
 
       it { expect(response).to have_http_status 200 }
 
-      it 'returns non zero balances' do
+      it 'returns nonzero balances' do
         result = JSON.parse(response.body)
         expect(result).to contain_exactly(
                             { 'currency' => 'btc',  'balance' => '5.0',  'locked'  => '5.0' },
@@ -46,7 +51,7 @@ describe API::V2::Account::Balances, type: :request do
       end
     end
 
-    context 'use non_empty parameter == false' do
+    context 'use nonzero parameter == false' do
       before { api_get '/api/v2/account/balances', token: token, params: {nonzero: false} }
 
       it { expect(response).to have_http_status 200 }
@@ -56,8 +61,6 @@ describe API::V2::Account::Balances, type: :request do
         expect(result).to contain_exactly(
                             { 'currency' => 'btc',  'balance' => '5.0',  'locked'  => '5.0' },
                             { 'currency' => 'eth',  'balance' => '30.5', 'locked'  => '0.0' },
-                            { 'currency' => 'ring', 'balance' => '0.0',  'locked'  => '0.0' },
-                            { 'currency' => 'trst', 'balance' => '0.0',  'locked'  => '0.0' },
                             { 'currency' => 'usd',  'balance' => '0.0',  'locked'  => '0.0' },
                             )
       end
@@ -96,7 +99,7 @@ describe API::V2::Account::Balances, type: :request do
 
       it 'returns only balances of enabled currencies' do
         result = JSON.parse(response.body)
-        expect(result.count).to eq 1
+        expect(result.count).to eq 2
       end
 
     end
