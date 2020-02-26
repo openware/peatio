@@ -33,7 +33,7 @@ describe API::V2::Account::Balances, type: :request do
     end
 
     context 'use non_empty parameter == true' do
-      before { api_get '/api/v2/account/balances', token: token, params: {not_empty: true} }
+      before { api_get '/api/v2/account/balances', token: token, params: {nonzero: true} }
 
       it { expect(response).to have_http_status 200 }
 
@@ -47,7 +47,7 @@ describe API::V2::Account::Balances, type: :request do
     end
 
     context 'use non_empty parameter == false' do
-      before { api_get '/api/v2/account/balances', token: token, params: {not_empty: false} }
+      before { api_get '/api/v2/account/balances', token: token, params: {nonzero: false} }
 
       it { expect(response).to have_http_status 200 }
 
@@ -64,7 +64,7 @@ describe API::V2::Account::Balances, type: :request do
     end
 
     context 'use non_empty parameter == string' do
-      before { api_get '/api/v2/account/balances', token: token, params: {not_empty: "token"} }
+      before { api_get '/api/v2/account/balances', token: token, params: {nonzero: "token"} }
 
       it { expect(response).to have_http_status 422 }
 
