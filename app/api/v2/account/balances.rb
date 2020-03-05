@@ -18,7 +18,7 @@ module API
         params do
           use :pagination
           optional :nonzero,
-                   type: { value: Boolean, message: 'account.balances.non_expected_value' },
+                   type: { value: Boolean, message: 'account.balances.invalid_nonzero' },
                    default: false,
                    desc: 'Filter non zero balances.'
         end

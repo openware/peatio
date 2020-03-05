@@ -66,14 +66,14 @@ describe API::V2::Account::Balances, type: :request do
       end
     end
 
-    context 'use non_empty parameter == string' do
+    context 'use nonzero parameter == string' do
       before { api_get '/api/v2/account/balances', token: token, params: {nonzero: "token"} }
 
       it { expect(response).to have_http_status 422 }
 
       it 'returns all balances' do
         result = JSON.parse(response.body)
-        expect(result).to contain_exactly(["errors", ["account.balances.non_expected_value"]])
+        expect(result).to contain_exactly(["errors", ["account.balances.invalid_nonzero"]])
       end
     end
 
