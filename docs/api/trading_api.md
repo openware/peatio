@@ -39,7 +39,7 @@ http GET https://your.domain/api/v2/peatio/public/markets
 
 Expected response:
 
-```bash
+```json
 [
   {
       "amount_precision": 5,
@@ -200,7 +200,7 @@ Before calling private endpoint you will need to generate three headers:
 
 `X-Auth-Apikey` - API key (from previous step)
 
-`X-Auth-Nonce` - The nonce is a regular integer number (can be timestamp in ms). It must be increasing with every request you make. Read more about it [here](https://en.wikipedia.org/wiki/Cryptographic_nonce).
+`X-Auth-Nonce` - A nonce is an arbitrary number that can be used just once. In our environment you *MUST* use a millisecond timestamp in UTC time. Read more about it [here](https://en.wikipedia.org/wiki/Cryptographic_nonce).
 
 ```bash
 date +%s%3N
@@ -233,11 +233,6 @@ Expected response:
     {
         "balance": "1.4995",
         "currency": "eth",
-        "locked": "0.0"
-    },
-    {
-        "balance": "99.0",
-        "currency": "usd",
         "locked": "0.0"
     }
 ]
@@ -325,20 +320,6 @@ curl -X GET https://your.domain.com/api/v2/peatio/market/orders \
      "fee_amount": "0.01",
      "fee_currency": "eth",
      "id": 1834499,
-     "market": "ethusd",
-     "order_id": 10440269,
-     "price": "160.82",
-     "side": "buy",
-     "taker_type": "buy",
-     "total": "804.1"
-   },
-   {
-     "amount": "5.0",
-     "created_at": "2020-03-12T17:01:56+01:00",
-     "fee": "0.002",
-     "fee_amount": "0.01",
-     "fee_currency": "eth",
-     "id": 1834498,
      "market": "ethusd",
      "order_id": 10440269,
      "price": "160.82",
