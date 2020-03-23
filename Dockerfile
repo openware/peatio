@@ -32,15 +32,13 @@ RUN apt-get update \
 WORKDIR $APP_HOME
 
 # Install dependencies defined in Gemfile.
-COPY Gemfile Gemfile.lock $APP_HOME/
+COPY --chown=app:app Gemfile Gemfile.lock $APP_HOME/
 RUN mkdir -p /opt/vendor/bundle \
  && chown -R app:app /opt/vendor $APP_HOME \
  && su app -s /bin/bash -c "bundle install --path /opt/vendor/bundle"
 
 # Copy application sources.
-COPY . $APP_HOME
-# TODO: Use COPY --chown=app:app when Docker Hub will support it.
-RUN chown -R app:app $APP_HOME
+COPY --chown=app:app . $APP_HOME
 
 # Switch to application user.
 USER app
@@ -62,7 +60,7 @@ CMD ["bundle", "exec", "puma", "--config", "config/puma.rb"]
 FROM base
 
 # Copy Gemfile.plugin for installing plugins.
-COPY Gemfile.plugin Gemfile.lock $APP_HOME/
+COPY --chown=app:app Gemfile.plugin Gemfile.lock $APP_HOME/
 
 # Install plugins.
 RUN bundle install --path /opt/vendor/bundle
