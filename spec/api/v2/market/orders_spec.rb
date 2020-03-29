@@ -385,7 +385,7 @@ describe API::V2::Market::Orders, type: :request do
         member.get_account(:usd).update_attributes(locked: order.price * order.volume)
       end
 
-      it 'should cancel specified order' do
+      it 'should cancel specified order by id' do
         AMQP::Queue.expects(:enqueue).with(:matching, action: 'cancel', order: order.to_matching_attributes)
         AMQP::Queue.expects(:enqueue).with(:events_processor,
                                          subject: :stop_order,
@@ -394,6 +394,18 @@ describe API::V2::Market::Orders, type: :request do
           api_post "/api/v2/market/orders/#{order.id}/cancel", token: token
           expect(response).to be_successful
           expect(JSON.parse(response.body)['id']).to eq order.id
+        end.not_to change(Order, :count)
+      end
+
+      it 'should cancel specified order by uuid' do
+        AMQP::Queue.expects(:enqueue).with(:matching, action: 'cancel', order: order.to_matching_attributes)
+        AMQP::Queue.expects(:enqueue).with(:events_processor,
+                                           subject: :stop_order,
+                                           payload: order.as_json_for_events_processor)
+        expect do
+          api_post "/api/v2/market/orders/#{order.uuid}/cancel", token: token
+          expect(response).to be_successful
+          expect(JSON.parse(response.body)['uuid']).to eq order.uuid
         end.not_to change(Order, :count)
       end
     end
