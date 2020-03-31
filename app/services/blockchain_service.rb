@@ -42,7 +42,7 @@ class BlockchainService
       withdrawals.each(&method(:update_withdrawal))
       update_height(block_number)
     end
-    accepted_deposits.each(&:collect!)
+    accepted_deposits.each(&:process!)
     block
   end
 
