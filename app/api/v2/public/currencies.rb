@@ -30,12 +30,27 @@ module API
                    type: String,
                    values: { value: %w[fiat coin], message: 'public.currency.invalid_type' },
                    desc: -> { API::V2::Entities::Currency.documentation[:type][:desc] }
+          optional :search, type: JSON, default: {} do
+            optional :code,
+                     type: String,
+                     desc: 'Search by currency code using SQL LIKE'
+            optional :name,
+                     type: String,
+                     desc: 'Search by currency name using SQL LIKE'
+          end
         end
         get '/currencies' do
-          currencies = Currency.visible
+          search_params = params[:search]
+                            .slice(:code, :name)
+                            .transform_keys {|k| "#{k}_cont"}
+                            .merge(m: 'or')
+
+          currencies = Currency.visible.ordered
           currencies = currencies.where(type: params[:type]).includes(:blockchain) if params[:type] == 'coin'
           currencies = currencies.where(type: params[:type]) if params[:type] == 'fiat'
-          present paginate(currencies.ordered), with: API::V2::Entities::Currency
+
+          search = currencies.ransack(search_params)
+          present paginate(search.result), with: API::V2::Entities::Currency
         end
       end
     end
