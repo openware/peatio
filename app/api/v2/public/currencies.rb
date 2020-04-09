@@ -40,16 +40,15 @@ module API
           end
         end
         get '/currencies' do
-          search_params = params[:search]
-                            .slice(:code, :name)
-                            .transform_keys {|k| "#{k}_cont"}
-                            .merge(m: 'or')
+          search_attrs = { m: 'or',
+                           code_cont: params.dig(:search, :code),
+                           name_cont: params.dig(:search, :name) }
 
           currencies = Currency.visible.ordered
           currencies = currencies.where(type: params[:type]).includes(:blockchain) if params[:type] == 'coin'
           currencies = currencies.where(type: params[:type]) if params[:type] == 'fiat'
 
-          search = currencies.ransack(search_params)
+          search = currencies.ransack(search_attrs)
           present paginate(search.result), with: API::V2::Entities::Currency
         end
       end
