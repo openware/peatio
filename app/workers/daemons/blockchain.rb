@@ -94,7 +94,7 @@ module Workers
               @runner_pool.transform_values(&:ts)
             end
 
-            # Reschedule in 30 seconds.
+            # Check for blockchain config changes in 30 seconds.
             sleep 30
 
           rescue StandardError => e
