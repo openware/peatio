@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 2019_09_23_085927) do
     t.index ["type", "state", "market_id"], name: "index_orders_on_type_and_state_and_market_id"
     t.index ["type", "state", "member_id"], name: "index_orders_on_type_and_state_and_member_id"
     t.index ["updated_at"], name: "index_orders_on_updated_at"
+    t.index ["uuid"], name: "index_orders_on_uuid", unique: true
   end
 
   create_table "payment_addresses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
