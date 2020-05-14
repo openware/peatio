@@ -55,7 +55,6 @@ steps:
   - bundle exec rake db:create db:migrate
   - LOG_LEVEL=warn bundle exec rspec
 
-
 # Update application version
 - name: git-tag-and-push
   image: quay.io/openware/sdk-citools:2.4.5
@@ -82,7 +81,6 @@ steps:
   when:
     branch:
       - "integration/*"
-
 
 # Copy bundler cache from the build environment to your host machine.
 # Plugin description: http://plugins.drone.io/drillster/drone-volume-cache
@@ -122,7 +120,7 @@ steps:
     EVENT_API_RABBITMQ_HOST: rabbitmq
     REDIS_URL: redis://redis:6379
   commands:
-    - gem install bundler -v 2.0.2
+    - gem install bundler:2.1.4
     - bin/gendocs
   when:
     branch:
