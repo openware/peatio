@@ -29,23 +29,6 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
-class FakeBlockchain < Peatio::Blockchain::Abstract
-  def initialize
-    @features = {cash_addr_format: false, case_sensitive: true}
-  end
-
-  def configure(settings = {}); end
-end
-
-class FakeWallet < Peatio::Wallet::Abstract
-  def initialize; end
-
-  def configure(settings = {}); end
-end
-
-Peatio::Blockchain.registry[:fake] = FakeBlockchain
-Peatio::Wallet.registry[:fake] = FakeWallet
-
 RSpec.configure do |config|
   # ## Mock Framework
   #

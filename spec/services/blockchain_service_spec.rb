@@ -31,6 +31,8 @@ describe BlockchainService do
     ].map { |t| Peatio::Transaction.new(t) }
   end
 
+  let(:expected_block) { Peatio::Block.new(block_number, expected_transactions) }
+
   before do
     Peatio::Blockchain.registry.expects(:[])
                          .with(:fake)
@@ -54,7 +56,7 @@ describe BlockchainService do
         PaymentAddress.create!(currency: fake_currency1,
                                account: member.get_account(fake_currency1),
                                address: 'fake_address')
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.adapter.stubs(:fetch_block!).returns(expected_block)
         service.process_block(block_number)
       end
 
@@ -64,7 +66,7 @@ describe BlockchainService do
 
       context 'creates deposit with correct attributes' do
         before do
-          service.adapter.stubs(:fetch_block!).returns([transaction])
+          service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
           service.process_block(block_number)
         end
 
@@ -78,7 +80,7 @@ describe BlockchainService do
       context 'collect deposit after processing block' do
         before do
           service.stubs(:latest_block_number).returns(100)
-          service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+          service.adapter.stubs(:fetch_block!).returns(expected_block)
           AMQP::Queue.expects(:enqueue).with(:events_processor, is_a(Hash))
           AMQP::Queue.expects(:enqueue).with(:deposit_collection_fees, id: subject.first.id)
         end
@@ -88,7 +90,7 @@ describe BlockchainService do
 
       context 'process data one more time' do
         before do
-          service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+          service.adapter.stubs(:fetch_block!).returns(expected_block)
         end
 
         it { expect { service.process_block(block_number) }.not_to change { subject } }
@@ -103,7 +105,7 @@ describe BlockchainService do
         PaymentAddress.create!(currency: fake_currency1,
           account: member.get_account(fake_currency1),
           address: 'fake_address1')
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.adapter.stubs(:fetch_block!).returns(expected_block)
         service.process_block(block_number)
       end
 
@@ -123,7 +125,7 @@ describe BlockchainService do
                           type: Deposits::Coin)
         end
         before do
-          service.adapter.stubs(:fetch_block!).returns([transaction])
+          service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
           service.process_block(block_number)
         end
         it { expect(Deposits::Coin.find_by(txid: transaction.hash).block_number).to eq(transaction.block_number) }
@@ -138,7 +140,7 @@ describe BlockchainService do
         PaymentAddress.create!(currency: fake_currency2,
           account: member.get_account(fake_currency2),
           address: 'fake_address2')
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.adapter.stubs(:fetch_block!).returns(expected_block)
         service.process_block(block_number)
       end
 
@@ -173,7 +175,7 @@ describe BlockchainService do
       end
 
       before do
-        service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+        service.adapter.stubs(:fetch_block!).returns(expected_block)
         service.process_block(block_number)
       end
 
@@ -183,7 +185,7 @@ describe BlockchainService do
 
         before do
           service.stubs(:latest_block_number).returns(100)
-          service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+          service.adapter.stubs(:fetch_block!).returns(expected_block)
           service.process_block(block_number)
         end
 
@@ -209,7 +211,7 @@ describe BlockchainService do
     end
 
     before do
-      service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+      service.adapter.stubs(:fetch_block!).returns(expected_block)
       service.process_block(block_number)
     end
 
@@ -245,7 +247,7 @@ describe BlockchainService do
     end
 
     before do
-      service.adapter.stubs(:fetch_block!).returns(expected_transactions)
+      service.adapter.stubs(:fetch_block!).returns(expected_block)
       service.process_block(block_number)
     end
 
@@ -275,7 +277,7 @@ describe BlockchainService do
       end
 
       before do
-        service.adapter.stubs(:fetch_block!).returns([transaction])
+        service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
         service.process_block(block_number)
       end
 
@@ -311,7 +313,7 @@ describe BlockchainService do
 
       before do
         service.adapter.stubs(:respond_to?).returns(true)
-        service.adapter.stubs(:fetch_block!).returns([transaction])
+        service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
         service.adapter.stubs(:fetch_transaction).with(transaction).returns(failed_transaction)
         service.process_block(block_number)
       end
@@ -348,7 +350,7 @@ describe BlockchainService do
 
       before do
         service.adapter.stubs(:respond_to?).returns(true)
-        service.adapter.stubs(:fetch_block!).returns([transaction])
+        service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
         service.stubs(:latest_block_number).returns(10)
         service.adapter.stubs(:fetch_transaction).with(transaction).returns(succeed_transaction)
         service.process_block(block_number)
@@ -371,6 +373,8 @@ describe BlockchainService do
       ].map { |t| Peatio::Transaction.new(t) }
     end
 
+    let(:expected_block1) { Peatio::Block.new(block_number, expected_transactions1) }
+
     let!(:fake_account1) { member.get_account(:fake1) }
     let!(:fake_account2) { member.get_account(:fake2) }
 
@@ -382,7 +386,7 @@ describe BlockchainService do
       PaymentAddress.create!(currency: fake_currency2,
         account: fake_account2,
         address: 'fake_address2')
-      service.adapter.stubs(:fetch_block!).returns(expected_transactions, expected_transactions1)
+      service.adapter.stubs(:fetch_block!).returns(expected_block, expected_block1)
     end
 
     it 'creates deposits and updates withdrawals' do
