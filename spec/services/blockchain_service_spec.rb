@@ -51,7 +51,6 @@ describe BlockchainService do
     context 'single fake deposit was created during block processing' do
 
       before do
-        clear_redis
         PaymentAddress.create!(currency: fake_currency1,
                                account: member.get_account(fake_currency1),
                                address: 'fake_address')
@@ -78,7 +77,6 @@ describe BlockchainService do
 
       context 'collect deposit after processing block' do
         before do
-          clear_redis
           service.stubs(:latest_block_number).returns(100)
           service.adapter.stubs(:fetch_block!).returns(expected_transactions)
           AMQP::Queue.expects(:enqueue).with(:events_processor, is_a(Hash))
@@ -184,7 +182,6 @@ describe BlockchainService do
       context 'single withdrawal was succeed during block processing' do
 
         before do
-          clear_redis
           service.stubs(:latest_block_number).returns(100)
           service.adapter.stubs(:fetch_block!).returns(expected_transactions)
           service.process_block(block_number)
@@ -378,7 +375,6 @@ describe BlockchainService do
     let!(:fake_account2) { member.get_account(:fake2) }
 
     before do
-      clear_redis
       service.stubs(:latest_block_number).returns(100)
       PaymentAddress.create!(currency: fake_currency1,
         account: fake_account1,
