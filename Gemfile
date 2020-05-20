@@ -75,7 +75,7 @@ group :development do
 end
 
 group :test do
-  gem 'rspec-rails', '~> 3.9', '>= 3.9.0'
+  gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
   gem 'rspec-retry',         '~> 0.6'
   gem 'webmock',             '~> 3.5'
   gem 'database_cleaner',    '~> 1.7'
