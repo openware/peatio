@@ -7,7 +7,7 @@ git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 ruby '~> 2.6'
 
 gem 'ransack', '~> 2.1.1'
-gem 'rails', '~> 5.2.4'
+gem 'rails', '~> 5.2.4', '>= 5.2.4.3'
 gem 'puma', '~> 3.12.2'
 gem 'mysql2', '~> 0.5.2'
 gem 'redis', '~> 4.1.2', require: ['redis', 'redis/connection/hiredis']
@@ -25,17 +25,17 @@ gem 'grape-entity', '~> 0.7.1'
 gem 'grape-swagger', '~> 0.30.1'
 gem 'grape-swagger-ui', '~> 2.2.8'
 gem 'grape-swagger-entity', '~> 0.2.5'
-gem 'grape_logging', '~> 1.8.0'
+gem 'grape_logging', '~> 1.8.3'
 gem 'rack-attack', '~> 5.4.2'
 gem 'faraday', '~> 0.17'
-gem 'better-faraday', '~> 1.0.5'
+gem 'better-faraday', '~> 1.0.8'
 gem 'faraday_middleware', '~> 0.13.1'
 gem 'faye', '~> 1.2'
 gem 'eventmachine', '~> 1.2'
 gem 'em-synchrony', '~> 1.0'
 gem 'jwt', '~> 2.1.0'
 gem 'email_validator', '~> 1.6.0'
-gem 'validate_url', '~> 1.0.4'
+gem 'validate_url', '~> 1.0.8'
 gem 'god', '~> 0.13.7', require: false
 gem 'mini_racer', '~> 0.2.4', require: false
 gem 'arel-is-blank', '~> 1.0.0'
@@ -64,23 +64,23 @@ group :development, :test do
   gem 'bump',         '~> 0.7'
   gem 'faker',        '~> 1.8'
   gem 'pry-byebug',   '~> 3.7'
-  gem 'bullet',       '~> 5.9'
+  gem 'bullet', '~> 5.9', '>= 5.9.0'
   gem 'grape_on_rails_routes', '~> 0.3.2'
 end
 
 group :development do
-  gem 'annotate',   '~> 3.1.0'
+  gem 'annotate', '~> 3.1.0'
   gem 'ruby-prof',  '~> 0.17.0', require: false
   gem 'listen',     '>= 3.0.5', '< 3.2'
 end
 
 group :test do
-  gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
+  gem 'rspec-rails', '~> 3.9', '>= 3.9.0'
   gem 'rspec-retry',         '~> 0.6'
   gem 'webmock',             '~> 3.5'
   gem 'database_cleaner',    '~> 1.7'
   gem 'mocha',               '~> 1.8', require: false
-  gem 'factory_bot_rails', '~> 5.0', '>= 5.0.2'
+  gem 'factory_bot_rails', '~> 5.1', '>= 5.1.1'
   gem 'timecop',             '~> 0.9'
   gem 'rubocop-rspec',       '~> 1.32', require: false
 end
