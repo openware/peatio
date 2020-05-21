@@ -75,6 +75,75 @@ describe API::V2::Admin::Markets, type: :request do
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
     end
+
+    context 'filtering' do
+      it 'filters by both units' do
+        api_get '/api/v2/admin/markets', params: { unit: "eth" }, token: token
+        result = JSON.parse(response.body)
+
+        expect(response).to be_successful
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["id"]}).to all include "eth"
+
+        api_get '/api/v2/admin/markets', params: { ordering: 'asc', order_by: 'quote_currency', unit: "btc" }, token: token
+        result = JSON.parse(response.body)
+
+        expect(response).to be_successful
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["id"]}).to all include "btc"
+      end
+
+      it 'filters by base_unit' do
+        api_get '/api/v2/admin/markets', params: { base_unit: :btc }, token: token
+        expect(response).to be_successful
+        result = JSON.parse(response.body)
+
+        expect(result.size).to eq Market.where(base_unit: :btc).size
+        result.each do |market|
+          expect(market['base_unit']).to eq 'btc'
+        end
+      end
+
+      it 'filters by quote_unit' do
+        api_get '/api/v2/admin/markets', params: {quote_unit: :usd }, token: token
+        expect(response).to be_successful
+        result = JSON.parse(response.body)
+
+        expect(result.size).to eq Market.where(quote_unit: :usd).size
+        result.each do |market|
+          expect(market['quote_unit']).to eq 'usd'
+        end
+      end
+
+      it 'filters by state' do
+        api_get '/api/v2/admin/markets', params: { state: "enabled" }, token: token
+        result = JSON.parse(response.body)
+
+        expect(response).to be_successful
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["state"]}).to all eq "enabled"
+
+        api_get '/api/v2/admin/markets', params: { state: "hidden" }, token: token
+        result = JSON.parse(response.body)
+
+        expect(response).to be_successful
+        expect(result.length).to eq 0
+      end
+
+      it 'return error in case of unexisting unit' do
+        api_get '/api/v2/admin/markets', params: { unit: "etht" }, token: token
+
+        expect(response.code).to eq '422'
+        expect(response).to include_api_error('admin.markets.unit_doesnt_exist')
+      end
+
+      it 'return error in case of invalid state' do
+        api_get '/api/v2/admin/markets', params: { state: "invalid" }, token: token
+
+        expect(response.code).to eq '422'
+        expect(response).to include_api_error('admin.market.invalid_state')
+      end
+    end
   end
 
   describe 'POST /api/v2/admin/markets/new' do

@@ -69,28 +69,6 @@ describe API::V2::Admin::Currencies, type: :request do
       expect(result.size).to eq Currency.count
     end
 
-    it 'list of coins' do
-      api_get '/api/v2/admin/currencies', params: { type: 'coin' }, token: token
-      expect(response).to be_successful
-
-      result = JSON.parse(response.body)
-      expect(result.size).to eq Currency.coins.size
-    end
-
-    it 'list of fiats' do
-      api_get '/api/v2/admin/currencies', params: { type: 'fiat' }, token: token
-      expect(response).to be_successful
-
-      result = JSON.parse(response.body, symbolize_names: true)
-      expect(result.size).to eq Currency.fiats.size
-      expect(result.dig(0, :code)).to eq 'eur'
-    end
-
-    it 'returns error in case of invalid type' do
-      api_get '/api/v2/admin/currencies', params: { type: 'invalid' }, token: token
-      expect(response).to have_http_status 422
-    end
-
     it 'returns currencies by ascending order' do
       api_get '/api/v2/admin/currencies', params: { ordering: 'asc', order_by: 'code'}, token: token
       result = JSON.parse(response.body)
@@ -124,6 +102,58 @@ describe API::V2::Admin::Currencies, type: :request do
 
       expect(response.code).to eq '403'
       expect(response).to include_api_error('admin.ability.not_permitted')
+    end
+
+    context 'filtering' do
+      it 'list of coins' do
+        api_get '/api/v2/admin/currencies', params: { type: 'coin' }, token: token
+        expect(response).to be_successful
+
+        result = JSON.parse(response.body)
+        expect(result.size).to eq Currency.coins.size
+      end
+
+      it 'list of fiats' do
+        api_get '/api/v2/admin/currencies', params: { type: 'fiat' }, token: token
+        expect(response).to be_successful
+
+        result = JSON.parse(response.body, symbolize_names: true)
+        expect(result.size).to eq Currency.fiats.size
+        expect(result.dig(0, :code)).to eq 'eur'
+      end
+
+      it 'filters by blockchain key' do
+        api_get '/api/v2/admin/currencies', params: { type: 'coin', blockchain_key: 'eth-rinkeby' }, token: token
+        expect(response).to be_successful
+
+        result = JSON.parse(response.body)
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["blockchain_key"]}).to all eq 'eth-rinkeby'
+      end
+
+      it 'filters by visibility' do
+        api_get '/api/v2/admin/currencies', params: { type: 'coin', visible: true }, token: token
+        expect(response).to be_successful
+
+        result = JSON.parse(response.body)
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["visible"]}).to all eq true
+      end
+
+      it 'returns error in case of invalid type' do
+        api_get '/api/v2/admin/currencies', params: { type: 'invalid' }, token: token
+        expect(response).to have_http_status 422
+      end
+
+      it 'returns error in case of unexisting blockchain key' do
+        api_get '/api/v2/admin/currencies', params: { blockchain_key: 'invalid' }, token: token
+        expect(response).to have_http_status 422
+      end
+
+      it 'returns error in case of invalid visibility' do
+        api_get '/api/v2/admin/currencies', params: { visible: 'invalid' }, token: token
+        expect(response).to have_http_status 422
+      end
     end
   end
 

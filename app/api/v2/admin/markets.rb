@@ -62,14 +62,38 @@ module API
           is_array: true,
           success: API::V2::Admin::Entities::Market
         params do
+          optional :state,
+                   values: { value: ::Market::STATES, message: 'admin.market.invalid_state' },
+                   desc: 'Market state'
+          optional :base_unit,
+                   type: String,
+                   values: { value: -> (v){ ::Currency.exists?(v) },
+                             message: 'admin.markets.base_unit_doesnt_exist' },
+                   desc: 'Strict filter for base unit'
+          optional :quote_unit,
+                   type: String,
+                   values: { value: -> (v){ ::Currency.exists?(v) },
+                             message: 'admin.markets.quote_unit_doesnt_exist' },
+                   desc: 'Strict filter for quote unit'
+          optional :unit,
+                   type: String,
+                   values: { value: -> (v){ ::Currency.exists?(v) },
+                             message: 'admin.markets.unit_doesnt_exist' },
+                   desc: 'Strict filter for base or quote unit'
           use :pagination
           use :ordering
         end
         get '/markets' do
           authorize! :read, ::Market
 
-          result = ::Market.order(params[:order_by] => params[:ordering])
-          present paginate(result), with: API::V2::Admin::Entities::Market
+          ransack_params = Helpers::RansackBuilder.new(params)
+                              .eq(:base_unit, :quote_unit, :state )
+                              .merge(base_unit_or_quote_unit_eq: params[:unit])
+                              .build
+
+          search = ::Market.ransack(ransack_params)
+          search.sorts = "#{params[:order_by]} #{params[:ordering]}"
+          present paginate(search.result), with: API::V2::Admin::Entities::Market
         end
 
         desc 'Get market.' do

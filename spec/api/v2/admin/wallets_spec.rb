@@ -112,6 +112,37 @@ describe API::V2::Admin::Wallets, type: :request do
         expect(result.length).not_to eq 0
         expect(result.map { |r| r["currency"]}).to all eq "eth"
       end
+
+      it 'filters by gateway' do
+        api_get "/api/v2/admin/wallets", token: token, params: { gateway: "geth" }
+
+        result = JSON.parse(response.body)
+
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["gateway"]}).to all eq "geth"
+
+        api_get "/api/v2/admin/wallets", token: token, params: { gateway: "parity" }
+
+        result = JSON.parse(response.body)
+
+        expect(result).not_to eq 0
+        expect(result.map { |r| r["gateway"]}).to all eq "parity"
+      end
+
+      it 'filters by status' do
+        api_get "/api/v2/admin/wallets", token: token, params: { status: "active" }
+
+        result = JSON.parse(response.body)
+
+        expect(result.length).not_to eq 0
+        expect(result.map { |r| r["status"]}).to all eq "active"
+
+        api_get "/api/v2/admin/wallets", token: token, params: { status: "disabled" }
+
+        result = JSON.parse(response.body)
+
+        expect(result.length).to eq 0
+      end
     end
   end
 

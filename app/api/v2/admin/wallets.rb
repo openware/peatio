@@ -46,11 +46,18 @@ module API
           success: API::V2::Admin::Entities::Wallet
         params do
           optional :blockchain_key,
-                   values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.currency.blockchain_key_doesnt_exist' },
+                   values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.wallet.blockchain_key_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:blockchain_key][:desc] }
           optional :kind,
                    values: { value: -> { Wallet.kind.values }, message: 'admin.wallet.invalid_kind' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
+          optional :gateway,
+                   values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
+          optional :status,
+                   values: { value: %w(active disabled), message: 'admin.wallet.invalid_status' },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:status][:desc] }
+
           use :currency
           use :pagination
           use :ordering
@@ -59,7 +66,7 @@ module API
           authorize! :read, Wallet
 
           ransack_params = Helpers::RansackBuilder.new(params)
-                             .eq(:blockchain_key)
+                             .eq(:blockchain_key, :gateway, :status)
                              .translate(currency: :currency_id)
                              .merge(kind_eq: params[:kind].present? ? Wallet.kinds[params[:kind].to_sym] : nil)
                              .build
