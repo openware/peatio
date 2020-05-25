@@ -3,17 +3,18 @@
 
 class PaymentAddress < ApplicationRecord
   include Vault::EncryptedModel
-  include BelongsToCurrency
-  include BelongsToAccount
 
   vault_lazy_decrypt!
 
   after_commit :enqueue_address_generation
 
-  validates :address, uniqueness: { scope: :currency_id }, if: :address?
+  validates :address, uniqueness: { scope: :wallet_id }, if: :address?
 
   vault_attribute :details, serialize: :json, default: {}
   vault_attribute :secret
+
+  belongs_to :wallet
+  belongs_to :member
 
   before_validation do
     next if blockchain_api&.case_sensitive?
@@ -25,10 +26,14 @@ class PaymentAddress < ApplicationRecord
     self.address = CashAddr::Converter.to_cash_address(address)
   end
 
+  def blockchain_api
+    BlockchainService.new(wallet.blockchain)
+  rescue StandardError
+    return
+  end
+
   def enqueue_address_generation
-    if currency.coin?
-      AMQP::Queue.enqueue(:deposit_coin_address, { account_id: account.id }, { persistent: true })
-    end
+    AMQP::Queue.enqueue(:deposit_coin_address, { member_id: member.id, wallet_id: wallet.id }, { persistent: true })
   end
 
   def format_address(format)
@@ -44,8 +49,8 @@ class PaymentAddress < ApplicationRecord
   end
 
   def trigger_address_event
-    ::AMQP::Queue.enqueue_event('private', account.member.uid, :deposit_address, type: :create,
-                          currency: currency.code,
+    ::AMQP::Queue.enqueue_event('private', member.uid, :deposit_address, type: :create,
+                          currencies: currencies.codes,
                           address:  address)
   end
 end

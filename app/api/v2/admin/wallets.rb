@@ -105,8 +105,8 @@ module API
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:name][:desc] }
           requires :address,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
-          requires :currency,
-                   values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_doesnt_exist' },
+          requires :currencies,
+                   values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
                    as: :currency_id,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
           requires :kind,
@@ -121,7 +121,10 @@ module API
 
           wallet = ::Wallet.new(declared(params))
           if wallet.save
-            present wallet, with: API::V2::Admin::Entities::Wallet
+            params[:currencies].each do |currency|
+              CurrencyWallet.create!(currency_id: currency, wallet_id: wallet.id)
+            end
+            present wallet, with: API::V2::Admin::Entities::Wallet, full: true
             status 201
           else
             body errors: wallet.errors.full_messages

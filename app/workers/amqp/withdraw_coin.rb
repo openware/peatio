@@ -40,8 +40,8 @@ module Workers
                        rid: withdraw.rid,
                        message: 'Sending witdraw.'
 
-          wallet = Wallet.active.withdraw
-                         .find_by(currency_id: withdraw.currency_id, kind: :hot)
+          wallet = Wallet.active.withdraw.joins(:currencies)
+                         .find_by(currencies: { id: withdraw.currency_id }, kind: :hot)
 
           unless wallet
             @logger.warn id: withdraw.id,

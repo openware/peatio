@@ -122,10 +122,13 @@ class Deposit < ApplicationRecord
     spread.map { |s| Peatio::Transaction.new(s) }
   end
 
+  def deposit_wallet
+    Wallet.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
+  end
+
   def spread_between_wallets!
     return false if spread.present?
 
-    deposit_wallet = Wallet.active.deposit.find_by(currency_id: currency_id)
     spread = WalletService.new(deposit_wallet).spread_deposit(self)
     update!(spread: spread.map(&:as_json))
   end
