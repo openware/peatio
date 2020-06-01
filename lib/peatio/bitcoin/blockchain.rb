@@ -35,6 +35,10 @@ module Bitcoin
       raise Peatio::Blockchain::ClientError, e
     end
 
+    def transaction_sources(transaction)
+      
+    end
+
     def load_balance_of_address!(address, _currency_id)
       address_with_balance = client.json_rpc(:listaddressgroupings)
                                    .flatten(1)

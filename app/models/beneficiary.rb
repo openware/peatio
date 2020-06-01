@@ -29,14 +29,25 @@ class Beneficiary < ApplicationRecord
   aasm column: :state, enum: :states_mapping, whiny_transitions: false do
     state :pending, initial: true
     state :active
+    state :aml_processing
+    state :aml_suspicious
     state :archived
 
     event :activate do
-      transitions from: :pending, to: :active, guard: :valid_pin?
+      transitions from: :pending, to: :aml_processing, guard: :valid_pin?
+      after do
+        Peatio::AML.check(rid, currency_id)
+      end
+    end
+    event :enable do
+      transition from: :aml_processing, to: :active
+    end
+    event :aml_suspicious do
+      transitions from: :aml_processing, to: :aml_suspicious
     end
 
     event :archive do
-      transitions from: %i[pending active], to: :archived
+      transitions from: %i[pending aml_processing aml_suspicious active], to: :archived
     end
   end
 

@@ -1,4 +1,24 @@
 GIT
+  remote: http://github.com/openware/peatio-core
+  revision: 6c2b260cb9033ba20d54060432a49fbdf0bd3432
+  branch: enhancement/add-from-address-transaction
+  specs:
+    peatio (2.4.4)
+      activemodel (> 5.2, <= 6.0.0)
+      amqp
+      bunny
+      clamp
+      em-synchrony (~> 1.0)
+      em-websocket
+      eventmachine
+      faraday_middleware (~> 0.13.1)
+      faye (~> 1.2)
+      jwt
+      mysql2
+      prometheus-client
+      thin
+
+GIT
   remote: http://github.com/rubykube/vault-rails
   revision: 6389cf63bc68254f9b86ca634204eee3fd838be0
   specs:
@@ -268,20 +288,6 @@ GEM
     parallel (1.19.1)
     parser (2.7.0.4)
       ast (~> 2.4.0)
-    peatio (2.4.4)
-      activemodel (> 5.2, <= 6.0.0)
-      amqp
-      bunny
-      clamp
-      em-synchrony (~> 1.0)
-      em-websocket
-      eventmachine
-      faraday_middleware (~> 0.13.1)
-      faye (~> 1.2)
-      jwt
-      mysql2
-      prometheus-client
-      thin
     peatio-bitcoincash (2.5.2)
       activesupport (~> 5.2.3)
       better-faraday (~> 1.0.5)
@@ -497,7 +503,7 @@ DEPENDENCIES
   mocha (~> 1.8)
   mysql2 (~> 0.5.2)
   net-http-persistent (~> 3.0.1)
-  peatio (= 2.4.4)
+  peatio!
   peatio-bitcoincash (~> 2.5.2)
   peatio-bitgo (~> 1.1.6)
   peatio-dash (~> 2.5.2)
@@ -529,4 +535,4 @@ RUBY VERSION
    ruby 2.6.5p114
 
 BUNDLED WITH
-   2.0.2
+   2.1.4

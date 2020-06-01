@@ -116,6 +116,7 @@ ActiveRecord::Schema.define(version: 2020_08_05_102002) do
     t.decimal "amount", precision: 32, scale: 16, null: false
     t.decimal "fee", precision: 32, scale: 16, null: false
     t.string "address", limit: 95
+    t.string "from_addresses", limit: 1000
     t.string "txid", limit: 128, collation: "utf8_bin"
     t.integer "txout"
     t.string "aasm_state", limit: 30, null: false
