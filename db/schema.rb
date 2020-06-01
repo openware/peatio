@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_153429) do
+ActiveRecord::Schema.define(version: 2020_05_27_130534) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_153429) do
     t.string "description", default: ""
     t.json "data"
     t.integer "pin", limit: 3, null: false, unsigned: true
+    t.datetime "sent_at"
     t.integer "state", limit: 1, default: 0, null: false, unsigned: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -182,10 +183,10 @@ ActiveRecord::Schema.define(version: 2020_05_13_153429) do
     t.decimal "max_price", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "min_amount", precision: 32, scale: 16, default: "0.0", null: false
     t.integer "position", default: 0, null: false
-    t.json "data"
     t.string "state", limit: 32, default: "enabled", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "data"
     t.index ["base_unit", "quote_unit"], name: "index_markets_on_base_unit_and_quote_unit", unique: true
     t.index ["base_unit"], name: "index_markets_on_base_unit"
     t.index ["engine_id"], name: "index_markets_on_engine_id"
