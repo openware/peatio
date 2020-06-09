@@ -15,11 +15,5 @@ module Peatio
         method_not_implemented
       end
     end
-
-    class Dummy < Abstract
-      def check!(_address, _currency_id, _uid)
-        OpenStruct.new(risk_detected: false, is_pending: false, error: nil)
-      end
-    end
   end
 end

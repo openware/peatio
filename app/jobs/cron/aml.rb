@@ -7,7 +7,7 @@ module Jobs
         end
 
         Beneficiary.aml_processing.each do |b|
-          b.enable! if aml_check!
+          b.enable! if b.aml_check!
         end
         sleep 60
       end

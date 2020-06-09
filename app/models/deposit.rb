@@ -68,18 +68,18 @@ class Deposit < ApplicationRecord
       else
         transitions from: %i[accepted skipped], to: :processing do
           guard { coin? }
-          after :collect!
         end
+      end
+    end
+
+    event :fee_process do
+      transitions from: %i[accepted processing skipped], to: :fee_processing do
+        guard { coin? }
       end
     end
 
     event :process_collect do
       transitions from: %i[aml_processing aml_suspicious], to: :processing do
-        guard { coin? }
-      end
-    end
-    event :fee_process do
-      transitions from: %i[accepted processing skipped], to: :fee_processing do
         guard { coin? }
       end
     end if Peatio::AML.adapter.present?
@@ -104,7 +104,7 @@ class Deposit < ApplicationRecord
         aml_suspicious!
         return nil
       end
-      return nil if result.is_pending
+      return nil if result.pending
     end
     true
   end
