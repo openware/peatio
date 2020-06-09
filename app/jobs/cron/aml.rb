@@ -7,13 +7,7 @@ module Jobs
         end
 
         Beneficiary.aml_processing.each do |b|
-          result = Peatio::AML.check!(address, b.currency_id, b.member.uid)
-          if result.risk_detected
-            b.aml_suspicious!
-            next
-          end
-          next if result.is_pending
-          b.enable!
+          b.enable! if aml_check!
         end
         sleep 60
       end

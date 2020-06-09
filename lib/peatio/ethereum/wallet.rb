@@ -17,7 +17,7 @@ module Ethereum
 
       @wallet = @settings.fetch(:wallet) do
         raise Peatio::Wallet::MissingSettingError, :wallet
-      end.slice(:uri, :address, :secret)
+      end.slice(:uri, :address, :secret, :pa_secret)
 
       @currency = @settings.fetch(:currency) do
         raise Peatio::Wallet::MissingSettingError, :currency
@@ -99,7 +99,7 @@ module Ethereum
                       value:    '0x' + amount.to_s(16),
                       gas:      '0x' + options.fetch(:gas_limit).to_i.to_s(16),
                       gasPrice: '0x' + options.fetch(:gas_price).to_i.to_s(16)
-                    }.compact, @wallet.fetch(:secret)])
+                    }.compact, @wallet.fetch(:pa_secret, @wallet.fetch(:secret))])
 
       unless valid_txid?(normalize_txid(txid))
         raise Ethereum::WalletClient::Error, \

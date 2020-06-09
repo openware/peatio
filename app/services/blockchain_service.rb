@@ -41,7 +41,7 @@ class BlockchainService
       accepted_deposits = deposits.map(&method(:update_or_create_deposit)).compact
       withdrawals.each(&method(:update_withdrawal))
     end
-    accepted_deposits.each(&:aml_check!)
+    accepted_deposits.each(&:process!)
     block
   end
 
@@ -89,7 +89,7 @@ class BlockchainService
     # TODO: Rewrite this guard clause
     return unless PaymentAddress.exists?(currency_id: transaction.currency_id, address: transaction.to_address)
 
-    if transaction.from_addresses.empty? && adapter.respond_to?(:transaction_sources)
+    if transaction.from_addresses.blank? && adapter.respond_to?(:transaction_sources)
       transaction.from_addresses = adapter.transaction_sources(transaction)
     end
 
