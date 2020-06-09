@@ -6,6 +6,26 @@ GIT
       rails (>= 4.1)
       vault (~> 0.5)
 
+GIT
+  remote: https://github.com/openware/peatio-core
+  revision: 8307870d0dcf8afa45da7674a86040d55070b661
+  branch: enhancement/add-wallet-features
+  specs:
+    peatio (2.6.0)
+      activemodel (> 5.2, <= 6.0.0)
+      amqp
+      bunny
+      clamp
+      em-synchrony (~> 1.0)
+      em-websocket
+      eventmachine
+      faraday_middleware (~> 0.13.1)
+      faye (~> 1.2)
+      jwt
+      mysql2
+      prometheus-client
+      thin
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -203,13 +223,13 @@ GEM
     io-console (0.5.6)
     irb (1.2.3)
       reline (>= 0.0.1)
-    irix (2.4.5)
+    irix (2.6.0)
       em-synchrony (~> 1.0)
       em-websocket
       eventmachine
       faraday_middleware (~> 0.13.1)
       faye (~> 1.2)
-      peatio (~> 2.4.2)
+      peatio (>= 2.4.2)
     jaro_winkler (1.5.4)
     jwt (2.1.0)
     jwt-multisig (1.0.0)
@@ -268,20 +288,6 @@ GEM
     parallel (1.19.1)
     parser (2.7.0.4)
       ast (~> 2.4.0)
-    peatio (2.4.4)
-      activemodel (> 5.2, <= 6.0.0)
-      amqp
-      bunny
-      clamp
-      em-synchrony (~> 1.0)
-      em-websocket
-      eventmachine
-      faraday_middleware (~> 0.13.1)
-      faye (~> 1.2)
-      jwt
-      mysql2
-      prometheus-client
-      thin
     peatio-bitcoincash (2.6.0)
       activesupport (~> 5.2.3)
       better-faraday (~> 1.0.5)
@@ -490,7 +496,7 @@ DEPENDENCIES
   hiredis (~> 0.6.0)
   influxdb (~> 0.7.0)
   irb
-  irix (~> 2.4.5)
+  irix (~> 2.6.0)
   jwt (~> 2.1.0)
   jwt-multisig (~> 1.0.0)
   jwt-rack (~> 0.1.0)
@@ -502,7 +508,7 @@ DEPENDENCIES
   mocha (~> 1.8)
   mysql2 (~> 0.5.2)
   net-http-persistent (~> 3.0.1)
-  peatio (= 2.4.4)
+  peatio!
   peatio-bitcoincash (~> 2.6.0)
   peatio-bitgo (~> 2.6.0)
   peatio-dash (~> 2.6.0)
