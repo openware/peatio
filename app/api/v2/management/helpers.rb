@@ -31,7 +31,7 @@ module API
                     .camelize
                     .constantize
 
-          if klass == ::Operations::Revenue
+          if klass == ::Operations::Revenue && attrs.dig(:uid)
             member_id = Member.find_by!(uid: attrs.fetch(:uid)).id
           else
             member_id = nil
