@@ -21,19 +21,35 @@ describe Workers::AMQP::DepositCollection do
     end
   end
 
-  before do
-    transactions = collected_spread.map { |s| Peatio::Transaction.new(s) }
-    WalletService.any_instance
-                  .expects(:collect_deposit!)
-                  .with(instance_of(Deposits::Coin), anything)
-                  .returns(transactions)
+  context do
+    before do
+      transactions = collected_spread.map { |s| Peatio::Transaction.new(s) }
+      WalletService.any_instance
+                    .expects(:collect_deposit!)
+                    .with(instance_of(Deposits::Coin), anything)
+                    .returns(transactions)
+    end
+
+    it 'collect deposit and update spread' do
+      expect(deposit.spread).to eq(spread)
+      expect(deposit.collected?).to be_falsey
+      expect{ Workers::AMQP::DepositCollection.new.process(deposit) }.to change{ deposit.reload.spread }
+      expect(deposit.spread).to eq(collected_spread)
+      expect(deposit.collected?).to be_truthy
+    end
   end
 
-  it 'collect deposit and update spread' do
-    expect(deposit.spread).to eq(spread)
-    expect(deposit.collected?).to be_falsey
-    expect{ Workers::AMQP::DepositCollection.new.process(deposit) }.to change{ deposit.reload.spread }
-    expect(deposit.spread).to eq(collected_spread)
-    expect(deposit.collected?).to be_truthy
+  context do
+    before do
+      WalletService.any_instance
+                    .expects(:collect_deposit!)
+                    .with(instance_of(Deposits::Coin), anything)
+                    .returns([])
+    end
+
+    it 'collect deposit with empty spread' do
+      Workers::AMQP::DepositCollection.new.process(deposit)
+      expect(deposit.reload.collected?).to be_truthy
+    end
   end
 end
