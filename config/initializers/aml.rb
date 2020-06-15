@@ -6,6 +6,6 @@ begin
     require ENV['AML_BACKEND']
     Peatio::AML.adapter = "#{ENV.fetch('AML_BACKEND').capitalize}".constantize.new
   end
-rescue StandardError => e
+rescue StandardError, LoadError => e
   Rails.logger.error { e.message }
 end
