@@ -452,7 +452,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm (~> 5.0.0)
+  aasm (~> 5.0.8)
   annotate (~> 3.1.0)
   arel-is-blank (~> 1.0.0)
   better-faraday (~> 1.0.5)

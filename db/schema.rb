@@ -276,6 +276,16 @@ ActiveRecord::Schema.define(version: 2020_08_05_144308) do
     t.index ["currency_id", "address"], name: "index_payment_addresses_on_currency_id_and_address", unique: true
   end
 
+  create_table "refunds", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "deposit_id", null: false
+    t.string "state", limit: 30, null: false
+    t.string "address", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deposit_id"], name: "index_refunds_on_deposit_id"
+    t.index ["state"], name: "index_refunds_on_state"
+  end
+
   create_table "revenues", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "code", null: false
     t.string "currency_id", null: false
@@ -302,8 +312,8 @@ ActiveRecord::Schema.define(version: 2020_08_05_144308) do
     t.decimal "total_debit_value", precision: 48, scale: 16, default: "0.0"
     t.decimal "total_balance_value", precision: 48, scale: 16, default: "0.0"
     t.decimal "average_balance_price", precision: 48, scale: 16, default: "0.0"
-    t.datetime "created_at", default: -> { "current_timestamp()" }, null: false
-    t.datetime "updated_at", default: -> { "current_timestamp()" }, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["pnl_currency_id", "currency_id", "member_id"], name: "index_currency_ids_and_member_id", unique: true
   end
 
@@ -312,8 +322,8 @@ ActiveRecord::Schema.define(version: 2020_08_05_144308) do
     t.string "currency_id", limit: 10, null: false
     t.string "reference_type", null: false
     t.bigint "last_id"
-    t.datetime "created_at", default: -> { "current_timestamp()" }, null: false
-    t.datetime "updated_at", default: -> { "current_timestamp()" }, null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["pnl_currency_id", "currency_id", "last_id"], name: "index_currency_ids_and_last_id"
     t.index ["pnl_currency_id", "currency_id", "reference_type"], name: "index_currency_ids_and_type", unique: true
   end

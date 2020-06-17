@@ -14,7 +14,7 @@ gem 'redis', '~> 4.1.2', require: ['redis', 'redis/connection/hiredis']
 gem 'hiredis', '~> 0.6.0'
 gem 'figaro', '~> 1.1.1'
 gem 'hashie', '~> 3.6.0'
-gem 'aasm', '~> 5.0.0'
+gem 'aasm', '~> 5.0.8'
 gem 'bunny', '~> 2.14.1'
 gem 'cancancan', '~> 2.3.0'
 gem 'enumerize', '~> 2.2.2'
