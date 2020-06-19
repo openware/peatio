@@ -25,7 +25,7 @@ RUN groupadd -r --gid ${GID} app \
       --gid ${GID} --uid ${UID} app
 
 # Install system dependencies.
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y \
       default-libmysqlclient-dev
 
