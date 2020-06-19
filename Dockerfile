@@ -25,8 +25,8 @@ RUN groupadd -r --gid ${GID} app \
       --gid ${GID} --uid ${UID} app
 
 # Install system dependencies.
-RUN apt-get update \
-  && apt-get install -y \
+RUN apt-get update && apt-get upgrade
+RUN apt-get install -y \
       default-libmysqlclient-dev
 
 # Install Kaigara
