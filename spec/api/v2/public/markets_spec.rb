@@ -3,6 +3,7 @@
 
 describe API::V2::Public::Markets, type: :request do
 
+  before(:each) { clear_redis }
   describe 'GET /api/v2/markets' do
 
     let(:expected_keys) do
@@ -16,6 +17,7 @@ describe API::V2::Public::Markets, type: :request do
       result = JSON.parse(response.body)
 
       expect(result.size).to eq Market.enabled.size
+
       result.each do |market|
         expect(market.keys).to eq expected_keys
       end

@@ -36,6 +36,12 @@ module API
           currencies = currencies.where(type: params[:type]).includes(:blockchain) if params[:type] == 'coin'
           currencies = currencies.where(type: params[:type]) if params[:type] == 'fiat'
           present paginate(currencies.ordered), with: API::V2::Entities::Currency
+          present paginate(Rails.cache.fetch("currencies_#{params}", expires_in: 600) do
+            currencies = Currency.visible
+            currencies = currencies.where(type: params[:type]).includes(:blockchain) if params[:type] == 'coin'
+            currencies = currencies.where(type: params[:type]) if params[:type] == 'fiat'
+            currencies.load.to_a
+          end), with: API::V2::Entities::Currency
         end
       end
     end
