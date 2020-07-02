@@ -1,6 +1,6 @@
 ## How to process distribution for users
 
-1. Create `csv` files with those templates.
+1. Create `csv` files with the following format
 
 ### Distribution table
 
@@ -8,7 +8,7 @@
   |---------------|-------------|--------|
   | ID1000003837  | usdt        |  100   |
 
-  uid, currency_id, amount - require params
+  uid, currency_id, amount - required params
 
 2. For process distribution
    
