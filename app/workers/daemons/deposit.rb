@@ -30,6 +30,11 @@ module Workers
           Rails.logger.info { "Starting processing token deposit with id: #{deposit.id}." }
 
           process_deposit(deposit)
+        rescue StandardError => e
+          Rails.logger.error { "Failed to collect deposit #{deposit.id}. See exception details below." }
+          report_exception(e)
+
+          raise e if is_db_connection_error?(e)
         end
       end
 
