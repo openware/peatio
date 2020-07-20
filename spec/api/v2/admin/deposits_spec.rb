@@ -156,12 +156,14 @@ describe API::V2::Admin::Deposits, type: :request do
         api_post url, token: token, params: { action: 'process', id: coin.id }
 
         expect(response).to be_successful
+        expect(Deposit.find(response_body['id']).processing?).to be_truthy
       end
 
       it 'sends event to deposit_collection daemon' do
-        api_post url, token: token, params: { action: 'process', fees: true, id: coin.id }
+        api_post url, token: token, params: { action: 'fee_process', fees: true, id: coin.id }
 
         expect(response).to be_successful
+        expect(Deposit.find(response_body['id']).fee_processing?).to be_truthy
       end
     end
   end

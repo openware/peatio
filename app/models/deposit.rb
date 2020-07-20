@@ -59,7 +59,7 @@ class Deposit < ApplicationRecord
       end
     end
     event :fee_process do
-      transitions from: %i[accepted skipped], to: :fee_processing do
+      transitions from: %i[accepted processing skipped], to: :fee_processing do
         guard { coin? }
       end
     end
