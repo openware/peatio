@@ -55,9 +55,6 @@ describe Workers::Daemons::Deposit do
 
     it 'process one eth deposit' do
       subject.process
-      expect(eth_deposit.reload.fee_processing?).to be_truthy
-      eth_deposit.update!(updated_at: Time.now - 20.minutes)
-      subject.process
       expect(eth_deposit.reload.collected?).to be_truthy
     end
   end
