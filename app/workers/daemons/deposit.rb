@@ -9,7 +9,7 @@ module Workers
         ::Deposit.processing.each do |deposit|
           Rails.logger.info { "Starting processing coin deposit with id: #{deposit.id}." }
 
-          wallet = Wallet.active.deposit.find_by(blockchain_key: deposit.currency.blockchain_key)
+          wallet = Wallet.active.deposit.find_by(currency_id: deposit.currency_id)
           unless wallet
             Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
             next
@@ -46,7 +46,7 @@ module Workers
           Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
         end
 
-        wallet = Wallet.active.deposit.find_by(blockchain_key: deposit.currency.blockchain_key)
+        wallet = Wallet.active.deposit.find_by(currency_id: deposit.currency_id)
         service = WalletService.new(wallet)
 
         transactions = service.collect_deposit!(deposit, deposit.spread_to_transactions)
