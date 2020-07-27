@@ -17,9 +17,17 @@ module Workers
           service = WalletService.new(wallet)
           # Check if adapter has prepare_deposit_collection! implementation
           if service.adapter.class.instance_methods(false).include?(:prepare_deposit_collection!)
-            collect_fee(deposit)
-            # Will be processed after fee collection
-            next if deposit.fee_processing?
+            begin
+              collect_fee(deposit)
+              # Will be processed after fee collection
+              next if deposit.fee_processing?
+            rescue StandardError => e
+              Rails.logger.error { "Failed to collect deposit fee #{deposit.id}. See exception details below." }
+              report_exception(e)
+              raise e if is_db_connection_error?(e)
+
+              next
+            end
           end
 
           process_deposit(deposit)
@@ -29,11 +37,6 @@ module Workers
           Rails.logger.info { "Starting processing token deposit with id: #{deposit.id}." }
 
           process_deposit(deposit)
-        rescue StandardError => e
-          Rails.logger.error { "Failed to collect deposit #{deposit.id}. See exception details below." }
-          report_exception(e)
-
-          raise e if is_db_connection_error?(e)
         end
       end
 
@@ -76,11 +79,6 @@ module Workers
         transactions = WalletService.new(fee_wallet).deposit_collection_fees!(deposit, deposit.spread_to_transactions)
         deposit.fee_process! if transactions.present?
         Rails.logger.warn { "The API accepted token deposit collection fee and assigned transaction ID: #{transactions.map(&:as_json)}." }
-      rescue StandardError => e
-        Rails.logger.error { "Failed to collect deposit fee #{deposit.id}. See exception details below." }
-        report_exception(e)
-
-        raise e if is_db_connection_error?(e)
       end
     end
   end
