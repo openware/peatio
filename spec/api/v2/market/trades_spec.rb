@@ -97,6 +97,26 @@ describe API::V2::Market::Trades, type: :request do
       expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['order_id']).to eq btcusd_bid.id
     end
 
+    it 'returns my recent trades for btcusd market with sell type' do
+      api_get '/api/v2/market/trades', params: { market: 'btcusd', type: 'sell' }, token: token
+      expect(response).to be_successful
+      result = JSON.parse(response.body)
+
+      expect(result.size).to eq 1
+      expect(result.find { |t| t['id'] == btcusd_ask_trade.id }['side']).to eq 'sell'
+      expect(result.find { |t| t['id'] == btcusd_ask_trade.id }['order_id']).to eq btcusd_ask.id
+    end
+
+    it 'returns my recent trades for btcusd market with buy type' do
+      api_get '/api/v2/market/trades', params: { market: 'btcusd', type: 'buy' }, token: token
+      expect(response).to be_successful
+      result = JSON.parse(response.body)
+
+      expect(result.size).to eq 1
+      expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['side']).to eq 'buy'
+      expect(result.find { |t| t['id'] == btcusd_bid_trade.id }['order_id']).to eq btcusd_bid.id
+    end
+
     it 'returns trades for several markets' do
       api_get '/api/v2/market/trades', params: { market: ['btcusd', 'btceth'] }, token: token
       result = JSON.parse(response.body)
@@ -184,6 +204,28 @@ describe API::V2::Market::Trades, type: :request do
 
       expect(result['order_id']).to eq btcusd_ask.id
       expect(result['fee_currency']).to eq 'usd'
+    end
+
+    it 'received amount for sell order' do
+      api_get '/api/v2/market/trades', params: { market: 'btcusd' }, token: token
+      result = JSON.parse(response.body).find { |t| t['side'] == 'sell' }
+
+      fee_amount = btcusd_ask.taker_fee * btcusd_ask_trade.total
+      expect(result['order_id']).to eq btcusd_ask.id
+      expect(result['fee_currency']).to eq 'usd'
+      expect(result['fee_amount']).to eq fee_amount.to_s
+      expect(result['received_amount']).to eq (btcusd_ask_trade.total - fee_amount).to_s
+    end
+
+    it 'received amount for buy order' do
+      api_get '/api/v2/market/trades', params: { market: 'btcusd' }, token: token
+      result = JSON.parse(response.body).find { |t| t['side'] == 'buy' }
+
+      fee_amount = btcusd_bid.taker_fee * btcusd_bid_trade.amount
+      expect(result['order_id']).to eq btcusd_bid.id
+      expect(result['fee_currency']).to eq 'btc'
+      expect(result['fee_amount']).to eq fee_amount.to_s
+      expect(result['received_amount']).to eq (btcusd_bid_trade.amount - fee_amount).to_s
     end
   end
 end

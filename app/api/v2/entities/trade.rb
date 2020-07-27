@@ -71,6 +71,17 @@ module API
           end
 
         expose(
+          :received_amount,
+          documentation: {
+            type: BigDecimal,
+            desc: 'Trade amount without fees.'
+          },
+          if: ->(_, options) { options[:current_user] }
+        ) do |trade, options|
+            received_amount(trade, options[:current_user])
+        end
+
+        expose(
           :market_id,
           as: :market,
           documentation: {
@@ -126,6 +137,12 @@ module API
 
         def fee_currency(order)
           order.side == 'buy' ? order.ask : order.bid
+        end
+
+        def received_amount(trade, current_user)
+          order = trade.order_for_member(current_user)
+          fee_amount = fee_amount(trade, order)
+          order.side == 'buy' ? trade.amount - fee_amount : trade.total - fee_amount
         end
       end
     end

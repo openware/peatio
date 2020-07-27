@@ -17,13 +17,16 @@ module API
           use :trade_filters
         end
         get '/trades' do
-          current_user
-            .trades
-            .order(order_param)
-            .tap { |q| q.where!(market: params[:market]) if params[:market] }
-            .tap { |q| q.where!('created_at >= ?', Time.at(params[:time_from])) if params[:time_from] }
-            .tap { |q| q.where!('created_at < ?', Time.at(params[:time_to])) if params[:time_to] }
-            .tap { |q| present paginate(q, false), with: API::V2::Entities::Trade, current_user: current_user }
+          trades = current_user
+                      .trades
+                      .order(order_param)
+                      .tap { |q| q.where!(market: params[:market]) if params[:market] }
+                      .tap { |q| q.where!('created_at >= ?', Time.at(params[:time_from])) if params[:time_from] }
+                      .tap { |q| q.where!('created_at < ?', Time.at(params[:time_to])) if params[:time_to] }
+
+          trades = trades.select { |trade| trade.side(current_user) == params[:type] } if params[:type]
+
+          present(paginate(trades, false), with: API::V2::Entities::Trade, current_user: current_user)
         end
       end
     end

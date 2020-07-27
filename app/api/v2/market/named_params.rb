@@ -59,6 +59,10 @@ module API
                    allow_blank: { value: false, message: 'market.trade.empty_time_from' },
                    desc: "An integer represents the seconds elapsed since Unix epoch."\
                          "If set, only trades executed after the time will be returned."
+          optional :type,
+                   type: String,
+                   values: { value: %w(buy sell), message: 'market.trade.invalid_type' },
+                   desc: 'Filter trade by type.'
           optional :time_to,
                    type: { value: Integer, message: 'market.trade.non_integer_time_to' },
                    allow_blank: { value: false, message: 'market.trade.empty_time_to' },
