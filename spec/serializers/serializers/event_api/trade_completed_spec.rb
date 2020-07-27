@@ -96,15 +96,15 @@ describe Serializers::EventAPI::TradeCompleted, 'Event API' do
       taker.get_account(:usd).lock_funds('14.0'.to_d)
     end
 
-    before { Trade.any_instance.expects(:created_at).returns(completed_at).at_least_once }
+    before { allow_any_instance_of(Trade).to receive(:created_at).and_return(completed_at) }
 
     before do
       DatabaseCleaner.clean
-      EventAPI.expects(:notify).with('model.account.created', anything).twice
-      EventAPI.expects(:notify).with('market.btcusd.order_created', anything).twice
-      EventAPI.expects(:notify).with('market.btcusd.order_updated', anything).once
-      EventAPI.expects(:notify).with('market.btcusd.order_completed', anything).once
-      EventAPI.expects(:notify).with('market.btcusd.trade_completed', {
+      expect(EventAPI).to receive(:notify).with('model.account.created', anything).twice
+      expect(EventAPI).to receive(:notify).with('market.btcusd.order_created', anything).twice
+      expect(EventAPI).to receive(:notify).with('market.btcusd.order_updated', anything)
+      expect(EventAPI).to receive(:notify).with('market.btcusd.order_completed', anything)
+      expect(EventAPI).to receive(:notify).with('market.btcusd.trade_completed', {
         id:                     1,
         market:                 'btcusd',
         price:                  '0.03',
@@ -124,7 +124,7 @@ describe Serializers::EventAPI::TradeCompleted, 'Event API' do
         taker_outcome_amount:   '0.42',
         taker_outcome_fee:      '0.0',
         completed_at:           completed_at.iso8601
-      }).once
+      })
     end
 
     after do
@@ -166,15 +166,15 @@ describe Serializers::EventAPI::TradeCompleted, 'Event API' do
       maker.get_account(:usd).lock_funds('14.0'.to_d)
     end
 
-    before { Trade.any_instance.expects(:created_at).returns(completed_at).at_least_once }
+    before { allow_any_instance_of(Trade).to receive(:created_at).and_return(completed_at) }
 
     before do
       DatabaseCleaner.clean
-      EventAPI.expects(:notify).with('model.account.created', anything).twice
-      EventAPI.expects(:notify).with('market.btcusd.order_created', anything).twice
-      EventAPI.expects(:notify).with('market.btcusd.order_updated', anything).once
-      EventAPI.expects(:notify).with('market.btcusd.order_completed', anything).once
-      EventAPI.expects(:notify).with('market.btcusd.trade_completed', {
+      expect(EventAPI).to receive(:notify).with('model.account.created', anything).twice
+      expect(EventAPI).to receive(:notify).with('market.btcusd.order_created', anything).twice
+      expect(EventAPI).to receive(:notify).with('market.btcusd.order_updated', anything)
+      expect(EventAPI).to receive(:notify).with('market.btcusd.order_completed', anything)
+      expect(EventAPI).to receive(:notify).with('market.btcusd.trade_completed', {
         id:                     1,
         market:                 'btcusd',
         price:                  '0.03',
@@ -194,7 +194,7 @@ describe Serializers::EventAPI::TradeCompleted, 'Event API' do
         taker_outcome_amount:   '14.0',
         taker_outcome_fee:      '0.0',
         completed_at:           completed_at.iso8601
-      }).once
+      })
     end
 
     after do

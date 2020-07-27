@@ -24,7 +24,7 @@ describe AMQP::Config do
   end
 
   before do
-    AMQP::Config.stubs(:data).returns(config)
+    allow(AMQP::Config).to receive(:data).and_return(config)
   end
 
   it 'should tell client how to connect' do

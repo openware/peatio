@@ -98,7 +98,7 @@ describe Order, '#submit' do
   end
 
   it 'mysql connection error' do
-    ActiveRecord::Base.stubs(:transaction).raises(Mysql2::Error::ConnectionError.new(''))
+    allow(ActiveRecord::Base).to receive(:transaction).and_raise(Mysql2::Error::ConnectionError.new(''))
     expect { Order.submit(order.id) }.to raise_error(Mysql2::Error::ConnectionError)
   end
 end
@@ -107,7 +107,7 @@ describe Order, '#cancel' do
   let(:order) { create(:order_bid, :with_deposit_liability, state: 'pending', price: '12.32'.to_d, volume: '123.12345678') }
 
   it 'mysql connection error' do
-    ActiveRecord::Base.stubs(:transaction).raises(Mysql2::Error::ConnectionError.new(''))
+    allow(ActiveRecord::Base).to receive(:transaction).and_raise(Mysql2::Error::ConnectionError.new(''))
     expect { Order.cancel(order.id) }.to raise_error(Mysql2::Error::ConnectionError)
   end
 end
@@ -322,7 +322,7 @@ describe Order, '#trigger_event' do
       }
     end
 
-    before { ::AMQP::Queue.expects(:enqueue_event).with('private', subject.member.uid, 'order', data) }
+    before { expect(::AMQP::Queue).to receive(:enqueue_event).with('private', subject.member.uid, 'order', data) }
 
     it { subject.trigger_event }
   end
@@ -353,19 +353,19 @@ describe Order, '#trigger_event' do
     end
 
     it 'doesnt push event for active market order' do
-      ::AMQP::Queue.expects(:enqueue_event).with(:order, data).never
+      expect(::AMQP::Queue).to receive(:enqueue_event).with(:order, data).never
       subject.trigger_event
     end
 
     it 'pushes event for completed market order' do
-      subject.expects(:trigger_event)
+      expect(subject).to receive(:trigger_event)
       subject.update!(state: 'done')
     end
 
     context do
       it do
         subject.update!(state: 'done')
-        ::AMQP::Queue.expects(:enqueue_event).with('private', subject.member.uid, 'order', data)
+        expect(::AMQP::Queue).to receive(:enqueue_event).with('private', subject.member.uid, 'order', data)
         subject.trigger_event
       end
     end

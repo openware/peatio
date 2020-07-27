@@ -48,7 +48,7 @@ describe API::V2::Admin::Wallets, type: :request do
     end
 
     it 'returns wallet balance if node accessible' do
-      WalletService.any_instance.stubs(:load_balance!).returns('1')
+      allow_any_instance_of(WalletService).to receive(:load_balance!).and_return('1')
 
       api_get "/api/v2/admin/wallets/#{wallet.id}", token: token
       expect(response).to be_successful

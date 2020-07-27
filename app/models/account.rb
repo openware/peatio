@@ -12,7 +12,7 @@ class Account < ApplicationRecord
 
   has_many :payment_addresses, -> { order(id: :asc) }
 
-  validates :member_id, uniqueness: { scope: :currency_id }
+  validates :member_id, uniqueness: { scope: :currency_id, case_sensitive: false }
   validates :balance, :locked, numericality: { greater_than_or_equal_to: 0.to_d }
 
   scope :visible, -> { joins(:currency).merge(Currency.where(visible: true)) }

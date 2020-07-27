@@ -58,7 +58,7 @@ class TradingFee < ApplicationRecord
 
   validates :group,
             presence: true,
-            uniqueness: { scope: :market_id }
+            uniqueness: { scope: :market_id, case_sensitive: true }
 
   validates :maker,
             :taker,

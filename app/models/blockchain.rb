@@ -6,7 +6,7 @@ class Blockchain < ApplicationRecord
   has_many :wallets, foreign_key: :blockchain_key, primary_key: :key
 
   validates :key, :name, :client, presence: true
-  validates :key, uniqueness: true
+  validates :key, uniqueness: { case_sensitive: true }
   validates :status, inclusion: { in: %w[active disabled] }
   validates :height,
             :min_confirmations,

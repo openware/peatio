@@ -3,6 +3,7 @@
 # This file is used by Rack-based servers to start the application.
 require ::File.expand_path('../config/environment', __FILE__)
 require 'rack/cors'
+require_relative 'lib/peatio/env-tweaks'
 
 map Rails.application.config.relative_url_root do
   use Rack::Cors do

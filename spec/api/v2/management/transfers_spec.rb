@@ -349,6 +349,7 @@ describe API::V2::Management::Transfers, type: :request do
                code: coin_distribution_account_code, credit: 1000, member_id: nil)
       end
 
+      let(:holder) { create(:member, :barong) }
       let(:member1) { create(:member, :barong) }
       let(:member2) { create(:member, :barong) }
 

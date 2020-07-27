@@ -11,7 +11,7 @@ module TIDIdentifiable
       next unless tid.blank?
       begin
         self.tid = "TID#{SecureRandom.hex(5).upcase}"
-      end while self.class.where(tid: tid).any?
+      end while self.class.unscoped.where(tid: tid).any?
     end
   end
 end

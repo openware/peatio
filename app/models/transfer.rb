@@ -27,7 +27,7 @@ class Transfer < ApplicationRecord
 
   # == Validations ==========================================================
 
-  validates :key, uniqueness: true, presence: true
+  validates :key, uniqueness: { case_sensitive: false }, presence: true
   validates :category, presence: true
   validate do
     errors.add(:base, 'invalidates accounting equation') unless Operations.validate_accounting_equation(operations)

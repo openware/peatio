@@ -30,13 +30,13 @@ describe Serializers::EventAPI::OrderCompleted do
     seller.get_account(:btc).lock_funds('100.0'.to_d)
   end
 
-  before { OrderAsk.any_instance.expects(:created_at).returns(created_at).at_least_once }
-  before { OrderAsk.any_instance.expects(:updated_at).returns(completed_at).at_least_once }
+  before { allow_any_instance_of(OrderAsk).to receive(:created_at).and_return(created_at) }
+  before { allow_any_instance_of(OrderAsk).to receive(:updated_at).and_return(completed_at) }
 
   before do
     DatabaseCleaner.clean
-    EventAPI.expects(:notify).with('market.btcusd.order_created', anything).once
-    EventAPI.expects(:notify).with('market.btcusd.order_completed', {
+    expect(EventAPI).to receive(:notify).with('market.btcusd.order_created', anything)
+    expect(EventAPI).to receive(:notify).with('market.btcusd.order_completed', {
       id:                      1,
       market:                  'btcusd',
       type:                    'sell',
@@ -60,7 +60,7 @@ describe Serializers::EventAPI::OrderCompleted do
       trades_count:            1,
       created_at:              created_at.iso8601,
       completed_at:            completed_at.iso8601
-    }).once
+    })
   end
 
   after do

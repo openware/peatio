@@ -34,13 +34,13 @@ describe BlockchainService do
   let(:expected_block) { Peatio::Block.new(block_number, expected_transactions) }
 
   before do
-    Peatio::Blockchain.registry.expects(:[])
+    allow(Peatio::Blockchain.registry).to receive(:[])
                          .with(:fake)
-                         .returns(fake_adapter.class)
-                         .at_least_once
+                         .and_return(fake_adapter.class)
+                         .at_least(:once)
 
-    service.stubs(:latest_block_number).returns(4)
-    service.adapter.stubs(:latest_block_number).never
+    allow(service).to receive(:latest_block_number).and_return(4)
+    allow(service.adapter).to receive(:latest_block_number).never
   end
 
   # Deposit context: (mock fetch_block)
@@ -56,7 +56,7 @@ describe BlockchainService do
         PaymentAddress.create!(currency: fake_currency1,
                                account: member.get_account(fake_currency1),
                                address: 'fake_address')
-        service.adapter.stubs(:fetch_block!).returns(expected_block)
+        allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
         service.process_block(block_number)
       end
 
@@ -66,7 +66,7 @@ describe BlockchainService do
 
       context 'creates deposit with correct attributes' do
         before do
-          service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
+          allow(service.adapter).to receive(:fetch_block!).and_return(Peatio::Block.new(block_number, [transaction]))
           service.process_block(block_number)
         end
 
@@ -79,10 +79,10 @@ describe BlockchainService do
 
       context 'collect deposit after processing block' do
         before do
-          service.stubs(:latest_block_number).returns(100)
-          service.adapter.stubs(:fetch_block!).returns(expected_block)
-          AMQP::Queue.expects(:enqueue).with(:events_processor, is_a(Hash))
-          AMQP::Queue.expects(:enqueue).with(:deposit_collection_fees, id: subject.first.id)
+          allow(service).to receive(:latest_block_number).and_return(100)
+          allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
+          expect(AMQP::Queue).to receive(:enqueue).with(:events_processor, instance_of(Hash))
+          expect(AMQP::Queue).to receive(:enqueue).with(:deposit_collection_fees, id: subject.first.id)
         end
 
         it { service.process_block(block_number) }
@@ -90,7 +90,7 @@ describe BlockchainService do
 
       context 'process data one more time' do
         before do
-          service.adapter.stubs(:fetch_block!).returns(expected_block)
+          allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
         end
 
         it { expect { service.process_block(block_number) }.not_to change { subject } }
@@ -105,7 +105,7 @@ describe BlockchainService do
         PaymentAddress.create!(currency: fake_currency1,
           account: member.get_account(fake_currency1),
           address: 'fake_address1')
-        service.adapter.stubs(:fetch_block!).returns(expected_block)
+        allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
         service.process_block(block_number)
       end
 
@@ -125,7 +125,7 @@ describe BlockchainService do
                           type: Deposits::Coin)
         end
         before do
-          service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
+          allow(service.adapter).to receive(:fetch_block!).and_return(Peatio::Block.new(block_number, [transaction]))
           service.process_block(block_number)
         end
         it { expect(Deposits::Coin.find_by(txid: transaction.hash).block_number).to eq(transaction.block_number) }
@@ -140,7 +140,7 @@ describe BlockchainService do
         PaymentAddress.create!(currency: fake_currency2,
           account: member.get_account(fake_currency2),
           address: 'fake_address2')
-        service.adapter.stubs(:fetch_block!).returns(expected_block)
+        allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
         service.process_block(block_number)
       end
 
@@ -175,7 +175,7 @@ describe BlockchainService do
       end
 
       before do
-        service.adapter.stubs(:fetch_block!).returns(expected_block)
+        allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
         service.process_block(block_number)
       end
 
@@ -184,8 +184,8 @@ describe BlockchainService do
       context 'single withdrawal was succeed during block processing' do
 
         before do
-          service.stubs(:latest_block_number).returns(100)
-          service.adapter.stubs(:fetch_block!).returns(expected_block)
+          allow(service).to receive(:latest_block_number).and_return(100)
+          allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
           service.process_block(block_number)
         end
 
@@ -211,7 +211,7 @@ describe BlockchainService do
     end
 
     before do
-      service.adapter.stubs(:fetch_block!).returns(expected_block)
+      allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
       service.process_block(block_number)
     end
 
@@ -247,7 +247,7 @@ describe BlockchainService do
     end
 
     before do
-      service.adapter.stubs(:fetch_block!).returns(expected_block)
+      allow(service.adapter).to receive(:fetch_block!).and_return(expected_block)
       service.process_block(block_number)
     end
 
@@ -277,7 +277,7 @@ describe BlockchainService do
       end
 
       before do
-        service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
+        allow(service.adapter).to receive(:fetch_block!).and_return(Peatio::Block.new(block_number, [transaction]))
         service.process_block(block_number)
       end
 
@@ -312,9 +312,9 @@ describe BlockchainService do
       end
 
       before do
-        service.adapter.stubs(:respond_to?).returns(true)
-        service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
-        service.adapter.stubs(:fetch_transaction).with(transaction).returns(failed_transaction)
+        allow(service.adapter).to receive(:respond_to?).and_return(true)
+        allow(service.adapter).to receive(:fetch_block!).and_return(Peatio::Block.new(block_number, [transaction]))
+        allow(service.adapter).to receive(:fetch_transaction).with(transaction).and_return(failed_transaction)
         service.process_block(block_number)
       end
 
@@ -349,10 +349,10 @@ describe BlockchainService do
       end
 
       before do
-        service.adapter.stubs(:respond_to?).returns(true)
-        service.adapter.stubs(:fetch_block!).returns(Peatio::Block.new(block_number, [transaction]))
-        service.stubs(:latest_block_number).returns(10)
-        service.adapter.stubs(:fetch_transaction).with(transaction).returns(succeed_transaction)
+        allow(service.adapter).to receive(:respond_to?).and_return(true)
+        allow(service.adapter).to receive(:fetch_block!).and_return(Peatio::Block.new(block_number, [transaction]))
+        allow(service).to receive(:latest_block_number).and_return(10)
+        allow(service.adapter).to receive(:fetch_transaction).with(transaction).and_return(succeed_transaction)
         service.process_block(block_number)
       end
 
@@ -379,14 +379,14 @@ describe BlockchainService do
     let!(:fake_account2) { member.get_account(:fake2) }
 
     before do
-      service.stubs(:latest_block_number).returns(100)
+      allow(service).to receive(:latest_block_number).and_return(100)
       PaymentAddress.create!(currency: fake_currency1,
         account: fake_account1,
         address: 'fake_address')
       PaymentAddress.create!(currency: fake_currency2,
         account: fake_account2,
         address: 'fake_address2')
-      service.adapter.stubs(:fetch_block!).returns(expected_block, expected_block1)
+      allow(service.adapter).to receive(:fetch_block!).and_return(expected_block, expected_block1)
     end
 
     it 'creates deposits and updates withdrawals' do

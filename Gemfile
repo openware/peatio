@@ -6,8 +6,8 @@ git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
 
 ruby '~> 2.6'
 
-gem 'ransack', '~> 2.1.1'
-gem 'rails', '~> 5.2.4', '>= 5.2.4.3'
+gem 'ransack', '~> 2.3.2'
+gem 'rails', '~> 6.0.0'
 gem 'puma', '~> 3.12.6'
 gem 'mysql2', '~> 0.5.2'
 gem 'redis', '~> 4.1.2', require: ['redis', 'redis/connection/hiredis']
@@ -28,22 +28,21 @@ gem 'grape-swagger-entity', '~> 0.2.5'
 gem 'grape_logging', '~> 1.8.3'
 gem 'rack-attack', '~> 5.4.2'
 gem 'faraday', '~> 0.17'
-gem 'better-faraday', '~> 1.0.8'
+gem 'better-faraday', git: 'https://github.com/openware/better-faraday.git', branch: 'feature/dependencies'
 gem 'faraday_middleware', '~> 0.13.1'
 gem 'faye', '~> 1.2', '>= 1.2.5'
 gem 'eventmachine', '~> 1.2'
 gem 'em-synchrony', '~> 1.0'
-gem 'jwt', '~> 2.1.0'
+gem 'jwt', '~> 2.2.1'
 gem 'email_validator', '~> 1.6.0'
 gem 'validate_url', '~> 1.0.8'
 gem 'god', '~> 0.13.7', require: false
 gem 'mini_racer', '~> 0.2.4', require: false
-gem 'arel-is-blank', '~> 1.0.0'
 gem 'sentry-raven', '~> 2.9.0', require: false
 gem 'memoist', '~> 0.16.0'
 gem 'method-not-implemented', '~> 1.0.1'
 gem 'validates_lengths_from_database', '~> 0.7.0'
-gem 'jwt-multisig', '~> 1.0.0'
+gem 'jwt-multisig', git: 'https://github.com/rubykube/jwt-multisig.git', branch: 'feature/gemfile'
 gem 'cash-addr', '~> 0.2.0', require: 'cash_addr'
 gem 'digest-sha3', '~> 1.1.0'
 gem 'scout_apm', '~> 2.4', require: false
@@ -51,7 +50,7 @@ gem 'peatio', '= 2.6.1'
 gem 'irix', '~> 2.6.0'
 gem 'rack-cors', '~> 1.0.6', require: false
 gem 'jwt-rack', '~> 0.1.0', require: false
-gem 'env-tweaks', '~> 1.0.0'
+# gem 'env-tweaks', '~> 1.0.0'
 gem 'vault', '~> 0.12', require: false
 gem 'vault-rails', git: 'http://github.com/rubykube/vault-rails'
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -64,7 +63,7 @@ group :development, :test do
   gem 'bump',         '~> 0.7'
   gem 'faker',        '~> 1.8'
   gem 'pry-byebug',   '~> 3.7'
-  gem 'bullet', '~> 5.9', '>= 5.9.0'
+  gem 'bullet', '~> 6.1', '>= 6.1.0'
   gem 'grape_on_rails_routes', '~> 0.3.2'
 end
 
@@ -79,7 +78,7 @@ group :test do
   gem 'rspec-retry',         '~> 0.6'
   gem 'webmock',             '~> 3.5'
   gem 'database_cleaner',    '~> 1.7'
-  gem 'mocha',               '~> 1.8', require: false
+  gem 'mocha',               '~> 1.11', require: false
   gem 'factory_bot_rails', '~> 5.1', '>= 5.1.1'
   gem 'timecop',             '~> 0.9'
   gem 'rubocop-rspec',       '~> 1.32', require: false

@@ -9,9 +9,9 @@ module Operations
     PLATFORM_TYPES = %w[asset expense revenue].freeze
     TYPES = (MEMBER_TYPES + PLATFORM_TYPES).freeze
 
-    validates :code, presence: true, uniqueness: true
+    validates :code, presence: true, uniqueness: { case_sensitive: false }
     validates :type, presence: true, inclusion: { in: TYPES }
-    validates :kind, presence: true, uniqueness: { scope: %i[type currency_type] }
+    validates :kind, presence: true, uniqueness: { scope: %i[type currency_type], case_sensitive: false }
     validates :currency_type, presence: true, inclusion: { in: Currency.types.map(&:to_s) }
     validates :scope, presence: true, inclusion: { in: SCOPES }
 

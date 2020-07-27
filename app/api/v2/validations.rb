@@ -31,7 +31,7 @@ module API
 
         def message(_param)
           api = @scope.instance_variable_get(:@api)
-          module_name = api.base.parent.name.humanize.demodulize
+          module_name = api.base.module_parent.name.humanize.demodulize
           class_name = api.base.name.humanize.demodulize.singularize
           # Return default API error message for Management module (no errors unify).
           return super if module_name == 'management'
@@ -53,7 +53,7 @@ module API
 
         def message(_param)
           api = @scope.instance_variable_get(:@api)
-          module_name = api.base.parent.name.humanize.demodulize
+          module_name = api.base.module_parent.name.humanize.demodulize
           class_name = api.base.name.humanize.demodulize.singularize
           # Return default API error message for Management module (no errors unify).
           return super if module_name == 'management'

@@ -30,13 +30,13 @@ describe Serializers::EventAPI::OrderCanceled do
     seller.get_account(:btc).lock_funds('100.0'.to_d)
   end
 
-  before { OrderAsk.any_instance.expects(:created_at).returns(created_at).at_least_once }
-  before { OrderAsk.any_instance.expects(:updated_at).returns(canceled_at).at_least_once }
+  before { allow_any_instance_of(OrderAsk).to receive(:created_at).and_return(created_at) }
+  before { allow_any_instance_of(OrderAsk).to receive(:updated_at).and_return(canceled_at) }
 
   before do
     DatabaseCleaner.clean
-    EventAPI.expects(:notify).with('market.btcusd.order_created', anything).once
-    EventAPI.expects(:notify).with('market.btcusd.order_canceled', {
+    expect(EventAPI).to receive(:notify).with('market.btcusd.order_created', anything)
+    expect(EventAPI).to receive(:notify).with('market.btcusd.order_canceled', {
       id:                       1,
       market:                  'btcusd',
       type:                    'sell',
@@ -58,7 +58,7 @@ describe Serializers::EventAPI::OrderCanceled do
       trades_count:            0,
       created_at:              created_at.iso8601,
       canceled_at:             canceled_at.iso8601
-    }).once
+    })
   end
 
   after do

@@ -44,12 +44,12 @@ RSpec.describe Peatio::Upstream::Opendax do
   end
 
   it 'detects trade' do
-    opendax.expects(:notify_public_trade).with(trade)
+    expect(opendax).to receive(:notify_public_trade).with(trade)
     opendax.ws_read_public_message(msg)
   end
 
   it 'doesnt notify about public trade' do
-    opendax.expects(:notify_public_trade).never
+    expect(opendax).to receive(:notify_public_trade).never
     opendax.ws_read_public_message(subscribe_msg)
   end
 end

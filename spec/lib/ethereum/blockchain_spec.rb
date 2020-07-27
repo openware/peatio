@@ -147,7 +147,7 @@ describe Ethereum::Blockchain do
     end
 
     before do
-      Ethereum::Client.any_instance.stubs(:rpc_call_id).returns(1)
+      allow_any_instance_of(Ethereum::Client).to receive(:rpc_call_id).and_return(1)
       block_data.each do |blk|
         # stub get_block_hash
         stub_request(:post, endpoint)

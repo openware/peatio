@@ -12,7 +12,7 @@ describe Deposit do
   end
 
   context 'fee is set to fixed value of 10' do
-    before { Currency.any_instance.expects(:deposit_fee).once.returns(10) }
+    before { allow_any_instance_of(Currency).to receive(:deposit_fee).and_return(10) }
 
     it 'computes fee' do
       expect(deposit.fee).to eql 10.to_d
@@ -21,7 +21,7 @@ describe Deposit do
   end
 
   context 'fee exceeds amount' do
-    before { Currency.any_instance.expects(:deposit_fee).once.returns(1.1) }
+    before(:each) { allow_any_instance_of(Currency).to receive(:deposit_fee).and_return(1.1) }
     let(:amount) { 1 }
     let(:deposit) { build(:deposit_usd, member: member, amount: amount, currency: currency) }
     it 'fails validation' do
@@ -54,8 +54,8 @@ describe Deposit do
     let(:deposit) { create(:deposit_btc) }
 
     it 'uses height from blockchain by default' do
-      deposit.blockchain.stubs(:processed_height).returns(100)
-      deposit.stubs(:block_number).returns(90)
+      deposit.blockchain.stub(:processed_height).and_return(100)
+      deposit.stub(:block_number).and_return(90)
       expect(deposit.confirmations).to eql(10)
     end
   end
@@ -68,7 +68,7 @@ describe Deposit do
     let(:deposit) { create(:deposit_btc, amount: 3.7) }
 
     before do
-      WalletService.any_instance.expects(:spread_deposit).returns(spread)
+      allow_any_instance_of(WalletService).to receive(:spread_deposit).and_return(spread)
     end
 
     it 'spreads deposit between wallets' do
@@ -177,7 +177,7 @@ describe Deposit do
     end
 
     it 'produce amqp message for collect deposit' do
-      AMQP::Queue.expects(:enqueue).with(:events_processor, { subject: :operation,
+      allow(AMQP::Queue).to receive(:enqueue).with(:events_processor, { subject: :operation,
                                                               payload: { code: 212,
                                                                          currency: 'btc',
                                                                          member_id: crypto_deposit.member_id,
@@ -185,13 +185,13 @@ describe Deposit do
                                                                          reference_type: 'deposit',
                                                                          debit: 0.0,
                                                                          credit: 0.37e1 } })
-      AMQP::Queue.expects(:enqueue).with(:deposit_collection_fees, id: crypto_deposit.id)
+      allow(AMQP::Queue).to receive(:enqueue).with(:deposit_collection_fees, id: crypto_deposit.id)
       crypto_deposit.accept!
       crypto_deposit.process!
     end
 
     it 'produces amqp message for collect deposit' do
-      AMQP::Queue.expects(:enqueue).with(:events_processor, { subject: :operation,
+      allow(AMQP::Queue).to receive(:enqueue).with(:events_processor, { subject: :operation,
                                                               payload: { code: 212,
                                                                          currency: 'btc',
                                                                          member_id: crypto_deposit.member_id,
@@ -199,7 +199,7 @@ describe Deposit do
                                                                          reference_type: 'deposit',
                                                                          debit: 0.0,
                                                                          credit: 0.37e1 } })
-      AMQP::Queue.expects(:enqueue).with(:deposit_collection, id: crypto_deposit.id)
+      allow(AMQP::Queue).to receive(:enqueue).with(:deposit_collection, id: crypto_deposit.id)
       crypto_deposit.accept!
       crypto_deposit.process!(false)
     end

@@ -85,7 +85,7 @@ describe API::V2::Public::Webhooks, type: :request do
 
       before do
         member.get_account(:eth).payment_addresses.create(currency_id: :eth, address: '0x1ef338196bd0207ba4852ba7a6847eed59331b84')
-        WalletService.any_instance.stubs(:trigger_webhook_event).with(request_body).returns({ transfers: [transaction] })
+        allow_any_instance(WalletService).to receive(:trigger_webhook_event).with(request_body).and_return({ transfers: [transaction] })
       end
 
       it 'creates new deposit' do
@@ -111,7 +111,7 @@ describe API::V2::Public::Webhooks, type: :request do
       context 'process undefined transfer' do
 
         before do
-          WalletService.any_instance.stubs(:trigger_webhook_event).with(request_body).returns({ transfers: [invlaid_transaction] })
+          allow_any_instance(WalletService).to receive(:trigger_webhook_event).with(request_body).and_return({ transfers: [invlaid_transaction] })
         end
 
         it 'doesnt create deposit and return 200' do
@@ -128,10 +128,10 @@ describe API::V2::Public::Webhooks, type: :request do
 
       before do
         member.get_account(:eth).payment_addresses.create(currency_id: :eth, address: '0x1ef338196bd0207ba4852ba7a6847eed59331b84')
-        WalletService.any_instance.stubs(:trigger_webhook_event).with(request_body).raises(Peatio::Wallet::ClientError.new('something went wrong'))
+        allow_any_instance(WalletService).to receive(:trigger_webhook_event).with(request_body).raises(Peatio::Wallet::ClientError.new('something went wrong'))
       end
 
-      it 'returns error' do
+      it 'and_return error' do
         api_post '/api/v2/public/webhooks/deposit', params: request_body
         expect(response.status).to eq 422
         expect(response).to include_api_error('public.webhook.cannot_perfom_transfer')
@@ -152,7 +152,7 @@ describe API::V2::Public::Webhooks, type: :request do
         context 'update payment address' do
           before do
             member.get_account(:eth).payment_addresses.create(currency_id: :eth, address: nil, details: { address_id: 'address_id' })
-            WalletService.any_instance.stubs(:trigger_webhook_event).with(request_body).returns({ address_id: 'address_id', currency_id: 'eth' })
+            allow_any_instance(WalletService).to receive(:trigger_webhook_event).with(request_body).and_return({ address_id: 'address_id', currency_id: 'eth' })
           end
 
           it 'should create address for member' do
@@ -165,7 +165,7 @@ describe API::V2::Public::Webhooks, type: :request do
         context 'skip payment address' do
           before do
             member.get_account(:eth).payment_addresses.create(currency_id: :eth, address: request_body['address'], details: { address_id: 'address_id' })
-            WalletService.any_instance.stubs(:trigger_webhook_event).with(request_body).returns({ address_id: 'address_id', currency_id: 'eth' })
+            allow_any_instance(WalletService).to receive(:trigger_webhook_event).with(request_body).and_return({ address_id: 'address_id', currency_id: 'eth' })
           end
 
           it 'should not update address if address already exists' do
@@ -179,10 +179,10 @@ describe API::V2::Public::Webhooks, type: :request do
       context 'adapter raises error invalid' do
         before do
           member.get_account(:eth).payment_addresses.create(currency_id: :eth, address: nil, details: { address_id: 'address_id' })
-          WalletService.any_instance.stubs(:trigger_webhook_event).with(request_body).raises(Peatio::Wallet::ClientError.new('something went wrong'))
+          allow_any_instance(WalletService).to receive(:trigger_webhook_event).with(request_body).raises(Peatio::Wallet::ClientError.new('something went wrong'))
         end
 
-        it 'returns error' do
+        it 'and_return error' do
           api_post '/api/v2/public/webhooks/deposit', params: request_body
           expect(response.status).to eq 422
           expect(response).to include_api_error('public.webhook.cannot_perfom_address_confirmation')

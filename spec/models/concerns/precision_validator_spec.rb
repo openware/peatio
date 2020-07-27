@@ -11,18 +11,18 @@ describe PrecisionValidator do
   subject { Validatable.new }
 
   it 'returns valid record' do
-    subject.stubs(amount: 1)
+    subject.stub(amount: 1)
     expect(subject).to be_valid
   end
 
   it 'returns invalid record with errors' do
-    subject.stubs(amount: 0.001)
+    subject.stub(amount: 0.001)
     expect(subject).not_to be_valid
     expect(subject.errors[:amount]).to include(/precision must be less than or equal to 2/)
   end
 
   it 'returns invalid record with errors' do
-    subject.stubs(amount: '0.001')
+    subject.stub(amount: '0.001')
     expect(subject).not_to be_valid
     expect(subject.errors[:amount]).to include(/must be a number/)
   end

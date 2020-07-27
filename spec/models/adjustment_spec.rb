@@ -32,7 +32,7 @@ describe Adjustment do
         subject { build(:adjustment) }
 
         before do
-          subject.stubs(:fetch_operations).returns([build(:asset)])
+          allow(subject).to receive(:fetch_operations).and_return([build(:asset)])
         end
 
         it 'invalidates transfer' do
@@ -52,7 +52,7 @@ describe Adjustment do
         let(:liability) { build(:liability, :with_member, credit: 5, currency_id: :btc) }
 
         before do
-          subject.stubs(:fetch_operations).returns([asset, liability])
+          allow(subject).to receive(:fetch_operations).and_return([asset, liability])
         end
 
         it 'invalidates transfer' do

@@ -235,7 +235,7 @@ describe Transfer do
 
         context 'legacy balance update raise error' do
           before do
-            Account.any_instance.expects(:sub_funds).raises(Account::AccountError)
+            allow_any_instance_of(Account).to receive(:sub_funds).and_raise(Account::AccountError)
           end
 
           it 'does not create transfer' do

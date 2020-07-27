@@ -3,7 +3,7 @@
 module Operations
   # {Liability} is a balance sheet operation
   class Liability < Operation
-    belongs_to :member
+    belongs_to :member, required: false
 
     validates :member_id, presence: {
       if: ->(liability) { liability.account.scope == 'member' }

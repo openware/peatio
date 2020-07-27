@@ -19,7 +19,7 @@ class Member < ApplicationRecord
   before_validation :downcase_email
 
   validates :uid, length: { maximum: 32 }
-  validates :email, presence: true, uniqueness: true, email: true
+  validates :email, presence: true, uniqueness: { case_sensitive: true }, email: true
   validates :level, numericality: { greater_than_or_equal_to: 0 }
   validates :role, inclusion: { in: ROLES }
 

@@ -13,7 +13,7 @@ describe Withdraw do
       end
 
       it 'should accept quick withdraw directly' do
-        subject.update_attributes sum: 5
+        subject.update sum: 5
         subject.audit!
         expect(subject).to be_accepted
       end
@@ -90,7 +90,7 @@ describe Withdraw do
     subject { create(:usd_withdraw, :with_deposit_liability, sum: 1000) }
 
     before do
-      subject.stubs(:send_withdraw_confirm_email)
+      allow(subject).to receive(:send_withdraw_confirm_email)
     end
 
     it 'initializes with state :prepared' do
@@ -151,7 +151,7 @@ describe Withdraw do
       before { subject.accept! }
 
       it 'transitions to :processing after calling #process! when withdrawing fiat currency' do
-        subject.stubs(:coin?).returns(false)
+        expect(subject).to receive(:coin?).and_return(false)
 
         subject.process!
 
@@ -159,7 +159,7 @@ describe Withdraw do
       end
 
       it 'transitions to :failed after calling #fail! when withdrawing fiat currency' do
-        subject.stubs(:coin?).returns(false)
+        expect(subject).to receive(:coin?).and_return(false)
 
         subject.process!
 
@@ -169,7 +169,7 @@ describe Withdraw do
       end
 
       it 'transitions to :processing after calling #process!' do
-        subject.expects(:send_coins!)
+        expect(subject).to receive(:send_coins!)
 
         subject.process!
 
@@ -535,7 +535,7 @@ describe Withdraw do
 
   context 'fee is set to fixed value of 10' do
     let(:withdraw) { create(:usd_withdraw, :with_deposit_liability, sum: 200) }
-    before { Currency.any_instance.expects(:withdraw_fee).once.returns(10) }
+    before { allow_any_instance_of(Currency).to receive(:withdraw_fee).and_return(10) }
     it 'computes fee' do
       expect(withdraw.fee).to eql 10.to_d
       expect(withdraw.amount).to eql 190.to_d
@@ -544,7 +544,7 @@ describe Withdraw do
 
   context 'fee exceeds amount' do
     let(:withdraw) { build(:usd_withdraw, sum: 200, member: nil) }
-    before { Currency.any_instance.expects(:withdraw_fee).once.returns(200) }
+    before { allow_any_instance_of(Currency).to receive(:withdraw_fee).and_return(200) }
     it 'fails validation' do
       expect(withdraw.save).to eq false
       expect(withdraw.errors[:amount]).to match(["must be greater than 0.0"])

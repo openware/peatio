@@ -14,31 +14,31 @@ describe AMQP::Queue do
                      })
   end
 
-  let(:default_exchange) { stub('default_exchange') }
-  let(:channel) { stub('channel', default_exchange: default_exchange) }
+  let(:default_exchange) { double('default_exchange') }
+  let(:channel) { double('channel', default_exchange: default_exchange) }
 
   before do
-    AMQP::Config.stubs(:data).returns(config)
+    allow(AMQP::Config).to receive(:data).and_return(config)
 
-    AMQP::Queue.unstub(:publish)
-    AMQP::Queue.stubs(:exchanges).returns(default: default_exchange)
-    AMQP::Queue.stubs(:channel).returns(channel)
+    allow(AMQP::Queue).to receive(:publish).and_call_original
+    allow(AMQP::Queue).to receive(:exchanges).and_return(default: default_exchange)
+    allow(AMQP::Queue).to receive(:channel).and_return(channel)
   end
 
   it 'should instantiate exchange use exchange config' do
-    channel.expects(:fanout).with('testx')
+    expect(channel).to receive(:fanout).with('testx')
     AMQP::Queue.exchange(:testx)
   end
 
   it 'should publish message on selected exchange' do
-    exchange = mock('test exchange')
-    channel.expects(:fanout).with('testx').returns(exchange)
-    exchange.expects(:publish).with(JSON.dump(data: 'hello'), {})
+    exchange = double('test exchange')
+    expect(channel).to receive(:fanout).with('testx').and_return(exchange)
+    expect(exchange).to receive(:publish).with(JSON.dump(data: 'hello'), {})
     AMQP::Queue.publish(:testx, data: 'hello')
   end
 
   it 'should publish message on default exchange' do
-    default_exchange.expects(:publish).with(JSON.dump(data: 'hello'), routing_key: 'testd')
+    expect(default_exchange).to receive(:publish).with(JSON.dump(data: 'hello'), routing_key: 'testd')
     AMQP::Queue.enqueue(:testd, data: 'hello')
   end
 end

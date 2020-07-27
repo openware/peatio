@@ -3,7 +3,7 @@
 module Operations
   # {Revenue} is a income statement operation
   class Revenue < Operation
-    belongs_to :member
+    belongs_to :member, required: false
   end
 end
 

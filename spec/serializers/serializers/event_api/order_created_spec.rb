@@ -29,11 +29,11 @@ describe Serializers::EventAPI::OrderCreated do
     buyer.get_account(:btc).lock_funds('100.0'.to_d)
   end
 
-  before { OrderBid.any_instance.expects(:created_at).returns(created_at).at_least_once }
+  before { allow_any_instance_of(OrderBid).to receive(:created_at).and_return(created_at) }
 
   before do
     DatabaseCleaner.clean
-    EventAPI.expects(:notify).with('market.btcusd.order_created', {
+    expect(EventAPI).to receive(:notify).with('market.btcusd.order_created', {
       id:                     1,
       market:                 'btcusd',
       type:                   'buy',
@@ -54,7 +54,7 @@ describe Serializers::EventAPI::OrderCreated do
       state:                  'open',
       trades_count:           0,
       created_at:             created_at.iso8601
-    }).once
+    })
   end
 
   after do

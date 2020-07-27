@@ -90,12 +90,12 @@ describe Currency do
     let!(:fake_currency) { create(:currency, :btc, id: 'fake') }
 
     it 'should not update the base factor' do
-      fake_currency.update_attributes :base_factor => 8
+      fake_currency.update :base_factor => 8
       expect(fake_currency.reload.base_factor).to eq(fake_currency.base_factor)
     end
 
     it 'should not update the type' do
-      fake_currency.update_attributes :type => 'fiat'
+      fake_currency.update :type => 'fiat'
       expect(fake_currency.reload.type).to eq(fake_currency.type)
     end
   end

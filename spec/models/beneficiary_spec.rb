@@ -29,7 +29,7 @@ describe Beneficiary, 'Validations' do
   context 'pin presence' do
     context 'nil pin' do
       subject { build(:beneficiary) }
-      before { Beneficiary.expects(:generate_pin).returns(nil) }
+      before { expect(Beneficiary).to receive(:generate_pin).and_return(nil) }
       it { expect(subject.valid?).to be_falsey }
     end
   end
@@ -37,7 +37,7 @@ describe Beneficiary, 'Validations' do
   context 'pin numericality only_integer' do
     context 'float pin' do
       subject { build(:beneficiary) }
-      before { Beneficiary.expects(:generate_pin).returns(3.14) }
+      before { expect(Beneficiary).to receive(:generate_pin).and_return(3.14) }
       it { expect(subject.valid?).to be_falsey }
     end
   end
@@ -150,7 +150,7 @@ describe Beneficiary, 'Instance Methods' do
       sent_at = subject.sent_at
       pin = subject.pin
 
-      Time.stubs(:now).returns(Time.mktime(1970,1,1))
+      allow(Time).to receive(:now).and_return(Time.mktime(1970,1,1))
       subject.regenerate_pin!
       expect(subject.pin).to_not eq(pin)
       expect(subject.sent_at).to_not eq(sent_at)

@@ -18,7 +18,7 @@ describe API::V2::Public::Tools, type: :request do
     end
 
     it 'returns failed liveness probe' do
-      Market.stubs(:connected?).returns(false)
+      allow(Market).to receive(:connected?).and_return(false)
 
       get '/api/v2/public/health/alive'
       expect(response).to have_http_status(503)
@@ -30,7 +30,7 @@ describe API::V2::Public::Tools, type: :request do
     end
 
     it 'returns failed readiness probe' do
-      Bunny.stubs(:run).returns(false)
+      allow(Bunny).to receive(:run).and_return(false)
 
       get '/api/v2/public/health/alive'
       expect(response).to have_http_status(503)

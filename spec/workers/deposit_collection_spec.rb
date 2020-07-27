@@ -24,10 +24,10 @@ describe Workers::AMQP::DepositCollection do
   context do
     before do
       transactions = collected_spread.map { |s| Peatio::Transaction.new(s) }
-      WalletService.any_instance
-                    .expects(:collect_deposit!)
+      expect_any_instance_of(WalletService)
+                    .to receive(:collect_deposit!)
                     .with(instance_of(Deposits::Coin), anything)
-                    .returns(transactions)
+                    .and_return(transactions)
     end
 
     it 'collect deposit and update spread' do
@@ -41,10 +41,10 @@ describe Workers::AMQP::DepositCollection do
 
   context do
     before do
-      WalletService.any_instance
-                    .expects(:collect_deposit!)
+      expect_any_instance_of(WalletService)
+                    .to receive(:collect_deposit!)
                     .with(instance_of(Deposits::Coin), anything)
-                    .returns([])
+                    .and_return([])
     end
 
     it 'collect deposit with empty spread' do

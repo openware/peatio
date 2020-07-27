@@ -17,7 +17,7 @@ describe Workers::AMQP::DepositCoinAddress do
   subject { account.payment_address.address }
 
   it 'raise error on databse connection error' do
-    Account.stubs(:find_by_id).raises(Mysql2::Error::ConnectionError.new(''))
+    expect(Account).to receive(:find_by_id).and_raise(Mysql2::Error::ConnectionError.new(''))
     expect {
       Workers::AMQP::DepositCoinAddress.new.process(account_id: account.id)
     }.to raise_error Mysql2::Error::ConnectionError
@@ -25,9 +25,9 @@ describe Workers::AMQP::DepositCoinAddress do
 
   context 'wallet service' do
     before do
-      WalletService.any_instance
-                    .expects(:create_address!)
-                    .returns(create_address_result)
+      expect_any_instance_of(WalletService)
+                    .to receive(:create_address!)
+                    .and_return(create_address_result)
     end
 
     it 'is passed to wallet service' do

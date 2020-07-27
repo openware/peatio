@@ -83,7 +83,7 @@ describe Matching::Executor do
     end
 
     it 'should publish trade through amqp' do
-      AMQP::Queue.expects(:publish)
+      expect(AMQP::Queue).to receive(:publish)
       subject.execute!
     end
   end
@@ -220,7 +220,7 @@ describe Matching::Executor do
 
     it 'should not create trade' do
       # set locked funds to 0 so strike will fail
-      alice.get_account(:btc).update_attributes(locked: ::Trade::ZERO)
+      alice.get_account(:btc).update(locked: ::Trade::ZERO)
 
       expect do
         expect { subject.execute! }.to raise_error(Account::AccountError)

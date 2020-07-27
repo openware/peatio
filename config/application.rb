@@ -5,6 +5,21 @@ require_relative 'boot'
 
 require 'rails'
 
+# require "rails"
+# # Pick the frameworks you want:
+# require "active_model/railtie"
+# require "active_job/railtie"
+# require "active_record/railtie"
+# # require "active_storage/engine"
+# require "action_controller/railtie"
+# # require "action_mailer/railtie"
+# # require "action_mailbox/engine"
+# # require "action_text/engine"
+# require "action_view/railtie"
+# # require "action_cable/engine"
+# # require "sprockets/railtie"
+# require "rails/test_unit/railtie"
+
 %w( active_record action_controller action_view active_job ).each { |framework| require "#{framework}/railtie" }
 
 # Require the gems listed in Gemfile, including any gems
@@ -51,5 +66,8 @@ module Peatio
     config.action_controller.allow_forgery_protection = false
 
     config.middleware.use ActionDispatch::Flash
+
+    config.load_defaults 6.0
+    config.autoloader = :classic
   end
 end

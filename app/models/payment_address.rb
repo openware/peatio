@@ -10,7 +10,7 @@ class PaymentAddress < ApplicationRecord
 
   after_commit :enqueue_address_generation
 
-  validates :address, uniqueness: { scope: :currency_id }, if: :address?
+  validates :address, uniqueness: { scope: :currency_id, case_sensitive: false }, if: :address?
 
   vault_attribute :details, serialize: :json, default: {}
   vault_attribute :secret

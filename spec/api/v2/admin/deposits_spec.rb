@@ -168,14 +168,14 @@ describe API::V2::Admin::Deposits, type: :request do
 
     context 'action :process' do
       it 'sends event to deposit_collection daemon' do
-        AMQP::Queue.expects(:enqueue).with(:deposit_collection, id: coin.id)
+        expect(AMQP::Queue).to receive(:enqueue).with(:deposit_collection, id: coin.id)
         api_post url, token: token, params: { action: 'process', id: coin.id }
 
         expect(response).to be_successful
       end
 
       it 'sends event to deposit_collection daemon' do
-        AMQP::Queue.expects(:enqueue).with(:deposit_collection_fees, id: coin.id)
+        expect(AMQP::Queue).to receive(:enqueue).with(:deposit_collection_fees, id: coin.id)
         api_post url, token: token, params: { action: 'process', fees: true, id: coin.id }
 
         expect(response).to be_successful

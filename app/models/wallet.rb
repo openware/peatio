@@ -36,7 +36,7 @@ class Wallet < ApplicationRecord
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
 
-  validates :name,    presence: true, uniqueness: true
+  validates :name,    presence: true, uniqueness: { case_sensitive: true }
   validates :address, presence: true
 
   validates :status,  inclusion: { in: %w[active disabled] }

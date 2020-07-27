@@ -1,15 +1,15 @@
 describe API::V2::Management::Trades, type: :request do
   let(:member) do
     create(:member, :level_3).tap do |m|
-      m.get_account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
-      m.get_account(:usd).update_attributes(balance: 2014.47, locked: 0)
+      m.get_account(:btc).update(balance: 12.13,   locked: 3.14)
+      m.get_account(:usd).update(balance: 2014.47, locked: 0)
     end
   end
 
   let(:second_member) do
     create(:member, :level_3).tap do |m|
-      m.get_account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
-      m.get_account(:usd).update_attributes(balance: 2014.47, locked: 0)
+      m.get_account(:btc).update(balance: 12.13,   locked: 3.14)
+      m.get_account(:usd).update(balance: 2014.47, locked: 0)
     end
   end
 

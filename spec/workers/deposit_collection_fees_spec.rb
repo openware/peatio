@@ -14,16 +14,16 @@ describe Workers::AMQP::DepositCollectionFees do
 
   before do
     spread_deposit_res = spread.map { |s| Peatio::Transaction.new(s) }
-    WalletService.any_instance
-                  .expects(:spread_deposit)
+    expect_any_instance_of(WalletService)
+                  .to receive(:spread_deposit)
                   .with(instance_of(Deposits::Coin))
-                  .returns(spread_deposit_res)
+                  .and_return(spread_deposit_res)
 
     deposit_collection_fees_res = [Peatio::Transaction.new(amount: 1, currency_id: :bbtc, hash: 'hash')]
-    WalletService.any_instance
-                  .expects(:deposit_collection_fees!)
+    expect_any_instance_of(WalletService)
+                  .to receive(:deposit_collection_fees!)
                   .with(instance_of(Deposits::Coin), anything)
-                  .returns(deposit_collection_fees_res)
+                  .and_return(deposit_collection_fees_res)
   end
 
   it 'calls spread_deposit, deposit_collection_fees! and returns true' do
