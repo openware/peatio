@@ -6,6 +6,7 @@ module Workers
       self.sleep_time = 60
 
       def process
+        # Process deposits with `processing` state each minute
         ::Deposit.processing.each do |deposit|
           Rails.logger.info { "Starting processing coin deposit with id: #{deposit.id}." }
 
@@ -18,6 +19,7 @@ module Workers
           # Check if adapter has prepare_deposit_collection! implementation
           if service.adapter.class.instance_methods(false).include?(:prepare_deposit_collection!)
             begin
+              # Process fee collection for tokens
               collect_fee(deposit)
               # Will be processed after fee collection
               next if deposit.fee_processing?
@@ -33,6 +35,7 @@ module Workers
           process_deposit(deposit)
         end
 
+        # Process deposits with `fee_processing` state that already collected fees for collection
         ::Deposit.fee_processing.where('updated_at < ?', 5.minute.ago).each do |deposit|
           Rails.logger.info { "Starting processing token deposit with id: #{deposit.id}." }
 
