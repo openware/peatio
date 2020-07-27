@@ -9,11 +9,6 @@ module Workers
         ::Deposit.processing.each do |deposit|
           Rails.logger.info { "Starting processing coin deposit with id: #{deposit.id}." }
 
-          if deposit.spread.blank?
-            deposit.spread_between_wallets!
-            Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
-          end
-
           wallet = Wallet.active.deposit.find_by(blockchain_key: deposit.currency.blockchain_key)
           unless wallet
             Rails.logger.warn { "Can't find active deposit wallet for currency with code: #{deposit.currency_id}."}
@@ -43,6 +38,11 @@ module Workers
       end
 
       def process_deposit(deposit)
+        if deposit.spread.blank?
+          deposit.spread_between_wallets!
+          Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
+        end
+
         wallet = Wallet.active.deposit.find_by(blockchain_key: deposit.currency.blockchain_key)
         service = WalletService.new(wallet)
 
@@ -62,6 +62,11 @@ module Workers
       end
 
       def collect_fee(deposit)
+        if deposit.spread.blank?
+          deposit.spread_between_wallets!
+          Rails.logger.warn { "The deposit was spreaded in the next way: #{deposit.spread}"}
+        end
+
         fee_wallet = Wallet.active.fee.find_by(blockchain_key: deposit.currency.blockchain_key)
         unless fee_wallet
           Rails.logger.warn { "Can't find active fee wallet for currency with code: #{deposit.currency_id}."}
