@@ -8,7 +8,7 @@ module Jobs
         order_max_age = ENV.fetch('ORDER_MAX_AGE', 40320)
 
         # Cancel orders that older than max_order_age
-        Order.where('created_at > ? AND state = ?', Time.now - order_max_age, 100).each do |o|
+        Order.where('created_at < ? AND state = ?', Time.now - order_max_age, 100).each do |o|
           Order.cancel(o.id)
         end
 
@@ -19,14 +19,23 @@ module Jobs
 
         return if config.blank?
 
-        time = Time.now
-        statement = ActiveRecord::Base.connection.raw_connection.prepare('SELECT * FROM `orders` WHERE updated_at < DATE_SUB(?, INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;')
-        result = statement.execute(time)
-
-        # Connection to the archive database
         archive_database = Mysql2::Client.new(config)
         # TODO: Write orders to the archive database
-        # TODO: Delete after
+        # time = Time.now
+        # statement = ActiveRecord::Base.connection.raw_connection.prepare('SELECT * FROM `orders` WHERE updated_at < DATE_SUB(?, INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;')
+        # result = statement.execute(time)
+        # result = ActiveRecord::Base.connection.exec_query('SELECT * FROM `orders` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;')
+        # result.each do |record|
+        #   record["uuid"] = UUID::Type.new.deserialize(record["uuid"])
+        #   columns = record.keys.join(",")
+        #   values = record.values.join(",")
+        #   binding.pry
+        #   archive_database.query("INSERT INTO orders (#{columns}) VALUES(#{values})")
+        # end
+        # Connection to the archive database
+
+        # Delete old cancelled orders without trades
+        ActiveRecord::Base.connection.exec_query('DELETE FROM `orders` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;')
 
         # Execute sp.sql
         ActiveRecord::Base.connection.execute("call compact_liabilities('2020-07-28 00:00:00','2020-07-28 23:59:59')")
