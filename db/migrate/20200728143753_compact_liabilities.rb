@@ -10,18 +10,6 @@ class CompactLiabilities < ActiveRecord::Migration[5.2]
             IN max_date DATETIME
         )
         BEGIN
-
-            -- SELECT * FROM `orders` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 28 DAY) AND state != 100;
-            -- SELECT * FROM `orders` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;
-
-            -- Copy the orders older than 1 week
-            -- Copy the trades older than 1 month
-
-            -- verify copy then delete
-
-            -- DELETE FROM `orders` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 28 DAY) AND state != 100 AND trades_count = 0;
-            -- DELETE FROM `orders` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;
-
             -- Liabilities Compaction
             CREATE TABLE IF NOT EXISTS `liabilities_tmp` LIKE `liabilities`;
 
