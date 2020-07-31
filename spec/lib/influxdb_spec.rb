@@ -5,11 +5,11 @@ describe Peatio::InfluxDB do
   context 'host sharding' do
     before do
       Peatio::InfluxDB.instance_variable_set(:@clients, {})
-      ENV['INFLUXDB_HOST'] = 'inflxudb-0,inflxudb-1'
+      ENV['INFLUXDB_SERVICE_HOST'] = 'inflxudb-0,inflxudb-1'
     end
 
     after do
-      ENV['INFLUXDB_HOST'] = 'influxdb'
+      ENV['INFLUXDB_SERVICE_HOST'] = 'influxdb'
       Peatio::InfluxDB.instance_variable_set(:@clients, {})
     end
 
