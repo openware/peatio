@@ -19,7 +19,7 @@ module API
           end
           get "/" do
             markets = ::Market.enabled.ordered.load.to_a
-            present paginate(Rails.cache.fetch("markets_#{params}", expires_in: 600) { markets.result.load.to_a }),
+            present paginate(Rails.cache.fetch("markets_#{params}", expires_in: 600) { markets }),
                     with: API::V2::Entities::Market
           end
 
@@ -135,11 +135,9 @@ module API
 
           desc 'Get ticker of all markets (For response doc see /:market/tickers/ response).'
           get "/tickers" do
-            Rails.cache.fetch(:markets_tickers, expires_in: 60) do
-              ::Market.active.ordered.inject({}) do |h, m|
-                h[m.id] = format_ticker Global[m.id].ticker
-                h
-              end
+            ::Market.enabled.ordered.inject({}) do |h, m|
+              h[m.id] = format_ticker Global[m.id].ticker
+              h
             end
           end
 
