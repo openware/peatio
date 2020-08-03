@@ -195,10 +195,10 @@ ActiveRecord::Schema.define(version: 2020_08_05_144308) do
     t.decimal "max_price", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "min_amount", precision: 32, scale: 16, default: "0.0", null: false
     t.integer "position", default: 0, null: false
+    t.json "data"
     t.string "state", limit: 32, default: "enabled", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.json "data"
     t.index ["base_unit", "quote_unit"], name: "index_markets_on_base_unit_and_quote_unit", unique: true
     t.index ["base_unit"], name: "index_markets_on_base_unit"
     t.index ["engine_id"], name: "index_markets_on_engine_id"

@@ -20,7 +20,7 @@ class CompactLiabilities < ActiveRecord::Migration[5.2]
             INSERT INTO `liabilities`
             SELECT NULL, code, currency_id, member_id, 'compact',
             DATE_FORMAT(max_date, "%Y%m%d"), SUM(debit), SUM(credit), NOW(), NOW() FROM `liabilities_tmp`
-            WHERE `created_at` BETWEEN min_date AND max_date
+            WHERE `reference_type` = 'Order' AND `created_at` BETWEEN min_date AND max_date
             GROUP BY code, currency_id, member_id, DATE(`created_at`);
 
             DROP TABLE `liabilities_tmp`;
