@@ -57,16 +57,20 @@ namespace :job do
 
   namespace :liabilities do
     desc 'Compact liabilities using Stored Procedure'
-    task archive: :environment do
-      # Execute Stored Procedure for Liabilities compacting
-      # Example:
-      # Current date: "2020-07-30 16:39:15"
-      # min_time: "2020-07-23 00:00:00"
-      # max_time: "2020-07-24 00:00:00"
-      # Compact liabilities beetwen: "2020-07-23 00:00:00" and "2020-07-24 00:00:00"
-      min_time = (Time.now - 1.week).beginning_of_day.to_s(:db)
-      max_time = (Time.now - 6.day).beginning_of_day.to_s(:db)
-      ActiveRecord::Base.connection.execute("call compact_liabilities('#{min_time}', '#{max_time}')")
+    task :compact_orders, %i[min_time max_time] => [:environment] do |_, args|
+      Job.execute('compact_orders') do
+        # Execute Stored Procedure for Liabilities compacting
+        # Example:
+        # Current date: "2020-07-30 16:39:15"
+        # min_time: "2020-07-23 00:00:00"
+        # max_time: "2020-07-24 00:00:00"
+        # Compact liabilities beetwen: "2020-07-23 00:00:00" and "2020-07-24 00:00:00"
+        args.with_defaults(min_time: (Time.now - 1.week).beginning_of_day.to_s(:db),
+                          max_time: (Time.now - 6.day).beginning_of_day.to_s(:db))
+        result = ActiveRecord::Base.connection.exec_query("call compact_orders('#{args.min_time}', '#{args.max_time}', @pointer, @counter)")
+        ActiveRecord::Base.clear_active_connections!
+        result
+      end
     end
   end
 end
