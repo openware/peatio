@@ -4,36 +4,47 @@ namespace :job do
   namespace :order do
     desc 'Close orders older than ORDER_MAX_AGE.'
     task close: :environment do
-      order_max_age = ENV.fetch('ORDER_MAX_AGE', 40_320)
+      Job.execute('close_orders') do
+        order_max_age = ENV.fetch('ORDER_MAX_AGE', 40_320)
 
-      # Cancel orders that older than max_order_age
-      Order.where('created_at < ? AND state = ?', Time.now - order_max_age, 100).each do |o|
-        Order.cancel(o.id)
+        # Cancel orders that older than max_order_age
+        orders = Order.where('created_at < ? AND state = ?', Time.now - order_max_age, 100)
+        orders.each do |o|
+          Order.cancel(o.id)
+        end
+
+        { pointer: Time.now.to_s(:db), counter: orders.count }
       end
     end
 
     desc 'Archive and delete old cancelled orders without trades to the archive database.'
     task archive: :environment do
-      time = Time.now.to_s(:db)
-      result = ActiveRecord::Base.connection.exec_query("SELECT * FROM `orders` WHERE updated_at < DATE_SUB('#{time}', INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;")
-      # Connection to the archive database
-      ActiveRecord::Base.establish_connection(:archive_db)
-      # Copy old cancelled orders without trades to the archive database
-      ActiveRecord::Base.connection.transaction do
+      Job.execute('archive_orders') do
+        time = Time.now.to_s(:db)
+        # Connection to the main database
+        main_db = Mysql2::Client.new(sql_config(ENV.fetch('RAILS_ENV', 'development')))
+        # Connection to the archive database
+        archive_db = Mysql2::Client.new(sql_config('archive_db'))
+
+        result = main_db.query("SELECT * FROM `orders` WHERE updated_at < DATE_SUB('#{time}', INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;")
+        # Copy old cancelled orders without trades to the archive database
+        archive_db.query('BEGIN')
         result.each_slice(1000) do |batch|
           queries = []
           batch.each do |order|
             queries << order_values(order)
           end
-          ActiveRecord::Base.connection.exec_query(order_insert + queries.join(', ') + ';')
+          archive_db.query(order_insert + queries.join(', ') + ';')
+        rescue StandardError => e
+          archive_db.query('ROLLBACK')
+          raise e
         end
+        archive_db.query('COMMIT')
+
+        # Delete old cancelled orders without trades
+        main_db.query("DELETE FROM `orders` WHERE updated_at < DATE_SUB('#{time}', INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;")
+        { pointer: time, counter: result.count }
       end
-
-      # Connection to the main database
-      ActiveRecord::Base.establish_connection(ENV['RAILS_ENV'].to_sym)
-
-      # Delete old cancelled orders without trades
-      ActiveRecord::Base.connection.exec_query("DELETE FROM `orders` WHERE updated_at < DATE_SUB('#{time}', INTERVAL 1 WEEK) AND state = -100 AND trades_count = 0;")
     end
 
     def order_insert
@@ -59,6 +70,8 @@ namespace :job do
     desc 'Compact liabilities using Stored Procedure'
     task :compact_orders, %i[min_time max_time] => [:environment] do |_, args|
       Job.execute('compact_orders') do
+        # Connection to the main database
+        main_db = Mysql2::Client.new(sql_config(ENV.fetch('RAILS_ENV', 'development')))
         # Execute Stored Procedure for Liabilities compacting
         # Example:
         # Current date: "2020-07-30 16:39:15"
@@ -66,11 +79,17 @@ namespace :job do
         # max_time: "2020-07-24 00:00:00"
         # Compact liabilities beetwen: "2020-07-23 00:00:00" and "2020-07-24 00:00:00"
         args.with_defaults(min_time: (Time.now - 1.week).beginning_of_day.to_s(:db),
-                          max_time: (Time.now - 6.day).beginning_of_day.to_s(:db))
-        result = ActiveRecord::Base.connection.exec_query("call compact_orders('#{args.min_time}', '#{args.max_time}', @pointer, @counter)")
-        ActiveRecord::Base.clear_active_connections!
-        result
+                           max_time: (Time.now - 6.day).beginning_of_day.to_s(:db))
+        result = main_db.query("call compact_orders('#{args.min_time}', '#{args.max_time}');")
+        result.first
       end
     end
+  end
+
+  def sql_config(namespace)
+    yaml = ::Pathname.new('config/database.yml')
+    return {} unless yaml.exist?
+
+    ::SafeYAML.load(::ERB.new(yaml.read).result)[namespace]
   end
 end
