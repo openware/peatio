@@ -10,16 +10,24 @@ class CompactLiabilities < ActiveRecord::Migration[5.2]
             IN max_date DATETIME
         )
         BEGIN
-            -- Liabilities Compaction
+
+            -- Variables
             DECLARE pointer INT;
             DECLARE counter INT;
+
+            -- Temporary liabilities table
             CREATE TABLE IF NOT EXISTS `liabilities_tmp` LIKE `liabilities`;
 
-            INSERT INTO `liabilities_tmp` SELECT * FROM `liabilities` WHERE `created_at` BETWEEN min_date AND max_date;
-            SELECT DATE_FORMAT(max_date, "%Y%m%d") INTO pointer;
-            SELECT ROW_COUNT() INTO counter;
+            -- Copy liabilities to tmp
+            INSERT INTO `liabilities_tmp` SELECT * FROM `liabilities`
+            WHERE `reference_type` = 'Order' AND `created_at` BETWEEN min_date AND max_date;
 
-            DELETE FROM `liabilities` WHERE `created_at` BETWEEN min_date AND max_date;
+            -- Set counter and pointer vars
+            SELECT ROW_COUNT() INTO counter;
+            SELECT DATE_FORMAT(max_date, "%Y%m%d") INTO pointer;
+
+            -- Delete liabilities to compact
+            DELETE FROM `liabilities` WHERE `reference_type` = 'Order' AND `created_at` BETWEEN min_date AND max_date;
 
             INSERT INTO `liabilities`
             SELECT NULL, code, currency_id, member_id, 'compact_orders',
@@ -28,7 +36,9 @@ class CompactLiabilities < ActiveRecord::Migration[5.2]
             GROUP BY code, currency_id, member_id, DATE(`created_at`);
 
             DROP TABLE `liabilities_tmp`;
-            SELECT pointer,counter;
+
+            -- Return pointer and counter
+            SELECT `pointer`, `counter`;
         END
         SQL
       end
