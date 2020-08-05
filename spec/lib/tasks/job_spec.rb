@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-Rails.application.load_tasks
-
 describe 'job.rake' do
   context "Rake::Task['job:liabilities:compact_orders']" do
     let(:member1) { create(:member) }
@@ -15,8 +13,8 @@ describe 'job.rake' do
 
     subject { Rake::Task['job:liabilities:compact_orders'] }
 
-    before { DatabaseCleaner.clean }
-    after do
+    before(:each) { DatabaseCleaner.clean }
+    after(:each) do
       DatabaseCleaner.strategy = :truncation
       subject.reenable
     end
@@ -32,7 +30,7 @@ describe 'job.rake' do
       expect(job.name).to eq('compact_orders')
       expect(job.counter).to eq(counter)
       expect(job.error_code).to eq(0)
-      expect(Operations::Liability.where(reference_type: 'compact_orders').count).to eq(result.count)
+      expect(Operations::Liability.where(reference_type: 'CompactOrders').count).to eq(result.count)
     end
 
     it 'call rake task with time range', clean_database_with_truncation: true do
@@ -45,7 +43,7 @@ describe 'job.rake' do
       expect(job.name).to eq('compact_orders')
       expect(job.counter).to eq(counter)
       expect(job.error_code).to eq(0)
-      expect(Operations::Liability.where(reference_type: 'compact_orders').count).to eq(result.count)
+      expect(Operations::Liability.where(reference_type: 'CompactOrders').count).to eq(result.count)
     end
   end
 end
