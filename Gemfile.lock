@@ -54,7 +54,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    amq-protocol (2.3.0)
+    amq-protocol (2.3.2)
     amqp (1.8.0)
       amq-protocol (>= 2.2.0)
       eventmachine
@@ -209,7 +209,7 @@ GEM
       eventmachine
       faraday_middleware (~> 0.13.1)
       faye (~> 1.2)
-      peatio (~> 2.4.2)
+      peatio (>= 2.4.2)
     jwt (2.1.0)
     jwt-multisig (1.0.0)
       activesupport (>= 4.0, < 6.0)
@@ -264,7 +264,7 @@ GEM
     parallel (1.19.2)
     parser (2.7.1.4)
       ast (~> 2.4.1)
-    peatio (2.4.4)
+    peatio (2.6.1)
       activemodel (> 5.2, <= 6.0.0)
       amqp
       bunny
@@ -316,7 +316,7 @@ GEM
       peatio (>= 0.6.3)
     polyamorous (2.3.2)
       activerecord (>= 5.2.1)
-    prometheus-client (2.0.0)
+    prometheus-client (2.1.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)

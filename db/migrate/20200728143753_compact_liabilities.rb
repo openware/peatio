@@ -30,15 +30,15 @@ class CompactLiabilities < ActiveRecord::Migration[5.2]
             DELETE FROM `liabilities` WHERE `reference_type` = 'Order' AND `created_at` BETWEEN min_date AND max_date;
 
             INSERT INTO `liabilities`
-            SELECT NULL, code, currency_id, member_id, 'compact_orders',
-            DATE_FORMAT(max_date, "%Y%m%d"), SUM(debit), SUM(credit), max_date, NOW() FROM `liabilities_tmp`
+            SELECT NULL, code, currency_id, member_id, 'CompactOrders',
+            DATE_FORMAT(max_date, "%Y%m%d"), SUM(debit), SUM(credit), DATE(`created_at`), NOW() FROM `liabilities_tmp`
             WHERE `reference_type` = 'Order' AND `created_at` BETWEEN min_date AND max_date
             GROUP BY code, currency_id, member_id, DATE(`created_at`);
 
             DROP TABLE `liabilities_tmp`;
 
             -- Return pointer and counter
-            SELECT `pointer`, `counter`;
+            SELECT pointer, counter;
         END
         SQL
       end
