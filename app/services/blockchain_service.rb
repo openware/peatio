@@ -85,8 +85,7 @@ class BlockchainService
     transaction = adapter.fetch_transaction(transaction) if @adapter.respond_to?(:fetch_transaction) && transaction.status.pending?
     return unless transaction.status.success?
 
-    # TODO: Rewrite this guard clause
-    address = PaymentAddress.find_by(wallet: Wallet.deposit.joins(:currencies).find_by(currencies: { id: @currencies }), address: transaction.to_address)
+    address = PaymentAddress.find_by(wallet: Wallet.deposit.joins(:currencies).find_by(currencies: { id: transaction.currency_id }), address: transaction.to_address)
     return if address.blank?
 
     if transaction.from_addresses.blank? && adapter.respond_to?(:transaction_sources)
@@ -101,7 +100,7 @@ class BlockchainService
       ) do |d|
         d.address = transaction.to_address
         d.amount = transaction.amount
-        d.member = PaymentAddress.find_by(currency_id: transaction.currency_id, address: transaction.to_address).account.member
+        d.member = address.member
         d.from_addresses = transaction.from_addresses
         d.block_number = transaction.block_number
       end
