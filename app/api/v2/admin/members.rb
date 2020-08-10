@@ -72,7 +72,7 @@ module API
                    desc: 'User gruop'
         end
         put '/members/:uid' do
-          admin_authorize! :update, Member
+          admin_authorize! :update, Member, params[:group]
           declared_params = declared(params)
 
           member = Member.find_by!(uid: declared_params[:uid])

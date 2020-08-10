@@ -46,7 +46,8 @@ admin_permissions:
       - Order
     update:
       - Order
-      - Member
+      - Member:
+        - uid
     manage:
       - Beneficiary
       - Operations::Account
