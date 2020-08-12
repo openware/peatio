@@ -59,7 +59,7 @@ module API
           end
 
           post '/actions' do
-            authorize! :write, Beneficiary
+            authorize! :update, Beneficiary
 
             beneficiary = Beneficiary.find(params[:id])
 

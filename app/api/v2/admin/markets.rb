@@ -143,7 +143,7 @@ module API
 
         end
         post '/markets/update' do
-          authorize! :write, ::Market
+          authorize! :update, ::Market
 
           market = ::Market.find(params[:id])
           if market.update(declared(params, include_missing: false))

@@ -156,7 +156,7 @@ module API
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
         end
         post '/wallets/update' do
-          authorize! :write, Wallet
+          authorize! :update, Wallet
           wallet = ::Wallet.find(params[:id])
 
           params[:settings] = wallet.settings.merge(params[:settings]) if params[:settings]

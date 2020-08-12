@@ -24,8 +24,8 @@ describe Ability do
     it { is_expected.to be_able_to(:read, Order.new) }
     it { is_expected.to be_able_to(:update, Order.new) }
     it { is_expected.to be_able_to(:read, Trade.new) }
-    it { is_expected.not_to be_able_to(:write, Trade.new) }
-    it { is_expected.not_to be_able_to(:write, Order.new) }
+    it { is_expected.not_to be_able_to(:update, Trade.new) }
+    it { is_expected.not_to be_able_to(:update, Order.new) }
   end
 
   context 'abilities for admin' do
@@ -50,11 +50,10 @@ describe Ability do
     it { is_expected.to be_able_to(:update, Order.new) }
     it { is_expected.to be_able_to(:read, Trade.new) }
     it { is_expected.to be_able_to(:read, Account.new) }
-    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
-    it { is_expected.not_to be_able_to(:write, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Order.new) }
-    it { is_expected.not_to be_able_to(:write, Trade.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
+    it { is_expected.not_to be_able_to(:update, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:update, Member.new) }
+    it { is_expected.not_to be_able_to(:update, Trade.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
   end
 
   context 'abilities for manager' do
@@ -79,11 +78,11 @@ describe Ability do
     it { is_expected.to be_able_to(:read, Withdraw.new) }
     it { is_expected.not_to be_able_to(:manage, Market.new) }
     it { is_expected.not_to be_able_to(:manage, Wallet.new) }
-    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
-    it { is_expected.not_to be_able_to(:write, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Order.new) }
-    it { is_expected.not_to be_able_to(:write, Trade.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
+    it { is_expected.not_to be_able_to(:update, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:update, Member.new) }
+    it { is_expected.not_to be_able_to(:update, Order.new) }
+    it { is_expected.not_to be_able_to(:update, Trade.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
   end
 
   context 'abilities for compliance' do
@@ -100,17 +99,17 @@ describe Ability do
     it { is_expected.to be_able_to(:read, Operations::Liability.new) }
     it { is_expected.to be_able_to(:read, Operations::Revenue.new) }
     it { is_expected.to be_able_to(:read, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
-    it { is_expected.to be_able_to(:write, Deposit.new) }
-    it { is_expected.to be_able_to(:write, Withdraw.new) }
-    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Account.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Asset.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Expense.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Liability.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Revenue.new) }
+    it { is_expected.not_to be_able_to(:update, Member.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
+    it { is_expected.to be_able_to(:update, Deposit.new) }
+    it { is_expected.to be_able_to(:update, Withdraw.new) }
+    it { is_expected.not_to be_able_to(:update, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Account.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Asset.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Expense.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Liability.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Revenue.new) }
   end
 
   context 'abilities for support' do
@@ -121,11 +120,11 @@ describe Ability do
     it { is_expected.to be_able_to(:read, Deposit.new) }
     it { is_expected.to be_able_to(:read, Withdraw.new) }
     it { is_expected.to be_able_to(:read, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
-    it { is_expected.not_to be_able_to(:write, Deposit.new) }
-    it { is_expected.not_to be_able_to(:write, Withdraw.new) }
-    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:update, Member.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
+    it { is_expected.not_to be_able_to(:update, Deposit.new) }
+    it { is_expected.not_to be_able_to(:update, Withdraw.new) }
+    it { is_expected.not_to be_able_to(:update, PaymentAddress.new) }
   end
 
   context 'abilities for technical' do
@@ -141,11 +140,11 @@ describe Ability do
     it { is_expected.to be_able_to(:read, Withdraw.new) }
     it { is_expected.to be_able_to(:read, Account.new) }
     it { is_expected.to be_able_to(:read, PaymentAddress.new) }
-    it { is_expected.not_to be_able_to(:write, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Deposit.new) }
-    it { is_expected.not_to be_able_to(:write, Withdraw.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
-    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:update, Member.new) }
+    it { is_expected.not_to be_able_to(:update, Deposit.new) }
+    it { is_expected.not_to be_able_to(:update, Withdraw.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
+    it { is_expected.not_to be_able_to(:update, PaymentAddress.new) }
   end
 
   context 'abilities for accountant' do
@@ -162,15 +161,15 @@ describe Ability do
     it { is_expected.to be_able_to(:read, Operations::Liability.new) }
     it { is_expected.to be_able_to(:read, Operations::Revenue.new) }
     it { is_expected.to be_able_to(:read, Member.new) }
-    it { is_expected.not_to be_able_to(:write, Member.new) }
-    it { is_expected.to be_able_to(:write, Deposit.new) }
-    it { is_expected.to be_able_to(:write, Withdraw.new) }
-    it { is_expected.not_to be_able_to(:write, Account.new) }
-    it { is_expected.not_to be_able_to(:write, PaymentAddress.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Account.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Asset.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Expense.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Liability.new) }
-    it { is_expected.not_to be_able_to(:write, Operations::Revenue.new) }
+    it { is_expected.not_to be_able_to(:update, Member.new) }
+    it { is_expected.to be_able_to(:update, Deposit.new) }
+    it { is_expected.to be_able_to(:update, Withdraw.new) }
+    it { is_expected.not_to be_able_to(:update, Account.new) }
+    it { is_expected.not_to be_able_to(:update, PaymentAddress.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Account.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Asset.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Expense.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Liability.new) }
+    it { is_expected.not_to be_able_to(:update, Operations::Revenue.new) }
   end
 end

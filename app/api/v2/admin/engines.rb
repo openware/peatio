@@ -85,7 +85,7 @@ module API
                    desc: -> { API::V2::Admin::Entities::Engine.documentation[:state][:desc] }
         end
         post '/engines/update' do
-          authorize! :write, ::Engine
+          authorize! :update, ::Engine
 
           engine = ::Engine.find(params[:id])
           if engine.update(declared(params, include_missing: false))

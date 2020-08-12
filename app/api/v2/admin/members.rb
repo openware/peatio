@@ -14,7 +14,7 @@ module API
           optional :state,
                    desc: 'Filter order by state.'
           optional :role,
-                   values: { value: -> { ::Member::ROLES }, message: 'admin.member.invalid_role' }
+                   values: { value: -> { ::Ability.roles }, message: 'admin.member.invalid_role' }
           optional :group,
                    values: { value: -> { ::Member.groups }, message: 'admin.member.invalid_group' }
           optional :email,

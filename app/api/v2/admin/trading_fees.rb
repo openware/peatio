@@ -96,7 +96,7 @@ module API
                              message: 'admin.trading_fee.market_doesnt_exist' }
         end
         post '/trading_fees/update' do
-          authorize! :write, TradingFee
+          authorize! :update, TradingFee
 
           trading_fee = ::TradingFee.find(params[:id])
           if trading_fee.update(declared(params, include_missing: false))

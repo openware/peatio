@@ -126,7 +126,7 @@ module API
                     desc: "Adjustment action all available actions: #{Adjustment.aasm.events.map(&:name)}"
           end
           post '/action' do
-            authorize! :write, Adjustment
+            authorize! :update, Adjustment
             adjustment = Adjustment.find(params[:id])
 
             if adjustment.public_send("may_#{params[:action]}?")

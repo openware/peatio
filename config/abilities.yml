@@ -1,16 +1,43 @@
 roles:
+  - superadmin
   - admin
   - manager
   - accountant
-  - superadmin
-  - technical
   - compliance
   - support
+  - technical
+  - member
+  - broker
+  - trader
+  - maker
 
 permissions:
+  superadmin:
+    manage:
+      - Operations::Account
+      - Operations::Asset
+      - Operations::Expense
+      - Operations::Liability
+      - Operations::Revenue
+      - Deposit
+      - Withdraw
+      - Account
+      - PaymentAddress
+      - Member
+      - Engine
+      - Market
+      - Currency
+      - Blockchain
+      - TradingFee
+      - Wallet
+      - Adjustment
+      - Beneficiary
+    read:
+      - Trade
+    update:
+      - Order
   admin:
     read:
-      - Order
       - Trade
       - Member
       - Account
@@ -47,7 +74,7 @@ permissions:
       - Account
       - PaymentAddress
       - Beneficiary
-    write:
+    update:
       - Deposit
       - Withdraw
     create:
@@ -66,7 +93,7 @@ permissions:
       - Account
       - PaymentAddress
       - Beneficiary
-    write:
+    update:
       - Deposit
       - Withdraw
   manager:
@@ -83,37 +110,11 @@ permissions:
       - Beneficiary
       - Member
       - Trade
-      - Order
     update:
       - Order
     manage:
       - Currency
       - Blockchain
-  superadmin:
-    manage:
-      - Operations::Account
-      - Operations::Asset
-      - Operations::Expense
-      - Operations::Liability
-      - Operations::Revenue
-      - Deposit
-      - Withdraw
-      - Account
-      - PaymentAddress
-      - Member
-      - Engine
-      - Market
-      - Currency
-      - Blockchain
-      - TradingFee
-      - Wallet
-      - Adjustment
-      - Beneficiary
-    read:
-      - Trade
-      - Order
-    update:
-      - Order
   support:
     read:
       - Deposit

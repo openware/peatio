@@ -158,7 +158,7 @@ module API
                      desc: -> { API::V2::Admin::Entities::Blockchain.documentation[:min_confirmations][:desc] }
           end
           post '/update' do
-            authorize! :write, Blockchain
+            authorize! :update, Blockchain
 
             blockchain = Blockchain.find(params[:id])
             if blockchain.update(declared(params, include_missing: false))
@@ -182,7 +182,7 @@ module API
                      desc: -> { 'The id of a particular block on blockchain' }
           end
           post '/process_block' do
-            authorize! :write, Blockchain
+            authorize! :update, Blockchain
 
             blockchain = Blockchain.find(params[:id])
             begin

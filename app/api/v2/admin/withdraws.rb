@@ -83,7 +83,7 @@ module API
           end
         end
         post '/withdraws/actions' do
-          authorize! :write, Withdraw
+          authorize! :update, Withdraw
 
           declared_params = declared(params, include_missing: false)
 

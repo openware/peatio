@@ -66,7 +66,7 @@ module API
           end
         end
         post '/deposits/actions' do
-          authorize! :write, Deposit
+          authorize! :update, Deposit
 
           deposit = Deposit.find(params[:id])
 
