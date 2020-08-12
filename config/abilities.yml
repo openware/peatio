@@ -11,7 +11,7 @@ roles:
   - trader
   - maker
 
-permissions:
+admin_permissions:
   superadmin:
     manage:
       - Operations::Account
@@ -34,14 +34,16 @@ permissions:
       - Beneficiary
     read:
       - Trade
+      - Order
     update:
       - Order
   admin:
     read:
       - Trade
-      - Member
       - Account
       - PaymentAddress
+      - Member
+      - Order
     update:
       - Order
       - Member
@@ -110,7 +112,6 @@ permissions:
       - Beneficiary
       - Member
       - Trade
-    update:
       - Order
     manage:
       - Currency

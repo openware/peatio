@@ -8,7 +8,7 @@ module API
         namespace :abilities do
           desc 'Get all roles and permissions.'
           get do
-            Ability.load_abilities['permissions'][current_user.role] || {}
+            Ability.admin_permissions[current_user.role] || {}
           end
         end
       end
