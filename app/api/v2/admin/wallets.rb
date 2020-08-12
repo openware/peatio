@@ -51,7 +51,10 @@ module API
           optional :kind,
                    values: { value: -> { Wallet.kind.values }, message: 'admin.wallet.invalid_kind' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
-          use :currency
+          optional :currencies,
+                   values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
+                   types: [String, Array], coerce_with: ->(c) { [*c] },
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }
           use :pagination
           use :ordering
         end
@@ -60,11 +63,11 @@ module API
 
           ransack_params = Helpers::RansackBuilder.new(params)
                              .eq(:blockchain_key)
-                             .translate(currency: :currency_id)
+                             .translate_in(currencies: :currencies_id)
                              .merge(kind_eq: params[:kind].present? ? Wallet.kinds[params[:kind].to_sym] : nil)
                              .build
 
-          search = ::Wallet.ransack(ransack_params)
+          search = ::Wallet.joins(:currencies).ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
           present paginate(search.result), with: API::V2::Admin::Entities::Wallet
         end
@@ -107,8 +110,9 @@ module API
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
           requires :currencies,
                    values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
-                   as: :currency_id,
-                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
+                   types: [String, Array], coerce_with: ->(c) { [*c] },
+                   as: :currency_ids,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }
           requires :kind,
                    values: { value: ::Wallet.kind.values, message: 'admin.wallet.invalid_kind' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
@@ -121,9 +125,6 @@ module API
 
           wallet = ::Wallet.new(declared(params))
           if wallet.save
-            params[:currencies].each do |currency|
-              CurrencyWallet.create!(currency_id: currency, wallet_id: wallet.id)
-            end
             present wallet, with: API::V2::Admin::Entities::Wallet, full: true
             status 201
           else
@@ -153,10 +154,11 @@ module API
           optional :gateway,
                    values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
-          optional :currency,
-                   values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_doesnt_exist' },
-                   as: :currency_id,
-                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
+          optional :currencies,
+                   values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
+                   types: [String, Array], coerce_with: ->(c) { [*c] },
+                   as: :currency_ids,
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }
         end
         post '/wallets/update' do
           admin_authorize! :update, Wallet
