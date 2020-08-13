@@ -114,12 +114,6 @@ ActiveRecord::Schema.define(version: 2020_09_03_113109) do
     t.index ["visible"], name: "index_currencies_on_visible"
   end
 
-  create_table "currencies_wallets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "currency_id"
-    t.string "wallet_id"
-    t.index ["currency_id", "wallet_id"], name: "index_currencies_wallets_on_currency_id_and_wallet_id", unique: true
-  end
-
   create_table "deposits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
     t.string "currency_id", limit: 10, null: false
@@ -277,16 +271,14 @@ ActiveRecord::Schema.define(version: 2020_09_03_113109) do
   end
 
   create_table "payment_addresses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "currency_id", limit: 10
+    t.integer "account_id"
     t.string "address", limit: 95
     t.string "secret_encrypted"
     t.string "details_encrypted", limit: 1024
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "wallet_id"
-    t.bigint "member_id"
     t.index ["address"], name: "index_payment_addresses_on_currency_id_and_address", unique: true
-    t.index ["member_id"], name: "index_payment_addresses_on_member_id"
-    t.index ["wallet_id"], name: "index_payment_addresses_on_wallet_id"
   end
 
   create_table "refunds", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -395,6 +387,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_113109) do
 
   create_table "wallets", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "blockchain_key", limit: 32
+    t.string "currency_id", limit: 10
     t.string "name", limit: 64
     t.string "address", null: false
     t.integer "kind", null: false
