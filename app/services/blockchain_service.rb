@@ -61,7 +61,7 @@ class BlockchainService
   private
 
   def filter_deposits(block)
-    addresses = PaymentAddress.where(wallet: Wallet.deposit.joins(:currencies).where(currencies: { id: @currencies }), address: block.transactions.map(&:to_address)).pluck(:address)
+    addresses = PaymentAddress.where(wallet: Wallet.deposit.joins(:currencies).where('currencies.id': @currencies.codes), address: block.transactions.map(&:to_address)).pluck(:address)
     block.select { |transaction| transaction.to_address.in?(addresses) }
   end
 
@@ -85,7 +85,7 @@ class BlockchainService
     transaction = adapter.fetch_transaction(transaction) if @adapter.respond_to?(:fetch_transaction) && transaction.status.pending?
     return unless transaction.status.success?
 
-    address = PaymentAddress.find_by(wallet: Wallet.deposit.joins(:currencies).find_by(currencies: { id: transaction.currency_id }), address: transaction.to_address)
+    address = PaymentAddress.find_by(wallet: Wallet.deposit.joins(:currencies).find_by('currencies.id': transaction.currency_id), address: transaction.to_address)
     return if address.blank?
 
     if transaction.from_addresses.blank? && adapter.respond_to?(:transaction_sources)

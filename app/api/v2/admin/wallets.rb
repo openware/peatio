@@ -125,7 +125,7 @@ module API
 
           wallet = ::Wallet.new(declared(params))
           if wallet.save
-            present wallet, with: API::V2::Admin::Entities::Wallet, full: true
+            present wallet, with: API::V2::Admin::Entities::Wallet
             status 201
           else
             body errors: wallet.errors.full_messages

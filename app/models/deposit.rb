@@ -123,7 +123,7 @@ class Deposit < ApplicationRecord
   end
 
   def deposit_wallet
-    Wallet.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
+    Wallet.deposit.joins(:currencies).find_by('currencies.id': currency_id)
   end
 
   def spread_between_wallets!

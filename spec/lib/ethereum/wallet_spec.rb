@@ -101,11 +101,11 @@ describe Ethereum::Wallet do
       Currency.find_by(id: :ring)
     end
 
-    let(:deposit_wallet_eth) { Wallet.joins(:currencies).find_by(currencies: { id: :eth }, kind: :deposit) }
-    let(:hot_wallet_eth) { Wallet.joins(:currencies).find_by(currencies: { id: :eth }, kind: :hot) }
-    let(:fee_wallet) { Wallet.joins(:currencies).find_by(currencies: { id: :eth }, kind: :fee) }
-    let(:deposit_wallet_trst) { Wallet.joins(:currencies).find_by(currencies: { id: :eth }, kind: :deposit) }
-    let(:hot_wallet_trst) { Wallet.joins(:currencies).find_by(currencies: { id: :eth }, kind: :hot) }
+    let(:deposit_wallet_eth) { Wallet.joins(:currencies).find_by('currencies.id': :eth, kind: :deposit) }
+    let(:hot_wallet_eth) { Wallet.joins(:currencies).find_by('currencies.id': :eth, kind: :hot) }
+    let(:fee_wallet) { Wallet.joins(:currencies).find_by('currencies.id': :eth, kind: :fee) }
+    let(:deposit_wallet_trst) { Wallet.joins(:currencies).find_by('currencies.id': :eth, kind: :deposit) }
+    let(:hot_wallet_trst) { Wallet.joins(:currencies).find_by('currencies.id': :eth, kind: :hot) }
 
     let(:uri) { 'http://127.0.0.1:8545' }
 

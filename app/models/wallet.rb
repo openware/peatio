@@ -30,7 +30,6 @@ class Wallet < ApplicationRecord
 
   NOT_AVAILABLE = 'N/A'.freeze
 
-  # include BelongsToCurrency
 
   vault_attribute :settings, serialize: :json, default: {}
 
