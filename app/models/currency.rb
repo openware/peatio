@@ -163,17 +163,6 @@ class Currency < ApplicationRecord
                                   options:     opt)
   end
 
-  def summary
-    locked  = Account.with_currency(code).sum(:locked)
-    balance = Account.with_currency(code).sum(:balance)
-    { name:     id.upcase,
-      sum:      locked + balance,
-      balance:  balance,
-      locked:   locked,
-      coinable: coin?,
-      hot:      coin? ? balance : nil }
-  end
-
   def is_erc20?
     erc20_contract_address.present?
   end
@@ -188,29 +177,16 @@ class Currency < ApplicationRecord
     end
   end
 
-  def initialize_options
-    self.options = options.present? ? options : {}
-  end
-
-  def validate_options
-    errors.add(:options, :invalid) unless Hash === options if options.present?
-  end
-
-  def build_options_schema
-    default_schema = DEFAULT_OPTIONS_SCHEMA
-    props_schema = (options.keys - OPTIONS_ATTRIBUTES.map(&:to_s)) \
-                       .map{|v| [v, { title: v.to_s.humanize, format: "table"}]}.to_h
-    default_schema.merge!(props_schema)
-  end
-
-  def set_options_values
-    options.keys.present?  ? \
-          options.keys.map{|v| [v, options[v]]}.to_h \
-          : OPTIONS_ATTRIBUTES.map(&:to_s).map{|v| [v, '']}.to_h
-  end
-
   def subunits
     Math.log(self.base_factor, 10).round
+  end
+
+  def initialize_options	
+    self.options = options.present? ? options : {}	
+  end
+
+  def validate_options	
+    errors.add(:options, :invalid) unless Hash === options if options.present?	
   end
 end
 

@@ -89,7 +89,7 @@ module API
 
           withdraw = Withdraw.find(declared_params[:id])
 
-          if withdraw.fiat? && declared_params[:txid].present?
+          if withdraw.currency.fiat? && declared_params[:txid].present?
             error!({ errors: ['admin.withdraw.redundant_txid'] }, 422)
           end
 

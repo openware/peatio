@@ -3,8 +3,8 @@
 class Account < ApplicationRecord
   AccountError = Class.new(StandardError)
 
-  include BelongsToCurrency
-  include BelongsToMember
+  belongs_to :currency, required: true
+  belongs_to :member, required: true
 
   acts_as_eventable prefix: 'account', on: %i[create update]
 
@@ -132,12 +132,6 @@ class Account < ApplicationRecord
 
   def amount
     balance + locked
-  end
-
-  def as_json(*)
-    super.merge! \
-      deposit_address: payment_address&.address,
-      currency:        currency_id
   end
 end
 

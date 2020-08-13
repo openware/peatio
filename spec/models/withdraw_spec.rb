@@ -151,7 +151,7 @@ describe Withdraw do
       before { subject.accept! }
 
       it 'transitions to :processing after calling #process! when withdrawing fiat currency' do
-        subject.stubs(:coin?).returns(false)
+        subject.currency.stubs(:coin?).returns(false)
 
         subject.process!
 
@@ -159,7 +159,7 @@ describe Withdraw do
       end
 
       it 'transitions to :failed after calling #fail! when withdrawing fiat currency' do
-        subject.stubs(:coin?).returns(false)
+        subject.currency.stubs(:coin?).returns(false)
 
         subject.process!
 

@@ -9,13 +9,14 @@ class Deposit < ApplicationRecord
 
   include AASM
   include AASM::Locking
-  include BelongsToCurrency
-  include BelongsToMember
   include TIDIdentifiable
   include FeeChargeable
 
   extend Enumerize
   TRANSFER_TYPES = { fiat: 100, crypto: 200 }
+
+  belongs_to :currency, required: true
+  belongs_to :member, required: true
 
   acts_as_eventable prefix: 'deposit', on: %i[create update]
 
@@ -49,7 +50,7 @@ class Deposit < ApplicationRecord
     event :accept do
       transitions from: :submitted, to: :accepted
       after do
-        if coin?
+        if currency.coin?
           account.plus_locked_funds(amount)
         else
           account.plus_funds(amount)
@@ -70,20 +71,20 @@ class Deposit < ApplicationRecord
         end
       else
         transitions from: %i[accepted skipped], to: :processing do
-          guard { coin? }
+          guard { currency.coin? }
         end
       end
     end
 
     event :fee_process do
       transitions from: %i[accepted processing skipped], to: :fee_processing do
-        guard { coin? }
+        guard { currency.coin? }
       end
     end
 
     event :process_collect do
       transitions from: %i[aml_processing aml_suspicious], to: :processing do
-        guard { coin? }
+        guard { currency.coin? }
       end
     end if Peatio::AML.adapter.present?
 
@@ -101,7 +102,7 @@ class Deposit < ApplicationRecord
 
     event :refund do
       transitions from: %i[aml_suspicious skipped], to: :refunding do
-        guard { coin? }
+        guard { currency.coin? }
       end
     end
   end
@@ -116,6 +117,19 @@ class Deposit < ApplicationRecord
       return nil if result.pending
     end
     true
+  end
+
+  def blockchain_api
+    currency.blockchain_api
+  end
+
+  def confirmations
+    return 0 if block_number.blank?
+    return blockchain.processed_height - block_number if (blockchain.processed_height - block_number) >= 0
+    'N/A'
+  rescue StandardError => e
+    report_exception(e)
+    'N/A'
   end
 
   def spread_to_transactions
@@ -187,7 +201,7 @@ class Deposit < ApplicationRecord
         member_id: member_id
       )
 
-      kind = coin? ? :locked : :main
+      kind = currency.coin? ? :locked : :main
       # Credit locked fiat/crypto Liability account.
       Operations::Liability.credit!(
         amount: amount,
