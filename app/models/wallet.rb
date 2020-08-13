@@ -90,6 +90,10 @@ class Wallet < ApplicationRecord
     end
   end
 
+  def attributes
+    super.merge('currency_ids' => currency_ids.join(','))
+  end
+
   def blockchain_api
     BlockchainService.new(blockchain)
   rescue StandardError

@@ -89,6 +89,7 @@ namespace :seed do
     Wallet.transaction do
       YAML.load_file(Rails.root.join('config/seed/wallets.yml')).each do |hash|
         next if Wallet.exists?(name: hash.fetch('name'))
+        hash['currency_ids'] = hash['currency_ids'].split(',')
         Wallet.create!(hash)
       end
     end
