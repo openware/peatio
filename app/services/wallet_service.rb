@@ -31,7 +31,7 @@ class WalletService
         # NOTE: Consider min_collection_amount is defined per wallet.
         #       For now min_collection_amount is currency config.
         { address:                 w.address,
-          balance:                 w.current_balance,
+          balance:                 w.current_balance(deposit.currency),
           max_balance:             w.max_balance,
           min_collection_amount:   deposit.currency.min_collection_amount,
           skip_deposit_collection: w.service.skip_deposit_collection? }
@@ -92,11 +92,13 @@ class WalletService
     @adapter.create_transaction!(refund_transaction, subtract_fee: true)
   end
 
-  def load_balance!
+  def load_balance!(currency)
+    @adapter.configure(wallet:   @wallet.to_wallet_api_settings,
+                       currency: currency)
     @adapter.load_balance!
   rescue Peatio::Wallet::Error => e
     report_exception(e)
-    BlockchainService.new(wallet.blockchain).load_balance!(@wallet.address, @wallet.currency_id)
+    BlockchainService.new(wallet.blockchain).load_balance!(@wallet.address, currency.id)
   end
 
   def register_webhooks!(url)

@@ -45,7 +45,7 @@ describe API::V2::Admin::Wallets, type: :request do
       wallet.update(balance: wallet.current_balance)
       api_get "/api/v2/admin/wallets/#{wallet.id}", token: token
       expect(response).to be_successful
-      expect(response_body['balance']).to eq('N/A')
+      expect(response_body['balance']).to eq({ 'eth' => 'N/A' })
     end
 
     it 'returns wallet balance if node accessible' do

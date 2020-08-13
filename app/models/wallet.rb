@@ -99,8 +99,17 @@ class Wallet < ApplicationRecord
     return
   end
 
-  def current_balance
-    WalletService.new(self).load_balance!
+  def current_balance(currency = nil)
+    if currency.present?
+      WalletService.new(self).load_balance!(currency)
+    else
+      currencies.each_with_object({}) do |c, balances|
+        balances[c.id] = WalletService.new(self).load_balance!(c)
+      rescue StandardError => e
+        report_exception(e)
+        balances[c.id] = NOT_AVAILABLE
+      end
+    end
   rescue StandardError => e
     report_exception(e)
     NOT_AVAILABLE

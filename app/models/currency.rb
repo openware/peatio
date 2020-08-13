@@ -163,10 +163,6 @@ class Currency < ApplicationRecord
                                   options:     opt)
   end
 
-  def is_erc20?
-    erc20_contract_address.present?
-  end
-
   def dependent_markets
     Market.where('base_unit = ? OR quote_unit = ?', id, id)
   end
@@ -178,14 +174,14 @@ class Currency < ApplicationRecord
   end
 
   def subunits
-    Math.log(self.base_factor, 10).round
+    Math.log(base_factor, 10).round
   end
 
-  def initialize_options	
+  def initialize_options
     self.options = options.present? ? options : {}	
   end
 
-  def validate_options	
+  def validate_options
     errors.add(:options, :invalid) unless Hash === options if options.present?	
   end
 end

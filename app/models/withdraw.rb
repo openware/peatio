@@ -287,7 +287,7 @@ private
       )
     end
   end
- 
+
   def send_coins!
     AMQP::Queue.enqueue(:withdraw_coin, id: id) if currency.coin?
   end
