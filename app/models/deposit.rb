@@ -15,7 +15,7 @@ class Deposit < ApplicationRecord
   include FeeChargeable
 
   extend Enumerize
-  TRANSFER_TYPES = { wire: 100, blockchain: 200 }
+  TRANSFER_TYPES = { fiat: 100, crypto: 200 }
 
   acts_as_eventable prefix: 'deposit', on: %i[create update]
 
@@ -31,7 +31,7 @@ class Deposit < ApplicationRecord
   scope :recent, -> { order(id: :desc) }
 
   before_validation { self.completed_at ||= Time.current if completed? }
-  before_validation { self.transfer_type ||= coin? ? 'blockchain' : 'wire' }
+  before_validation { self.transfer_type ||= coin? ? 'crypto' : 'fiat' }
 
   aasm whiny_transitions: false do
     state :submitted, initial: true
@@ -104,10 +104,6 @@ class Deposit < ApplicationRecord
         guard { coin? }
       end
     end
-  end
-
-  def self.define_types(defult_values)
-    binding.pry
   end
 
   def aml_check!
