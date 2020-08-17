@@ -1,0 +1,8 @@
+deposit: 
+  swift: 101
+  card: 102
+  sepa: 103
+withdraw:
+  swift: 101
+  card: 102
+  sepa: 103

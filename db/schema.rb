@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(version: 2020_08_24_172823) do
     t.string "aasm_state", limit: 30, null: false
     t.integer "block_number"
     t.string "type", limit: 30, null: false
+    t.integer "transfer_type"
     t.string "tid", limit: 64, null: false, collation: "utf8_bin"
     t.string "spread", limit: 1000
     t.datetime "created_at", precision: 3, null: false
@@ -413,6 +414,7 @@ ActiveRecord::Schema.define(version: 2020_08_24_172823) do
     t.integer "block_number"
     t.decimal "sum", precision: 32, scale: 16, null: false
     t.string "type", limit: 30, null: false
+    t.integer "transfer_type"
     t.string "tid", limit: 64, null: false, collation: "utf8_bin"
     t.string "rid", limit: 256, null: false
     t.string "note", limit: 256
