@@ -67,8 +67,6 @@ class Currency < ApplicationRecord
             :position,
             numericality: { greater_than_or_equal_to: 0 }
 
-  validate :validate_options
-
   # == Scopes ===============================================================
 
   scope :visible, -> { where(visible: true) }
@@ -82,7 +80,7 @@ class Currency < ApplicationRecord
 
   # == Callbacks ============================================================
 
-  before_validation :initialize_options
+  before_validation :initialize_defaults
   before_validation { self.code = code.downcase }
   before_validation { self.deposit_fee = 0 unless fiat? }
   before_validation { self.blockchain_key = parent.blockchain_key if token? && blockchain_key.blank? }
@@ -132,6 +130,10 @@ class Currency < ApplicationRecord
     Rails.cache.delete_matched("currencies*")
   end
 
+  def initialize_defaults
+    self.options = {} if options.blank?
+  end
+
   # Allows to dynamically check value of id/code:
   #
   #   id.btc? # true if code equals to "btc".
@@ -175,14 +177,6 @@ class Currency < ApplicationRecord
 
   def subunits
     Math.log(base_factor, 10).round
-  end
-
-  def initialize_options
-    self.options = options.present? ? options : {}	
-  end
-
-  def validate_options
-    errors.add(:options, :invalid) unless Hash === options if options.present?	
   end
 end
 

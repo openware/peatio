@@ -52,7 +52,7 @@ module API
                    values: { value: -> { Wallet.kind.values }, message: 'admin.wallet.invalid_kind' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
           optional :currencies,
-                   values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
+                   values: { value: ->(v) { Array.wrap(v).all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
                    types: [String, Array], coerce_with: ->(c) { [*c] },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }
           use :pagination
@@ -109,7 +109,7 @@ module API
           requires :address,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:address][:desc] }
           requires :currencies,
-                   values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
+                   values: { value: ->(v) { Array.wrap(v).all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
                    types: [String, Array], coerce_with: ->(c) { [*c] },
                    as: :currency_ids,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }
@@ -155,7 +155,7 @@ module API
                    values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
           optional :currencies,
-                   values: { value: ->(v) { [*v].all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
+                   values: { value: ->(v) { Array.wrap(v).all? { |value| value.in? ::Currency.codes } }, message: 'admin.wallet.currency_doesnt_exist' },
                    types: [String, Array], coerce_with: ->(c) { [*c] },
                    as: :currency_ids,
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }

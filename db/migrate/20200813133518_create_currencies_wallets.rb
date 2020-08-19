@@ -24,6 +24,8 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
             pa.update!(wallet_id: wallet.id, member_id: ac.member_id)
           end
         end
+        change_column_default :currencies, :options, nil
+        change_column :currencies, :options, :json
         remove_column :wallets, :currency_id
         remove_column :payment_addresses, :currency_id
         remove_column :payment_addresses, :account_id

@@ -20,7 +20,7 @@ module API
                    values: { value: -> { Currency.visible.codes(bothcase: true) }, message: 'account.currency.doesnt_exist' },
                    desc: 'Currency code'
           optional :state,
-                   values: { value: ->(v) { [*v].all? { |value| value.in? Deposit::STATES.map(&:to_s) } }, message: 'account.deposit.invalid_state' },
+                   values: { value: ->(v) { Array.wrap(v).all? { |value| value.in? Deposit::STATES.map(&:to_s) } }, message: 'account.deposit.invalid_state' },
                    desc: 'Filter deposits by states.'
           optional :txid,
                    type: String,

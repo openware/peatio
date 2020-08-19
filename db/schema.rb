@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_113109) do
     t.decimal "withdraw_limit_24h", precision: 32, scale: 16, default: "0.0", null: false
     t.decimal "withdraw_limit_72h", precision: 32, scale: 16, default: "0.0", null: false
     t.integer "position", default: 0, null: false
-    t.string "options", limit: 1000, default: "{}"
+    t.json "options"
     t.boolean "visible", default: true, null: false
     t.boolean "deposit_enabled", default: true, null: false
     t.boolean "withdrawal_enabled", default: true, null: false
