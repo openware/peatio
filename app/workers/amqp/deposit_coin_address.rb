@@ -8,12 +8,19 @@ module Workers
         payload.symbolize_keys!
 
         member = Member.find_by_id(payload[:member_id])
+        unless member
+          Rails.logger.warn do
+            'Unable to generate deposit address.'\
+            "Member with id: #{payload[:member_id]} doesn't exist"
+          end
+          return
+        end
+
         wallet = Wallet.find_by_id(payload[:wallet_id])
-        return unless member
 
         unless wallet
           Rails.logger.warn do
-            "Unable to generate deposit address."\
+            'Unable to generate deposit address.'\
             "Deposit Wallet with id: #{payload[:wallet_id]} doesn't exist"
           end
           return

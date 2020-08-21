@@ -119,13 +119,31 @@ describe API::V2::Admin::Wallets, type: :request do
         expect(result.map { |r| r["kind"]}).to all eq "deposit"
       end
 
-      it 'filters by currency'do
-        api_get "/api/v2/admin/wallets", token: token, params: { currencies: "eth" }
+      context do
+        let(:hot_wallet) { Wallet.find_by(blockchain_key: 'eth-rinkeby', kind: :hot) }
 
-        result = JSON.parse(response.body)
+        before do
+          hot_wallet.currencies << Currency.find(:trst)
+        end
 
-        expect(result.length).not_to eq 0
-        expect(result.map { |r| r["currencies"]}).to all eq ["eth"]
+        it 'filters by currency' do
+          api_get '/api/v2/admin/wallets', token: token, params: { currencies: 'eth' }
+
+          expect(response_body.length).not_to eq 0
+          expect(response_body.pluck('currencies').map { |a| a.include?('eth') }.all?).to eq(true)
+          count = Wallet.joins(:currencies).where(currencies: { id: :eth }).count
+          expect(response_body.find { |c| c['id'] == hot_wallet.id }['currencies']).to eq(%w[eth trst])
+          expect(response_body.count).to eq(count)
+        end
+
+        it 'filters by currency' do
+          api_get '/api/v2/admin/wallets', token: token, params: { currencies: %w[eth trst] }
+
+          expect(response_body.length).not_to eq 0
+          count = Wallet.joins(:currencies).where(currencies: { id: %i[eth trst] }).count
+          expect(response_body.find { |c| c['id'] == hot_wallet.id }['currencies']).to eq(%w[eth trst])
+          expect(response_body.count).to eq(count)
+        end
       end
     end
   end
@@ -150,6 +168,15 @@ describe API::V2::Admin::Wallets, type: :request do
       result = JSON.parse(response.body)
 
       expect(response).to be_successful
+      expect(result['name']).to eq 'Test'
+    end
+
+    it 'create wallet' do
+      api_post '/api/v2/admin/wallets/new', params: { name: 'Test', kind: 'deposit', currencies: ['eth','trst'], address: 'blank', blockchain_key: 'btc-testnet', gateway: 'geth', settings: { uri: 'http://127.0.0.1:18332'}}, token: token
+      result = JSON.parse(response.body)
+
+      expect(response).to be_successful
+      expect(result['currencies']).to eq(['eth', 'trst'])
       expect(result['name']).to eq 'Test'
     end
 

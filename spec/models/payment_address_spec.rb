@@ -5,7 +5,7 @@ describe PaymentAddress do
   context '.create' do
     let(:member)  { create(:member, :level_3) }
     let!(:account) { member.get_account(:btc) }
-    let!(:wallet) { Wallet.joins(:currencies).find_by('currencies.id': :btc) }
+    let!(:wallet) { Wallet.joins(:currencies).find_by(currencies: { id: :btc }) }
     let(:secret) { 's3cr3t' }
     let(:details) { { 'a' => 'b', 'b' => 'c' } }
     let!(:addr) { create(:payment_address, :btc_address, address: nil, secret: secret, wallet_id: wallet.id) }
