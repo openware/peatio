@@ -2,90 +2,6 @@
 # frozen_string_literal: true
 
 describe Withdraw do
-  context 'bank withdraw' do
-    describe '#audit!' do
-      subject { create(:usd_withdraw, :with_deposit_liability) }
-      before  { subject.submit! }
-
-      it 'should accept withdraw with clean history' do
-        subject.audit!
-        expect(subject).to be_accepted
-      end
-
-      it 'should accept quick withdraw directly' do
-        subject.update_attributes sum: 5
-        subject.audit!
-        expect(subject).to be_accepted
-      end
-    end
-  end
-
-  context 'coin withdraw' do
-    describe '#audit!' do
-      subject { create(:btc_withdraw, :with_deposit_liability, sum: sum) }
-      let(:sum) { 10.to_d }
-      before { subject.submit! }
-
-      xit 'should be rejected if address is invalid' do
-        WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: false }))
-        subject.audit!
-        expect(subject).to be_rejected
-      end
-
-      context 'internal recipient' do
-        let(:payment_address) { create(:btc_payment_address) }
-        subject { create(:btc_withdraw, :with_deposit_liability, rid: payment_address.address) }
-
-        around do |example|
-          WebMock.disable_net_connect!
-          example.run
-          WebMock.allow_net_connect!
-        end
-
-        let :request_body do
-          { jsonrpc: '1.0',
-            method:  'validateaddress',
-            params:  [payment_address.address]
-          }.to_json
-        end
-
-        let(:response_body) { '{"result":{"isvalid":true,"ismine":true}}' }
-
-        before do
-          stub_request(:post, 'http://127.0.0.1:18332').with(body: request_body).to_return(body: response_body)
-        end
-
-        it 'permits withdraw to address which belongs to Peatio' do
-          subject.audit!
-          expect(subject).to be_accepted
-        end
-      end
-
-      xit 'should accept withdraw with clean history' do
-        WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
-        subject.audit!
-        expect(subject).to be_accepted
-      end
-
-      context 'sum less than quick withdraw limit' do
-        let(:sum) { '0.099'.to_d }
-        xit 'should approve quick withdraw directly' do
-          WalletClient.stubs(:[]).returns(mock('rpc', inspect_address!: { is_valid: true }))
-          subject.audit!
-          expect(subject).to be_processing
-        end
-      end
-    end
-
-    describe 'balance validations' do
-      subject { build :btc_withdraw }
-
-      it 'validates balance' do
-        expect { subject.save }.to raise_error(::Account::AccountError)
-      end
-    end
-  end
-
   context 'aasm_state' do
     subject { create(:usd_withdraw, :with_deposit_liability, sum: 1000) }
 
@@ -495,40 +411,6 @@ describe Withdraw do
           subject.fail!
           expect(subject.failed?).to be true
         end
-      end
-    end
-  end
-
-  context '#quick?' do
-
-    before do
-      withdraw.currency.update(
-        'withdraw_limit_24h': 1,
-        'withdraw_limit_72h': 3
-      )
-    end
-
-    context 'returns false if exceeds 24h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 2, aasm_state: 'accepted') }
-      it { expect(withdraw).to_not be_quick }
-    end
-
-    context 'returns false if exceeds 72h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 4, aasm_state: 'accepted') }
-      it { expect(withdraw).to_not be_quick }
-    end
-
-    context 'returns true if doesn\'t exceeds 24h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 0.5.to_d, aasm_state: 'accepted') }
-      it { expect(withdraw).to be_quick }
-    end
-
-    context 'returns false if exceeds 24h withdraw limit' do
-      subject(:withdraw) { create(:btc_withdraw, :with_deposit_liability, sum: 0.5.to_d, aasm_state: 'accepted') }
-      it do
-        second_withdraw = create(:btc_withdraw, :with_deposit_liability, member: withdraw.member, sum: 0.8.to_d, aasm_state: 'accepted')
-        second_withdraw.process!
-        expect(second_withdraw).to_not be_quick
       end
     end
   end

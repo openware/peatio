@@ -14,6 +14,7 @@ class Withdraw < ApplicationRecord
                errored
                confirming].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
+  SUCCEED_PROCESSING_STATES = %i[accepted skipped processing errored confirming succeed].freeze
 
   include AASM
   include AASM::Locking
@@ -47,11 +48,12 @@ class Withdraw < ApplicationRecord
     errors.add(:beneficiary, 'not active') if beneficiary.present? && !beneficiary.active? && !aasm_state.to_sym.in?(COMPLETED_STATES)
   end
 
+  validate :verify_limits, on: :create
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
+  scope :succeed_processing, -> { where(aasm_state: SUCCEED_PROCESSING_STATES) }
 
   aasm whiny_transitions: false do
     state :prepared, initial: true
-    state :submitted
     state :canceled
     state :accepted
     state :skipped
@@ -63,11 +65,14 @@ class Withdraw < ApplicationRecord
     state :errored
     state :confirming
 
-    event :submit do
-      transitions from: :prepared, to: :submitted
+    event :accept do
+      transitions from: :prepared, to: :accepted
       after do
         lock_funds
         record_submit_operations!
+      end
+      after_commit do
+        process! if ENV.true?('WITHDRAW_ADMIN_APPROVE') && currenc.coin?
       end
     end
 
@@ -79,10 +84,6 @@ class Withdraw < ApplicationRecord
           record_cancel_operations!
         end
       end
-    end
-
-    event :accept do
-      transitions from: :submitted, to: :accepted
     end
 
     event :reject do
@@ -170,25 +171,17 @@ class Withdraw < ApplicationRecord
     end
   end
 
-  def quick?
-    sums_24h = Withdraw.where(currency_id: currency_id,
-      member_id: member_id,
-      created_at: [1.day.ago..Time.now],
-      aasm_state: [:processing, :confirming, :succeed])
-      .sum(:sum) + sum
-    sums_72h = Withdraw.where(currency_id: currency_id,
-      member_id: member_id,
-      created_at: [3.day.ago..Time.now],
-      aasm_state: [:processing, :confirming, :succeed])
-      .sum(:sum) + sum
+  def verify_limits
+    limits = WithdrawLimit.for(kyc_level: member.level, group: member.group, currency_id: currency_id)
+    limit_24_hours = limits.l24hour * currency.price.to_d
+    limit_1_months = limits.l1month * currency.price.to_d
+    sum_withdraws_24_hours = member.withdraws.succeed_processing.where('created_at > ?', 24.hours.ago).sum(:sum) + sum
+    sum_withdraws_1_month = member.withdraws.succeed_processing.where('created_at > ?', 1.month.ago).sum(:sum) + sum
 
-    sums_24h <= currency.withdraw_limit_24h && sums_72h <= currency.withdraw_limit_72h
-  end
-
-  def audit!
-    with_lock do
-      accept!
-      process! if quick? && currency.coin?
+    if sum_withdraws_24_hours > limit_24_hours
+      errors.add(:withdraw, '24h_limit_exceeded')
+    elsif sum_withdraws_1_month > limit_1_months
+      errors.add(:withdraw, '72h_limit_exceeded')
     end
   end
 
