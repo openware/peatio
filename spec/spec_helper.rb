@@ -82,6 +82,7 @@ RSpec.configure do |config|
     DatabaseCleaner.start
     AMQP::Queue.stubs(:publish)
     KlineDB.stubs(:kline).returns([])
+    Currency.any_instance.stubs(:price).returns(99_999.to_d)
     %w[eth-kovan eth-rinkeby btc-testnet].each { |blockchain| FactoryBot.create(:blockchain, blockchain) }
     %i[usd btc eth trst ring eur].each { |ccy| FactoryBot.create(:currency, ccy) }
 
@@ -91,6 +92,7 @@ RSpec.configure do |config|
     %i[btcusd btceth].each { |market| FactoryBot.create(:market, market) }
     %w[101 102 201 202 211 212 301 302 401 402].each { |ac_code| FactoryBot.create(:operations_account, ac_code)}
     FactoryBot.create(:trading_fee, market_id: :any, group: :any, maker: 0.0015, taker: 0.0015)
+    FactoryBot.create(:withdraw_limit)
   end
 
   config.after(:each) do

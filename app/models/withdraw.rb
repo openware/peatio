@@ -172,6 +172,8 @@ class Withdraw < ApplicationRecord
   end
 
   def verify_limits
+    return unless member.present?
+
     limits = WithdrawLimit.for(kyc_level: member.level, group: member.group, currency_id: currency_id)
     limit_24_hours = limits.l24hour * currency.price.to_d
     limit_1_months = limits.l1month * currency.price.to_d

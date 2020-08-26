@@ -14,42 +14,42 @@ describe Withdraw do
     end
 
     it 'transitions to :rejected after calling #reject!' do
-      subject.submit!
+      subject.accept!
       subject.reject!
 
       expect(subject.rejected?).to be true
     end
 
-    context :submit do
-      it 'transitions to :submitted after calling #submit!' do
-        subject.submit!
-        expect(subject.submitted?).to be true
+    context :accept do
+      it 'transitions to :submitted after calling #accept!' do
+        subject.accept!
+        expect(subject.accepted?).to be true
         expect(subject.sum).to eq subject.account.locked
       end
 
       context :record_submit_operations! do
         it 'creates two liability operations' do
-          expect{ subject.submit! }.to change{ Operations::Liability.count }.by(2)
+          expect{ subject.accept! }.to change{ Operations::Liability.count }.by(2)
         end
 
         it 'doesn\'t create asset operations' do
-          expect{ subject.submit! }.to_not change{ Operations::Asset.count }
+          expect{ subject.accept! }.to_not change{ Operations::Asset.count }
         end
 
         it 'debits main liabilities for member' do
-          expect{ subject.submit! }.to change {
+          expect{ subject.accept! }.to change {
             subject.member.balance_for(currency: subject.currency, kind: :main)
           }.by(-subject.sum)
         end
 
         it 'credits locked liabilities for member' do
-          expect{ subject.submit! }.to change {
+          expect{ subject.accept! }.to change {
             subject.member.balance_for(currency: subject.currency, kind: :locked)
           }.by(subject.sum)
         end
 
         it 'updates both legacy and operations based member balance' do
-          subject.submit!
+          subject.accept!
 
           %i[main locked].each do |kind|
             expect(
@@ -63,7 +63,7 @@ describe Withdraw do
     end
 
     context :process do
-      before { subject.submit! }
+      before { subject.accept! }
       before { subject.accept! }
 
       it 'transitions to :processing after calling #process! when withdrawing fiat currency' do
@@ -123,14 +123,14 @@ describe Withdraw do
       end
 
       it 'transitions from :submitted to :canceled after calling #cancel!' do
-        subject.submit!
+        subject.accept!
         subject.cancel!
 
         expect(subject.canceled?).to be true
       end
 
       it 'transitions from :accepted to :canceled after calling #cancel!' do
-        subject.submit!
+        subject.accept!
         subject.accept!
         subject.cancel!
 
@@ -139,7 +139,7 @@ describe Withdraw do
 
       context :record_cancel_operations do
         before do
-          subject.submit!
+          subject.accept!
           subject.accept!
         end
         it 'creates two liability operations' do
@@ -178,7 +178,7 @@ describe Withdraw do
 
     context :skip do
       before do
-        subject.submit!
+        subject.accept!
         subject.accept!
         subject.process!
       end
@@ -192,7 +192,7 @@ describe Withdraw do
 
     context :reject do
       before do
-        subject.submit!
+        subject.accept!
       end
 
       it 'transitions from :submitted to :rejected after calling #reject!' do
@@ -258,7 +258,7 @@ describe Withdraw do
     context :success do
 
       before do
-        subject.submit!
+        subject.accept!
         subject.accept!
         subject.process!
         subject.dispatch!
@@ -322,7 +322,7 @@ describe Withdraw do
 
       subject { create(:btc_withdraw, :with_deposit_liability) }
 
-      before { subject.submit! }
+      before { subject.accept! }
       before { subject.accept! }
 
       it 'doesn\'t change state after calling #load! when withdrawing coin currency' do
@@ -342,7 +342,7 @@ describe Withdraw do
 
       subject { create(:btc_withdraw, :with_deposit_liability) }
 
-      before { subject.submit! }
+      before { subject.accept! }
       before { subject.accept! }
 
       it 'doesn\'t change state after calling #load! when withdrawing coin currency' do
@@ -360,7 +360,7 @@ describe Withdraw do
     context :fail do
       subject { create(:btc_withdraw, :with_deposit_liability) }
 
-      before { subject.submit! }
+      before { subject.accept! }
       before { subject.accept! }
 
       context 'from errored' do
@@ -393,7 +393,7 @@ describe Withdraw do
 
         subject { create(:btc_withdraw, :with_deposit_liability, member: member, rid: address, beneficiary: beneficiary) }
 
-        before { subject.submit! }
+        before { subject.accept! }
         before { subject.accept! }
 
         let!(:beneficiary) { create(:beneficiary,

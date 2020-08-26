@@ -11,15 +11,12 @@ module API
             withdraw.with_lock do
               case action
                 when 'process'
-                  withdraw.submit!
+                  withdraw.accept!
                   # Process fiat withdraw immediately. Crypto withdraws will be processed by workers.
-                  if withdraw.currency.fiat?
-                    withdraw.accept!
-                    if withdraw.quick?
-                      withdraw.process!
-                      withdraw.dispatch!
-                      withdraw.success!
-                    end
+                  if withdraw.fiat?
+                    withdraw.process!
+                    withdraw.dispatch!
+                    withdraw.success!
                   end
                 when 'cancel'
                   withdraw.cancel!
