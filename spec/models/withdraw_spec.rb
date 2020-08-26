@@ -425,7 +425,9 @@ describe Withdraw do
   end
 
   context 'fee exceeds amount' do
-    let(:withdraw) { build(:usd_withdraw, sum: 200, member: nil) }
+    let(:member) { create(:member) }
+    let!(:account) { member.get_account(:usd).tap { |x| x.update!(balance: 200.0.to_d) } }
+    let(:withdraw) { build(:usd_withdraw, sum: 200, member: member) }
     before { Currency.any_instance.expects(:withdraw_fee).once.returns(200) }
     it 'fails validation' do
       expect(withdraw.save).to eq false
@@ -443,7 +445,7 @@ describe Withdraw do
 
   it 'validates uniqueness of TID' do
     record1 = create(:btc_withdraw, :with_deposit_liability)
-    record2 = build(:btc_withdraw, tid: record1.tid, member: nil)
+    record2 = build(:btc_withdraw, tid: record1.tid, member: record1.member)
     record2.save
     expect(record2.errors[:tid]).to match(["has already been taken"])
   end
@@ -506,46 +508,10 @@ describe Withdraw do
     end
   end
 
-  context 'CashAddr' do
-    let(:member) { create(:member) }
-    let(:account) { member.get_account(:bch).tap { |x| x.update!(balance: 1.0.to_d) } }
-    let :record do
-      Withdraws::Coin.new \
-        currency: Currency.find(:bch),
-        member:   member,
-        rid:      address,
-        sum:      1.0.to_d
-    end
-
-    context 'valid CashAddr address' do
-      let(:address) { 'bitcoincash:qqkv9wr69ry2p9l53lxp635va4h86wv435995w8p2h' }
-      xit { expect(record.save).to eq true }
-    end
-
-    context 'invalid CashAddr address' do
-      let(:address) { 'bitcoincash::qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a' }
-      xit do
-        expect(record.save).to eq false
-        expect(record.errors.full_messages).to include 'Rid is invalid'
-      end
-    end
-
-    context 'valid legacy address' do
-      let(:address) { '155fzsEBHy9Ri2bMQ8uuuR3tv1YzcDywd4' }
-      xit { expect(record.save).to eq true }
-    end
-
-    context 'invalid legacy address' do
-      let(:address) { '155fzsEBHy9Ri2bMQ8uuuR3tv1YzcDywd400' }
-      xit do
-        expect(record.save).to eq false
-        expect(record.errors.full_messages).to include 'Rid is invalid'
-      end
-    end
-  end
-
   context 'validate min withdrawal sum' do
-    subject { build(:btc_withdraw, sum: 0.1, member: nil) }
+    let(:member) { create(:member) }
+    let!(:account) { member.get_account(:btc).tap { |x| x.update!(balance: 1.0.to_d) } }
+    subject { build(:btc_withdraw, sum: 0.1, member: member) }
 
     before do
       Currency.find('btc').update(min_withdraw_amount: 0.5.to_d)

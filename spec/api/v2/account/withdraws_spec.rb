@@ -290,7 +290,7 @@ describe API::V2::Account::Withdraws, type: :request do
       expect(response).to have_http_status(201)
       record = Withdraw.last
       expect(record.sum).to eq amount
-      expect(record.aasm_state).to eq 'submitted'
+      expect(record.aasm_state).to eq 'accepted'
       expect(record.account).to eq account
       expect(record.account.balance).to eq(1.2 - amount)
       expect(record.account.locked).to eq amount

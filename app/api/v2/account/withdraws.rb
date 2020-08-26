@@ -98,7 +98,7 @@ module API
             currency:    currency,
             note:        params[:note]
           withdraw.save!
-          withdraw.with_lock { withdraw.submit! }
+          withdraw.with_lock { withdraw.accept! }
           present withdraw, with: API::V2::Entities::Withdraw
 
         rescue ::Account::AccountError => e

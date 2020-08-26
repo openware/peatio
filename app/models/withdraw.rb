@@ -3,7 +3,6 @@
 
 class Withdraw < ApplicationRecord
   STATES = %i[ prepared
-               submitted
                rejected
                accepted
                skipped
@@ -72,12 +71,12 @@ class Withdraw < ApplicationRecord
         record_submit_operations!
       end
       after_commit do
-        process! if ENV.true?('WITHDRAW_ADMIN_APPROVE') && currenc.coin?
+        process! if ENV.true?('WITHDRAW_ADMIN_APPROVE') && currency.coin?
       end
     end
 
     event :cancel do
-      transitions from: %i[prepared submitted accepted], to: :canceled
+      transitions from: %i[prepared accepted], to: :canceled
       after do
         unless aasm.from_state == :prepared
           unlock_funds
@@ -87,7 +86,7 @@ class Withdraw < ApplicationRecord
     end
 
     event :reject do
-      transitions from: %i[submitted to_reject accepted confirming], to: :rejected
+      transitions from: %i[to_reject accepted confirming], to: :rejected
       after do
         unlock_funds
         record_cancel_operations!
@@ -172,8 +171,6 @@ class Withdraw < ApplicationRecord
   end
 
   def verify_limits
-    return unless member.present?
-
     limits = WithdrawLimit.for(kyc_level: member.level, group: member.group, currency_id: currency_id)
     limit_24_hours = limits.l24hour * currency.price.to_d
     limit_1_months = limits.l1month * currency.price.to_d

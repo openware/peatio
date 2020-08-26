@@ -119,7 +119,7 @@ module API
           withdraw = "withdraws/#{currency.type}".camelize.constantize.new(declared_params)
 
           withdraw.save!
-          withdraw.with_lock { withdraw.submit! }
+          withdraw.with_lock { withdraw.accept! }
           perform_action(withdraw, params[:action]) if params[:action]
           present withdraw, with: API::V2::Management::Entities::Withdraw
         rescue ::Account::AccountError => e
