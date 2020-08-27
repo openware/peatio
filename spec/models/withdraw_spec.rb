@@ -323,7 +323,6 @@ describe Withdraw do
       subject { create(:btc_withdraw, :with_deposit_liability) }
 
       before { subject.accept! }
-      before { subject.accept! }
 
       it 'doesn\'t change state after calling #load! when withdrawing coin currency' do
         subject.load!

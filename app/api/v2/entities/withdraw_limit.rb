@@ -1,7 +1,7 @@
 module API
   module V2
     module Entities
-      class TradingFee < API::V2::Entities::Base
+      class WithdrawLimit < API::V2::Entities::Base
         expose(
           :id,
           documentation:{
@@ -35,7 +35,7 @@ module API
         )
 
         expose(
-          :l24hour,
+          :limit_24_hour,
           documentation:{
             type: BigDecimal,
             desc: '24 hours withdraw limit.'
@@ -43,7 +43,7 @@ module API
         )
 
         expose(
-          :l1month,
+          :limit_1_month,
           documentation:{
             type: BigDecimal,
             desc: '1 month withdraw limit.'

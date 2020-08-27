@@ -71,7 +71,7 @@ class Withdraw < ApplicationRecord
         record_submit_operations!
       end
       after_commit do
-        process! if ENV.true?('WITHDRAW_ADMIN_APPROVE') && currency.coin?
+        process! if ENV.false?('WITHDRAW_ADMIN_APPROVE') && currency.coin?
       end
     end
 
@@ -172,8 +172,8 @@ class Withdraw < ApplicationRecord
 
   def verify_limits
     limits = WithdrawLimit.for(kyc_level: member.level, group: member.group, currency_id: currency_id)
-    limit_24_hours = limits.l24hour * currency.price.to_d
-    limit_1_months = limits.l1month * currency.price.to_d
+    limit_24_hours = limits.limit_24_hour * currency.price.to_d
+    limit_1_months = limits.limit_1_month * currency.price.to_d
     sum_withdraws_24_hours = member.withdraws.succeed_processing.where('created_at > ?', 24.hours.ago).sum(:sum) + sum
     sum_withdraws_1_month = member.withdraws.succeed_processing.where('created_at > ?', 1.month.ago).sum(:sum) + sum
 
@@ -286,7 +286,7 @@ private
 end
 
 # == Schema Information
-# Schema version: 20200211124707
+# Schema version: 20200827105929
 #
 # Table name: withdraws
 #
@@ -301,8 +301,9 @@ end
 #  block_number   :integer
 #  sum            :decimal(32, 16)  not null
 #  type           :string(30)       not null
+#  transfer_type  :integer
 #  tid            :string(64)       not null
-#  rid            :string(95)       not null
+#  rid            :string(256)      not null
 #  note           :string(256)
 #  error          :json
 #  created_at     :datetime         not null

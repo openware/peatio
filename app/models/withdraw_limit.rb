@@ -27,18 +27,18 @@ class WithdrawLimit < ApplicationRecord
 end
 
 # == Schema Information
-# Schema version: 20200825105929
+# Schema version: 20200827105929
 #
 # Table name: withdraw_limits
 #
-#  id          :bigint           not null, primary key
-#  currency_id :string(20)       default("any"), not null
-#  group       :string(32)       default("any"), not null
-#  kyc_level   :string(32)       default("any"), not null
-#  l24hour     :decimal(32, 16)  default(0.0), not null
-#  l1month     :decimal(32, 16)  default(0.0), not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id            :bigint           not null, primary key
+#  currency_id   :string(20)       default("any"), not null
+#  group         :string(32)       default("any"), not null
+#  kyc_level     :string(32)       default("any"), not null
+#  limit_24_hour :decimal(32, 16)  default(0.0), not null
+#  limit_1_month :decimal(32, 16)  default(0.0), not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #

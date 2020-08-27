@@ -50,7 +50,6 @@ module API
                                     API::V2::Admin::Entities::Operation,
                                     API::V2::Admin::Entities::Order,
                                     API::V2::Admin::Entities::Trade,
-                                    API::V2::Entities::TradingFee,
                                     API::V2::Admin::Entities::Wallet,
                                     API::V2::Admin::Entities::Withdraw
                                   ]

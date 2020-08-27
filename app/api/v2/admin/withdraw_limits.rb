@@ -9,7 +9,7 @@ module API
 
         desc 'Returns withdraw limits table as paginated collection',
           is_array: true,
-          success: API::V2::Admin::Entities::WithdrawLimits
+          success: API::V2::Admin::Entities::WithdrawLimit
         params do
           optional :group,
                    type: String,
@@ -17,9 +17,7 @@ module API
                    coerce_with: ->(c) { c.strip.downcase }
           optional :kyc_level,
                    type: String,
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:kyc_level][:desc] },
-                   values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
-                             message: 'admin.withdraw_limit.currency_doesnt_exist' }
+                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:kyc_level][:desc] }
           optional :currency_id,
                    type: String,
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:currency_id][:desc] },
@@ -44,14 +42,14 @@ module API
         desc 'It creates withdraw limits record',
           success: API::V2::Entities::WithdrawLimit
         params do
-          requires :l24hour,
-                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_l24hour' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_l24hour' },
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:l24hour][:desc] }
-          requires :l1month,
-                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_l1month' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_l1month' },
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:l1month][:desc] }
+          requires :limit_24_hour,
+                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_24_hour' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_24_hour' },
+                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_24_hour][:desc] }
+          requires :limit_1_month,
+                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_1_month' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_1_month' },
+                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_1_month][:desc] }
           optional :group,
                    type: String,
                    default: ::WithdrawLimit::ANY,
@@ -86,14 +84,14 @@ module API
           requires :id,
                    type: { value: Integer, message: 'admin.withdraw_limit.non_integer_id' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:id][:desc] }
-          optional :l24hour,
-                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_l24hour' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_l24hour' },
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:l24hour][:desc] }
-          optional :l1month,
-                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_l1month' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_l1month' },
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:l1month][:desc] }
+          optional :limit_24_hour,
+                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_24_hour' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_24_hour' },
+                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_24_hour][:desc] }
+          optional :limit_1_month,
+                   type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_1_month' },
+                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_1_month' },
+                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_1_month][:desc] }
           optional :kyc_level,
                    type: String,
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:kyc_level][:desc] }

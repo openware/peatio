@@ -6,7 +6,7 @@ FactoryBot.define do
     currency_id { 'any' }
     group { 'any' }
     kyc_level { 'any' }
-    l24hour { 9999.to_d }
-    l1month { 999_999.to_d }
+    limit_24_hour { 9999.to_d }
+    limit_1_month { 999_999.to_d }
   end
 end
