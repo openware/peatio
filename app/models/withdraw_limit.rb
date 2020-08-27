@@ -5,6 +5,39 @@ class WithdrawLimit < ApplicationRecord
   # Default value for kyc_level, group name and currency_id in WithdrawLimit table;
   ANY = 'any'
 
+    # == Attributes ===========================================================
+
+  # == Extensions ===========================================================
+
+  # == Relationships ========================================================
+
+  belongs_to :currency, optional: true
+
+  # == Validations ==========================================================
+
+  validates :kyc_level,
+            presence: true,
+            uniqueness: { scope: %i[currency_id group] }
+
+  validates :group,
+            presence: true
+
+  validates :currency_id,
+            presence: true,
+            inclusion: { in: ->(_fs){ Currency.ids.append(ANY) } }
+
+  validates :limit_24_hour,
+            :limit_1_month,
+            presence: true
+
+  # == Scopes ===============================================================
+
+  # == Callbacks ============================================================
+
+  before_create { self.group = self.group.strip.downcase }
+  after_commit :wipe_cache
+
+  # == Class Methods ========================================================
   class << self
     # Get withdrawal limit for specific withdraw that based on member kyc_level, group and currency_id.
     # WithdrawLimit record selected with the next priorities:
@@ -21,8 +54,25 @@ class WithdrawLimit < ApplicationRecord
     end
   end
 
+  # == Instance Methods =====================================================
+
+  # Withdraw limit suitability expressed in weight.
+  # Withdraw limit with the greatest weight selected.
+  # Kyc_level has greater weight then group and group has greater weight then currency_id match.
+  # E.g Withdrawal for member with kyc_level 2, group 'vip-0' and currency_id 'btc'
+  # (kyc_level == 3     && group == 'vip-0' && currency_id == 'btc') >
+  # (kyc_level == 3     && group == 'vip-0' && currency_id == 'any') >
+  # (kyc_level == 3     && group == 'any'   && currency_id == 'btc') >
+  # (kyc_level == 'any' && group == 'vip-0' && currency_id == 'btc') >
+  # (kyc_level == 'any' && group == 'vip-0' && currency_id == 'any') >
+  # (kyc_level == 'any' && group == 'any'   && currency_id == 'btc') >
+  # (kyc_level == 'any' && group == 'any'   && currency_id == 'any') >
   def weight
     (kyc_level == 'any' ? 0 : 100) + (group == 'any' ? 0 : 10) + (currency_id == 'any' ? 0 : 1)
+  end
+
+  def wipe_cache
+    Rails.cache.delete_matched("withdraw_limits_fees*")
   end
 end
 
