@@ -63,7 +63,7 @@ module API
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:currency_id][:desc] },
                    default: ::WithdrawLimit::ANY,
                    values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
-                             message: 'admin.withdraw_limit.currency_id_doesnt_exist' }
+                             message: 'admin.withdraw_limit.currency_doesnt_exist' }
         end
         post '/withdraw_limits/new' do
           admin_authorize! :create, WithdrawLimit
