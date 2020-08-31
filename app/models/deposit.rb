@@ -32,7 +32,7 @@ class Deposit < ApplicationRecord
   scope :recent, -> { order(id: :desc) }
 
   before_validation { self.completed_at ||= Time.current if completed? }
-  before_validation { self.transfer_type ||= coin? ? 'crypto' : 'fiat' }
+  before_validation { self.transfer_type ||= currency.coin? ? 'crypto' : 'fiat' }
 
   aasm whiny_transitions: false do
     state :submitted, initial: true
@@ -136,14 +136,10 @@ class Deposit < ApplicationRecord
     spread.map { |s| Peatio::Transaction.new(s) }
   end
 
-  def deposit_wallet
-    Wallet.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
-  end
-
   def spread_between_wallets!
     return false if spread.present?
 
-    spread = WalletService.new(deposit_wallet).spread_deposit(self)
+    spread = WalletService.new(Wallet.deposit_wallet(currency_id)).spread_deposit(self)
     update!(spread: spread.map(&:as_json))
   end
 

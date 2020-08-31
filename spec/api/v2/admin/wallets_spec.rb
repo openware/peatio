@@ -186,7 +186,7 @@ describe API::V2::Admin::Wallets, type: :request do
       expect(response).to have_http_status 422
       expect(response).to include_api_error('admin.wallet.missing_name')
       expect(response).to include_api_error('admin.wallet.missing_kind')
-      expect(response).to include_api_error('admin.wallet.missing_currencies')
+      expect(response).to include_api_error('admin.wallet.missing_currency_or_currencies_fields')
       expect(response).to include_api_error('admin.wallet.missing_address')
       expect(response).to include_api_error('admin.wallet.missing_blockchain_key')
       expect(response).to include_api_error('admin.wallet.missing_gateway')

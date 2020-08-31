@@ -732,12 +732,4 @@ describe Withdraw do
       expect(record.errors[:sum]).to include("precision must be less than or equal to #{currency.precision}")
     end
   end
-
-  it 'doesn\'t raise exceptions in before_validation callbacks if member doesn\'t exist' do
-    expect { Withdraw.new.validate }.not_to raise_error
-  end
-
-  it 'doesn\'t raise exceptions in before_validation callbacks if currency doesn\'t exist' do
-    expect { Withdraw.new(member: create(:member)).validate }.not_to raise_error
-  end
 end

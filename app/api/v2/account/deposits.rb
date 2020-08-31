@@ -85,7 +85,7 @@ module API
             error!({ errors: ['account.currency.deposit_disabled'] }, 422)
           end
 
-          wallet = Wallet.deposit.joins(:currencies).find_by(currencies: { id: currency.id })
+          wallet = Wallet.deposit_wallet(currency.id)
 
           unless wallet.present?
             error!({ errors: ['account.wallet.not_found'] }, 422)

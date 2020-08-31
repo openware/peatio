@@ -87,6 +87,10 @@ class Wallet < ApplicationRecord
           end
         end
     end
+
+    def deposit_wallet(currency_id)
+      Wallet.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
+    end
   end
 
   def attributes

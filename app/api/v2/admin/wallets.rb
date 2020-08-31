@@ -117,14 +117,14 @@ module API
           optional :currency,
                    values: { value: -> { ::Currency.codes }, message: 'admin.wallet.currency_doesnt_exist' },
                    as: :currency_ids,
-                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currency][:desc] }
+                   desc: -> { API::V2::Admin::Entities::Wallet.documentation[:currencies][:desc] }
           requires :kind,
                    values: { value: ::Wallet.kind.values, message: 'admin.wallet.invalid_kind' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:kind][:desc] }
           requires :gateway,
                    values: { value: -> { ::Wallet.gateways.map(&:to_s) }, message: 'admin.wallet.gateway_doesnt_exist' },
                    desc: -> { API::V2::Admin::Entities::Wallet.documentation[:gateway][:desc] }
-          exactly_one_of :currencies, :currency, message: 'admin.market.one_of_currencies_currency_fields'
+          exactly_one_of :currencies, :currency, message: 'admin.wallet.missing_currency_or_currencies_fields'
         end
         post '/wallets/new' do
           admin_authorize! :create, Wallet

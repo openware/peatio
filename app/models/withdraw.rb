@@ -34,7 +34,7 @@ class Withdraw < ApplicationRecord
 
   before_validation(on: :create) { self.rid ||= beneficiary.rid if beneficiary.present? }
   before_validation { self.completed_at ||= Time.current if completed? }
-  before_validation { self.transfer_type ||= coin? ? 'crypto' : 'fiat' }
+  before_validation { self.transfer_type ||= currency.coin? ? 'crypto' : 'fiat' }
 
   validates :rid, :aasm_state, presence: true
   validates :txid, uniqueness: { scope: :currency_id }, if: :txid?
