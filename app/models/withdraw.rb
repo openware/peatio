@@ -50,6 +50,8 @@ class Withdraw < ApplicationRecord
   validate :verify_limits, on: :create
   scope :completed, -> { where(aasm_state: COMPLETED_STATES) }
   scope :succeed_processing, -> { where(aasm_state: SUCCEED_PROCESSING_STATES) }
+  scope :last_24_hours, -> { where('created_at > ?', 24.hour.ago) }
+  scope :last_1_month, -> { where('created_at > ?', 1.month.ago) }
 
   aasm whiny_transitions: false do
     state :prepared, initial: true

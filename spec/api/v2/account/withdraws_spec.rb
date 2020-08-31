@@ -313,4 +313,28 @@ describe API::V2::Account::Withdraws, type: :request do
       expect(response).to include_api_error('account.withdraw.too_long_note')
     end
   end
+
+  describe 'GET /withdraws/sums' do
+    let!(:btc_withdraws) { create_list(:btc_withdraw, 2, :with_deposit_liability, member: member) }
+    let!(:usd_withdraws) { create_list(:usd_withdraw, 2, :with_deposit_liability, member: member) }
+
+    before do
+      btc_withdraws.map(&:accept!)
+      usd_withdraws.map(&:accept!)
+    end
+
+    it 'returns withdrawals sums' do
+      api_get '/api/v2/account/withdraws/sums', token: token
+
+      expect(response_body['last_24_hours'].key?('btc')).to be_truthy
+      expect(response_body['last_24_hours'].key?('usd')).to be_truthy
+    end
+
+    it 'returns withdrawals sums for currency' do
+      api_get '/api/v2/account/withdraws/sums?currency=btc', token: token
+
+      expect(response_body['last_24_hours'].key?('btc')).to be_truthy
+      expect(response_body['last_24_hours'].key?('usd')).to be_falsey
+    end
+  end
 end

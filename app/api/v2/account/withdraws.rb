@@ -44,6 +44,30 @@ module API
                       .tap { |q| present paginate(q), with: API::V2::Entities::Withdraw }
         end
 
+        desc 'Returns withdrawal sums for last 4 hours and 1 month'
+        params do
+          optional :currency,
+                   type: String,
+                   values: { value: -> { Currency.visible.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
+                   desc: 'Currency code.'
+        end
+        get '/withdraws/sums' do
+          result = {}
+          if params[:currency].present?
+            result[:last_24_hours] = Withdraw.where(currency_id: params[:currency], member: current_user)
+                                             .succeed_processing.last_24_hours.group(:currency_id).sum(:sum)
+            result[:last_1_month] = Withdraw.where(currency_id: params[:currency], member: current_user)
+                                            .succeed_processing.last_1_month.group(:currency_id).sum(:sum)
+          else
+            result[:last_24_hours] = Withdraw.where(member: current_user)
+                                             .succeed_processing.last_24_hours.group(:currency_id).sum(:sum)
+            result[:last_1_month] = Withdraw.where(member: current_user)
+                                            .succeed_processing.last_1_month.group(:currency_id).sum(:sum)
+          end
+
+          present result
+        end
+
         desc 'Creates new withdrawal to active beneficiary.'
         params do
           requires :otp,

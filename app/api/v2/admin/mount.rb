@@ -52,7 +52,7 @@ module API
                                     API::V2::Admin::Entities::Order,
                                     API::V2::Admin::Entities::Trade,
                                     API::V2::Admin::Entities::Wallet,
-                                    API::V2::Admin::Entities::Withdraw,
+                                    API::V2::Admin::Entities::Withdraw
                                   ]
       end
     end
