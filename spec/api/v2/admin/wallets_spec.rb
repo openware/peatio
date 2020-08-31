@@ -304,4 +304,39 @@ describe API::V2::Admin::Wallets, type: :request do
       expect(response).to include_api_error('admin.ability.not_permitted')
     end
   end
+
+  describe 'POST /api/v2/admin/wallets/currencies' do
+    let(:wallet) { Wallet.joins(:currencies).find_by(currencies: { id: 'eth' }) }
+
+    it do
+      api_post '/api/v2/admin/wallets/currencies', params: { id: wallet.id, currencies: 'trst' }, token: token
+
+      expect(response).to be_successful
+      expect(response_body['currencies'].include?('trst')).to be_truthy
+    end
+
+    it do
+      api_post '/api/v2/admin/wallets/currencies', params: { id: wallet.id, currencies: 'eth' }, token: token
+
+      expect(response).to have_http_status 422
+      expect(response).to include_api_error('Currency has already been taken')
+    end
+  end
+
+  describe 'POST /api/v2/admin/wallets/currencies' do
+    let(:wallet) { Wallet.joins(:currencies).find_by(currencies: { id: 'eth' }) }
+
+    it do
+      api_delete '/api/v2/admin/wallets/currencies', params: { id: wallet.id, currencies: 'eth' }, token: token
+
+      expect(response).to be_successful
+      expect(response_body['currencies'].include?('eth')).to be_falsey
+    end
+
+    it do
+      api_delete '/api/v2/admin/wallets/currencies', params: { id: wallet.id, currencies: 'trst' }, token: token
+
+      expect(response).to have_http_status 404
+    end
+  end
 end
