@@ -62,7 +62,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
   describe 'POST /withdraw_limits/new' do
     it 'creates a table with default group' do
-      api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, currency_id: 'btc' }
+      api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, currency_id: 'btc' }
 
       expect(response).to be_successful
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -73,7 +73,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'creates a table with default currency' do
-      api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { group: 'vip-1', limit_24_hour: 100, limit_1_month: 1000 }
+      api_post '/api/v2/admin/withdraw_limits', token: token, params: { group: 'vip-1', limit_24_hour: 100, limit_1_month: 1000 }
 
       expect(response).to be_successful
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -84,7 +84,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'creates a table with default kyc_level' do
-      api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { group: 'vip-1', limit_24_hour: 100, limit_1_month: 1000 }
+      api_post '/api/v2/admin/withdraw_limits', token: token, params: { group: 'vip-1', limit_24_hour: 100, limit_1_month: 1000 }
 
       expect(response).to be_successful
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -95,7 +95,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'returns created withdraw limit table' do
-      api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { kyc_level: 4, group: 'vip-1', currency_id: 'btc', limit_24_hour: 100, limit_1_month: 1000 }
+      api_post '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: 4, group: 'vip-1', currency_id: 'btc', limit_24_hour: 100, limit_1_month: 1000 }
 
       expect(response).to have_http_status(201)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -107,7 +107,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'returns created withdraw limit table without group' do
       it 'returns created withdraw limit table' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { currency_id: 'btc', limit_24_hour: 100, limit_1_month: 1000 }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'btc', limit_24_hour: 100, limit_1_month: 1000 }
 
         expect(response).to have_http_status(201)
         expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -120,7 +120,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'returns created withdraw limit table without currency_id' do
       it 'returns created withdraw limit table' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, group: 'vip-1' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, group: 'vip-1' }
 
         expect(response).to have_http_status(201)
         expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -133,7 +133,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'returns created withdraw limit table without kyc_level' do
       it 'returns created withdraw limit table' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, group: 'vip-1' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, group: 'vip-1' }
 
         expect(response).to have_http_status(201)
         expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
@@ -146,7 +146,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'invalid currency_id' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, currency_id: 'uah' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, currency_id: 'uah' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.currency_doesnt_exist')
@@ -155,7 +155,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'empty limit_24_hour field' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_1_month: 1000, group: 'vip-1', currency_id: 'btc' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: 1000, group: 'vip-1', currency_id: 'btc' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_24_hour')
@@ -164,7 +164,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'empty limit_1_month field' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_24_hour: 1000, group: 'vip-1', currency_id: 'btc' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 1000, group: 'vip-1', currency_id: 'btc' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_1_month')
@@ -173,7 +173,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'invalid limit_24_hour/limit_1_month value' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/new', token: token, params: { limit_1_month: -1, limit_24_hour: -15, group: 'vip-1', currency_id: 'btc' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: -1, limit_24_hour: -15, group: 'vip-1', currency_id: 'btc' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_24_hour')
@@ -184,9 +184,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
   describe 'POST /withdraw_limits/update' do
     it 'returns updated withdraw limit table with new kyc_level' do
-      api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { kyc_level: '3', id: WithdrawLimit.first.id }
+      api_put '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: '3', id: WithdrawLimit.first.id }
 
-      expect(response).to have_http_status(201)
+      expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
@@ -195,9 +195,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'returns updated withdraw limit table with new group' do
-      api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { group: 'vip-1', id: WithdrawLimit.first.id }
+      api_put '/api/v2/admin/withdraw_limits', token: token, params: { group: 'vip-1', id: WithdrawLimit.first.id }
 
-      expect(response).to have_http_status(201)
+      expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('vip-1')
@@ -206,9 +206,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'returns updated withdraw limit table with new group with capitalized letter' do
-      api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { group: 'Vip-1 ', id: WithdrawLimit.first.id }
+      api_put '/api/v2/admin/withdraw_limits', token: token, params: { group: 'Vip-1 ', id: WithdrawLimit.first.id }
 
-      expect(response).to have_http_status(201)
+      expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('vip-1')
@@ -217,9 +217,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'returns updated withdraw limit table with new limit_24_hour' do
-      api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { currency_id: 'btc', id: WithdrawLimit.first.id }
+      api_put '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'btc', id: WithdrawLimit.first.id }
 
-      expect(response).to have_http_status(201)
+      expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
@@ -228,9 +228,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
 
     it 'returns updated withdraw limit table with new limit_24_hour, limit_1_month fields' do
-      api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { limit_24_hour: 10, limit_1_month: 100, id: WithdrawLimit.first.id }
+      api_put '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 10, limit_1_month: 100, id: WithdrawLimit.first.id }
 
-      expect(response).to have_http_status(201)
+      expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('10.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('100.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
@@ -240,7 +240,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'not found withdraw_limit table' do
       it 'returns status 404 and error' do
-        api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { id: 100 }
+        api_put '/api/v2/admin/withdraw_limits', token: token, params: { id: 100 }
 
         expect(response).to have_http_status(404)
         expect(response).to include_api_error('record.not_found')
@@ -249,7 +249,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'empty limit_24_hour type' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { limit_24_hour: -1, id: WithdrawLimit.first.id }
+        api_put '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: -1, id: WithdrawLimit.first.id }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_24_hour')
@@ -258,7 +258,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'empty limit_1_month type' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { limit_1_month: -1, id: WithdrawLimit.first.id }
+        api_put '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: -1, id: WithdrawLimit.first.id }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_1_month')
@@ -267,7 +267,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'invalid limit_24_hour/limit_1_month type' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits/update', token: token, params: { currency_id: 'uahusd', id: WithdrawLimit.first.id }
+        api_put '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'uahusd', id: WithdrawLimit.first.id }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.currency_doesnt_exist')
@@ -278,28 +278,28 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
   describe 'POST /withdraw_limits/delete' do
     let!(:withdraw_limit) { create(:withdraw_limit, kyc_level: 1) }
 
-    it 'requires id' do
-      api_post '/api/v2/admin/withdraw_limits/delete', token: token
-      expect(response).to include_api_error 'admin.withdrawlimit.missing_id'
+    it 'id has invalid type' do
+      api_delete '/api/v2/admin/withdraw_limits/id', token: token
+      expect(response).to include_api_error 'admin.withdraw_limit.non_integer_id'
     end
 
     it 'deletes withdraw limit table' do
       expect {
-        api_post '/api/v2/admin/withdraw_limits/delete', token: token, params: { id: withdraw_limit.id }
+        api_delete "/api/v2/admin/withdraw_limits/#{withdraw_limit.id}", token: token
       }.to change { WithdrawLimit.count }.by(-1)
 
-      expect(response).to have_http_status(201)
+      expect(response).to have_http_status(200)
     end
 
     it 'returns deleted withdraw limit table' do
-      api_post '/api/v2/admin/withdraw_limits/delete', token: token, params: { id: withdraw_limit.id }
+      api_delete "/api/v2/admin/withdraw_limits/#{withdraw_limit.id}", token: token
 
       expect(JSON.parse(response.body)['id']).to eq withdraw_limit.id
     end
 
     it 'retuns 404 if record does not exist' do
       expect {
-        api_post '/api/v2/admin/withdraw_limits/delete', token: token, params: { id: WithdrawLimit.last.id + 42 }
+        api_delete "/api/v2/admin/withdraw_limits/#{WithdrawLimit.last.id + 42}", token: token
       }.not_to change { WithdrawLimit.count }
 
       expect(response.status).to eq 404

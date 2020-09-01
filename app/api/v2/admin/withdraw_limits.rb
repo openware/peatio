@@ -65,7 +65,7 @@ module API
                    values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
                              message: 'admin.withdraw_limit.currency_doesnt_exist' }
         end
-        post '/withdraw_limits/new' do
+        post '/withdraw_limits' do
           admin_authorize! :create, WithdrawLimit
 
           withdraw_limit = ::WithdrawLimit.new(declared(params))
@@ -105,7 +105,7 @@ module API
                    values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
                              message: 'admin.withdraw_limit.currency_doesnt_exist' }
         end
-        post '/withdraw_limits/update' do
+        put '/withdraw_limits' do
           admin_authorize! :update, WithdrawLimit
 
           withdraw_limit = ::WithdrawLimit.find(params[:id])
@@ -124,7 +124,7 @@ module API
                    type: { value: Integer, message: 'admin.withdraw_limit.non_integer_id' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:id][:desc] }
         end
-        post '/withdraw_limits/delete' do
+        delete '/withdraw_limits/:id' do
           admin_authorize! :delete, WithdrawLimit
 
           present WithdrawLimit.destroy(params[:id]), with: API::V2::Entities::WithdrawLimit
