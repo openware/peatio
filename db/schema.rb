@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_03_113109) do
+ActiveRecord::Schema.define(version: 2020_09_07_133518) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_113109) do
   create_table "currencies_wallets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "currency_id"
     t.string "wallet_id"
+    t.datetime "created_at"
     t.index ["currency_id", "wallet_id"], name: "index_currencies_wallets_on_currency_id_and_wallet_id", unique: true
   end
 

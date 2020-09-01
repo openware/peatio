@@ -367,6 +367,7 @@ describe API::V2::Admin::Blockchains, type: :request do
       let!(:currency) { create(:currency, :btc, id: 'fake') }
       let(:block_number) { 3 }
       let!(:member) { create(:member) }
+      let!(:fake_blockchain) { create(:blockchain, 'fake-testnet') }
       let!(:wallet) { create(:wallet, :fake_deposit) }
 
       before do

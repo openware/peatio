@@ -41,9 +41,9 @@ module Workers
                         details: result.fetch(:details, {}).merge(pa.details))
             end
           end
-        end
 
-        pa.trigger_address_event unless pa.address.blank?
+          pa.trigger_address_event unless pa.address.blank?
+        end
 
       # Don't re-enqueue this job in case of error.
       # The system is designed in such way that when user will

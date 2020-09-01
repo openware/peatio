@@ -50,10 +50,11 @@ class Wallet < ApplicationRecord
   scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
   scope :fee,      -> { where(kind: kinds(fee: true, values: true)) }
   scope :withdraw, -> { where(kind: kinds(withdraw: true, values: true)) }
-  scope :ordered,  -> { order(kind: :asc) }
+  scope :with_currency, ->(currency) { joins(:currencies).where(currencies: { id: currency }) }
+  scope :ordered, -> { order(kind: :asc) }
 
   before_validation do
-    next unless blockchain_api&.supports_cash_addr_format? && address?
+    next unless blockchain.blockchain_api.supports_cash_addr_format? && address?
     self.address = CashAddr::Converter.to_cash_address(address)
   end
 
@@ -95,12 +96,6 @@ class Wallet < ApplicationRecord
 
   def attributes
     super.merge('currency_ids' => currency_ids.join(','))
-  end
-
-  def blockchain_api
-    BlockchainService.new(blockchain)
-  rescue StandardError
-    return
   end
 
   def current_balance(currency = nil)

@@ -40,7 +40,7 @@ module Workers
                        rid: withdraw.rid,
                        message: 'Sending witdraw.'
 
-          wallet = Wallet.active.withdraw.joins(:currencies)
+          wallet = Wallet.active.joins(:currencies)
                          .find_by(currencies: { id: withdraw.currency_id }, kind: :hot)
 
           unless wallet

@@ -34,7 +34,7 @@ module API
             :currency_ids,
             as: :currencies,
             documentation: {
-                type: String,
+                type: Array,
                 desc: 'Wallet currency code.'
             }
           )

@@ -80,7 +80,7 @@ class Currency < ApplicationRecord
 
   # == Callbacks ============================================================
 
-  before_validation :initialize_defaults
+  after_initialize :initialize_defaults
   before_validation { self.code = code.downcase }
   before_validation { self.deposit_fee = 0 unless fiat? }
   before_validation { self.blockchain_key = parent.blockchain_key if token? && blockchain_key.blank? }
