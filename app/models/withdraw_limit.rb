@@ -60,9 +60,9 @@ class WithdrawLimit < ApplicationRecord
   # Withdraw limit with the greatest weight selected.
   # Kyc_level has greater weight then group and group has greater weight then currency_id match.
   # E.g Withdrawal for member with kyc_level 2, group 'vip-0' and currency_id 'btc'
-  # (kyc_level == 3     && group == 'vip-0' && currency_id == 'btc') >
-  # (kyc_level == 3     && group == 'vip-0' && currency_id == 'any') >
-  # (kyc_level == 3     && group == 'any'   && currency_id == 'btc') >
+  # (kyc_level == 2     && group == 'vip-0' && currency_id == 'btc') >
+  # (kyc_level == 2     && group == 'vip-0' && currency_id == 'any') >
+  # (kyc_level == 2     && group == 'any'   && currency_id == 'btc') >
   # (kyc_level == 'any' && group == 'vip-0' && currency_id == 'btc') >
   # (kyc_level == 'any' && group == 'vip-0' && currency_id == 'any') >
   # (kyc_level == 'any' && group == 'any'   && currency_id == 'btc') >

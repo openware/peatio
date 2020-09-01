@@ -52,6 +52,7 @@ class Withdraw < ApplicationRecord
   scope :succeed_processing, -> { where(aasm_state: SUCCEED_PROCESSING_STATES) }
   scope :last_24_hours, -> { where('created_at > ?', 24.hour.ago) }
   scope :last_1_month, -> { where('created_at > ?', 1.month.ago) }
+  scope :with_currency, ->(currency) { where(currency_id: currency) }
 
   aasm whiny_transitions: false do
     state :prepared, initial: true
@@ -147,17 +148,20 @@ class Withdraw < ApplicationRecord
     end
   end
 
-  def blockchain_api
-    currency.blockchain_api
-  end
+  class << self
+    def sum_query
+      'SELECT sum(w.sum * c.price) as sum FROM withdraws as w ' \
+      'INNER JOIN currencies as c ON c.id=w.currency_id ' \
+      'where w.member_id = ? AND w.aasm_state IN (?) AND w.created_at > ?;'
+    end
 
-  def confirmations
-    return 0 if block_number.blank?
-    return blockchain.processed_height - block_number if (blockchain.processed_height - block_number) >= 0
-    'N/A'
-  rescue StandardError => e
-    report_exception(e)
-    'N/A'
+    def sanitize_execute_sum_queries(member_id)
+      squery_24h = ActiveRecord::Base.sanitize_sql_for_conditions([sum_query, member_id, SUCCEED_PROCESSING_STATES, 24.hours.ago])
+      squery_1m = ActiveRecord::Base.sanitize_sql_for_conditions([sum_query, member_id, SUCCEED_PROCESSING_STATES, 1.month.ago])
+      sum_withdraws_24_hours = ActiveRecord::Base.connection.exec_query(squery_24h).to_hash.first['sum'].to_d
+      sum_withdraws_1_month = ActiveRecord::Base.connection.exec_query(squery_1m).to_hash.first['sum'].to_d
+      [sum_withdraws_24_hours, sum_withdraws_1_month]
+    end
   end
 
   def account
@@ -174,15 +178,14 @@ class Withdraw < ApplicationRecord
 
   def verify_limits
     limits = WithdrawLimit.for(kyc_level: member.level, group: member.group, currency_id: currency_id)
-    limit_24_hours = limits.limit_24_hour * currency.price.to_d
-    limit_1_months = limits.limit_1_month * currency.price.to_d
-    sum_withdraws_24_hours = member.withdraws.succeed_processing.where('created_at > ?', 24.hours.ago).sum(:sum) + sum
-    sum_withdraws_1_month = member.withdraws.succeed_processing.where('created_at > ?', 1.month.ago).sum(:sum) + sum
+    # Withdraw limits in USD and withdraw sum in currency.
+    # Convert withdraw sums with price from the currency model.
+    sum_24_hours, sum_1_month = Withdraw.sanitize_execute_sum_queries(member_id)
 
-    if sum_withdraws_24_hours > limit_24_hours
+    if sum_24_hours + sum * currency.price > limits.limit_24_hour
       errors.add(:withdraw, '24h_limit_exceeded')
-    elsif sum_withdraws_1_month > limit_1_months
-      errors.add(:withdraw, '72h_limit_exceeded')
+    elsif sum_1_month + sum * currency.price > limits.limit_1_month
+      errors.add(:withdraw, '1m_limit_exceeded')
     end
   end
 

@@ -53,17 +53,9 @@ module API
         end
         get '/withdraws/sums' do
           result = {}
-          if params[:currency].present?
-            result[:last_24_hours] = Withdraw.where(currency_id: params[:currency], member: current_user)
-                                             .succeed_processing.last_24_hours.group(:currency_id).sum(:sum)
-            result[:last_1_month] = Withdraw.where(currency_id: params[:currency], member: current_user)
-                                            .succeed_processing.last_1_month.group(:currency_id).sum(:sum)
-          else
-            result[:last_24_hours] = Withdraw.where(member: current_user)
-                                             .succeed_processing.last_24_hours.group(:currency_id).sum(:sum)
-            result[:last_1_month] = Withdraw.where(member: current_user)
-                                            .succeed_processing.last_1_month.group(:currency_id).sum(:sum)
-          end
+          sum_24_hours, sum_1_month = Withdraw.sanitize_execute_sum_queries(current_user.id)
+          result[:last_24_hours] = sum_24_hours
+          result[:last_1_month] = sum_1_month
 
           present result
         end
