@@ -10,9 +10,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
   describe 'GET /withdraw_limits' do
     before do
-      create(:withdraw_limit, limit_24_hour: 100, limit_1_month: 1000, kyc_level: 2, currency_id: :btc, group: 'vip-0')
-      create(:withdraw_limit, limit_24_hour: 50, limit_1_month: 500, kyc_level: 1, currency_id: :any, group: 'vip-0')
-      create(:withdraw_limit, limit_24_hour: 50, limit_1_month: 500, kyc_level: 1, currency_id: :btc, group: :any)
+      create(:withdraw_limit, limit_24_hour: 100, limit_1_month: 1000, kyc_level: 2, group: 'vip-0')
+      create(:withdraw_limit, limit_24_hour: 50, limit_1_month: 500, kyc_level: 1, group: 'vip-0')
+      create(:withdraw_limit, limit_24_hour: 50, limit_1_month: 500, kyc_level: 1, group: :any)
     end
 
     it 'returns all withdraw limits' do
@@ -25,14 +25,6 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     it 'pagination' do
       api_get '/api/v2/admin/withdraw_limits', token: token, params: { limit: 1 }
       expect(JSON.parse(response.body).length).to eq 1
-    end
-
-    it 'filters by currency_id' do
-      api_get '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'btc' }
-
-      result = JSON.parse(response.body)
-      expect(result.map { |r| r['currency_id'] }).to all eq 'btc'
-      expect(result.length).to eq WithdrawLimit.where(currency_id: 'btc').count
     end
 
     it 'filters by group' do
@@ -60,27 +52,15 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
   end
 
-  describe 'POST /withdraw_limits/new' do
+  describe 'POST /withdraw_limits' do
     it 'creates a table with default group' do
-      api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, currency_id: 'btc' }
+      api_post '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: 1, limit_24_hour: 100, limit_1_month: 1000 }
 
       expect(response).to be_successful
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
-      expect(JSON.parse(response.body)['currency_id']).to eq('btc')
-      expect(JSON.parse(response.body)['kyc_level']).to eq('any')
-    end
-
-    it 'creates a table with default currency' do
-      api_post '/api/v2/admin/withdraw_limits', token: token, params: { group: 'vip-1', limit_24_hour: 100, limit_1_month: 1000 }
-
-      expect(response).to be_successful
-      expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
-      expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
-      expect(JSON.parse(response.body)['group']).to eq('vip-1')
-      expect(JSON.parse(response.body)['currency_id']).to eq('any')
-      expect(JSON.parse(response.body)['kyc_level']).to eq('any')
+      expect(JSON.parse(response.body)['kyc_level']).to eq('1')
     end
 
     it 'creates a table with default kyc_level' do
@@ -90,44 +70,28 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
       expect(JSON.parse(response.body)['group']).to eq('vip-1')
-      expect(JSON.parse(response.body)['currency_id']).to eq('any')
       expect(JSON.parse(response.body)['kyc_level']).to eq('any')
     end
 
     it 'returns created withdraw limit table' do
-      api_post '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: 4, group: 'vip-1', currency_id: 'btc', limit_24_hour: 100, limit_1_month: 1000 }
+      api_post '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: 4, group: 'vip-1', limit_24_hour: 100, limit_1_month: 1000 }
 
       expect(response).to have_http_status(201)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
       expect(JSON.parse(response.body)['group']).to eq('vip-1')
-      expect(JSON.parse(response.body)['currency_id']).to eq('btc')
       expect(JSON.parse(response.body)['kyc_level']).to eq('4')
     end
 
     context 'returns created withdraw limit table without group' do
       it 'returns created withdraw limit table' do
-        api_post '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'btc', limit_24_hour: 100, limit_1_month: 1000 }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: 1, limit_24_hour: 100, limit_1_month: 1000 }
 
         expect(response).to have_http_status(201)
         expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
         expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
         expect(JSON.parse(response.body)['group']).to eq('any')
-        expect(JSON.parse(response.body)['currency_id']).to eq('btc')
-        expect(JSON.parse(response.body)['kyc_level']).to eq('any')
-      end
-    end
-
-    context 'returns created withdraw limit table without currency_id' do
-      it 'returns created withdraw limit table' do
-        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, group: 'vip-1' }
-
-        expect(response).to have_http_status(201)
-        expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
-        expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
-        expect(JSON.parse(response.body)['group']).to eq('vip-1')
-        expect(JSON.parse(response.body)['currency_id']).to eq('any')
-        expect(JSON.parse(response.body)['kyc_level']).to eq('any')
+        expect(JSON.parse(response.body)['kyc_level']).to eq('1')
       end
     end
 
@@ -139,23 +103,13 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
         expect(JSON.parse(response.body)['limit_24_hour']).to eq('100.0')
         expect(JSON.parse(response.body)['limit_1_month']).to eq('1000.0')
         expect(JSON.parse(response.body)['group']).to eq('vip-1')
-        expect(JSON.parse(response.body)['currency_id']).to eq('any')
         expect(JSON.parse(response.body)['kyc_level']).to eq('any')
-      end
-    end
-
-    context 'invalid currency_id' do
-      it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 100, limit_1_month: 1000, currency_id: 'uah' }
-
-        expect(response).to have_http_status(422)
-        expect(response).to include_api_error('admin.withdraw_limit.currency_doesnt_exist')
       end
     end
 
     context 'empty limit_24_hour field' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: 1000, group: 'vip-1', currency_id: 'btc' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: 1000, group: 'vip-1' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_24_hour')
@@ -164,7 +118,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'empty limit_1_month field' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 1000, group: 'vip-1', currency_id: 'btc' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_24_hour: 1000, group: 'vip-1' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_1_month')
@@ -173,7 +127,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
 
     context 'invalid limit_24_hour/limit_1_month value' do
       it 'returns status 422 and error' do
-        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: -1, limit_24_hour: -15, group: 'vip-1', currency_id: 'btc' }
+        api_post '/api/v2/admin/withdraw_limits', token: token, params: { limit_1_month: -1, limit_24_hour: -15, group: 'vip-1' }
 
         expect(response).to have_http_status(422)
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_24_hour')
@@ -182,7 +136,7 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
     end
   end
 
-  describe 'POST /withdraw_limits/update' do
+  describe 'PUT /withdraw_limits' do
     it 'returns updated withdraw limit table with new kyc_level' do
       api_put '/api/v2/admin/withdraw_limits', token: token, params: { kyc_level: '3', id: WithdrawLimit.first.id }
 
@@ -190,7 +144,6 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
-      expect(JSON.parse(response.body)['currency_id']).to eq('any')
       expect(JSON.parse(response.body)['kyc_level']).to eq('3')
     end
 
@@ -201,7 +154,6 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('vip-1')
-      expect(JSON.parse(response.body)['currency_id']).to eq('any')
       expect(JSON.parse(response.body)['kyc_level']).to eq('any')
     end
 
@@ -212,18 +164,16 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('vip-1')
-      expect(JSON.parse(response.body)['currency_id']).to eq('any')
       expect(JSON.parse(response.body)['kyc_level']).to eq('any')
     end
 
     it 'returns updated withdraw limit table with new limit_24_hour' do
-      api_put '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'btc', id: WithdrawLimit.first.id }
+      api_put '/api/v2/admin/withdraw_limits', token: token, params: { id: WithdrawLimit.first.id }
 
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('9999.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('999999.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
-      expect(JSON.parse(response.body)['currency_id']).to eq('btc')
       expect(JSON.parse(response.body)['kyc_level']).to eq('any')
     end
 
@@ -234,7 +184,6 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
       expect(JSON.parse(response.body)['limit_24_hour']).to eq('10.0')
       expect(JSON.parse(response.body)['limit_1_month']).to eq('100.0')
       expect(JSON.parse(response.body)['group']).to eq('any')
-      expect(JSON.parse(response.body)['currency_id']).to eq('any')
       expect(JSON.parse(response.body)['kyc_level']).to eq('any')
     end
 
@@ -264,18 +213,9 @@ describe API::V2::Admin::WithdrawLimits, type: :request do
         expect(response).to include_api_error('admin.withdraw_limit.invalid_limit_1_month')
       end
     end
-
-    context 'invalid limit_24_hour/limit_1_month type' do
-      it 'returns status 422 and error' do
-        api_put '/api/v2/admin/withdraw_limits', token: token, params: { currency_id: 'uahusd', id: WithdrawLimit.first.id }
-
-        expect(response).to have_http_status(422)
-        expect(response).to include_api_error('admin.withdraw_limit.currency_doesnt_exist')
-      end
-    end
   end
 
-  describe 'POST /withdraw_limits/delete' do
+  describe 'DELETE /withdraw_limits' do
     let!(:withdraw_limit) { create(:withdraw_limit, kyc_level: 1) }
 
     it 'id has invalid type' do

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 module API
@@ -8,8 +7,8 @@ module API
         helpers ::API::V2::Admin::Helpers
 
         desc 'Returns withdraw limits table as paginated collection',
-          is_array: true,
-          success: API::V2::Admin::Entities::WithdrawLimit
+             is_array: true,
+             success: API::V2::Admin::Entities::WithdrawLimit
         params do
           optional :group,
                    type: String,
@@ -18,11 +17,6 @@ module API
           optional :kyc_level,
                    type: String,
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:kyc_level][:desc] }
-          optional :currency_id,
-                   type: String,
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:currency_id][:desc] },
-                   values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
-                             message: 'admin.withdraw_limit.currency_doesnt_exist' }
           use :pagination
           use :ordering
         end
@@ -30,8 +24,8 @@ module API
           admin_authorize! :read, WithdrawLimit
 
           ransack_params = Helpers::RansackBuilder.new(params)
-                             .eq(:group, :currency_id, :kyc_level)
-                             .build
+                                                  .eq(:group, :kyc_level)
+                                                  .build
 
           search = WithdrawLimit.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
@@ -40,15 +34,15 @@ module API
         end
 
         desc 'It creates withdraw limits record',
-          success: API::V2::Entities::WithdrawLimit
+             success: API::V2::Entities::WithdrawLimit
         params do
           requires :limit_24_hour,
                    type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_24_hour' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_24_hour' },
+                   values: { value: ->(p) { p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_24_hour' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_24_hour][:desc] }
           requires :limit_1_month,
                    type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_1_month' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_1_month' },
+                   values: { value: ->(p) { p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_1_month' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_1_month][:desc] }
           optional :group,
                    type: String,
@@ -58,12 +52,6 @@ module API
                    type: String,
                    default: ::WithdrawLimit::ANY,
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:kyc_level][:desc] }
-          optional :currency_id,
-                   type: String,
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:currency_id][:desc] },
-                   default: ::WithdrawLimit::ANY,
-                   values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
-                             message: 'admin.withdraw_limit.currency_doesnt_exist' }
         end
         post '/withdraw_limits' do
           admin_authorize! :create, WithdrawLimit
@@ -79,18 +67,18 @@ module API
         end
 
         desc 'It updates withdraw limits record',
-          success: API::V2::Entities::WithdrawLimit
+             success: API::V2::Entities::WithdrawLimit
         params do
           requires :id,
                    type: { value: Integer, message: 'admin.withdraw_limit.non_integer_id' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:id][:desc] }
           optional :limit_24_hour,
                    type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_24_hour' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_24_hour' },
+                   values: { value: ->(p) { p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_24_hour' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_24_hour][:desc] }
           optional :limit_1_month,
                    type: { value: BigDecimal, message: 'admin.withdraw_limit.non_decimal_limit_1_month' },
-                   values: { value: -> (p){ p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_1_month' },
+                   values: { value: ->(p) { p && p >= 0 }, message: 'admin.withdraw_limit.invalid_limit_1_month' },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:limit_1_month][:desc] }
           optional :kyc_level,
                    type: String,
@@ -99,11 +87,6 @@ module API
                    type: String,
                    coerce_with: ->(c) { c.strip.downcase },
                    desc: -> { API::V2::Entities::WithdrawLimit.documentation[:group][:desc] }
-          optional :currency_id,
-                   type: String,
-                   desc: -> { API::V2::Entities::WithdrawLimit.documentation[:currency_id][:desc] },
-                   values: { value: -> { ::Currency.ids.append(::WithdrawLimit::ANY) },
-                             message: 'admin.withdraw_limit.currency_doesnt_exist' }
         end
         put '/withdraw_limits' do
           admin_authorize! :update, WithdrawLimit
@@ -118,7 +101,7 @@ module API
         end
 
         desc 'It deletes withdraw limits record',
-          success: API::V2::Entities::WithdrawLimit
+             success: API::V2::Entities::WithdrawLimit
         params do
           requires :id,
                    type: { value: Integer, message: 'admin.withdraw_limit.non_integer_id' },

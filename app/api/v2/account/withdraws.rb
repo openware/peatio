@@ -45,19 +45,10 @@ module API
         end
 
         desc 'Returns withdrawal sums for last 4 hours and 1 month'
-        params do
-          optional :currency,
-                   type: String,
-                   values: { value: -> { Currency.visible.codes(bothcase: true) }, message: 'account.currency.doesnt_exist'},
-                   desc: 'Currency code.'
-        end
         get '/withdraws/sums' do
-          result = {}
           sum_24_hours, sum_1_month = Withdraw.sanitize_execute_sum_queries(current_user.id)
-          result[:last_24_hours] = sum_24_hours
-          result[:last_1_month] = sum_1_month
 
-          present result
+          present({ last_24_hours: sum_24_hours, last_1_month: sum_1_month })
         end
 
         desc 'Creates new withdrawal to active beneficiary.'

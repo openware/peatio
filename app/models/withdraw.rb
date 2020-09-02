@@ -52,7 +52,6 @@ class Withdraw < ApplicationRecord
   scope :succeed_processing, -> { where(aasm_state: SUCCEED_PROCESSING_STATES) }
   scope :last_24_hours, -> { where('created_at > ?', 24.hour.ago) }
   scope :last_1_month, -> { where('created_at > ?', 1.month.ago) }
-  scope :with_currency, ->(currency) { where(currency_id: currency) }
 
   aasm whiny_transitions: false do
     state :prepared, initial: true
@@ -177,7 +176,7 @@ class Withdraw < ApplicationRecord
   end
 
   def verify_limits
-    limits = WithdrawLimit.for(kyc_level: member.level, group: member.group, currency_id: currency_id)
+    limits = WithdrawLimit.for(kyc_level: member.level, group: member.group)
     # Withdraw limits in USD and withdraw sum in currency.
     # Convert withdraw sums with price from the currency model.
     sum_24_hours, sum_1_month = Withdraw.sanitize_execute_sum_queries(member_id)

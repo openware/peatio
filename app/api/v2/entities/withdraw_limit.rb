@@ -19,14 +19,6 @@ module API
         )
 
         expose(
-          :currency_id,
-          documentation:{
-            type: String,
-            desc: 'Currency id for define withdraw limits.'
-          }
-        )
-
-        expose(
           :kyc_level,
           documentation:{
             type: String,

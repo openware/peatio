@@ -326,15 +326,8 @@ describe API::V2::Account::Withdraws, type: :request do
     it 'returns withdrawals sums' do
       api_get '/api/v2/account/withdraws/sums', token: token
 
-      expect(response_body['last_24_hours'].key?('btc')).to be_truthy
-      expect(response_body['last_24_hours'].key?('usd')).to be_truthy
-    end
-
-    it 'returns withdrawals sums for currency' do
-      api_get '/api/v2/account/withdraws/sums?currency=btc', token: token
-
-      expect(response_body['last_24_hours'].key?('btc')).to be_truthy
-      expect(response_body['last_24_hours'].key?('usd')).to be_falsey
+      expect(response_body.key?('last_24_hours')).to be_truthy
+      expect(response_body.key?('last_1_month')).to be_truthy
     end
   end
 end

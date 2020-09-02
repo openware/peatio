@@ -3,7 +3,6 @@
 
 FactoryBot.define do
   factory :withdraw_limit do
-    currency_id { 'any' }
     group { 'any' }
     kyc_level { 'any' }
     limit_24_hour { 9999.to_d }
