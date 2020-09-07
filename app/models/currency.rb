@@ -5,12 +5,6 @@ class Currency < ApplicationRecord
 
   # == Constants ============================================================
 
-  DEFAULT_OPTIONS_SCHEMA = {
-    erc20_contract_address: {
-      title: 'ERC20 Contract Address',
-      type: 'string'
-    }
-  }
   OPTIONS_ATTRIBUTES = %i[erc20_contract_address gas_limit gas_price].freeze
 
   # == Attributes ===========================================================
@@ -25,7 +19,7 @@ class Currency < ApplicationRecord
 
   # == Extensions ===========================================================
 
-  store :options, accessors: OPTIONS_ATTRIBUTES, coder: JSON
+  store :options, accessors: OPTIONS_ATTRIBUTES
 
   # == Relationships ========================================================
 
@@ -80,7 +74,7 @@ class Currency < ApplicationRecord
 
   # == Callbacks ============================================================
 
-  after_initialize :initialize_defaults
+  before_create :initialize_defaults
   before_validation { self.code = code.downcase }
   before_validation { self.deposit_fee = 0 unless fiat? }
   before_validation { self.blockchain_key = parent.blockchain_key if token? && blockchain_key.blank? }

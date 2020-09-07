@@ -17,8 +17,8 @@ describe BlockchainService do
   let(:service) { BlockchainService.new(blockchain) }
 
   let!(:fake_currency) { create(:currency, :fake) }
-  let!(:fake_currency1) { create(:currency, :fake, id: 'fake1', symbol: 'F') }
-  let!(:fake_currency2) { create(:currency, :fake, id: 'fake2', symbol: 'G') }
+  let!(:fake_currency1) { create(:currency, :fake, id: 'fake1') }
+  let!(:fake_currency2) { create(:currency, :fake, id: 'fake2') }
   let!(:wallet) { create(:wallet, :fake_deposit) }
 
   let!(:member) { create(:member) }

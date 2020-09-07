@@ -37,7 +37,7 @@ module API
                    desc: 'An integer represents the seconds elapsed since Unix epoch.'
 
           optional :deposit_state,
-                   values: { value: ->(v) { (Array.wrap(v) - Deposit::STATES.map(&:to_s)).blank? }, message: 'account.transactions.invalid_deposit_state' },
+                   values: { value: ->(v) { (Array.wrap(v) - ::Deposit.aasm.states.map(&:name).map(&:to_s)).blank? }, message: 'account.transactions.invalid_deposit_state' },
                    desc: 'Filter deposits by states.',
                    default: []
 

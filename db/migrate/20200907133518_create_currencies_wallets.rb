@@ -2,10 +2,9 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
   def change
     reversible do |dir|
       dir.up do
-        create_table :currencies_wallets do |t|
-          t.string :currency_id
-          t.string :wallet_id
-          t.datetime 'created_at'
+        create_join_table :currencies, :wallets do |t|
+          t.string :currency_id, index: true
+          t.integer :wallet_id, index: true
         end
         add_index :currencies_wallets, %i[currency_id wallet_id], unique: true
         # Add links for the existing wallets and currencies
@@ -16,6 +15,9 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
 
         add_reference :payment_addresses, :member, index: true, after: :id
         add_reference :payment_addresses, :wallet, index: true, after: :member_id
+        # Update old PaymentAddresses with wallet_id and memmber_id columns
+        # We will still have in DB old PAs but after join wallets system will display
+        # and use only one address
         PaymentAddress.find_in_batches do |batch|
           batch.each do |pa|
             wallet = Wallet.deposit.find_by(currency_id: pa.currency_id)
@@ -26,10 +28,10 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
           end
         end
         change_column_default :currencies, :options, nil
-        change_column :currencies, :options, :json
         remove_column :wallets, :currency_id
         remove_column :payment_addresses, :currency_id
         remove_column :payment_addresses, :account_id
+        change_column :currencies, :options, :json
       end
 
       dir.down do
@@ -54,6 +56,7 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
         PaymentAddress.where(account_id: nil, currency_id: nil).delete_all
         remove_column :payment_addresses, :member_id
         remove_column :payment_addresses, :wallet_id
+        change_column :currencies, :options, limit: 1000, default: "{}"
         drop_table :currencies_wallets
       end
     end

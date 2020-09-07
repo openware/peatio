@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class Deposit < ApplicationRecord
-  STATES = %i[submitted canceled rejected accepted collected skipped].freeze
+  STATES = %i[submitted canceled rejected accepted collected skipped processing fee_processing].freeze
 
   serialize :spread, Array
   serialize :from_addresses, Array

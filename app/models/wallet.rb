@@ -54,7 +54,7 @@ class Wallet < ApplicationRecord
   scope :ordered, -> { order(kind: :asc) }
 
   before_validation do
-    next unless blockchain.blockchain_api.supports_cash_addr_format? && address?
+    next unless address? && blockchain.blockchain_api.supports_cash_addr_format?
     self.address = CashAddr::Converter.to_cash_address(address)
   end
 
@@ -92,10 +92,6 @@ class Wallet < ApplicationRecord
     def deposit_wallet(currency_id)
       Wallet.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
     end
-  end
-
-  def attributes
-    super.merge('currency_ids' => currency_ids.join(','))
   end
 
   def current_balance(currency = nil)

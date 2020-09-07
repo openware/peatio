@@ -114,11 +114,12 @@ ActiveRecord::Schema.define(version: 2020_09_07_133518) do
     t.index ["visible"], name: "index_currencies_on_visible"
   end
 
-  create_table "currencies_wallets", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "currencies_wallets", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "currency_id"
-    t.string "wallet_id"
-    t.datetime "created_at"
+    t.integer "wallet_id"
     t.index ["currency_id", "wallet_id"], name: "index_currencies_wallets_on_currency_id_and_wallet_id", unique: true
+    t.index ["currency_id"], name: "index_currencies_wallets_on_currency_id"
+    t.index ["wallet_id"], name: "index_currencies_wallets_on_wallet_id"
   end
 
   create_table "deposits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

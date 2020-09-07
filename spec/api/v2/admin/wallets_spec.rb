@@ -66,14 +66,6 @@ describe API::V2::Admin::Wallets, type: :request do
       expect(result.size).to eq Wallet.count
     end
 
-    it 'returns wallets by ascending order' do
-      api_get '/api/v2/admin/wallets', params: { ordering: 'asc', order_by: 'currencies_ids'}, token: token
-      result = JSON.parse(response.body)
-
-      expect(response).to be_successful
-      expect(result.first['currencies']).to eq ['btc']
-    end
-
     it 'returns paginated wallets' do
       api_get '/api/v2/admin/wallets', params: { limit: 6, page: 1 }, token: token
       result = JSON.parse(response.body)
@@ -140,7 +132,7 @@ describe API::V2::Admin::Wallets, type: :request do
           api_get '/api/v2/admin/wallets', token: token, params: { currencies: %w[eth trst] }
 
           expect(response_body.length).not_to eq 0
-          count = Wallet.joins(:currencies).where(currencies: { id: %i[eth trst] }).count
+          count = Wallet.joins(:currencies).where(currencies: { id: %i[eth trst] }).distinct.count
           expect(response_body.find { |c| c['id'] == hot_wallet.id }['currencies']).to eq(%w[eth trst])
           expect(response_body.count).to eq(count)
         end

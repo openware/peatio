@@ -1,6 +1,7 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+# TODO: Rename to DepositAddress
 class PaymentAddress < ApplicationRecord
   include Vault::EncryptedModel
 
@@ -22,14 +23,12 @@ class PaymentAddress < ApplicationRecord
   end
 
   before_validation do
-    next unless blockchain_api&.supports_cash_addr_format? && address?
+    next unless address? && blockchain_api&.supports_cash_addr_format?
     self.address = CashAddr::Converter.to_cash_address(address)
   end
 
   def blockchain_api
     BlockchainService.new(wallet.blockchain)
-  rescue StandardError
-    return
   end
 
   def enqueue_address_generation

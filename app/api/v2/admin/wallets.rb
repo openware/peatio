@@ -67,9 +67,9 @@ module API
                              .merge(kind_eq: params[:kind].present? ? Wallet.kinds[params[:kind].to_sym] : nil)
                              .build
 
-          search = ::Wallet.joins(:currencies).ransack(ransack_params)
+          search = ::Wallet.ransack(ransack_params)
           search.sorts = "#{params[:order_by]} #{params[:ordering]}"
-          present paginate(search.result.distinct), with: API::V2::Admin::Entities::Wallet
+          present paginate(search.result.includes(:currencies).distinct), with: API::V2::Admin::Entities::Wallet
         end
 
         desc 'List wallet kinds.'
@@ -197,15 +197,12 @@ module API
           wallet.transaction do
             params[:currencies].each do |c_id|
               c_w = CurrencyWallet.new(currency_id: c_id, wallet_id: params[:id])
-              if c_w.save
-                present wallet, with: API::V2::Admin::Entities::Wallet
-                status 201
-              else
-                body errors: c_w.errors.full_messages
-                status 422
-              end
+              error!({ errors: c_w.errors.full_messages }, 422) unless c_w.save
             end
           end
+
+          present wallet, with: API::V2::Admin::Entities::Wallet
+          status 201
         end
 
         desc 'Delete currency from the wallet' do
@@ -224,7 +221,10 @@ module API
           wallet = Wallet.find(params[:id])
           wallet.transaction do
             params[:currencies].each do |c_id|
-              CurrencyWallet.find_by!(currency_id: c_id, wallet_id: params[:id]).destroy!
+              # Check if exist (will return error)
+              CurrencyWallet.find_by!(currency_id: c_id, wallet_id: params[:id])
+              # Delete relation
+              CurrencyWallet.delete(currency_id: c_id, wallet_id: params[:id])
             end
           end
 
