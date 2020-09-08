@@ -13,7 +13,7 @@ class Withdraw < ApplicationRecord
                errored
                confirming].freeze
   COMPLETED_STATES = %i[succeed rejected canceled failed].freeze
-  SUCCEED_PROCESSING_STATES = %i[accepted skipped processing errored confirming succeed].freeze
+  SUCCEED_PROCESSING_STATES = %i[prepared accepted skipped processing errored confirming succeed].freeze
 
   include AASM
   include AASM::Locking
@@ -182,10 +182,23 @@ class Withdraw < ApplicationRecord
     sum_24_hours, sum_1_month = Withdraw.sanitize_execute_sum_queries(member_id)
 
     if sum_24_hours + sum * currency.price > limits.limit_24_hour
-      errors.add(:withdraw, '24h_limit_exceeded')
+      errors.add(:withdraw, '24 hours limit exceeded')
     elsif sum_1_month + sum * currency.price > limits.limit_1_month
-      errors.add(:withdraw, '1m_limit_exceeded')
+      errors.add(:withdraw, '1 month limit exceeded')
     end
+  end
+
+  def blockchain_api
+    currency.blockchain_api
+  end
+
+  def confirmations
+    return 0 if block_number.blank?
+    return blockchain.processed_height - block_number if (blockchain.processed_height - block_number) >= 0
+    'N/A'
+  rescue StandardError => e
+    report_exception(e)
+    'N/A'
   end
 
   def completed?

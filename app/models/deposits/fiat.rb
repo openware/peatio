@@ -1,6 +1,8 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+# Deprecated
+# TODO: Delete this class and update type column
 module Deposits
   class Fiat < Deposit
     has_one :blockchain, through: :currency
