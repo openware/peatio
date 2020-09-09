@@ -55,12 +55,7 @@ module Ethereum
 
       options = DEFAULT_ERC20_FEE.merge(deposit_currency.fetch(:options).slice(:gas_limit, :gas_price))
 
-      # Get current gas price
-      gas_price = client.json_rpc(:eth_gasPrice, [])
-      Rails.logger.info { "Current gas price #{gas_price.to_i(16)}" }
-
-      # Apply thresholds depending on currency configs by default it will be standard
-      options[:gas_price] = gas_price.to_i(16) * GAS_PRICE_THRESHOLDS.fetch(options[:gas_price], 1).to_i
+      options[:gas_price] = calculate_gas_price(options)
 
       # We collect fees depending on the number of spread deposit size
       # Example: if deposit spreads on three wallets need to collect eth fee for 3 transactions
@@ -105,11 +100,7 @@ module Ethereum
       if transaction.options.present?
         options[:gas_price] = transaction.options[:gas_price]
       else
-        # Get current gas price
-        gas_price = client.json_rpc(:eth_gasPrice, [])
-
-        # Apply thresholds depending on currency configs by default it will be standard
-        options[:gas_price] = gas_price.to_i(16) * GAS_PRICE_THRESHOLDS.fetch(options[:gas_price], 1).to_i
+        options[:gas_price] = calculate_gas_price(options)
       end
 
       # Subtract fees from initial deposit amount in case of deposit collection
@@ -143,11 +134,11 @@ module Ethereum
                         normalize_address(transaction.to_address),
                         '0x' + amount.to_s(16))
 
-      # Get current gas price
-      gas_price = client.json_rpc(:eth_gasPrice, [])
-
-      # Apply thresholds depending on currency configs by default it will be standard
-      options[:gas_price] = gas_price.to_i(16) * GAS_PRICE_THRESHOLDS.fetch(options[:gas_price], 1).to_i
+      if transaction.options.present?
+        options[:gas_price] = transaction.options[:gas_price]
+      else
+        options[:gas_price] = calculate_gas_price(options)
+      end
 
       txid = client.json_rpc(:personal_sendTransaction,
                 [{
@@ -201,6 +192,15 @@ module Ethereum
             "#{value.to_d} - #{x.to_d} must be equal to zero."
       end
       x.to_i
+    end
+
+    def calculate_gas_price(options = { gas_price: :standard })
+      # Get current gas price
+      gas_price = client.json_rpc(:eth_gasPrice, [])
+      Rails.logger.info { "Current gas price #{gas_price.to_i(16)}" }
+
+      # Apply thresholds depending on currency configs by default it will be standard
+      (gas_price.to_i(16) * GAS_PRICE_THRESHOLDS.fetch(options[:gas_price].try(:to_sym), 1)).to_i
     end
 
     def client

@@ -679,6 +679,7 @@ describe WalletService do
       it 'returns transaction' do
         expect(subject).to contain_exactly(*transactions)
         expect(subject).to all(be_a(Peatio::Transaction))
+        deposit.spread.map { |s| s.key?(:options) }
       end
     end
 

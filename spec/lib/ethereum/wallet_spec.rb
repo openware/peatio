@@ -397,6 +397,64 @@ describe Ethereum::Wallet do
           expect(wallet.prepare_deposit_collection!(transaction, spread_deposit, currency)).to eq []
         end
       end
+
+      context '#calculate_gas_price' do
+        let(:gas_price) { 1_000_000_000 }
+        let(:gas_price_hex) { '0x' + gas_price.to_s(16) }
+
+        let(:settings) do
+          {
+            wallet: fee_wallet.to_wallet_api_settings,
+            currency: eth.to_blockchain_api_settings
+          }
+        end
+
+        let(:eth_GasPrice) do
+          {
+            "jsonrpc": '2.0',
+            "id": 1,
+            "method": 'eth_gasPrice',
+            "params": []
+          }
+        end
+
+        before do
+          wallet.configure(settings)
+          stub_request(:post, uri)
+            .with(body: eth_GasPrice.to_json)
+            .to_return(body: { result: gas_price_hex,
+                              error: nil,
+                              id: 1 }.to_json)
+        end
+
+        it do
+          options = { gas_price: 'standard' }
+          expect(wallet.send(:calculate_gas_price, options)).to eq gas_price
+        end
+
+        it do
+          options = { gas_price: 'fast' }
+          expect(wallet.send(:calculate_gas_price, options)).to eq gas_price * 1.1
+        end
+
+        it do
+          options = { gas_price: 'safelow' }
+          expect(wallet.send(:calculate_gas_price, options)).to eq gas_price * 0.9
+        end
+
+        it do
+          options = { gas_price: 12_346_789.to_s(16) }
+          expect(wallet.send(:calculate_gas_price, options)).to eq gas_price
+        end
+
+        it do
+          expect(wallet.send(:calculate_gas_price)).to eq gas_price
+        end
+
+        it do
+          expect(wallet.send(:calculate_gas_price, {})).to eq gas_price
+        end
+      end
     end
   end
 
