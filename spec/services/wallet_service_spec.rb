@@ -664,13 +664,15 @@ describe WalletService do
       [Peatio::Transaction.new( hash:        '0xfake',
                                 to_address:  deposit.address,
                                 amount:      '0.01',
-                                currency_id: currency.id)]
+                                currency_id: currency.id,
+                                options: { gas_limit: 21_000, gas_price: 10_000_000_000 })]
     end
 
     subject { service.deposit_collection_fees!(deposit, spread_deposit) }
 
     context 'Adapter collect fees for transaction' do
       before do
+        deposit.update!(spread: spread_deposit.map(&:as_json))
         service.adapter.expects(:prepare_deposit_collection!).returns(transactions)
       end
 
