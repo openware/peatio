@@ -3,6 +3,12 @@
 module API
   module V2
     module OrderHelpers
+
+      THIRD_PARTY_ORDER_CANCEL_TYPE = {
+          'single' => 3,
+          'bulk'   => 4
+      }.freeze
+
       def build_order(attrs)
         (attrs[:side] == 'sell' ? OrderAsk : OrderBid).new \
           state:         ::Order::PENDING,
@@ -42,7 +48,7 @@ module API
         submit_order(order)
         order
         # TODO: Make more specific error message for ActiveRecord::RecordInvalid.
-      rescue => e
+      rescue StandardError => e
         if create_order_errors.include?(e.class)
           report_api_error(e, request)
         else
@@ -64,23 +70,37 @@ module API
 
         order.save!
 
+        # FIXME: Need to send the message to third-party engine.
         AMQP::Queue.enqueue(:order_processor,
                           { action: 'submit', order: order.attributes },
                           { persistent: false })
 
-        # Notify third party trading engine about order submit.
-        AMQP::Queue.enqueue(:events_processor,
-                          subject: :submit_order,
-                          payload: order.as_json_for_events_processor)
       end
 
       def cancel_order(order)
-        AMQP::Queue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
+        market_engine = order.market.engine
 
-        # Notify third party trading engine about order stop.
-        AMQP::Queue.enqueue(:events_processor,
-                          subject: :stop_order,
-                          payload: order.as_json_for_events_processor)
+        if market_engine.peatio_engine?
+          cancel_peatio_order(order)
+        else
+          cancel_third_party_order(market_engine.driver, order)
+        end
+      end
+
+      def cancel_peatio_order(order)
+        AMQP::Queue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
+      end
+
+      def cancel_third_party_order(engine_driver, order)
+        AMQP::Queue.publish(engine_driver,
+                            data: order.as_json_for_third_party,
+                            type: THIRD_PARTY_ORDER_CANCEL_TYPE['single'])
+      end
+
+      def bulk_cancel_third_party_orders(engine_driver, filters = {})
+        AMQP::Queue.publish(engine_driver,
+                            data: filters,
+                            type: THIRD_PARTY_ORDER_CANCEL_TYPE['bulk'])
       end
 
       def order_param
