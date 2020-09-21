@@ -17,7 +17,7 @@ module Peatio
     end
 
     def export_blockchains
-      export('Blockchain').map { |r| r.except('id', 'currency_ids') }
+      export('Blockchain').map { |b| b.except('id', 'currency_ids') }
     end
 
     def export_currencies
@@ -25,19 +25,19 @@ module Peatio
     end
 
     def export_markets
-      export('Market')
+      export('Market').map { |m| m['engine_name'] = Engine.find(m['engine_id']).name; m.except('engine_id') }
     end
 
     def export_wallets
-      export('Wallet').map { |r| r.except('id') }
+      export('Wallet').map { |w| w.except('id') }
     end
 
     def export_trading_fees
-      export('TradingFee').map { |r| r.except('id') }
+      export('TradingFee').map { |t| t.except('id') }
     end
 
     def export_engines
-      export('Engine')
+      export('Engine').map { |e| e.except('id') }
     end
   end
 end
