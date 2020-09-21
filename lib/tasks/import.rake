@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'csv'
+require 'peatio/import'
 
 namespace :import do
   # Detailed instruction https://github.com/rubykube/peatio/blob/master/docs/tasks/import.md
@@ -92,5 +93,39 @@ namespace :import do
     end
     Kernel.puts "Addresses created #{count}"
     Kernel.puts "Errored #{errors_count}"
+  end
+
+  desc 'Import configs(blockchains, currencies, wallets, trading_fees, markets, engines) to the database'
+  task :configs, [:config_load_path] => :environment do |_, args|
+    args.with_defaults(config_load_path: 'import_configs.yaml')
+
+    import_data = YAML.load_file(Rails.root.join(args[:config_load_path]))
+    Peatio::Import.new(import_data).load_all
+  end
+
+  desc 'Load local trades to the influx'
+  task trade_to_influx: :environment do
+    Trade.find_in_batches do |batch|
+      batch.each_with_index do |trade, index|
+        # We will convert created_at to ms and update it with index to make sure that we have unique
+        # timestamps for each trade because influxdb use timestamp as unique identifier.
+        influx_data = trade.influx_data.merge(timestamp: trade.created_at.to_i * 1000 + index)
+        Peatio::InfluxDB.client(keyshard: trade.market_id).write_point('trades', influx_data, "ms")
+      end
+    end
+  end
+
+  desc 'Build candles for all trades in influx'
+  task influx_build_candles: :environment do
+    prev_from = 'trades'
+    Peatio::InfluxDB.config[:host].each do |host|
+      client = Peatio::InfluxDB.client(host: [host])
+      client.query('SELECT FIRST(price) AS open, max(price) AS high, min(price) AS low, last(price) AS close, sum(amount) AS volume INTO candles_1m FROM trades GROUP BY time(1m), market')
+      prev_from = 'candles_1m'
+      KLineService::HUMANIZED_POINT_PERIODS.except(1).each do |_, v|
+        client.query("SELECT FIRST(open) as open, MAX(high) as high, MIN(low) as low, LAST(close) as close, SUM(volume) as volume INTO candles_#{v} FROM #{prev_from} GROUP BY time(#{v}), market")
+        prev_from = "candles_#{v}"
+      end
+    end
   end
 end

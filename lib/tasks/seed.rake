@@ -70,6 +70,7 @@ namespace :seed do
             legacy_key_value = hash.delete(old_key)
             hash[new_key] ||= legacy_key_value
           end
+
           Market.create!(hash)
         end
     end
