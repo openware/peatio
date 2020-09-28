@@ -4,6 +4,8 @@ module API
   module V2
     module CoinGecko
       class Orderbook < Grape::API
+        class OrderBook < Struct.new(:market, :asks, :bids); end
+
         desc 'Get depth or specified market'
         params do
           requires :ticker_id,
@@ -12,8 +14,8 @@ module API
                    coerce_with: ->(name) { name.strip.split('_').join }
           optional :depth,
                    type: { value: Integer, message: 'coingecko.market_depth.non_integer_depth' },
-                   values: { value: 0..500, message: 'coingecko.market_depth.invalid_depth' },
-                   desc: 'Orders depth quantity: [0,5,10,20,50,100,500]'
+                   values: { value: 0..1000, message: 'coingecko.market_depth.invalid_depth' },
+                   desc: 'Orders depth quantity: [0, 100, 200, 500...]'
         end
 
         get '/orderbook' do
@@ -24,11 +26,11 @@ module API
           # Depth = 100 means 50 for each bid/ask side
           # Not defined or 0 = full order book
           unless params[:depth].to_d.zero?
-            asks = asks[0, params[:depth] / 2]
-            bids = bids[0, params[:depth] / 2]
+            asks = asks[0, params[:depth]/2]
+            bids = bids[0, params[:depth]/2]
           end
 
-          orderbook = format_orderbook(asks, bids, market)
+          orderbook = OrderBook.new market, asks, bids
           present orderbook, with: API::V2::CoinGecko::Entities::Orderbook
         end
       end

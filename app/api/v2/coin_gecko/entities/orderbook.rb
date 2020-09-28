@@ -1,6 +1,4 @@
-# encoding: UTF-8
 # frozen_string_literal: true
-
 
 module API
   module V2
@@ -8,37 +6,41 @@ module API
       module Entities
         class Orderbook < API::V2::Entities::Base
           expose(
-              :ticker_id,
-              documentation: {
-                  type: String,
-                  desc: 'A market ID with delimiter.'
-              }
+            :ticker_id,
+            documentation: {
+              type: String,
+              desc: 'A pair such as "BTC_ETH", with delimiter between different cryptoassets.'
+            }
+          ) do |orderbook|
+            orderbook.market.underscore_name
+          end
+
+          expose(
+            :timestamp,
+            documentation: {
+              type: Integer,
+              desc: 'Unix timestamp in milliseconds for when the last updated time occurred'
+            }
+          ) do
+            DateTime.now.strftime('%Q').to_i
+          end
+
+          expose(
+            :asks,
+            documentation: {
+              type: BigDecimal,
+              is_array: true,
+              desc: 'An array containing 2 elements. The offer price and quantity for each bid order.'
+            }
           )
 
           expose(
-              :timestamp,
-              documentation: {
-                  type: Integer,
-                  desc: 'Unix timestamp in milliseconds for when the last updated time occurred'
-              }
-          )
-
-          expose(
-              :asks,
-              documentation: {
-                  type: BigDecimal,
-                  is_array: true,
-                  desc: 'Asks in orderbook'
-              }
-          )
-
-          expose(
-              :bids,
-              documentation: {
-                  type: BigDecimal,
-                  is_array: true,
-                  desc: 'Bids in orderbook'
-              }
+            :bids,
+            documentation: {
+              type: BigDecimal,
+              is_array: true,
+              desc: 'An array containing 2 elements. The ask price and quantity for each ask order.'
+            }
           )
         end
       end

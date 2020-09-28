@@ -7,10 +7,10 @@ module API
       class Tickers < Grape::API
         desc 'Get list of all available trading pairs'
         get "/tickers" do
-          enabled_markets = ::Market.enabled.ordered
-
-          tickers = enabled_markets.map do |market|
-            format_ticker(TickersService[market].ticker, market)
+          tickers = Rails.cache.fetch(:markets_tickers_coingecko, expires_in: 60) do
+            ::Market.enabled.ordered.inject([]) do |hash, market|
+              hash << TickersService[market].ticker.merge(market: market)
+            end
           end
 
           present tickers, with: API::V2::CoinGecko::Entities::Ticker

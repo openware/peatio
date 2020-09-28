@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 module API
@@ -7,84 +6,104 @@ module API
       module Entities
         class Ticker < API::V2::Entities::Base
           expose(
-              :ticker_id,
+            :ticker_id,
               documentation: {
-                  type: String,
-                  desc: 'A market ID with delimiter.'
+               type: String,
+               desc: 'Identifier of a ticker with delimiter to separate base/target, eg. BTC_ETH.'
               }
-          )
+          ) do |ticker|
+            ticker[:market].underscore_name
+          end
 
           expose(
-              :base_currency,
-              documentation: {
-                  type: String,
-                  desc: 'A currency code of the base asset.'
-              }
-          )
+            :base_currency,
+            documentation: {
+              type: String,
+              desc: 'Symbol/currency code of base pair, eg. BTC.'
+            }
+          ) do |ticker|
+            ticker[:market][:base_unit].upcase
+          end
 
           expose(
-              :target_currency,
-              documentation: {
-                  type: String,
-                  desc: 'A currency code of the quote asset.'
-              }
-          )
+            :target_currency,
+            documentation: {
+              type: String,
+              desc: 'Symbol/currency code of target pair, eg. ETH.'
+            }
+          ) do |ticker|
+            ticker[:market][:quote_unit].upcase
+          end
 
           expose(
-              :last_price,
-              documentation: {
-                  type: BigDecimal,
-                  desc: 'The last executed trade price.'
-              }
-          )
+            :last_price,
+            documentation: {
+              type: BigDecimal,
+              desc: 'Last transacted price of base currency based on given target currency.'
+            }
+          ) do |ticker|
+            ticker[:last]
+          end
 
           expose(
-              :base_volume,
-              documentation: {
-                  type: BigDecimal,
-                  desc: '24 hour trading volume in base pair volume.'
-              }
-          )
+            :base_volume,
+            documentation: {
+              type: BigDecimal,
+              desc: '24 hour trading volume in base pair volume.'
+            }
+          ) do |ticker|
+            ticker[:amount]
+          end
 
           expose(
-              :target_volume,
-              documentation: {
-                  type: BigDecimal,
-                  desc: '24 hour trading volume in base pair volume.'
-              }
-          )
+            :target_volume,
+            documentation: {
+              type: BigDecimal,
+              desc: '24 hour trading volume in base pair volume.'
+            }
+          ) do |ticker|
+            ticker[:volume]
+          end
 
           expose(
-              :bid,
-              documentation: {
-                  type: BigDecimal,
-                  desc: 'Current highest bid price.'
-              }
-          )
+            :bid,
+            documentation: {
+              type: BigDecimal,
+              desc: 'Current highest bid price.'
+            }
+          ) do |ticker|
+            OrderBid.get_depth(ticker[:market].id).flatten.first.to_d
+          end
 
           expose(
-              :ask,
-              documentation: {
-                  type: BigDecimal,
-                  desc: 'Current lowest ask price.'
-              }
-          )
+            :ask,
+            documentation: {
+              type: BigDecimal,
+              desc: 'Current lowest ask price.'
+            }
+          ) do |ticker|
+            OrderAsk.get_depth(ticker[:market].id).flatten.first.to_d
+          end
 
           expose(
-              :high,
-              documentation: {
-                  type: BigDecimal,
-                  desc: 'The highest trade price during last 24 hours (0.0 if no trades executed during last 24 hours).'
-              }
-          )
+            :high,
+            documentation: {
+              type: BigDecimal,
+              desc: 'The highest trade price during last 24 hours (0.0 if no trades executed during last 24 hours).'
+            }
+          ) do |ticker|
+            ticker[:high]
+          end
 
           expose(
-              :low,
-              documentation: {
-                  type: BigDecimal,
-                  desc: 'The lowest trade price during last 24 hours (0.0 if no trades executed during last 24 hours).'
-              }
-          )
+            :low,
+            documentation: {
+              type: BigDecimal,
+              desc: 'The lowest trade price during last 24 hours (0.0 if no trades executed during last 24 hours).'
+            }
+          ) do |ticker|
+            ticker[:low]
+          end
         end
       end
     end

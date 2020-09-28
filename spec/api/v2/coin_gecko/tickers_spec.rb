@@ -3,8 +3,9 @@
 
 describe API::V2::CoinGecko::Tickers, type: :request do
   describe 'GET /api/v2/coingecko/tickers' do
+    before(:each) { delete_measurments('trades') }
+    after(:each) { delete_measurments('trades') }
 
-    after { delete_measurments("trades") }
     before do
       create_list(:order_bid, 5, :btcusd)
       create_list(:order_ask, 5, :btcusd)
@@ -30,7 +31,7 @@ describe API::V2::CoinGecko::Tickers, type: :request do
             'target_currency' => 'ETH',
             'last_price' => '0.0',
             'target_volume' => '0.0', 'base_volume' => '0.0',
-            'bid' => nil, 'ask' => nil,
+            'bid' => '0.0', 'ask' => '0.0',
             'high' => '0.0', 'low' => '0.0'
         }
       end

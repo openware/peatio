@@ -7,8 +7,8 @@ module API
       class Pairs < Grape::API
         desc 'Get list of all available trading pairs'
         get "/pairs" do
-          enabled_markets = ::Market.enabled
-          present enabled_markets, with: API::V2::CoinGecko::Entities::Pair
+          present Rails.cache.fetch(:markets_coingecko, expires_in: 60) { ::Market.enabled.ordered },
+                  with: API::V2::CoinGecko::Entities::Pair
         end
       end
     end

@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 module API
@@ -7,31 +6,31 @@ module API
       module Entities
         class Pair < API::V2::Entities::Base
           expose(
-              :ticker_id,
-              documentation: {
-                  type: String,
-                  desc: 'A market ID with delimiter.'
-              }
+            :ticker_id,
+            documentation: {
+              type: String,
+              desc: 'Identifier of a ticker with delimiter to separate base/target, eg. BTC_ETH.'
+            }
           ) do |market|
-            "#{market[:base_unit].upcase}_#{market[:quote_unit].upcase}"
+            market.underscore_name
           end
 
           expose(
-              :base,
-              documentation: {
-                  type: String,
-                  desc: 'A currency code of the base asset.'
-              }
+            :base,
+            documentation: {
+              type: String,
+              desc: 'Symbol/currency code of a the base cryptoasset, eg. BTC.'
+            }
           ) do |market|
             market[:base_unit].upcase
           end
 
           expose(
-              :target,
-              documentation: {
-                  type: String,
-                  desc: 'A currency code of the quote asset.'
-              }
+            :target,
+            documentation: {
+              type: String,
+              desc: 'Symbol/currency code of the target cryptoasset, eg. ETH.'
+            }
           ) do |market|
             market[:quote_unit].upcase
           end
