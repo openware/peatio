@@ -8,6 +8,8 @@ module API
 
         before { set_ets_context! }
 
+        helpers CoinGecko::Helpers
+
         mount CoinGecko::Pairs
         mount CoinGecko::Tickers
         mount CoinGecko::Orderbook
