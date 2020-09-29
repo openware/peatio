@@ -76,7 +76,7 @@ module API
                    desc: 'Filter order by owner uid'
           requires :market,
                    values: { value: -> { ::Market.active.ids }, message: 'management.order.market_doesnt_exist' },
-                   desc: -> { API::V2::Management::Entities::Order.documentation[:market_id][:desc] }
+                   desc: -> { API::V2::Management::Entities::Market.documentation[:id][:desc] }
         end
 
         post '/orders/cancel' do
