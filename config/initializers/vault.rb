@@ -15,7 +15,6 @@ if ENV['VAULT_TOKEN'].to_s != ''
   end
 
   def renew_process
-    puts 'renew_process'
     token = Vault.auth_token.lookup(Vault.token)
     time = token.data[:ttl] * (1 + rand) * 0.1
     Rails.logger.debug '[VAULT] Token will renew in %.0f sec' % time
