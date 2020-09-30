@@ -26,13 +26,6 @@ services:
   ports:
     - 6379
 
-- name: vault
-  image: vault:1.5.3
-  ports:
-    - 8200
-  environment:
-    VAULT_DEV_ROOT_TOKEN_ID: 'root-token'
-
 steps:
 # Wait MySQL to be ready for taking connections.
 - name: wait-for-mysql
@@ -55,8 +48,8 @@ steps:
     EVENT_API_RABBITMQ_HOST: rabbitmq
     REDIS_URL: redis://redis:6379
     RAILS_ENV: test
-    VAULT_ADDR: http://vault:8200
-    VAULT_TOKEN: 'root-token'
+    VAULT_ADDR: ''
+    VAULT_TOKEN: ''
   commands:
   - bin/init_config
   - gem install bundler:2.1.4
