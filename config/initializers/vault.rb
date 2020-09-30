@@ -7,7 +7,7 @@ require 'vault/rails'
 if ENV['VAULT_TOKEN'].to_s != ''
   Vault::Rails.configure do |config|
     config.enabled = Rails.env.production?
-    config.address = ENV.fetch('VAULT_URL', 'http://127.0.0.1:8200')
+    config.address = ENV.fetch('VAULT_ADDR', 'http://127.0.0.1:8200')
     config.token = ENV.fetch('VAULT_TOKEN')
     config.ssl_verify = false
     config.timeout = 60
