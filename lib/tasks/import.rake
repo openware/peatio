@@ -72,7 +72,7 @@ namespace :import do
     Kernel.puts "Errored #{errors_count}"
   end
 
-  desc 'Load addresses from csv file. Export file from Peatio Version: 2.6 (shared addresses) and higher'
+  desc 'Load addresses from csv file. Export file from Peatio version >= 2.6.0'
   task :addresses, [:config_load_path] => [:environment] do |_, args|
     args.with_defaults(:config_load_path => 'exported_addresses.csv')
     csv_table = File.read(Rails.root.join(args[:config_load_path]))
@@ -94,7 +94,7 @@ namespace :import do
     Kernel.puts "Errored #{errors_count}"
   end
 
-  desc 'Load addresses from csv file. Export file from Peatio Version: lower than 2.6 (shared addresses)'
+  desc 'Load addresses from csv file. Export file from Peatio version < 2.6.0'
   task :addresses_legacy, [:config_load_path] => [:environment] do |_, args|
     args.with_defaults(:config_load_path => 'exported_addresses.csv')
     csv_table = File.read(Rails.root.join(args[:config_load_path]))
