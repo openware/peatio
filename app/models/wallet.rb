@@ -30,7 +30,6 @@ class Wallet < ApplicationRecord
 
   NOT_AVAILABLE = 'N/A'.freeze
 
-
   vault_attribute :settings, serialize: :json, default: {}
 
   belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
