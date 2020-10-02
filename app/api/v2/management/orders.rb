@@ -55,7 +55,7 @@ module API
         post '/orders/:id/cancel' do
           begin
             order = Order.find(params[:id])
-            cancel_order(order)
+            order.trigger_cancellation
             present order, with: API::V2::Management::Entities::Order
             status 200
           rescue ActiveRecord::RecordNotFound => e
@@ -95,14 +95,14 @@ module API
                                                                     .build
 
             orders = Order.ransack(ransack_params).result
-            orders.each { |order| cancel_peatio_order(order) }
+            orders.map(&:trigger_internal_cancellation)
           else
             filters = {
               market_id: market.id,
               member_uid: params[:uid]
             }.compact
 
-            bulk_cancel_third_party_orders(market_engine.driver, filters)
+            Order.trigger_bulk_cancel_third_party(market_engine.driver, filters)
           end
           status 204
         end

@@ -4,11 +4,6 @@ module API
   module V2
     module OrderHelpers
 
-      THIRD_PARTY_ORDER_CANCEL_TYPE = {
-          'single' => 3,
-          'bulk'   => 4
-      }.freeze
-
       def build_order(attrs)
         (attrs[:side] == 'sell' ? OrderAsk : OrderBid).new \
           state:         ::Order::PENDING,
@@ -77,31 +72,6 @@ module API
 
       end
 
-      def cancel_order(order)
-        market_engine = order.market.engine
-
-        if market_engine.peatio_engine?
-          cancel_peatio_order(order)
-        else
-          cancel_third_party_order(market_engine.driver, order)
-        end
-      end
-
-      def cancel_peatio_order(order)
-        AMQP::Queue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
-      end
-
-      def cancel_third_party_order(engine_driver, order)
-        AMQP::Queue.publish(engine_driver,
-                            data: order.as_json_for_third_party,
-                            type: THIRD_PARTY_ORDER_CANCEL_TYPE['single'])
-      end
-
-      def bulk_cancel_third_party_orders(engine_driver, filters = {})
-        AMQP::Queue.publish(engine_driver,
-                            data: filters,
-                            type: THIRD_PARTY_ORDER_CANCEL_TYPE['bulk'])
-      end
 
       def order_param
         params[:order_by].downcase == 'asc' ? 'id asc' : 'id desc'
