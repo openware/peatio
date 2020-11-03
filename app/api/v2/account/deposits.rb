@@ -38,6 +38,8 @@ module API
                    desc: 'Page number (defaults to 1).'
         end
         get "/deposits" do
+          user_authorize! :read, Deposit
+
           currency = Currency.find(params[:currency]) if params[:currency].present?
 
           current_user.deposits.order(id: :desc)
@@ -57,6 +59,8 @@ module API
                    desc: "Deposit transaction id"
         end
         get "/deposits/:txid" do
+          user_authorize! :read, Deposit
+
           deposit = current_user.deposits.find_by!(txid: params[:txid])
           present deposit, with: API::V2::Entities::Deposit
         end
@@ -78,7 +82,9 @@ module API
                      desc: 'Address format legacy/cash'
           end
         end
-        get '/deposit_address/:currency' do
+        get '/deposit_address/:currency', requirements: { currency: /[\w\.\-]+/ } do
+          user_authorize! :read, PaymentAddress
+
           currency = Currency.find(params[:currency])
 
           unless currency.deposit_enabled?

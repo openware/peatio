@@ -29,6 +29,8 @@ module API
           end
         end
         get '/balances' do
+          user_authorize! :read, Account
+
           search_params = params[:search]
                                 .slice(:currency_code, :currency_name)
                                 .transform_keys {|k| "#{k}_cont"}
@@ -51,8 +53,9 @@ module API
                    values: { value: -> { Currency.visible.pluck(:id) }, message: 'account.currency.doesnt_exist' },
                    desc: 'The currency code.'
         end
+        get '/balances/:currency', requirements: { currency: /[\w\.\-]+/ }  do
+          user_authorize! :read, Account
 
-        get '/balances/:currency' do
           present current_user.accounts.visible.find_by!(currency_id: params[:currency]),
                   with: API::V2::Entities::Account
         end

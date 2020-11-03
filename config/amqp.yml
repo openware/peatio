@@ -20,6 +20,9 @@ exchange:
   matching:
     name: peatio.matching
     type: direct
+  finex-spot:
+    name: finex.orderapi
+    type: direct
 
 queue:
   matching:

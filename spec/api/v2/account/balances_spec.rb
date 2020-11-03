@@ -187,6 +187,19 @@ describe API::V2::Account::Balances, type: :request do
         end
       end
     end
+
+    context 'unauthorized' do
+      before do
+        Ability.stubs(:user_permissions).returns([])
+      end
+
+      before { api_get '/api/v2/account/balances', {token: token, params: {limit: 2} } }
+
+      it 'renders unauthorized error' do
+        expect(response).to have_http_status 403
+        expect(response).to include_api_error('user.ability.not_permitted')
+      end
+    end
   end
 
   describe 'GET api/v2/account/balances/:currency' do
@@ -197,6 +210,19 @@ describe API::V2::Account::Balances, type: :request do
       expect(response).to have_http_status 200
       result = JSON.parse(response.body)
       expect(result).to match response_body
+    end
+
+    context 'currency code with dot' do
+      let!(:currency) { create(:currency, :xagm_cx) }
+      let!(:account) { ::Account.create(currency_id: 'xagm.cx', member_id: member.id)}
+
+      it 'returns current user balance by currency' do
+        api_get "/api/v2/account/balances/#{currency.code}", token: token
+
+        expect(response).to have_http_status 200
+        result = JSON.parse(response.body)
+        expect(result['currency']).to eq currency.code
+      end
     end
 
     context 'invalid currency' do
@@ -221,6 +247,19 @@ describe API::V2::Account::Balances, type: :request do
         expect(response).to have_http_status 422
       end
 
+    end
+
+    context 'unauthorized' do
+      before do
+        Ability.stubs(:user_permissions).returns([])
+      end
+
+      before { api_get '/api/v2/account/balances/eth', token: token }
+
+      it 'renders unauthorized error' do
+        expect(response).to have_http_status 403
+        expect(response).to include_api_error('user.ability.not_permitted')
+      end
     end
   end
 end

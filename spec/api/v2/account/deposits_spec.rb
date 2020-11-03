@@ -135,6 +135,19 @@ describe API::V2::Account::Deposits, type: :request do
       expect(response.code).to eq '403'
       expect(response).to include_api_error('account.deposit.not_permitted')
     end
+
+    context 'unauthorized' do
+      before do
+        Ability.stubs(:user_permissions).returns([])
+      end
+
+      it 'renders unauthorized error' do
+        api_get '/api/v2/account/deposits/test', token: token
+
+        expect(response).to have_http_status 403
+        expect(response).to include_api_error('user.ability.not_permitted')
+      end
+    end
   end
 
   describe 'GET /api/v2/account/deposit_address/:currency' do
@@ -158,6 +171,18 @@ describe API::V2::Account::Deposits, type: :request do
         expect(response).to have_http_status 422
         expect(response).to include_api_error('account.currency.doesnt_exist')
       end
+
+      context 'unauthorized' do
+        before do
+          Ability.stubs(:user_permissions).returns([])
+        end
+
+        it 'renders unauthorized error' do
+          api_get '/api/v2/account/deposit_address/btc', token: token
+          expect(response).to have_http_status 403
+          expect(response).to include_api_error('user.ability.not_permitted')
+        end
+      end
     end
 
     context 'successful' do
@@ -175,6 +200,16 @@ describe API::V2::Account::Deposits, type: :request do
           member.payment_address(wallet.id).update!(address: nil)
           api_get "/api/v2/account/deposit_address/#{currency}", token: token
           expect(response.body).to eq '{"currencies":["eth"],"address":null,"state":"pending"}'
+        end
+
+        context 'currency code with dot' do
+          let!(:currency) { create(:currency, :xagm_cx) }
+
+          it 'returns information about specified deposit address' do
+            api_get "/api/v2/account/deposit_address/#{currency.code}", token: token
+            expect(response).to have_http_status 200
+            expect(response.body).to eq '{"currencies":["eth","xagm.cx"],"address":"2n2wnxrdo4oengp498xgngcbru29mychogr","state":"active"}'
+          end
         end
       end
     end
