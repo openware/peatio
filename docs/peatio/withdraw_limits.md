@@ -1,8 +1,8 @@
 ## Global Withdraw Limits
 
-This doc describes how Peatio Withdraw Limits works
+This document describes how withdraw limits works in opendax peatio.
 
-Withdraw Limits schema:
+Withdraw limits schema:
 
 | Term           | Definition                                       |
 | -------------- | ------------------------------------------------ |
@@ -11,17 +11,18 @@ Withdraw Limits schema:
 | 24 hour limit  | 24 hour limit in platform currency e.g. USD      |
 | 1 month limit  | 1 month limit in platform currency e.g. USD      |
 
-Withdraw limit suitability expressed in weight. KYC level has greater weight then group match.
+Every user has a KyC level (starts from 0) and a group (default is 'any').
+The KYC level has a higher priority than group match.
 
-E.g. Withdrawal for member with kyc_level 2, group 'vip-0'
+For example a member with kyc_level 2 and group 'vip-0' will match the following rules in order:
+The first is the highest priority.
 
-(kyc_level == 2 && group == 'vip-0') >>
-
-(kyc_level == 2 && group == 'any') >>
-
-(kyc_level == 'any' && group == 'vip-0') >>
-
-(kyc_level == 'any' && group == 'any')
+|KYC level|Group    |Priority|
+|---------|---------|--------|
+| 2       | vip-0 | 1      |
+| 2       | any   | 2      |
+| any   | vip-0 | 3      |
+| any   | any   | 4      |
 
 Withdraw limits check flow:
 
