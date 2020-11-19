@@ -55,6 +55,35 @@ module Opendax
       raise Peatio::Wallet::ClientError, e
     end
 
+    # Only ERC-20 transaction
+    def prepare_deposit_collection!(transaction, deposit_spread, deposit_currency)
+      # Don't prepare for deposit_collection in case of eth deposit.
+      return [] if deposit_currency.dig(:options, :erc20_contract_address).blank?
+
+      options = DEFAULT_ERC20_FEE.merge(deposit_currency.fetch(:options).slice(:gas_limit, :gas_price))
+      gas_speed = options[:gas_price].in?(GAS_PRICE_THRESHOLDS) ? options[:gas_price] : 'standard'
+      gas_limit = options[:gas_limit].present? ? options[:gas_limit].to_i : options[:erc20_gas_limit]
+
+      response = client.rest_api(:post, '/tx/before_collect', {
+        coin_type:    coin_type,
+        gas_limit:    gas_limit,
+        gas_speed:    gas_speed,
+        spread_size:  deposit_spread.size,
+        to:           transaction.to_address,
+        gateway_url:  wallet_gateway_url,
+        wallet_index: wallet_index,
+        passphrase:   wallet_secret
+      })
+
+      transaction.hash = response['tx']
+      transaction.options = {}
+      transaction.options[:gas_limit] = gas_limit
+      transaction.options[:gas_price] = response['gas_price']
+      [transaction]
+    rescue Ethereum::Client::Error => e
+      raise Peatio::Wallet::ClientError, e
+    end
+
     def load_balance!
       response = client.rest_api(:post, '/wallet/balance', {
         coin_type:        coin_type,
@@ -86,13 +115,17 @@ module Opendax
 
       params = {
         gas_price:    gas_price,
-        gas_limit:    options[:eth_gas_limit],
         gas_speed:    gas_speed,
         subtract_fee: options.dig(:subtract_fee).present?
       }.compact!
 
-      params.merge!(contract_address: erc20_contract_address,
-                    gas_limit: options[:erc20_gas_limit]) if erc20_contract_address.present?
+      if erc20_contract_address.present?
+        gas_limit = options[:gas_limit].present? ? options[:gas_limit].to_i : options[:erc20_gas_limit]
+
+        params.merge!(contract_address: erc20_contract_address, gas_limit: gas_limit)
+      else
+        params[:gas_limit] = options[:gas_limit].present? ? options[:gas_limit].to_i : options[:eth_gas_limit]
+      end
 
       params
     end

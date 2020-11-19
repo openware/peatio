@@ -63,6 +63,8 @@ payment_address.details
 
 To test create transaction you should have all  configuration described on `create_address` step for all wallets related to your currency (especially deposit, hot wallet)
 
+Be sure that you have blockchain configured before doing transaction and this blockchain-key connected both for currency and wallets!
+Blockchain `server` param should be the same as `url` param in wallet settings (node url, infura url)
 1. Deposit
 - Deposit some funds to your created address
 - Check logs of `daemon-deposit`
@@ -78,7 +80,7 @@ To test load balance you should have all configuration described on `create_addr
 ```ruby
 1. Find deposit wallet and save it to variable
 w = Wallet.find(id)
-w.current_balance!
+w.current_balance
 # response
 {
   "balance":216380800000000000

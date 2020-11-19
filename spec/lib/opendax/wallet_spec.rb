@@ -108,6 +108,95 @@ describe Opendax::Wallet do
     end
   end
 
+  context :prepare_deposit_collection! do
+    around do |example|
+      WebMock.disable_net_connect!
+      example.run
+      WebMock.allow_net_connect!
+    end
+
+    let(:url) { 'http://127.0.0.1:8000/api/v2/hdwallet' }
+
+    let(:fee_wallet) { Wallet.joins(:currencies).find_by(currencies: { id: :eth }, kind: :fee) }
+
+    let(:trst) do
+      Currency.find_by(id: :trst)
+    end
+
+    let(:spread_deposit) do
+      [{ to_address: 'fake-hot',
+         amount: '2.0',
+         currency_id: trst.id },
+       { to_address: 'fake-hot',
+         amount: '2.0',
+         currency_id: trst.id }]
+    end
+
+    let(:infura_url) { 'https://rinkeby.infura.io/v3/08825a23f9454f998e6e7ba60bb6f023' }
+
+    let(:settings) do
+      {
+        wallet: {
+          address: fee_wallet.address,
+          uri: url,
+          gateway_url: infura_url,
+          wallet_index: 1,
+          secret: 'changeme'
+        },
+        currency: trst.to_blockchain_api_settings
+      }
+    end
+
+    let(:request_params) do
+      {
+        coin_type:    'eth',
+        gas_limit:    trst.options.fetch('gas_limit'),
+        gas_speed:    'standard',
+        spread_size:  spread_deposit.size,
+        to:           '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa',
+        gateway_url:  infura_url,
+        wallet_index: 1,
+        passphrase:   'changeme'
+      }
+    end
+
+    let(:response) do
+      {
+        tx: '0xab6ada9608f4cebf799ee8be20fe3fb84b0d08efcdb0d962df45d6fce70cb017',
+        gas_price: 1000000000
+      }
+    end
+
+    before do
+      wallet.configure(settings)
+    end
+
+    let(:transaction) do
+      Peatio::Transaction.new(amount: 1.1.to_d, to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa')
+    end
+
+    it do
+      stub_request(:post, url + '/tx/before_collect')
+        .with(body: request_params.to_json)
+        .to_return(body: response.to_json)
+
+      result = wallet.prepare_deposit_collection!(transaction, spread_deposit, trst.to_blockchain_api_settings)
+      expect(result.first.as_json.symbolize_keys).to eq(amount: '1.1',
+                                                  to_address: '0x6d6cabaa7232d7f45b143b445114f7e92350a2aa',
+                                                  hash: '0xab6ada9608f4cebf799ee8be20fe3fb84b0d08efcdb0d962df45d6fce70cb017',
+                                                  status: 'pending',
+                                                  options: {"gas_limit"=>90000, "gas_price"=>1000000000})
+    end
+
+    context 'erc20_contract_address is not configured properly in currency' do
+      it 'returns empty array' do
+        currency = trst.to_blockchain_api_settings.deep_dup
+        currency[:options].delete(:erc20_contract_address)
+        expect(wallet.prepare_deposit_collection!(transaction, spread_deposit, currency)).to eq []
+      end
+    end
+  end
+
   context :create_transaction! do
     around do |example|
       WebMock.disable_net_connect!
@@ -173,9 +262,9 @@ describe Opendax::Wallet do
           gateway_url:  infura_url,
           wallet_index: 1,
           passphrase:   'changeme',
-          gas_limit:    eth.options['gas_limit'],
           gas_speed:    'standard',
-          subtract_fee: false
+          subtract_fee: false,
+          gas_limit:    eth.options['gas_limit'],
         }
       end
 
@@ -225,10 +314,10 @@ describe Opendax::Wallet do
           gateway_url:      infura_url,
           wallet_index:     1,
           passphrase:       'changeme',
-          gas_limit:        trst.options['gas_limit'],
           gas_speed:        'standard',
           subtract_fee:     false,
-          contract_address: trst.options["erc20_contract_address"]
+          contract_address: trst.options["erc20_contract_address"],
+          gas_limit:        trst.options['gas_limit']
         }
       end
 
