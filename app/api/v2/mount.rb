@@ -39,7 +39,8 @@ module API
 
       # The documentation is accessible at http://localhost:3000/swagger?url=/api/v2/swagger
       # Add swagger documentation for Peatio User API
-      add_swagger_documentation base_path:   File.join(API::Mount::PREFIX, API_VERSION),
+      add_swagger_documentation base_path:   File.join(API::Mount::PREFIX, API_VERSION, 'peatio'),
+                                add_base_path: true,
                                 mount_path:  '/swagger',
                                 api_version: API_VERSION,
                                 doc_version: Peatio::Application::VERSION,

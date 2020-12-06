@@ -10,74 +10,223 @@
     "license": {
       "url": "https://github.com/rubykube/peatio/blob/master/LICENSE.md"
     },
-    "version": "2.4.0"
+    "version": "2.5.0"
   },
   "swagger": "2.0",
   "produces": [
     "application/json"
   ],
   "host": "localhost:3000",
-  "basePath": "/api/v2/management",
+  "basePath": "/api/v2/management/peatio",
   "tags": [
     {
-      "name": "accounts",
-      "description": "Operations about accounts"
-    },
-    {
-      "name": "deposits",
-      "description": "Operations about deposits"
-    },
-    {
-      "name": "withdraws",
-      "description": "Operations about withdraws"
-    },
-    {
-      "name": "timestamp",
-      "description": "Operations about timestamps"
-    },
-    {
-      "name": "assets",
-      "description": "Operations about assets"
-    },
-    {
-      "name": "expenses",
-      "description": "Operations about expenses"
-    },
-    {
-      "name": "revenues",
-      "description": "Operations about revenues"
-    },
-    {
-      "name": "liabilities",
-      "description": "Operations about liabilities"
-    },
-    {
-      "name": "transfers",
-      "description": "Operations about transfers"
-    },
-    {
-      "name": "trades",
-      "description": "Operations about trades"
-    },
-    {
-      "name": "members",
-      "description": "Operations about members"
-    },
-    {
-      "name": "fee_schedule",
-      "description": "Operations about fee_schedules"
-    },
-    {
-      "name": "currencies",
-      "description": "Operations about currencies"
-    },
-    {
-      "name": "markets",
-      "description": "Operations about markets"
+      "name": "api",
+      "description": "Operations about apis"
     }
   ],
   "paths": {
-    "/accounts/balance": {
+    "/api/v2/management/peatio/beneficiaries": {
+      "post": {
+        "description": "Create new beneficiary",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "currency",
+            "description": "Beneficiary currency code.",
+            "type": "string",
+            "enum": [
+              "btc",
+              "eth",
+              "trst",
+              "usd",
+              "BTC",
+              "ETH",
+              "TRST",
+              "USD"
+            ],
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "name",
+            "description": "Human rememberable name which refer beneficiary.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "description": "Human rememberable description which refer beneficiary.",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "data",
+            "description": "Beneficiary data in JSON format",
+            "type": "json",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "uid",
+            "description": "The shared user ID.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "state",
+            "description": "Defines either beneficiary active - user can use it to withdraw moneyor pending - requires beneficiary activation with pin.",
+            "type": "string",
+            "enum": [
+              "pending",
+              "active"
+            ],
+            "required": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Create new beneficiary",
+            "schema": {
+              "$ref": "#/definitions/Beneficiary"
+            }
+          }
+        },
+        "tags": [
+          "api"
+        ],
+        "operationId": "postApiV2ManagementPeatioBeneficiaries"
+      }
+    },
+    "/api/v2/management/peatio/beneficiaries/list": {
+      "post": {
+        "description": "Get list of user beneficiaries",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "uid",
+            "description": "The shared user ID.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "currency",
+            "description": "Beneficiary currency code.",
+            "type": "string",
+            "enum": [
+              "btc",
+              "eth",
+              "trst",
+              "usd",
+              "BTC",
+              "ETH",
+              "TRST",
+              "USD"
+            ],
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "state",
+            "description": "Defines either beneficiary active - user can use it to withdraw moneyor pending - requires beneficiary activation with pin.",
+            "type": "string",
+            "enum": [
+              "pending",
+              "active"
+            ],
+            "required": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Get list of user beneficiaries",
+            "schema": {
+              "$ref": "#/definitions/Beneficiary"
+            }
+          }
+        },
+        "tags": [
+          "api"
+        ],
+        "operationId": "postApiV2ManagementPeatioBeneficiariesList"
+      }
+    },
+    "/api/v2/management/peatio/accounts/balances": {
+      "post": {
+        "description": "Queries the non-zero balance accounts for the given currency.",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "currency",
+            "description": "The currency code.",
+            "type": "string",
+            "enum": [
+              "btc",
+              "eth",
+              "trst",
+              "usd",
+              "BTC",
+              "ETH",
+              "TRST",
+              "USD"
+            ],
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "page",
+            "description": "The page number (defaults to 1).",
+            "type": "integer",
+            "format": "int32",
+            "default": 1,
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "limit",
+            "description": "The number of accounts per page (defaults to 100, maximum is 1000).",
+            "type": "integer",
+            "format": "int32",
+            "default": 1000,
+            "required": false
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Queries the non-zero balance accounts for the given currency.",
+            "schema": {
+              "$ref": "#/definitions/Balance"
+            }
+          }
+        },
+        "tags": [
+          "api"
+        ],
+        "operationId": "postApiV2ManagementPeatioAccountsBalances"
+      }
+    },
+    "/api/v2/management/peatio/accounts/balance": {
       "post": {
         "description": "Queries the account balance for the given UID and currency.",
         "produces": [
@@ -121,12 +270,12 @@
           }
         },
         "tags": [
-          "accounts"
+          "api"
         ],
-        "operationId": "postAccountsBalance"
+        "operationId": "postApiV2ManagementPeatioAccountsBalance"
       }
     },
-    "/deposits/state": {
+    "/api/v2/management/peatio/deposits/state": {
       "put": {
         "description": "Allows to load money or cancel deposit.",
         "produces": [
@@ -164,12 +313,12 @@
           }
         },
         "tags": [
-          "deposits"
+          "api"
         ],
-        "operationId": "putDepositsState"
+        "operationId": "putApiV2ManagementPeatioDepositsState"
       }
     },
-    "/deposits/new": {
+    "/api/v2/management/peatio/deposits/new": {
       "post": {
         "description": "Creates new fiat deposit with state set to «submitted». Optionally pass field «state» set to «accepted» if want to load money instantly. You can also use PUT /fiat_deposits/:id later to load money or cancel deposit.",
         "produces": [
@@ -232,12 +381,12 @@
           }
         },
         "tags": [
-          "deposits"
+          "api"
         ],
-        "operationId": "postDepositsNew"
+        "operationId": "postApiV2ManagementPeatioDepositsNew"
       }
     },
-    "/deposits/get": {
+    "/api/v2/management/peatio/deposits/get": {
       "post": {
         "description": "Returns deposit by TID.",
         "produces": [
@@ -264,12 +413,12 @@
           }
         },
         "tags": [
-          "deposits"
+          "api"
         ],
-        "operationId": "postDepositsGet"
+        "operationId": "postApiV2ManagementPeatioDepositsGet"
       }
     },
-    "/deposits": {
+    "/api/v2/management/peatio/deposits": {
       "post": {
         "description": "Returns deposits as paginated collection.",
         "produces": [
@@ -346,12 +495,12 @@
           }
         },
         "tags": [
-          "deposits"
+          "api"
         ],
-        "operationId": "postDeposits"
+        "operationId": "postApiV2ManagementPeatioDeposits"
       }
     },
-    "/withdraws/action": {
+    "/api/v2/management/peatio/withdraws/action": {
       "put": {
         "summary": "Performs action on withdraw.",
         "description": "«process» – system will lock the money, check for suspected activity, validate recipient address, and initiate the processing of the withdraw. «cancel»  – system will mark withdraw as «canceled», and unlock the money.",
@@ -390,12 +539,12 @@
           }
         },
         "tags": [
-          "withdraws"
+          "api"
         ],
-        "operationId": "putWithdrawsAction"
+        "operationId": "putApiV2ManagementPeatioWithdrawsAction"
       }
     },
-    "/withdraws/new": {
+    "/api/v2/management/peatio/withdraws/new": {
       "post": {
         "summary": "Creates new withdraw.",
         "description": "Creates new withdraw. The behaviours for fiat and crypto withdraws are different. Fiat: money are immediately locked, withdraw state is set to «submitted», system workers will validate withdraw later against suspected activity, and assign state to «rejected» or «accepted». The processing will not begin automatically. The processing may be initiated manually from admin panel or by PUT /management_api/v1/withdraws/action. Coin: money are immediately locked, withdraw state is set to «submitted», system workers will validate withdraw later against suspected activity, validate withdraw address and set state to «rejected» or «accepted». Then in case state is «accepted» withdraw workers will perform interactions with blockchain. The withdraw receives new state «processing». Then withdraw receives state either «confirming» or «failed».Then in case state is «confirming» withdraw confirmations workers will perform interactions with blockchain.Withdraw receives state «succeed» when it receives minimum necessary amount of confirmations.",
@@ -486,12 +635,12 @@
           }
         },
         "tags": [
-          "withdraws"
+          "api"
         ],
-        "operationId": "postWithdrawsNew"
+        "operationId": "postApiV2ManagementPeatioWithdrawsNew"
       }
     },
-    "/withdraws/get": {
+    "/api/v2/management/peatio/withdraws/get": {
       "post": {
         "description": "Returns withdraw by ID.",
         "produces": [
@@ -518,12 +667,12 @@
           }
         },
         "tags": [
-          "withdraws"
+          "api"
         ],
-        "operationId": "postWithdrawsGet"
+        "operationId": "postApiV2ManagementPeatioWithdrawsGet"
       }
     },
-    "/withdraws": {
+    "/api/v2/management/peatio/withdraws": {
       "post": {
         "description": "Returns withdraws as paginated collection.",
         "produces": [
@@ -605,12 +754,12 @@
           }
         },
         "tags": [
-          "withdraws"
+          "api"
         ],
-        "operationId": "postWithdraws"
+        "operationId": "postApiV2ManagementPeatioWithdraws"
       }
     },
-    "/timestamp": {
+    "/api/v2/management/peatio/timestamp": {
       "post": {
         "description": "Returns server time in seconds since Unix epoch.",
         "produces": [
@@ -625,12 +774,12 @@
           }
         },
         "tags": [
-          "timestamp"
+          "api"
         ],
-        "operationId": "postTimestamp"
+        "operationId": "postApiV2ManagementPeatioTimestamp"
       }
     },
-    "/assets/new": {
+    "/api/v2/management/peatio/assets/new": {
       "post": {
         "description": "Creates new asset operation.",
         "produces": [
@@ -695,12 +844,12 @@
           }
         },
         "tags": [
-          "assets"
+          "api"
         ],
-        "operationId": "postAssetsNew"
+        "operationId": "postApiV2ManagementPeatioAssetsNew"
       }
     },
-    "/assets": {
+    "/api/v2/management/peatio/assets": {
       "post": {
         "description": "Returns assets as paginated collection.",
         "produces": [
@@ -778,12 +927,12 @@
           }
         },
         "tags": [
-          "assets"
+          "api"
         ],
-        "operationId": "postAssets"
+        "operationId": "postApiV2ManagementPeatioAssets"
       }
     },
-    "/expenses/new": {
+    "/api/v2/management/peatio/expenses/new": {
       "post": {
         "description": "Creates new expense operation.",
         "produces": [
@@ -848,12 +997,12 @@
           }
         },
         "tags": [
-          "expenses"
+          "api"
         ],
-        "operationId": "postExpensesNew"
+        "operationId": "postApiV2ManagementPeatioExpensesNew"
       }
     },
-    "/expenses": {
+    "/api/v2/management/peatio/expenses": {
       "post": {
         "description": "Returns expenses as paginated collection.",
         "produces": [
@@ -931,12 +1080,12 @@
           }
         },
         "tags": [
-          "expenses"
+          "api"
         ],
-        "operationId": "postExpenses"
+        "operationId": "postApiV2ManagementPeatioExpenses"
       }
     },
-    "/revenues/new": {
+    "/api/v2/management/peatio/revenues/new": {
       "post": {
         "description": "Creates new revenue operation.",
         "produces": [
@@ -1001,12 +1150,12 @@
           }
         },
         "tags": [
-          "revenues"
+          "api"
         ],
-        "operationId": "postRevenuesNew"
+        "operationId": "postApiV2ManagementPeatioRevenuesNew"
       }
     },
-    "/revenues": {
+    "/api/v2/management/peatio/revenues": {
       "post": {
         "description": "Returns revenues as paginated collection.",
         "produces": [
@@ -1084,12 +1233,12 @@
           }
         },
         "tags": [
-          "revenues"
+          "api"
         ],
-        "operationId": "postRevenues"
+        "operationId": "postApiV2ManagementPeatioRevenues"
       }
     },
-    "/liabilities/new": {
+    "/api/v2/management/peatio/liabilities/new": {
       "post": {
         "description": "Creates new liability operation.",
         "produces": [
@@ -1163,12 +1312,12 @@
           }
         },
         "tags": [
-          "liabilities"
+          "api"
         ],
-        "operationId": "postLiabilitiesNew"
+        "operationId": "postApiV2ManagementPeatioLiabilitiesNew"
       }
     },
-    "/liabilities": {
+    "/api/v2/management/peatio/liabilities": {
       "post": {
         "description": "Returns liabilities as paginated collection.",
         "produces": [
@@ -1253,12 +1402,12 @@
           }
         },
         "tags": [
-          "liabilities"
+          "api"
         ],
-        "operationId": "postLiabilities"
+        "operationId": "postApiV2ManagementPeatioLiabilities"
       }
     },
-    "/transfers/new": {
+    "/api/v2/management/peatio/transfers/new": {
       "post": {
         "description": "Creates new transfer.",
         "produces": [
@@ -1393,12 +1542,12 @@
           }
         },
         "tags": [
-          "transfers"
+          "api"
         ],
-        "operationId": "postTransfersNew"
+        "operationId": "postApiV2ManagementPeatioTransfersNew"
       }
     },
-    "/trades": {
+    "/api/v2/management/peatio/trades": {
       "post": {
         "description": "Returns trades as paginated collection.",
         "produces": [
@@ -1458,12 +1607,12 @@
           }
         },
         "tags": [
-          "trades"
+          "api"
         ],
-        "operationId": "postTrades"
+        "operationId": "postApiV2ManagementPeatioTrades"
       }
     },
-    "/members/group": {
+    "/api/v2/management/peatio/members/group": {
       "post": {
         "description": "Set user group.",
         "produces": [
@@ -1494,12 +1643,12 @@
           }
         },
         "tags": [
-          "members"
+          "api"
         ],
-        "operationId": "postMembersGroup"
+        "operationId": "postApiV2ManagementPeatioMembersGroup"
       }
     },
-    "/fee_schedule/trading_fees": {
+    "/api/v2/management/peatio/fee_schedule/trading_fees": {
       "post": {
         "description": "Returns trading_fees table as paginated collection",
         "produces": [
@@ -1557,12 +1706,12 @@
           }
         },
         "tags": [
-          "fee_schedule"
+          "api"
         ],
-        "operationId": "postFeeScheduleTradingFees"
+        "operationId": "postApiV2ManagementPeatioFeeScheduleTradingFees"
       }
     },
-    "/currencies/update": {
+    "/api/v2/management/peatio/currencies/update": {
       "put": {
         "description": "Update  currency.",
         "produces": [
@@ -1716,12 +1865,12 @@
           }
         },
         "tags": [
-          "currencies"
+          "api"
         ],
-        "operationId": "putCurrenciesUpdate"
+        "operationId": "putApiV2ManagementPeatioCurrenciesUpdate"
       }
     },
-    "/currencies/{code}": {
+    "/api/v2/management/peatio/currencies/{code}": {
       "post": {
         "description": "Returns currency by code.",
         "produces": [
@@ -1748,12 +1897,12 @@
           }
         },
         "tags": [
-          "currencies"
+          "api"
         ],
-        "operationId": "postCurrenciesCode"
+        "operationId": "postApiV2ManagementPeatioCurrenciesCode"
       }
     },
-    "/currencies/list": {
+    "/api/v2/management/peatio/currencies/list": {
       "post": {
         "description": "Return currencies list.",
         "produces": [
@@ -1784,12 +1933,12 @@
           }
         },
         "tags": [
-          "currencies"
+          "api"
         ],
-        "operationId": "postCurrenciesList"
+        "operationId": "postApiV2ManagementPeatioCurrenciesList"
       }
     },
-    "/markets/list": {
+    "/api/v2/management/peatio/markets/list": {
       "post": {
         "description": "Return markets list.",
         "produces": [
@@ -1807,12 +1956,12 @@
           }
         },
         "tags": [
-          "markets"
+          "api"
         ],
-        "operationId": "postMarketsList"
+        "operationId": "postApiV2ManagementPeatioMarketsList"
       }
     },
-    "/markets/update": {
+    "/api/v2/management/peatio/markets/update": {
       "put": {
         "description": "Update market.",
         "produces": [
@@ -1902,13 +2051,52 @@
           }
         },
         "tags": [
-          "markets"
+          "api"
         ],
-        "operationId": "putMarketsUpdate"
+        "operationId": "putApiV2ManagementPeatioMarketsUpdate"
       }
     }
   },
   "definitions": {
+    "Beneficiary": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Beneficiary Identifier in Database"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Beneficiary currency code."
+        },
+        "uid": {
+          "type": "string",
+          "description": "Beneficiary owner"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human rememberable name which refer beneficiary."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human rememberable description of beneficiary."
+        },
+        "data": {
+          "type": "json",
+          "description": "Bank Account details for fiat Beneficiary in JSON format.For crypto it's blockchain address."
+        },
+        "state": {
+          "type": "string",
+          "description": "Defines either beneficiary active - user can use it to withdraw moneyor pending - requires beneficiary activation with pin."
+        },
+        "sent_at": {
+          "type": "string",
+          "description": "Time when last pin was sent"
+        }
+      },
+      "description": "Get list of user beneficiaries"
+    },
     "Balance": {
       "type": "object",
       "properties": {

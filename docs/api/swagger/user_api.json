@@ -10,7 +10,7 @@
     "license": {
       "url": "https://github.com/rubykube/peatio/blob/master/LICENSE.md"
     },
-    "version": "2.4.0"
+    "version": "2.5.0"
   },
   "swagger": "2.0",
   "produces": [
@@ -24,25 +24,17 @@
     }
   },
   "host": "localhost:3000",
-  "basePath": "/api/v2",
+  "basePath": "/api/v2/peatio",
   "tags": [
     {
-      "name": "public",
-      "description": "Operations about publics"
-    },
-    {
-      "name": "account",
-      "description": "Operations about accounts"
-    },
-    {
-      "name": "market",
-      "description": "Operations about markets"
+      "name": "api",
+      "description": "Operations about apis"
     }
   ],
   "paths": {
-    "/public/webhooks/{event}": {
+    "/api/v2/peatio/public/webhooks/{event}": {
       "post": {
-        "description": "Bitgo Transfer Webhook",
+        "description": "Bitgo Webhook",
         "produces": [
           "application/json"
         ],
@@ -71,7 +63,7 @@
           {
             "in": "formData",
             "name": "hash",
-            "description": "Transfer txid.",
+            "description": "Address txid.",
             "type": "string",
             "required": true
           },
@@ -95,20 +87,34 @@
             "description": "Wallet id.",
             "type": "string",
             "required": true
+          },
+          {
+            "in": "formData",
+            "name": "address",
+            "description": "User Address.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "walletId",
+            "description": "Wallet id.",
+            "type": "string",
+            "required": true
           }
         ],
         "responses": {
           "201": {
-            "description": "Bitgo Transfer Webhook"
+            "description": "Bitgo Webhook"
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "postPublicWebhooksEvent"
+        "operationId": "postApiV2PeatioPublicWebhooksEvent"
       }
     },
-    "/public/trading_fees": {
+    "/api/v2/peatio/public/trading_fees": {
       "get": {
         "description": "Returns trading_fees table as paginated collection",
         "produces": [
@@ -191,12 +197,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicTradingFees"
+        "operationId": "getApiV2PeatioPublicTradingFees"
       }
     },
-    "/public/health/ready": {
+    "/api/v2/peatio/public/health/ready": {
       "get": {
         "description": "Get application readiness status",
         "produces": [
@@ -208,12 +214,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicHealthReady"
+        "operationId": "getApiV2PeatioPublicHealthReady"
       }
     },
-    "/public/health/alive": {
+    "/api/v2/peatio/public/health/alive": {
       "get": {
         "description": "Get application liveness status",
         "produces": [
@@ -225,12 +231,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicHealthAlive"
+        "operationId": "getApiV2PeatioPublicHealthAlive"
       }
     },
-    "/public/version": {
+    "/api/v2/peatio/public/version": {
       "get": {
         "description": "Get running Peatio version and build details.",
         "produces": [
@@ -242,12 +248,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicVersion"
+        "operationId": "getApiV2PeatioPublicVersion"
       }
     },
-    "/public/timestamp": {
+    "/api/v2/peatio/public/timestamp": {
       "get": {
         "description": "Get server current time, in seconds since Unix epoch.",
         "produces": [
@@ -259,12 +265,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicTimestamp"
+        "operationId": "getApiV2PeatioPublicTimestamp"
       }
     },
-    "/public/member-levels": {
+    "/api/v2/peatio/public/member-levels": {
       "get": {
         "description": "Returns hash of minimum levels and the privileges they provide.",
         "produces": [
@@ -276,12 +282,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMemberLevels"
+        "operationId": "getApiV2PeatioPublicMemberLevels"
       }
     },
-    "/public/markets/{market}/tickers": {
+    "/api/v2/peatio/public/markets/{market}/tickers": {
       "get": {
         "description": "Get ticker of specific market.",
         "produces": [
@@ -313,12 +319,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarketsMarketTickers"
+        "operationId": "getApiV2PeatioPublicMarketsMarketTickers"
       }
     },
-    "/public/markets/tickers": {
+    "/api/v2/peatio/public/markets/tickers": {
       "get": {
         "description": "Get ticker of all markets (For response doc see /:market/tickers/ response).",
         "produces": [
@@ -333,12 +339,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarketsTickers"
+        "operationId": "getApiV2PeatioPublicMarketsTickers"
       }
     },
-    "/public/markets/{market}/k-line": {
+    "/api/v2/peatio/public/markets/{market}/k-line": {
       "get": {
         "description": "Get OHLC(k line) of specific market.",
         "produces": [
@@ -417,12 +423,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarketsMarketKLine"
+        "operationId": "getApiV2PeatioPublicMarketsMarketKLine"
       }
     },
-    "/public/markets/{market}/depth": {
+    "/api/v2/peatio/public/markets/{market}/depth": {
       "get": {
         "description": "Get depth or specified market. Both asks and bids are sorted from highest price to lowest.",
         "produces": [
@@ -462,12 +468,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarketsMarketDepth"
+        "operationId": "getApiV2PeatioPublicMarketsMarketDepth"
       }
     },
-    "/public/markets/{market}/trades": {
+    "/api/v2/peatio/public/markets/{market}/trades": {
       "get": {
         "description": "Get recent trades on market, each trade is included only once. Trades are sorted in reverse creation order.",
         "produces": [
@@ -533,12 +539,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarketsMarketTrades"
+        "operationId": "getApiV2PeatioPublicMarketsMarketTrades"
       }
     },
-    "/public/markets/{market}/order-book": {
+    "/api/v2/peatio/public/markets/{market}/order-book": {
       "get": {
         "description": "Get the order book of specified market.",
         "produces": [
@@ -595,12 +601,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarketsMarketOrderBook"
+        "operationId": "getApiV2PeatioPublicMarketsMarketOrderBook"
       }
     },
-    "/public/markets": {
+    "/api/v2/peatio/public/markets": {
       "get": {
         "description": "Get all available markets.",
         "produces": [
@@ -713,12 +719,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicMarkets"
+        "operationId": "getApiV2PeatioPublicMarkets"
       }
     },
-    "/public/currencies": {
+    "/api/v2/peatio/public/currencies": {
       "get": {
         "description": "Get list of currencies",
         "produces": [
@@ -755,6 +761,27 @@
               "coin"
             ],
             "required": false
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "",
+            "type": "json",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "search[code]",
+            "description": "Search by currency code using SQL LIKE",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "search[name]",
+            "description": "Search by currency name using SQL LIKE",
+            "type": "string",
+            "required": false
           }
         ],
         "responses": {
@@ -769,12 +796,12 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicCurrencies"
+        "operationId": "getApiV2PeatioPublicCurrencies"
       }
     },
-    "/public/currencies/{id}": {
+    "/api/v2/peatio/public/currencies/{id}": {
       "get": {
         "description": "Get a currency",
         "produces": [
@@ -808,12 +835,48 @@
           }
         },
         "tags": [
-          "public"
+          "api"
         ],
-        "operationId": "getPublicCurrenciesId"
+        "operationId": "getApiV2PeatioPublicCurrenciesId"
       }
     },
-    "/account/transactions": {
+    "/api/v2/peatio/account/stats/pnl": {
+      "get": {
+        "description": "Get assets pnl calculated into one currency",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pnl_currency",
+            "description": "Currency code in which the PnL is calculated",
+            "type": "string",
+            "enum": [
+              "btc",
+              "eth",
+              "trst",
+              "usd",
+              "BTC",
+              "ETH",
+              "TRST",
+              "USD"
+            ],
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get assets pnl calculated into one currency"
+          }
+        },
+        "tags": [
+          "api"
+        ],
+        "operationId": "getApiV2PeatioAccountStatsPnl"
+      }
+    },
+    "/api/v2/peatio/account/transactions": {
       "get": {
         "description": "Get your transactions history.",
         "produces": [
@@ -913,12 +976,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountTransactions"
+        "operationId": "getApiV2PeatioAccountTransactions"
       }
     },
-    "/account/withdraws": {
+    "/api/v2/peatio/account/withdraws": {
       "post": {
         "description": "Creates new withdrawal to active beneficiary.",
         "produces": [
@@ -983,9 +1046,9 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "postAccountWithdraws"
+        "operationId": "postApiV2PeatioAccountWithdraws"
       },
       "get": {
         "description": "List your withdraws as paginated collection.",
@@ -1057,12 +1120,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountWithdraws"
+        "operationId": "getApiV2PeatioAccountWithdraws"
       }
     },
-    "/account/beneficiaries/{id}": {
+    "/api/v2/peatio/account/beneficiaries/{id}": {
       "delete": {
         "description": "Delete beneficiary",
         "produces": [
@@ -1084,9 +1147,9 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "deleteAccountBeneficiariesId"
+        "operationId": "deleteApiV2PeatioAccountBeneficiariesId"
       },
       "get": {
         "description": "Get beneficiary by ID",
@@ -1112,12 +1175,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountBeneficiariesId"
+        "operationId": "getApiV2PeatioAccountBeneficiariesId"
       }
     },
-    "/account/beneficiaries/{id}/activate": {
+    "/api/v2/peatio/account/beneficiaries/{id}/activate": {
       "patch": {
         "description": "Activates beneficiary with pin",
         "produces": [
@@ -1153,12 +1216,42 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "patchAccountBeneficiariesIdActivate"
+        "operationId": "patchApiV2PeatioAccountBeneficiariesIdActivate"
       }
     },
-    "/account/beneficiaries": {
+    "/api/v2/peatio/account/beneficiaries/{id}/resend_pin": {
+      "patch": {
+        "description": "Resend beneficiary pin",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Beneficiary Identifier in Database",
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resend beneficiary pin"
+          }
+        },
+        "tags": [
+          "api"
+        ],
+        "operationId": "patchApiV2PeatioAccountBeneficiariesIdResendPin"
+      }
+    },
+    "/api/v2/peatio/account/beneficiaries": {
       "post": {
         "description": "Create new beneficiary",
         "produces": [
@@ -1216,9 +1309,9 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "postAccountBeneficiaries"
+        "operationId": "postApiV2PeatioAccountBeneficiaries"
       },
       "get": {
         "description": "Get list of user beneficiaries",
@@ -1267,12 +1360,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountBeneficiaries"
+        "operationId": "getApiV2PeatioAccountBeneficiaries"
       }
     },
-    "/account/deposit_address/{currency}": {
+    "/api/v2/peatio/account/deposit_address/{currency}": {
       "get": {
         "description": "Returns deposit address for account you want to deposit to by currency. The address may be blank because address generation process is still in progress. If this case you should try again later.",
         "produces": [
@@ -1315,12 +1408,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountDepositAddressCurrency"
+        "operationId": "getApiV2PeatioAccountDepositAddressCurrency"
       }
     },
-    "/account/deposits/{txid}": {
+    "/api/v2/peatio/account/deposits/{txid}": {
       "get": {
         "description": "Get details of specific deposit.",
         "produces": [
@@ -1344,12 +1437,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountDepositsTxid"
+        "operationId": "getApiV2PeatioAccountDepositsTxid"
       }
     },
-    "/account/deposits": {
+    "/api/v2/peatio/account/deposits": {
       "get": {
         "description": "Get your deposits history.",
         "produces": [
@@ -1420,12 +1513,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountDeposits"
+        "operationId": "getApiV2PeatioAccountDeposits"
       }
     },
-    "/account/balances/{currency}": {
+    "/api/v2/peatio/account/balances/{currency}": {
       "get": {
         "description": "Get user account by currency",
         "produces": [
@@ -1455,12 +1548,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountBalancesCurrency"
+        "operationId": "getApiV2PeatioAccountBalancesCurrency"
       }
     },
-    "/account/balances": {
+    "/api/v2/peatio/account/balances": {
       "get": {
         "description": "Get list of user accounts",
         "produces": [
@@ -1528,12 +1621,12 @@
           }
         },
         "tags": [
-          "account"
+          "api"
         ],
-        "operationId": "getAccountBalances"
+        "operationId": "getApiV2PeatioAccountBalances"
       }
     },
-    "/market/trades": {
+    "/api/v2/peatio/market/trades": {
       "get": {
         "description": "Get your executed trades. Trades are sorted in reverse creation order.",
         "produces": [
@@ -1545,14 +1638,6 @@
             "name": "market",
             "description": "",
             "type": "string",
-            "enum": [
-              "btcusd",
-              "ethbtc",
-              "ethusd",
-              "trstbtc",
-              "trsteth",
-              "trstusd"
-            ],
             "required": false
           },
           {
@@ -1581,6 +1666,17 @@
             "description": "An integer represents the seconds elapsed since Unix epoch.If set, only trades executed after the time will be returned.",
             "type": "integer",
             "format": "int32",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Filter trade by type.",
+            "type": "string",
+            "enum": [
+              "buy",
+              "sell"
+            ],
             "required": false
           },
           {
@@ -1616,12 +1712,12 @@
           }
         },
         "tags": [
-          "market"
+          "api"
         ],
-        "operationId": "getMarketTrades"
+        "operationId": "getApiV2PeatioMarketTrades"
       }
     },
-    "/market/orders/cancel": {
+    "/api/v2/peatio/market/orders/cancel": {
       "post": {
         "description": "Cancel all my orders.",
         "produces": [
@@ -1667,12 +1763,12 @@
           }
         },
         "tags": [
-          "market"
+          "api"
         ],
-        "operationId": "postMarketOrdersCancel"
+        "operationId": "postApiV2PeatioMarketOrdersCancel"
       }
     },
-    "/market/orders/{id}/cancel": {
+    "/api/v2/peatio/market/orders/{id}/cancel": {
       "post": {
         "description": "Cancel an order.",
         "produces": [
@@ -1696,12 +1792,12 @@
           }
         },
         "tags": [
-          "market"
+          "api"
         ],
-        "operationId": "postMarketOrdersIdCancel"
+        "operationId": "postApiV2PeatioMarketOrdersIdCancel"
       }
     },
-    "/market/orders": {
+    "/api/v2/peatio/market/orders": {
       "post": {
         "description": "Create a Sell/Buy order.",
         "produces": [
@@ -1775,9 +1871,9 @@
           }
         },
         "tags": [
-          "market"
+          "api"
         ],
-        "operationId": "postMarketOrders"
+        "operationId": "postApiV2PeatioMarketOrders"
       },
       "get": {
         "description": "Get your orders, result is paginated.",
@@ -1790,14 +1886,6 @@
             "name": "market",
             "description": "",
             "type": "string",
-            "enum": [
-              "btcusd",
-              "ethbtc",
-              "ethusd",
-              "trstbtc",
-              "trsteth",
-              "trstusd"
-            ],
             "required": false
           },
           {
@@ -1920,12 +2008,12 @@
           }
         },
         "tags": [
-          "market"
+          "api"
         ],
-        "operationId": "getMarketOrders"
+        "operationId": "getApiV2PeatioMarketOrders"
       }
     },
-    "/market/orders/{id}": {
+    "/api/v2/peatio/market/orders/{id}": {
       "get": {
         "description": "Get information of specified order.",
         "produces": [
@@ -1949,9 +2037,9 @@
           }
         },
         "tags": [
-          "market"
+          "api"
         ],
-        "operationId": "getMarketOrdersId"
+        "operationId": "getApiV2PeatioMarketOrdersId"
       }
     }
   },
@@ -2099,6 +2187,11 @@
           "format": "double",
           "description": "Amount of fee user was charged for performed trade."
         },
+        "received_amount": {
+          "type": "number",
+          "format": "double",
+          "description": "Trade amount without fees."
+        },
         "market": {
           "type": "string",
           "description": "Trade market id."
@@ -2203,6 +2296,16 @@
           "type": "number",
           "format": "double",
           "description": "The executed volume, see 'volume'."
+        },
+        "maker_fee": {
+          "type": "number",
+          "format": "double",
+          "description": "Fee for maker."
+        },
+        "taker_fee": {
+          "type": "number",
+          "format": "double",
+          "description": "Fee for taker."
         },
         "trades_count": {
           "type": "integer",
@@ -2441,6 +2544,10 @@
           "type": "string",
           "description": "Beneficiary currency code."
         },
+        "uid": {
+          "type": "string",
+          "description": "Beneficiary owner"
+        },
         "name": {
           "type": "string",
           "description": "Human rememberable name which refer beneficiary."
@@ -2456,6 +2563,10 @@
         "state": {
           "type": "string",
           "description": "Defines either beneficiary active - user can use it to withdraw moneyor pending - requires beneficiary activation with pin."
+        },
+        "sent_at": {
+          "type": "string",
+          "description": "Time when last pin was sent"
         }
       },
       "description": "Get list of user beneficiaries"
@@ -2567,6 +2678,10 @@
           "type": "integer",
           "format": "int32",
           "description": "Number of confirmations."
+        },
+        "created_at": {
+          "type": "string",
+          "description": "Transaction created time in iso8601 format."
         },
         "updated_at": {
           "type": "string",

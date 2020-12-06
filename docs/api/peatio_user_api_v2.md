@@ -1,14 +1,14 @@
 # Peatio User API v2
 API for Peatio application.
 
-## Version: 2.4.0
+## Version: 2.5.0
 
 **Contact information:**  
-openware.com  
-https://www.openware.com  
-hello@openware.com  
+openware.com
+<https://www.openware.com>
+hello@openware.com
 
-**License:** https://github.com/rubykube/peatio/blob/master/LICENSE.md
+**License:** <https://github.com/rubykube/peatio/blob/master/LICENSE.md>
 
 ### Security
 **Bearer**  
@@ -18,12 +18,12 @@ hello@openware.com
 |Name|JWT|
 |In|header|
 
-### /public/webhooks/{event}
+### /api/v2/peatio/public/webhooks/{event}
 
 #### POST
-##### Description:
+##### Description
 
-Bitgo Transfer Webhook
+Bitgo Webhook
 
 ##### Parameters
 
@@ -31,21 +31,23 @@ Bitgo Transfer Webhook
 | ---- | ---------- | ----------- | -------- | ---- |
 | event | path | Name of event can be deposit or withdraw | Yes | string |
 | type | formData | Type of event. | Yes | string |
-| hash | formData | Transfer txid. | Yes | string |
+| hash | formData | Address txid. | Yes | string |
 | transfer | formData | Transfer id. | Yes | string |
 | coin | formData | Currency code. | Yes | string |
 | wallet | formData | Wallet id. | Yes | string |
+| address | formData | User Address. | Yes | string |
+| walletId | formData | Wallet id. | Yes | string |
 
 ##### Responses
 
 | Code | Description |
 | ---- | ----------- |
-| 201 | Bitgo Transfer Webhook |
+| 201 | Bitgo Webhook |
 
-### /public/trading_fees
+### /api/v2/peatio/public/trading_fees
 
 #### GET
-##### Description:
+##### Description
 
 Returns trading_fees table as paginated collection
 
@@ -66,10 +68,10 @@ Returns trading_fees table as paginated collection
 | ---- | ----------- | ------ |
 | 200 | Returns trading_fees table as paginated collection | [ [TradingFee](#tradingfee) ] |
 
-### /public/health/ready
+### /api/v2/peatio/public/health/ready
 
 #### GET
-##### Description:
+##### Description
 
 Get application readiness status
 
@@ -79,10 +81,10 @@ Get application readiness status
 | ---- | ----------- |
 | 200 | Get application readiness status |
 
-### /public/health/alive
+### /api/v2/peatio/public/health/alive
 
 #### GET
-##### Description:
+##### Description
 
 Get application liveness status
 
@@ -92,10 +94,10 @@ Get application liveness status
 | ---- | ----------- |
 | 200 | Get application liveness status |
 
-### /public/version
+### /api/v2/peatio/public/version
 
 #### GET
-##### Description:
+##### Description
 
 Get running Peatio version and build details.
 
@@ -105,10 +107,10 @@ Get running Peatio version and build details.
 | ---- | ----------- |
 | 200 | Get running Peatio version and build details. |
 
-### /public/timestamp
+### /api/v2/peatio/public/timestamp
 
 #### GET
-##### Description:
+##### Description
 
 Get server current time, in seconds since Unix epoch.
 
@@ -118,10 +120,10 @@ Get server current time, in seconds since Unix epoch.
 | ---- | ----------- |
 | 200 | Get server current time, in seconds since Unix epoch. |
 
-### /public/member-levels
+### /api/v2/peatio/public/member-levels
 
 #### GET
-##### Description:
+##### Description
 
 Returns hash of minimum levels and the privileges they provide.
 
@@ -131,10 +133,10 @@ Returns hash of minimum levels and the privileges they provide.
 | ---- | ----------- |
 | 200 | Returns hash of minimum levels and the privileges they provide. |
 
-### /public/markets/{market}/tickers
+### /api/v2/peatio/public/markets/{market}/tickers
 
 #### GET
-##### Description:
+##### Description
 
 Get ticker of specific market.
 
@@ -150,10 +152,10 @@ Get ticker of specific market.
 | ---- | ----------- | ------ |
 | 200 | Get ticker of specific market. | [Ticker](#ticker) |
 
-### /public/markets/tickers
+### /api/v2/peatio/public/markets/tickers
 
 #### GET
-##### Description:
+##### Description
 
 Get ticker of all markets (For response doc see /:market/tickers/ response).
 
@@ -163,10 +165,10 @@ Get ticker of all markets (For response doc see /:market/tickers/ response).
 | ---- | ----------- | ------ |
 | 200 | Get ticker of all markets (For response doc see /:market/tickers/ response). | [Ticker](#ticker) |
 
-### /public/markets/{market}/k-line
+### /api/v2/peatio/public/markets/{market}/k-line
 
 #### GET
-##### Description:
+##### Description
 
 Get OHLC(k line) of specific market.
 
@@ -186,10 +188,10 @@ Get OHLC(k line) of specific market.
 | ---- | ----------- |
 | 200 | Get OHLC(k line) of specific market. |
 
-### /public/markets/{market}/depth
+### /api/v2/peatio/public/markets/{market}/depth
 
 #### GET
-##### Description:
+##### Description
 
 Get depth or specified market. Both asks and bids are sorted from highest price to lowest.
 
@@ -206,10 +208,10 @@ Get depth or specified market. Both asks and bids are sorted from highest price 
 | ---- | ----------- |
 | 200 | Get depth or specified market. Both asks and bids are sorted from highest price to lowest. |
 
-### /public/markets/{market}/trades
+### /api/v2/peatio/public/markets/{market}/trades
 
 #### GET
-##### Description:
+##### Description
 
 Get recent trades on market, each trade is included only once. Trades are sorted in reverse creation order.
 
@@ -228,10 +230,10 @@ Get recent trades on market, each trade is included only once. Trades are sorted
 | ---- | ----------- | ------ |
 | 200 | Get recent trades on market, each trade is included only once. Trades are sorted in reverse creation order. | [ [Trade](#trade) ] |
 
-### /public/markets/{market}/order-book
+### /api/v2/peatio/public/markets/{market}/order-book
 
 #### GET
-##### Description:
+##### Description
 
 Get the order book of specified market.
 
@@ -249,10 +251,10 @@ Get the order book of specified market.
 | ---- | ----------- | ------ |
 | 200 | Get the order book of specified market. | [ [OrderBook](#orderbook) ] |
 
-### /public/markets
+### /api/v2/peatio/public/markets
 
 #### GET
-##### Description:
+##### Description
 
 Get all available markets.
 
@@ -278,10 +280,10 @@ Get all available markets.
 | ---- | ----------- | ------ |
 | 200 | Get all available markets. | [ [Market](#market) ] |
 
-### /public/currencies
+### /api/v2/peatio/public/currencies
 
 #### GET
-##### Description:
+##### Description
 
 Get list of currencies
 
@@ -292,6 +294,9 @@ Get list of currencies
 | limit | query | Limit the number of returned paginations. Defaults to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | type | query | Currency type | No | string |
+| search | query |  | No | json |
+| search[code] | query | Search by currency code using SQL LIKE | No | string |
+| search[name] | query | Search by currency name using SQL LIKE | No | string |
 
 ##### Responses
 
@@ -299,10 +304,10 @@ Get list of currencies
 | ---- | ----------- | ------ |
 | 200 | Get list of currencies | [ [Currency](#currency) ] |
 
-### /public/currencies/{id}
+### /api/v2/peatio/public/currencies/{id}
 
 #### GET
-##### Description:
+##### Description
 
 Get a currency
 
@@ -318,10 +323,29 @@ Get a currency
 | ---- | ----------- | ------ |
 | 200 | Get a currency | [Currency](#currency) |
 
-### /account/transactions
+### /api/v2/peatio/account/stats/pnl
 
 #### GET
-##### Description:
+##### Description
+
+Get assets pnl calculated into one currency
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| pnl_currency | query | Currency code in which the PnL is calculated | No | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Get assets pnl calculated into one currency |
+
+### /api/v2/peatio/account/transactions
+
+#### GET
+##### Description
 
 Get your transactions history.
 
@@ -345,10 +369,10 @@ Get your transactions history.
 | ---- | ----------- |
 | 200 | Get your transactions history. |
 
-### /account/withdraws
+### /api/v2/peatio/account/withdraws
 
 #### POST
-##### Description:
+##### Description
 
 Creates new withdrawal to active beneficiary.
 
@@ -369,7 +393,7 @@ Creates new withdrawal to active beneficiary.
 | 201 | Creates new withdrawal to active beneficiary. |
 
 #### GET
-##### Description:
+##### Description
 
 List your withdraws as paginated collection.
 
@@ -389,10 +413,10 @@ List your withdraws as paginated collection.
 | ---- | ----------- | ------ |
 | 200 | List your withdraws as paginated collection. | [ [Withdraw](#withdraw) ] |
 
-### /account/beneficiaries/{id}
+### /api/v2/peatio/account/beneficiaries/{id}
 
 #### DELETE
-##### Description:
+##### Description
 
 Delete beneficiary
 
@@ -409,7 +433,7 @@ Delete beneficiary
 | 204 | Delete beneficiary |
 
 #### GET
-##### Description:
+##### Description
 
 Get beneficiary by ID
 
@@ -425,10 +449,10 @@ Get beneficiary by ID
 | ---- | ----------- | ------ |
 | 200 | Get beneficiary by ID | [Beneficiary](#beneficiary) |
 
-### /account/beneficiaries/{id}/activate
+### /api/v2/peatio/account/beneficiaries/{id}/activate
 
 #### PATCH
-##### Description:
+##### Description
 
 Activates beneficiary with pin
 
@@ -445,10 +469,29 @@ Activates beneficiary with pin
 | ---- | ----------- | ------ |
 | 200 | Activates beneficiary with pin | [Beneficiary](#beneficiary) |
 
-### /account/beneficiaries
+### /api/v2/peatio/account/beneficiaries/{id}/resend_pin
+
+#### PATCH
+##### Description
+
+Resend beneficiary pin
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path | Beneficiary Identifier in Database | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Resend beneficiary pin |
+
+### /api/v2/peatio/account/beneficiaries
 
 #### POST
-##### Description:
+##### Description
 
 Create new beneficiary
 
@@ -468,7 +511,7 @@ Create new beneficiary
 | 201 | Create new beneficiary | [Beneficiary](#beneficiary) |
 
 #### GET
-##### Description:
+##### Description
 
 Get list of user beneficiaries
 
@@ -485,10 +528,10 @@ Get list of user beneficiaries
 | ---- | ----------- | ------ |
 | 200 | Get list of user beneficiaries | [ [Beneficiary](#beneficiary) ] |
 
-### /account/deposit_address/{currency}
+### /api/v2/peatio/account/deposit_address/{currency}
 
 #### GET
-##### Description:
+##### Description
 
 Returns deposit address for account you want to deposit to by currency. The address may be blank because address generation process is still in progress. If this case you should try again later.
 
@@ -505,10 +548,10 @@ Returns deposit address for account you want to deposit to by currency. The addr
 | ---- | ----------- | ------ |
 | 200 | Returns deposit address for account you want to deposit to by currency. The address may be blank because address generation process is still in progress. If this case you should try again later. | [Deposit](#deposit) |
 
-### /account/deposits/{txid}
+### /api/v2/peatio/account/deposits/{txid}
 
 #### GET
-##### Description:
+##### Description
 
 Get details of specific deposit.
 
@@ -524,10 +567,10 @@ Get details of specific deposit.
 | ---- | ----------- | ------ |
 | 200 | Get details of specific deposit. | [Deposit](#deposit) |
 
-### /account/deposits
+### /api/v2/peatio/account/deposits
 
 #### GET
-##### Description:
+##### Description
 
 Get your deposits history.
 
@@ -547,10 +590,10 @@ Get your deposits history.
 | ---- | ----------- | ------ |
 | 200 | Get your deposits history. | [ [Deposit](#deposit) ] |
 
-### /account/balances/{currency}
+### /api/v2/peatio/account/balances/{currency}
 
 #### GET
-##### Description:
+##### Description
 
 Get user account by currency
 
@@ -566,10 +609,10 @@ Get user account by currency
 | ---- | ----------- | ------ |
 | 200 | Get user account by currency | [Account](#account) |
 
-### /account/balances
+### /api/v2/peatio/account/balances
 
 #### GET
-##### Description:
+##### Description
 
 Get list of user accounts
 
@@ -590,10 +633,10 @@ Get list of user accounts
 | ---- | ----------- | ------ |
 | 200 | Get list of user accounts | [ [Account](#account) ] |
 
-### /market/trades
+### /api/v2/peatio/market/trades
 
 #### GET
-##### Description:
+##### Description
 
 Get your executed trades. Trades are sorted in reverse creation order.
 
@@ -605,6 +648,7 @@ Get your executed trades. Trades are sorted in reverse creation order.
 | limit | query | Limit the number of returned trades. Default to 100. | No | integer |
 | page | query | Specify the page of paginated results. | No | integer |
 | time_from | query | An integer represents the seconds elapsed since Unix epoch.If set, only trades executed after the time will be returned. | No | integer |
+| type | query | Filter trade by type. | No | string |
 | time_to | query | An integer represents the seconds elapsed since Unix epoch.If set, only trades executed before the time will be returned. | No | integer |
 | order_by | query | If set, returned trades will be sorted in specific order, default to 'desc'. | No | string |
 
@@ -614,10 +658,10 @@ Get your executed trades. Trades are sorted in reverse creation order.
 | ---- | ----------- | ------ |
 | 200 | Get your executed trades. Trades are sorted in reverse creation order. | [ [Trade](#trade) ] |
 
-### /market/orders/cancel
+### /api/v2/peatio/market/orders/cancel
 
 #### POST
-##### Description:
+##### Description
 
 Cancel all my orders.
 
@@ -634,10 +678,10 @@ Cancel all my orders.
 | ---- | ----------- | ------ |
 | 201 | Cancel all my orders. | [Order](#order) |
 
-### /market/orders/{id}/cancel
+### /api/v2/peatio/market/orders/{id}/cancel
 
 #### POST
-##### Description:
+##### Description
 
 Cancel an order.
 
@@ -653,10 +697,10 @@ Cancel an order.
 | ---- | ----------- |
 | 201 | Cancel an order. |
 
-### /market/orders
+### /api/v2/peatio/market/orders
 
 #### POST
-##### Description:
+##### Description
 
 Create a Sell/Buy order.
 
@@ -677,7 +721,7 @@ Create a Sell/Buy order.
 | 201 | Create a Sell/Buy order. | [Order](#order) |
 
 #### GET
-##### Description:
+##### Description
 
 Get your orders, result is paginated.
 
@@ -703,10 +747,10 @@ Get your orders, result is paginated.
 | ---- | ----------- | ------ |
 | 200 | Get your orders, result is paginated. | [ [Order](#order) ] |
 
-### /market/orders/{id}
+### /api/v2/peatio/market/orders/{id}
 
 #### GET
-##### Description:
+##### Description
 
 Get information of specified order.
 
@@ -723,7 +767,6 @@ Get information of specified order.
 | 200 | Get information of specified order. | [Order](#order) |
 
 ### Models
-
 
 #### TradingFee
 
@@ -776,6 +819,7 @@ Get your executed trades. Trades are sorted in reverse creation order.
 | fee_currency | double | Currency user's fees were charged in. | No |
 | fee | double | Percentage of fee user was charged for performed trade. | No |
 | fee_amount | double | Amount of fee user was charged for performed trade. | No |
+| received_amount | double | Trade amount without fees. | No |
 | market | string | Trade market id. | No |
 | created_at | string | Trade create time in iso8601 format. | No |
 | taker_type | string | Trade taker order type (sell or buy). | No |
@@ -810,6 +854,8 @@ Get your orders, result is paginated.
 | origin_volume | double | The amount user want to sell/buy.An order could be partially executed,e.g. an order sell 5 btc can be matched with a buy 3 btc order,left 2 btc to be sold; in this case the order's volume would be '5.0',its remaining_volume would be '2.0', its executed volume is '3.0'. | No |
 | remaining_volume | double | The remaining volume, see 'volume'. | No |
 | executed_volume | double | The executed volume, see 'volume'. | No |
+| maker_fee | double | Fee for maker. | No |
+| taker_fee | double | Fee for taker. | No |
 | trades_count | integer | Count of trades. | No |
 | trades | [ [Trade](#trade) ] | Trades wiht this order. | No |
 
@@ -836,24 +882,24 @@ Get a currency
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
-| id | string | Currency code. | No |
-| name | string | Currency name | No |
-| symbol | string | Currency symbol | No |
-| explorer_transaction | string | Currency transaction exprorer url template | No |
-| explorer_address | string | Currency address exprorer url template | No |
-| type | string | Currency type | No |
+| id | string | Currency code.<br>_Example:_ `"btc"` | No |
+| name | string | Currency name<br>_Example:_ `"Bitcoin"` | No |
+| symbol | string | Currency symbol<br>_Example:_ `"฿"` | No |
+| explorer_transaction | string | Currency transaction exprorer url template<br>_Example:_ `"https://testnet.blockchain.info/tx/"` | No |
+| explorer_address | string | Currency address exprorer url template<br>_Example:_ `"https://testnet.blockchain.info/address/"` | No |
+| type | string | Currency type<br>_Example:_ `"coin"` | No |
 | deposit_enabled | string | Currency deposit possibility status (true/false). | No |
 | withdrawal_enabled | string | Currency withdrawal possibility status (true/false). | No |
-| deposit_fee | string | Currency deposit fee | No |
-| min_deposit_amount | string | Minimal deposit amount | No |
-| withdraw_fee | string | Currency withdraw fee | No |
-| min_withdraw_amount | string | Minimal withdraw amount | No |
-| withdraw_limit_24h | string | Currency 24h withdraw limit | No |
-| withdraw_limit_72h | string | Currency 72h withdraw limit | No |
-| base_factor | string | Currency base factor | No |
-| precision | string | Currency precision | No |
-| position | string | Position used for defining currencies order | No |
-| icon_url | string | Currency icon | No |
+| deposit_fee | string | Currency deposit fee<br>_Example:_ `"0.0"` | No |
+| min_deposit_amount | string | Minimal deposit amount<br>_Example:_ `"0.0000356"` | No |
+| withdraw_fee | string | Currency withdraw fee<br>_Example:_ `"0.0"` | No |
+| min_withdraw_amount | string | Minimal withdraw amount<br>_Example:_ `"0.0"` | No |
+| withdraw_limit_24h | string | Currency 24h withdraw limit<br>_Example:_ `"0.1"` | No |
+| withdraw_limit_72h | string | Currency 72h withdraw limit<br>_Example:_ `"0.2"` | No |
+| base_factor | string | Currency base factor<br>_Example:_ `100000000` | No |
+| precision | string | Currency precision<br>_Example:_ `8` | No |
+| position | string | Position used for defining currencies order<br>_Example:_ `8` | No |
+| icon_url | string | Currency icon<br>_Example:_ `"https://upload.wikimedia.org/wikipedia/commons/0/05/Ethereum_logo_2014.svg"` | No |
 | min_confirmations | string | Number of confirmations required for confirming deposit or withdrawal | No |
 
 #### Withdraw
@@ -884,10 +930,12 @@ Get list of user beneficiaries
 | ---- | ---- | ----------- | -------- |
 | id | integer | Beneficiary Identifier in Database | No |
 | currency | string | Beneficiary currency code. | No |
+| uid | string | Beneficiary owner | No |
 | name | string | Human rememberable name which refer beneficiary. | No |
 | description | string | Human rememberable description of beneficiary. | No |
 | data | json | Bank Account details for fiat Beneficiary in JSON format.For crypto it's blockchain address. | No |
 | state | string | Defines either beneficiary active - user can use it to withdraw moneyor pending - requires beneficiary activation with pin. | No |
+| sent_at | string | Time when last pin was sent | No |
 
 #### Deposit
 
@@ -928,6 +976,7 @@ Get list of user accounts
 | state | string | Transaction state. | No |
 | note | string | Withdraw note. | No |
 | confirmations | integer | Number of confirmations. | No |
+| created_at | string | Transaction created time in iso8601 format. | No |
 | updated_at | string | Transaction updated time in iso8601 format. | No |
 | type | string | Type of transaction | No |
 
