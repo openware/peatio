@@ -184,6 +184,10 @@ steps:
 trigger:
   event:
     - push
+  branch:
+    - master
+    - "*-stable"
+    - "fix-db/*"
 
 ---
 kind: pipeline
@@ -260,6 +264,10 @@ steps:
 trigger:
   event:
     - push
+  branch:
+    - master
+    - "*-stable"
+    - "fix-db/*"
 
 ---
 kind: pipeline
@@ -339,6 +347,10 @@ steps:
 trigger:
   event:
     - push
+  branch:
+    - master
+    - "*-stable"
+    - "fix-db/*"
 
 ---
 kind: pipeline
