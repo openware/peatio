@@ -12,7 +12,7 @@ export ORDER_MAX_AGE=2_419_200
 bundle exec rake job job:order:close
 ```
 
-It will save id DB Job record:
+New DB Job record:
 
 | Column | Value |
 |--------|-------|

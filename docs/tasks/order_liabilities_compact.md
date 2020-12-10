@@ -23,7 +23,7 @@ It will compact liabilities for orders from previous week. Also you can specify 
 bundle exec rake job job:liabilities:compact_orders['2020-12-09 00:00:00','2020-12-10 00:00:00']
 ```
 
-It will save id DB Job record:
+New DB Job record:
 
 | Column | Value |
 |--------|-------|

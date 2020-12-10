@@ -11,7 +11,7 @@ For process order archive job:
 bundle exec rake job job:order:archive
 ```
 
-It will move cancelled orders without trades older than one week from main db to the archive db + delete moved orders from main db.
+It will move cancelled orders without trades older than one week from the main database to the archive database.
 
 New DB Job record:
 
