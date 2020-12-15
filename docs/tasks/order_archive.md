@@ -1,5 +1,8 @@
 ## Archive and delete cancelled orders without any trade older than one week
 
+This job archives orders that were cancelled more than a week ago and didn't produce any trade.
+Those orders are stored in the archive database and cleaned up from the main database.
+
 ### Prerequisites
 
 * Deploy archive database
@@ -10,8 +13,6 @@ For process order archive job:
 ```bash
 bundle exec rake job job:order:archive
 ```
-
-It will move cancelled orders without any trade older than one week from the main database to the archive database.
 
 New DB Job record:
 
