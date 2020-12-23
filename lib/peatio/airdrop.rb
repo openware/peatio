@@ -28,7 +28,7 @@ module Peatio
           ]
 
           Transfer.create!(
-            key: "#{credited_user.uid}_#{Time.now.to_i}",
+            key: "#{credited_user.uid}_#{currency.id}_#{Time.now.to_i}",
             category: 'airdrop',
             description: "Transfer from #{src_user.uid} to #{credited_user.uid} currency_id: #{currency.id}, amount: #{amount}",
             liabilities: liabilities
