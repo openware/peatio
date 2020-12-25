@@ -380,7 +380,7 @@ steps:
     json_key:
       from_secret: google_credentials
 
-# Redeploy on master.devkube.com
+# Redeploy on Vee's OpenDAX
 - name: "Redeploy on Vee's OpenDAX"
   image: rubykube/microkube:0.2.0
   environment:
