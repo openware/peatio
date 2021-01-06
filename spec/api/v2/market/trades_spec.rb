@@ -190,6 +190,25 @@ describe API::V2::Market::Trades, type: :request do
       expect(result['fee_currency']).to eq 'usd'
     end
 
+    # here
+    context 'type filtering' do
+      # in the top of a file you can see how we define trades and orders
+      # if you need you should define those factories here
+
+      # like if you want to check first case for spec you should have
+      #   let(:btcusd_ask) do
+      #   create(
+      #     :order_bid,
+      #     :btcusd,
+      #     price: '12.32'.to_d,
+      #     volume: '123.12345678',
+      #     member: member
+      #   )
+      # end
+      # let!(:btcusd_ask_trade) { create(:trade, :btcusd, taker: member, taker_order: btcusd_ask) }
+
+    end
+
     context 'unauthorized' do
       before do
         Ability.stubs(:user_permissions).returns([])

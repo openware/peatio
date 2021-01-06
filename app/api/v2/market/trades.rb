@@ -18,6 +18,21 @@ module API
         end
         get '/trades' do
           user_authorize! :read, ::Trade
+          # for sell orders query should be (when params[:type] == sell)
+          # where("taker_id = #{current_user.id} AND taker_type = 'sell' OR maker_id = #{current_user.id} AND taker_type = 'buy'")
+
+          # for buy orders query should be (when params[:type] == buy)
+          # where("taker_id = #{current_user.id} AND taker_type = 'buy' OR maker_id = #{current_user.id} AND taker_type = 'sell')
+
+          # If you want you can rewrite those filters with ransack (you can see a lot of examples on admin API endpoints)
+
+          # write specs on spec/market/trades_spec.rb
+
+          # it should be at least 4 tests
+          # 1) taker_id = current_user.id AND taker_type = 'sell' (should give you as trades with sell side)
+          # 2) maker_id = current_user.id AND taker_type = 'buy' (should give you as trades with sell side)
+          # 3) taker id = current_user.id AND taker_type = 'buy' (should give you as trades with buy side)
+          # 4) maker_id = current_user.id AND taker_type = 'sell' (should give you as trades with buy side)
 
           current_user
             .trades
