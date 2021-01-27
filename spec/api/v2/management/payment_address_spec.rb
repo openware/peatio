@@ -79,5 +79,17 @@ describe API::V2::Management::PaymentAddress, type: :request do
         end
       end
     end
+
+    context 'wallet service raised an error' do
+      before do
+        WalletService.any_instance.stubs(:create_address!).raises(StandardError.new)
+      end
+
+      it do
+        request
+        expect(response.body).to match(/management.payment_address.fail_to_generate/i)
+        expect(response).to have_http_status 422
+      end
+    end
   end
 end

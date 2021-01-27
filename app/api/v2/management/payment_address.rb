@@ -34,23 +34,27 @@ module API
           end
 
           pa = member.payment_address!(wallet.id)
-
           wallet_service = WalletService.new(wallet)
-          pa.with_lock do
-            # binding.pry
-            next if pa.address.present?
 
-            # Supply address ID in case of BitGo address generation if it exists.
-            result = wallet_service.create_address!(member.uid, pa.details.merge(updated_at: pa.updated_at))
-            if result.present?
-              pa.update!(address: result[:address],
-                        secret:  result[:secret],
-                        details: result.fetch(:details, {}).merge(pa.details))
+          begin
+            pa.with_lock do
+              next if pa.address.present?
+
+              # Supply address ID in case of BitGo address generation if it exists.
+              result = wallet_service.create_address!(member.uid, pa.details.merge(updated_at: pa.updated_at))
+              if result.present?
+                pa.update!(address: result[:address],
+                          secret:  result[:secret],
+                          details: result.fetch(:details, {}).merge(pa.details))
+              end
             end
-          end
 
-          present pa, with: API::V2::Management::Entities::PaymentAddress
-          status 200
+            present pa, with: API::V2::Management::Entities::PaymentAddress
+            status 200
+          rescue StandardError => e
+            Rails.logger.error { "Error: #{e} while generating payment address for #{params[:currency]} for user: #{params[:uid]}" }
+            error!({ errors: ['management.payment_address.fail_to_generate'] }, 422)
+          end
         end
       end
     end
