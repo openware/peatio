@@ -87,7 +87,7 @@ describe API::V2::Management::PaymentAddress, type: :request do
 
       it do
         request
-        expect(response.body).to match(/management.payment_address.fail_to_generate/i)
+        expect(response.body).to match(/management.payment_address.failed_to_generate/i)
         expect(response).to have_http_status 422
       end
     end

@@ -53,7 +53,7 @@ module API
             status 200
           rescue StandardError => e
             Rails.logger.error { "Error: #{e} while generating payment address for #{params[:currency]} for user: #{params[:uid]}" }
-            error!({ errors: ['management.payment_address.fail_to_generate'] }, 422)
+            error!({ errors: ['management.payment_address.failed_to_generate'] }, 422)
           end
         end
       end
