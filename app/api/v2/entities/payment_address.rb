@@ -27,6 +27,14 @@ module API
         end
 
         expose(
+          :remote,
+          documentation: {
+            type: String,
+            desc: 'Payment address remote creation (true/false).'
+          }
+        )
+
+        expose(
           :state,
           documentation: {
             desc: 'Payment address state.',
