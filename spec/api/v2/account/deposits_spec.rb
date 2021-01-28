@@ -197,13 +197,13 @@ describe API::V2::Account::Deposits, type: :request do
 
         it 'expose data about eth address' do
           api_get "/api/v2/account/deposit_address/#{currency}", token: token
-          expect(response.body).to eq '{"currencies":["eth"],"address":"2n2wnxrdo4oengp498xgngcbru29mychogr","remote":false,"state":"active"}'
+          expect(response.body).to eq '{"currencies":["eth"],"address":"2n2wnxrdo4oengp498xgngcbru29mychogr","state":"active"}'
         end
 
         it 'pending user address state' do
           member.payment_address(wallet.id).update!(address: nil)
           api_get "/api/v2/account/deposit_address/#{currency}", token: token
-          expect(response.body).to eq '{"currencies":["eth"],"address":null,"remote":false,"state":"pending"}'
+          expect(response.body).to eq '{"currencies":["eth"],"address":null,"state":"pending"}'
         end
 
         context 'currency code with dot' do
@@ -212,8 +212,14 @@ describe API::V2::Account::Deposits, type: :request do
           it 'returns information about specified deposit address' do
             api_get "/api/v2/account/deposit_address/#{currency.code}", token: token
             expect(response).to have_http_status 200
-            expect(response.body).to eq '{"currencies":["eth","xagm.cx"],"address":"2n2wnxrdo4oengp498xgngcbru29mychogr","remote":false,"state":"active"}'
+            expect(response.body).to eq '{"currencies":["eth","xagm.cx"],"address":"2n2wnxrdo4oengp498xgngcbru29mychogr","state":"active"}'
           end
+        end
+
+        it 'exposes non-remote addresses' do
+          member.payment_address(wallet.id).update!(remote: true)
+          api_get "/api/v2/account/deposit_address/#{currency}", token: token
+          expect(response.body).to be_empty
         end
       end
     end

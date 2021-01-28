@@ -101,11 +101,13 @@ class Member < ApplicationRecord
       pa.enqueue_address_generation
     end
 
+    # Returns non-remote addresses
+    pa = PaymentAddress.find(member: self, wallet: wallet, remote: false)
     pa
   end
 
   # Attempts to create additional deposit address for account.
-  def payment_address!(wallet_id)
+  def payment_address!(wallet_id, remote = false)
     wallet = Wallet.find(wallet_id)
 
     return if wallet.blank?
@@ -115,9 +117,12 @@ class Member < ApplicationRecord
     # The address generation process is in progress.
     if pa.present? && pa.address.blank?
       pa
-    else
-      # allows user to have multiple addresses.
+    elsif remote.nil?
+      # allows user to have multiple addresses with remote as false
       pa = payment_addresses.create!(wallet: wallet)
+    else
+      # allows user to have multiple addresses with remote as specified value
+      pa = payment_addresses.create!(wallet: wallet, remote: remote)
     end
     pa
   end

@@ -27,14 +27,6 @@ module API
         end
 
         expose(
-          :remote,
-          documentation: {
-            type: String,
-            desc: 'Payment address remote creation (true/false).'
-          }
-        )
-
-        expose(
           :state,
           documentation: {
             desc: 'Payment address state.',
@@ -43,7 +35,6 @@ module API
         ) do |pa|
           pa.address.present? ? 'active' : 'pending'
         end
-
       end
     end
   end
