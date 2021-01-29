@@ -115,11 +115,8 @@ class Member < ApplicationRecord
     # The address generation process is in progress.
     if pa.present? && pa.address.blank?
       pa
-    elsif remote.nil?
-      # allows user to have multiple addresses with remote as false
-      pa = payment_addresses.create!(wallet: wallet)
     else
-      # allows user to have multiple addresses with remote as specified value
+      # allows user to have multiple addresses
       pa = payment_addresses.create!(wallet: wallet, remote: remote)
     end
     pa

@@ -36,7 +36,12 @@ module API
             error!({ errors: ['account.wallet.not_found'] }, 422)
           end
 
-          pa = member.payment_address!(wallet.id, params[:remote])
+          unless params[:remote].nil?
+            pa = member.payment_address!(wallet.id, params[:remote])
+          else
+            pa = member.payment_address!(wallet.id)
+          end
+          
           wallet_service = WalletService.new(wallet)
 
           begin
