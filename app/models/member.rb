@@ -88,12 +88,12 @@ class Member < ApplicationRecord
     trades.each(&:revert_trade!)
   end
 
-  def payment_address(wallet_id)
+  def payment_address(wallet_id, remote = false)
     wallet = Wallet.find(wallet_id)
 
     return if wallet.blank?
 
-    pa = PaymentAddress.find_by(member: self, wallet: wallet)
+    pa = PaymentAddress.find_by(member: self, wallet: wallet, remote: remote)
 
     if pa.blank?
       pa = payment_addresses.create!(wallet: wallet)
@@ -101,8 +101,6 @@ class Member < ApplicationRecord
       pa.enqueue_address_generation
     end
 
-    # Returns non-remote addresses
-    pa = PaymentAddress.find(member: self, wallet: wallet, remote: false)
     pa
   end
 
