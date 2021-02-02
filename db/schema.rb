@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_28_083207) do
+ActiveRecord::Schema.define(version: 2021_01_28_144535) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -434,6 +434,15 @@ ActiveRecord::Schema.define(version: 2021_01_28_083207) do
     t.index ["kind", "status"], name: "index_wallets_on_kind_and_currency_id_and_status"
     t.index ["kind"], name: "index_wallets_on_kind"
     t.index ["status"], name: "index_wallets_on_status"
+  end
+
+  create_table "whitelisted_smart_contracts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "description"
+    t.string "address", null: false
+    t.string "state", limit: 30, null: false
+    t.string "blockchain_key", limit: 32, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "withdraw_limits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

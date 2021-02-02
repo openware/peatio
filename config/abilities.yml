@@ -33,6 +33,7 @@ admin_permissions:
       - TradingFee
       - Wallet
       - Adjustment  
+      - WhitelistedSmartContract
     read:
       - Trade
       - Order
@@ -58,7 +59,8 @@ admin_permissions:
       - Market
       - TradingFee
       - Wallet
-      - Adjustment 
+      - Adjustment
+      - WhitelistedSmartContract
     read:
       - Trade
       - Order

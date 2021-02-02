@@ -69,7 +69,7 @@ class Wallet < ApplicationRecord
   end
 
   before_validation do
-    next unless address? && blockchain.blockchain_api.supports_cash_addr_format?
+    next unless address? && blockchain.blockchain_api&.supports_cash_addr_format?
     self.address = CashAddr::Converter.to_cash_address(address)
   end
 

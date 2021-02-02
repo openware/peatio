@@ -1,0 +1,17 @@
+<% if ENV['WALLETS_CONFIG'] %>
+<%= File.read(ENV['WALLETS_CONFIG']) %>
+<% else %>
+
+- blockchain_key: eth-mainet
+  address:        '0x6C0B51971650D28821cE30b15B02b9826a20B129'
+  state:          active
+
+- blockchain_key: eth-rinkeby
+  address:        '0xbbd602bb278edff65cbc967b9b62095ad5be23a3'
+  state:          active
+
+- blockchain_key: eth-rinkeby
+  address:        '0xe3cb6897d83691a8eb8458140a1941ce1d6e6dac'
+  state:          active
+
+<% end %>
