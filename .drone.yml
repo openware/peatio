@@ -418,6 +418,25 @@ steps:
     branch:
       - master
 
+# http://plugins.drone.io/drone-plugins/drone-slack/
+- name: Slack Notify
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack_webhook
+    channel:
+      from_secret: slack_webhook_channel
+    template: >
+      *{{uppercasefirst repo.name}}*
+      {{#success build.status}}
+        [SUCCESS] Branch {{ build.branch }} by {{ build.author }}. Good job.
+      {{else}}
+        [FAILURE] Branch {{ build.branch }} by {{ build.author }}. Fix me please.
+      {{/success}}
+  when:
+    branch:
+      - master
+
 # Trigger custom Peatio image build
 - name: build-custom-image
   image: curlimages/curl
