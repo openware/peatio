@@ -71,6 +71,10 @@ group :development do
   gem 'annotate',   '~> 3.1.0'
   gem 'ruby-prof',  '~> 0.17.0', require: false
   gem 'listen',     '>= 3.0.5', '< 3.2'
+
+  gem 'rspec'
+  gem 'guard'
+  gem 'guard-rspec', github: 'caspark/guard-rspec' # Use from github to remove rspec < 4.0 dependencies
 end
 
 group :test do
