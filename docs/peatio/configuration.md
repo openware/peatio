@@ -1,7 +1,7 @@
-# Peatio environments overview
-##### This document provides description, defaults and possible values for all environment variables that take a part in app configuration
+# Peatio environments configuration
+This document provides description of available configuration through the environment.
 
 ### General configuration
-| Env name | Default value | Possible values | Description |
-| ---------- | ------ |-------------------------|---------------------------------- |
-| `deposit_funds_locked` | false | `true`, `false`| when turned on (`false`) user funds will not be locked on deposit creation |
+| Environment variable          | Default value | Possible values | Description                                                  |
+| ----------------------------- | ------------- | --------------- | ------------------------------------------------------------ |
+| `PEATIO_DEPOSIT_FUNDS_LOCKED` | false         | `true`, `false` | When turned on (`true`) user funds will be locked on deposit, and unlocked once the collection of this deposit succeed |
