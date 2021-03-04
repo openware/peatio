@@ -1,0 +1,16 @@
+wallets:
+  bitcoind: Bitcoin::Wallet
+  geth: Ethereum::Wallet
+  parity: Ethereum::Wallet
+  gnosis: Gnosis::Wallet
+  opendax: OWHDWallet::Wallet
+  ow_hdwallet: OWHDWallet::Wallet
+  opendax_cloud: OpendaxCloud::Wallet
+
+blockchains:
+  bitcoin: Bitcoin::Blockchain
+  geth: Ethereum::Blockchain
+  parity: Ethereum::Blockchain
+
+upstreams:
+  opendax: Peatio::Upstream::Opendax

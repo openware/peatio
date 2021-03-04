@@ -28,6 +28,7 @@ tmp
 /config/secrets
 /config/seed
 /config/bench/*.yml
+/config/registries.local.yml
 
 # Ignore translations.js
 /public/javascripts/translations.js
