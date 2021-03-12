@@ -6,7 +6,7 @@ module OpendaxCloud
     DEPOSIT_TRANSACTION_STATE_TRANSLATIONS = {
       success: %w[collected],
       rejected: %w[rejected],
-      pending: %w[processing accepted aml_processing aml_suspicious fee_processing]
+      pending: %w[processing fee_processing accepted]
     }.freeze
 
     WITHDRAW_TRANSACTION_STATE_TRANSLATIONS = {
@@ -48,10 +48,10 @@ module OpendaxCloud
 
     def create_transaction!(transaction)
       response = client.rest_api(:post, '/tx/send', {
-                        currency_id: currency_id,
-                        to_address: transaction.to_address,
-                        amount: transaction.amount,
-                        tid: transaction.options.try(:tid)
+                    currency_id: currency_id,
+                    to_address: transaction.to_address,
+                    amount: transaction.amount,
+                    tid: transaction.options.try(:[], :tid)
                   }.compact)
       transaction.options = response['options']
       transaction

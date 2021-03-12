@@ -94,8 +94,12 @@ module API
               d.block_number = transaction.block_number
             end
           # TODO: check if block number changed.
-          next unless transaction.status.success?
-          deposit.accept!
+
+          if transaction.status.success?
+            deposit.accept!
+          elsif transaction.status.rejected?
+            deposit.reject!
+          end
           deposit
         end
       end
@@ -124,6 +128,8 @@ module API
             withdrawal.fail!
           elsif transaction.status.success?
             withdrawal.success!
+          elsif transaction.status.rejected?
+            withdrawal.reject!
           end
         end
       end
