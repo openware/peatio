@@ -10,13 +10,13 @@
 #   keychain:
 #     backend-1.mycompany.example:
 #       algorithm: RS256
-#       value: <%= ENV['BACKEND2s_PUBLIC_KEY'] %>"
+#       value: <%= ENV['BACKEND1_PUBLIC_KEY'] %>"
 #     backend-2.mycompany.example:
 #       algorithm: HS384
-#       value: "<%= ENV['BACKEND2s_PUBLIC_KEY'] %>"
+#       value: "<%= ENV['BACKEND2_PUBLIC_KEY'] %>"
 #     backend-3.mycompany.example:
 #       algorithm: RS512
-#       value: "<%= ENV['BACKEND2s_PUBLIC_KEY'] %>"
+#       value: "<%= ENV['BACKEND3_PUBLIC_KEY'] %>"
 #
 #
 keychain: {}
