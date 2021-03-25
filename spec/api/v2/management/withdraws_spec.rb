@@ -120,9 +120,10 @@ describe API::V2::Management::Withdraws, type: :request do
       context 'withdrawal with beneficiary' do
         let(:beneficiary) { create(:beneficiary, state: :active, currency: currency) }
         let(:data) do
-          { uid:      member.uid,
-            currency: currency.code,
-            amount:   amount.to_s,
+          { uid:            member.uid,
+            currency:       currency.code,
+            amount:         amount.to_s,
+            additional_fee: true,
             beneficiary_id: beneficiary.id }
         end
 
@@ -130,12 +131,13 @@ describe API::V2::Management::Withdraws, type: :request do
           request
           expect(response).to have_http_status(201)
           record = Withdraw.find_by_tid!(JSON.parse(response.body).fetch('tid'))
-          expect(record.sum).to eq 0.1575
+          new_amount = currency.withdraw_fee + data[:amount].to_d
+          expect(record.sum).to eq new_amount
           expect(record.aasm_state).to eq 'accepted'
           expect(record.rid).to eq beneficiary.rid
           expect(record.account).to eq account
-          expect(record.account.balance).to eq (1.2 - amount)
-          expect(record.account.locked).to eq amount
+          expect(record.account.balance).to eq (1.2 - new_amount)
+          expect(record.account.locked).to eq new_amount
         end
 
         context 'pending beneficiary' do
