@@ -45,11 +45,6 @@ class Wallet < ApplicationRecord
 
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
 
-  validates :blockchain_key, exclusion: { in: lambda { |w|
-    Wallet.where(blockchain_key: w.blockchain_key, kind: 310)
-          .map(&:blockchain_key).uniq
-  } }, message: 'Blockchain hot wallet is already present.', on: :create
-
   scope :active,   -> { where(status: :active) }
   scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
   scope :fee,      -> { where(kind: kinds(fee: true, values: true)) }
