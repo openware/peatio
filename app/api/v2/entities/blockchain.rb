@@ -4,7 +4,7 @@
 module API
   module V2
     module Entities
-      class Blockchain < API::V2::Entities::Base
+      class Blockchain < Base
         expose(
           :key,
           documentation: {
@@ -74,24 +74,6 @@ module API
           documentation: {
             type: String,
             desc: 'Blockchain warning.'
-          }
-        )
-
-        expose(
-          :created_at,
-          format_with: :iso8601,
-          documentation: {
-            type: String,
-            desc: 'Blockchain created time in iso8601 format.'
-          }
-        )
-
-        expose(
-          :updated_at,
-          format_with: :iso8601,
-          documentation: {
-            type: String,
-            desc: 'Blockchain updated time in iso8601 format.'
           }
         )
       end

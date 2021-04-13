@@ -6,11 +6,11 @@ module API
     module Public
       class Config < Grape::API
         get '/config' do
-          present currencies: Currency.all, with: Entities::Currency,
-                  blockchains: Blockchain.all, with: Entities::Blockchain,
-                  trading_fees: TradingFee.all, with: Entities::TradingFee,
-                  markets: ::Market.all, with: Entities::Market,
-                  withdraw_limits: WithdrawLimit.all, with: Entities::WithdrawLimit
+          present :blockchains, Blockchain.active, with: Entities::Blockchain
+          present :currencies, Currency.visible, with: Entities::Currency
+          present :trading_fees, TradingFee.all, with: Entities::TradingFee
+          present :markets, ::Market.enabled, with: Entities::Market
+          present :withdraw_limits, WithdrawLimit.all, with: Entities::WithdrawLimit
         end
       end
     end

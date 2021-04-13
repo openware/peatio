@@ -192,14 +192,6 @@ module API
             desc: 'Number of confirmations required for confirming deposit or withdrawal'
           }
         ) { |c| c.blockchain.min_confirmations }
-
-        expose(
-          :blockchains,
-          if: ->(currency) { currency.coin? },
-          documentation: {
-            desc: 'Blockchain key of an currency',
-          }
-        ) { |c| c.blockchains.select(:id, :key, :warning, :description, :protocol).as_json }
       end
     end
   end
