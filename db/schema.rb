@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_09_100639) do
+ActiveRecord::Schema.define(version: 2021_04_16_054234) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -68,6 +68,18 @@ ActiveRecord::Schema.define(version: 2021_04_09_100639) do
     t.index ["member_id"], name: "index_beneficiaries_on_member_id"
   end
 
+  create_table "blockchain_currencies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "currency_id"
+    t.string "blockchain_key"
+    t.decimal "deposit_fee", precision: 32, scale: 16, default: "0.0", null: false
+    t.decimal "min_deposit_amount", precision: 32, scale: 16, default: "0.0", null: false
+    t.decimal "min_collection_amount", precision: 32, scale: 16, default: "0.0", null: false
+    t.decimal "withdraw_fee", precision: 32, scale: 16, default: "0.0", null: false
+    t.decimal "min_withdraw_amount", precision: 32, scale: 16, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "blockchains", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "key", null: false
     t.string "name"
@@ -85,13 +97,6 @@ ActiveRecord::Schema.define(version: 2021_04_09_100639) do
     t.string "protocol"
     t.index ["key"], name: "index_blockchains_on_key", unique: true
     t.index ["status"], name: "index_blockchains_on_status"
-  end
-
-  create_table "blockchains_currencies", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "blockchain_id", null: false
-    t.string "currency_id", null: false
-    t.index ["blockchain_id"], name: "index_blockchains_currencies_on_blockchain_id"
-    t.index ["currency_id"], name: "index_blockchains_currencies_on_currency_id"
   end
 
   create_table "currencies", id: :string, limit: 10, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
