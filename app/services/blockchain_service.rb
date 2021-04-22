@@ -116,7 +116,8 @@ class BlockchainService
       Deposits::Coin.find_or_create_by!(
         currency_id: transaction.currency_id,
         txid: transaction.hash,
-        txout: transaction.txout
+        blockchain_key: address.blockchain_key,
+        txout: transaction.txout,
       ) do |d|
         d.address = transaction.to_address
         d.amount = transaction.amount

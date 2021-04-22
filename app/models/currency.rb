@@ -60,10 +60,6 @@ class Currency < ApplicationRecord
             inclusion: { in: ->(_) { Currency.coins_without_tokens.pluck(:id).map(&:to_s) } },
             if: :coin?
 
-  validates :blockchain_key,
-            inclusion: { in: ->(_) { Blockchain.pluck(:key).map(&:to_s) } },
-            if: :coin?
-
   validates :type, inclusion: { in: ->(_) { Currency.types.map(&:to_s) } }
   validates :options, length: { maximum: 1000 }
   validates :base_factor, numericality: { greater_than_or_equal_to: 1, only_integer: true }
@@ -99,7 +95,6 @@ class Currency < ApplicationRecord
 
   before_validation { self.code = code.downcase }
   before_validation { self.deposit_fee = 0 unless fiat? }
-  before_validation { self.blockchain_key = parent.blockchain_key if token? && blockchain_key.blank? }
   before_validation(on: :create) { self.position = Currency.count + 1 unless position.present? }
 
   before_validation do
@@ -135,14 +130,7 @@ class Currency < ApplicationRecord
   end
 
   # == Instance Methods =====================================================
-
-  delegate :explorer_transaction, :blockchain_api, :explorer_address, to: :blockchain
-
   types.each { |t| define_method("#{t}?") { type == t.to_s } }
-
-  def blockchain
-    Rails.cache.fetch("#{code}_blockchain", expires_in: 60) { Blockchain.find_by(key: blockchain_key) }
-  end
 
   def wipe_cache
     Rails.cache.delete_matched("currencies*")

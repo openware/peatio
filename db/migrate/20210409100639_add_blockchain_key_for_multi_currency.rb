@@ -1,11 +1,13 @@
 class AddBlockchainKeyForMultiCurrency < ActiveRecord::Migration[5.2]
   def change
-    add_column :blockchains, :description, :string
-    add_column :blockchains, :warning, :string
-    add_column :blockchains, :protocol, :string
-    add_column :deposits, :blockchain_key, :string
-    add_column :withdraws, :blockchain_key, :string
-    add_column :payment_addresses, :blockchain_key, :string
+    %i[description warning protocol].each do |t|
+      add_column :blockchains, t, :string, after: :status
+    end
+    add_column :payment_addresses, :blockchain_key, :string, after: :wallet_id
+    %i[deposits withdraws].each do |t|
+      add_column t, :blockchain_key, :string, after: :currency_id
+    end
+
     # For existing payment address
     PaymentAddress.all.each { |payment| payment.update(blockchain_key: payment.wallet.blockchain_key) }
   end

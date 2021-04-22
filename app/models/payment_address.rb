@@ -16,7 +16,7 @@ class PaymentAddress < ApplicationRecord
 
   belongs_to :wallet
   belongs_to :member
-  belongs_to :blockchain, foreign_key: :blockchain_key
+  belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
 
   alias_attribute :code, :id
 
@@ -54,10 +54,6 @@ class PaymentAddress < ApplicationRecord
     ::AMQP::Queue.enqueue_event('private', member.uid, :deposit_address, type: :create,
                           currencies: wallet.currencies.codes,
                           address:  address)
-  end
-
-  def blockchain
-    Rails.cache.fetch("#{code}_blockchain", expires_in: 60) { Blockchain.find_by(key: blockchain_key) }
   end
 end
 

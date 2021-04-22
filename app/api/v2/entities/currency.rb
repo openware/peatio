@@ -61,24 +61,6 @@ module API
         )
 
         expose(
-          :explorer_transaction,
-          documentation: {
-            desc: 'Currency transaction exprorer url template',
-            example: 'https://testnet.blockchain.info/tx/'
-          },
-          if: -> (currency){ currency.coin? }
-        )
-
-        expose(
-          :explorer_address,
-          documentation: {
-            desc: 'Currency address exprorer url template',
-            example: 'https://testnet.blockchain.info/address/'
-          },
-          if: -> (currency){ currency.coin? }
-        )
-
-        expose(
           :type,
           documentation: {
             type: String,
@@ -184,14 +166,6 @@ module API
           },
           if: -> (currency){ currency.icon_url.present? }
         )
-
-        expose(
-          :min_confirmations,
-          if: ->(currency) { currency.coin? },
-          documentation: {
-            desc: 'Number of confirmations required for confirming deposit or withdrawal'
-          }
-        ) { |c| c.blockchain.min_confirmations }
       end
     end
   end

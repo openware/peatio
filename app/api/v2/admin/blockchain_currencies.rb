@@ -52,7 +52,7 @@ module API
                    desc: -> { API::V2::Admin::Entities::BlockchainCurrency.documentation[:min_withdraw_amount][:desc] }
         end
         post '/blockchains_currencies/update' do
-          admin_authorize! :update, ::BlockchainCurrency
+          admin_authorize! :update, ::BlockchainCurrency, params.except(:id)
 
           blockchain_currency = BlockchainCurrency.find(params[:id])
           if blockchain_currency.update(declared(params, include_missing: false))

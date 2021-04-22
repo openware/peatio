@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_16_054234) do
+ActiveRecord::Schema.define(version: 2021_04_20_044216) do
 
   create_table "accounts", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
@@ -90,11 +90,11 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
     t.string "explorer_transaction"
     t.integer "min_confirmations", default: 6, null: false
     t.string "status", null: false
+    t.string "protocol"
+    t.string "warning"
+    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "description"
-    t.string "warning"
-    t.string "protocol"
     t.index ["key"], name: "index_blockchains_on_key", unique: true
     t.index ["status"], name: "index_blockchains_on_status"
   end
@@ -103,7 +103,6 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
     t.string "name"
     t.text "description"
     t.string "homepage"
-    t.string "blockchain_key", limit: 32
     t.string "parent_id"
     t.string "type", limit: 30, default: "coin", null: false
     t.decimal "deposit_fee", precision: 32, scale: 16, default: "0.0", null: false
@@ -140,6 +139,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
   create_table "deposits", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "member_id", null: false
     t.string "currency_id", limit: 10, null: false
+    t.string "blockchain_key"
     t.decimal "amount", precision: 32, scale: 16, null: false
     t.decimal "fee", precision: 32, scale: 16, null: false
     t.string "address", limit: 95
@@ -155,7 +155,6 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
     t.datetime "created_at", precision: 3, null: false
     t.datetime "updated_at", precision: 3, null: false
     t.datetime "completed_at", precision: 3
-    t.string "blockchain_key"
     t.index ["aasm_state", "member_id", "currency_id"], name: "index_deposits_on_aasm_state_and_member_id_and_currency_id"
     t.index ["currency_id", "txid", "txout"], name: "index_deposits_on_currency_id_and_txid_and_txout", unique: true
     t.index ["currency_id"], name: "index_deposits_on_currency_id"
@@ -310,13 +309,13 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
   create_table "payment_addresses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "member_id"
     t.bigint "wallet_id"
+    t.string "blockchain_key"
     t.string "address", limit: 95
     t.boolean "remote", default: false, null: false
     t.string "secret_encrypted"
     t.string "details_encrypted", limit: 1024
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "blockchain_key"
     t.index ["member_id"], name: "index_payment_addresses_on_member_id"
     t.index ["wallet_id"], name: "index_payment_addresses_on_wallet_id"
   end
@@ -490,6 +489,7 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
     t.integer "member_id", null: false
     t.bigint "beneficiary_id"
     t.string "currency_id", limit: 10, null: false
+    t.string "blockchain_key"
     t.decimal "amount", precision: 32, scale: 16, null: false
     t.decimal "fee", precision: 32, scale: 16, null: false
     t.string "txid", limit: 128, collation: "utf8_bin"
@@ -506,7 +506,6 @@ ActiveRecord::Schema.define(version: 2021_04_16_054234) do
     t.datetime "created_at", precision: 3, null: false
     t.datetime "updated_at", precision: 3, null: false
     t.datetime "completed_at", precision: 3
-    t.string "blockchain_key"
     t.index ["aasm_state"], name: "index_withdraws_on_aasm_state"
     t.index ["currency_id", "txid"], name: "index_withdraws_on_currency_id_and_txid", unique: true
     t.index ["currency_id"], name: "index_withdraws_on_currency_id"

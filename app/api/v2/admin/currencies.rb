@@ -174,9 +174,6 @@ module API
                    values: { value: (0..18), message: 'admin.currency.invalid_subunits' },
                    desc: -> { API::V2::Admin::Entities::Currency.documentation[:subunits][:desc] }
           given type: ->(val) { val == 'coin' } do
-            optional :blockchain_key,
-                     values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.currency.blockchain_key_doesnt_exist' },
-                     desc: -> { API::V2::Admin::Entities::Currency.documentation[:blockchain_key][:desc] }
             optional :parent_id,
                      values: { value: -> { Currency.coins_without_tokens.pluck(:id).map(&:to_s) }, message: 'admin.currency.parent_id_doesnt_exist' },
                      desc: -> { API::V2::Admin::Entities::Currency.documentation[:parent_id][:desc] }
@@ -208,9 +205,6 @@ module API
                    type: { value: Integer, message: 'admin.currency.non_integer_position' },
                    values: { value: -> (p){ p >= ::Currency::TOP_POSITION }, message: 'admin.currency.invalid_position' },
                    desc: -> { API::V2::Admin::Entities::Currency.documentation[:position][:desc] }
-          optional :blockchain_key,
-                   values: { value: -> { ::Blockchain.pluck(:key) }, message: 'admin.currency.blockchain_key_doesnt_exist' },
-                   desc: -> { API::V2::Admin::Entities::Currency.documentation[:blockchain_key][:desc] }
           given code: -> (val) { val.in?(Currency.coins.pluck(:code).map(&:to_s)) } do
             optional :parent_id,
                      values: { value: -> { Currency.coins_without_tokens.pluck(:id).map(&:to_s) }, message: 'admin.currency.parent_id_doesnt_exist' },

@@ -5,7 +5,6 @@
 # TODO: Delete this class and update type column
 module Withdraws
   class Coin < Withdraw
-    has_one :blockchain, through: :currency
 
     before_validation do
       next unless blockchain_api&.supports_cash_addr_format? && rid?
@@ -27,6 +26,10 @@ module Withdraws
 
     def as_json_for_event_api
       super.merge blockchain_confirmations: confirmations
+    end
+
+    def blockchain
+      Blockchain.find_by(key: blockchain_key)
     end
   end
 end

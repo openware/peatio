@@ -17,15 +17,6 @@ module API
           )
 
           expose(
-            :blockchain_key,
-            documentation: {
-                type: String,
-                desc: 'Associated blockchain key which will perform transactions synchronization for currency.'
-            },
-            if: -> (currency){ currency.coin? }
-          )
-
-          expose(
             :parent_id,
             documentation: {
               desc: 'Parent currency id.',

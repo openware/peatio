@@ -5,12 +5,14 @@
 # TODO: Delete this class and update type column
 module Deposits
   class Fiat < Deposit
-    has_one :blockchain, through: :currency
-
     validate { errors.add(:currency, :invalid) if currency && !currency.fiat? }
 
     def charge!
       with_lock { accept! }
+    end
+
+    def blockchain
+      Blockchain.find_by(key: blockchain_key)
     end
   end
 end

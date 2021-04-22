@@ -123,7 +123,8 @@ class Deposit < ApplicationRecord
   end
 
   def blockchain_api
-    currency.blockchain_api
+    blockchain = Blockchain.find_by(key: blockchain_key)
+    blockchain.blockchain_api
   end
 
   def confirmations

@@ -113,7 +113,8 @@ class Withdraw < ApplicationRecord
         end
       end
       after_commit do
-        tx = currency.blockchain_api.fetch_transaction(self)
+        blockchain = Blockchain.find_by(key: blockchain_key)
+        tx = blockchain.blockchain_api.fetch_transaction(self)
         if tx.present?
           success! if tx.status.success?
         end
@@ -206,7 +207,8 @@ class Withdraw < ApplicationRecord
   end
 
   def blockchain_api
-    currency.blockchain_api
+    blockchain = Blockchain.find_by(key: blockchain_key)
+    blockchain.blockchain_api
   end
 
   def confirmations
