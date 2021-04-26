@@ -53,9 +53,10 @@ Wallet.create!(
   kind: "hot",
   settings: { 
     uri: "https://hdwallet/api/v2/hdwallet",
-    gateway_url: "https://infura.io"},
+    gateway_url: "https://infura.io",
     wallet_index: 1,
-    secret: "changeme",
+    secret: "changeme"
+  },
   max_balance: 1000,
   status: "active"
 )
