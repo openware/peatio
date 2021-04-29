@@ -62,8 +62,8 @@ class Wallet < ApplicationRecord
         result = { address: 'changeme', secret: 'changeme' }
       ensure
         if result.present?
-          self.address = result[:address]
-          self.secret = result[:secret]
+          self.address = result.delete(:address)
+          self.settings = self.settings.merge(result)
         end
       end
     end
@@ -143,7 +143,11 @@ class Wallet < ApplicationRecord
   end
 
   def generate_settings
-    service.create_address!('peatio', {})
+    results = service.create_address!('peatio', {})
+    {
+      address: results[:address],
+      secret: results[:secret]
+    }.merge(results[:details] || {})
   end
 end
 

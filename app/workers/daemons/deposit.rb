@@ -26,6 +26,8 @@ module Workers
             rescue StandardError => e
               Rails.logger.error { "Failed to collect deposit fee #{deposit.id}. See exception details below." }
               report_exception(e)
+              deposit.err! e
+
               raise e if is_db_connection_error?(e)
 
               next
@@ -35,7 +37,7 @@ module Workers
           process_deposit(deposit)
         end
 
-        # Process deposits with `fee_processing` state that already collected fees for collection
+        # Process deposits in `fee_processing` state that already transfered fees for collection
         ::Deposit.fee_processing.where('updated_at < ?', 5.minute.ago).each do |deposit|
           Rails.logger.info { "Starting processing token deposit with id: #{deposit.id}." }
 

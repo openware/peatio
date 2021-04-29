@@ -4,6 +4,7 @@
 class Deposit < ApplicationRecord
   STATES = %i[submitted canceled rejected accepted collected skipped processing fee_processing].freeze
 
+  serialize :error, JSON unless Rails.configuration.database_support_json
   serialize :spread, Array
   serialize :from_addresses, Array
 
@@ -46,6 +47,7 @@ class Deposit < ApplicationRecord
     state :skipped
     state :collected
     state :fee_processing
+    state :errored
     event(:cancel) { transitions from: :submitted, to: :canceled }
     event(:reject) { transitions from: :submitted, to: :rejected }
     event :accept do
@@ -65,13 +67,13 @@ class Deposit < ApplicationRecord
 
     event :process do
       if Peatio::AML.adapter.present?
-        transitions from: %i[aml_processing aml_suspicious accepted], to: :aml_processing do
+        transitions from: %i[aml_processing aml_suspicious accepted errored], to: :aml_processing do
           after do
             process_collect! if aml_check!
           end
         end
       else
-        transitions from: %i[accepted skipped], to: :processing do
+        transitions from: %i[accepted skipped errored], to: :processing do
           guard { currency.coin? }
         end
       end
@@ -81,6 +83,10 @@ class Deposit < ApplicationRecord
       transitions from: %i[accepted processing skipped], to: :fee_processing do
         guard { currency.coin? }
       end
+    end
+
+    event :err do
+      transitions from: %i[processing fee_processing], to: :errored, after: :add_error
     end
 
     event :process_collect do
@@ -133,6 +139,14 @@ class Deposit < ApplicationRecord
   rescue StandardError => e
     report_exception(e)
     'N/A'
+  end
+
+  def add_error(e)
+    if error.blank?
+      update!(error: [{ class: e.class.to_s, message: e.message }])
+    else
+      update!(error: error << { class: e.class.to_s, message: e.message })
+    end
   end
 
   def spread_to_transactions
