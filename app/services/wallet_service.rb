@@ -29,7 +29,7 @@ class WalletService
                        currency: deposit.currency.to_blockchain_api_settings)
 
     destination_wallets =
-      Wallet.active.withdraw.ordered
+      Wallet.active_retired.withdraw.ordered
         .joins(:currencies).where(currencies: { id: deposit.currency_id })
         .map do |w|
         # NOTE: Consider min_collection_amount is defined per wallet.

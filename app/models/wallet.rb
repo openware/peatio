@@ -39,13 +39,14 @@ class Wallet < ApplicationRecord
   validates :name,    presence: true, uniqueness: true
   validates :address, presence: true
 
-  validates :status,  inclusion: { in: %w[active disabled] }
+  validates :status,  inclusion: { in: %w[active disabled retired] }
 
   validates :gateway, inclusion: { in: ->(_){ Wallet.gateways.map(&:to_s) } }
 
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
 
   scope :active,   -> { where(status: :active) }
+  scope :active_retired, -> { where(status: %w[active retired]) }
   scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
   scope :fee,      -> { where(kind: kinds(fee: true, values: true)) }
   scope :withdraw, -> { where(kind: kinds(withdraw: true, values: true)) }
@@ -105,6 +106,10 @@ class Wallet < ApplicationRecord
     end
 
     def deposit_wallet(currency_id)
+      Wallet.active_retired.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
+    end
+
+    def active_wallet(currency_id)
       Wallet.active.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
     end
   end
