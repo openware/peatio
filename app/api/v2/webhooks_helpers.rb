@@ -29,7 +29,7 @@ module API
 
       def process_deposit_event(request)
         # For deposit events we use only Deposit wallets.
-        Wallet.where(status: :active, kind: :deposit, gateway: request.params[:adapter]).each do |w|
+        Wallet.active_retired.where(kind: :deposit, gateway: request.params[:adapter]).each do |w|
           service = w.service
 
           next unless service.adapter.respond_to?(:trigger_webhook_event)
@@ -47,7 +47,7 @@ module API
 
       def process_withdraw_event(request)
         # For withdraw events we use only Withdraw events.
-        Wallet.where(status: :active, kind: :hot, gateway: request.params[:adapter]).each do |w|
+        Wallet.active_retired.where(kind: :hot, gateway: request.params[:adapter]).each do |w|
           service = w.service
 
           next unless service.adapter.respond_to?(:trigger_webhook_event)
@@ -138,7 +138,7 @@ module API
       def create_address(address_id, address, currency_id)
         Rails.logger.info { "Address detected: #{address}" }
 
-        payment_address = PaymentAddress.where(address: nil, wallet: Wallet.deposit_wallet(currency_id))
+        payment_address = PaymentAddress.where(address: nil, wallet: Wallet.active_wallet(currency_id))
                                         .find { |address| address.details['address_id'] == address_id }
 
         payment_address.update!(address: address) if payment_address.present?
