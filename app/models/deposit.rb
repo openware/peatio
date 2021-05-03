@@ -183,7 +183,7 @@ class Deposit < ApplicationRecord
       currency:                 currency_id,
       amount:                   amount.to_s('F'),
       state:                    aasm_state,
-      status:                   PaymentAddress.find_by_address(address)&.wallet&.status,
+      wallet_state:             PaymentAddress.find_by_address(address)&.wallet&.status,
       created_at:               created_at.iso8601,
       updated_at:               updated_at.iso8601,
       completed_at:             completed_at&.iso8601,

@@ -548,7 +548,7 @@ describe WalletService do
       end
 
       it 'spreads everything to cold wallet' do
-        expect(Wallet.active.withdraw.joins(:currencies).where(currencies: { id: deposit.currency_id }).count).to eq 2
+        expect(Wallet.active_retired.withdraw.joins(:currencies).where(currencies: { id: deposit.currency_id }).count).to eq 2
 
         expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
         expect(subject).to all(be_a(Peatio::Transaction))
@@ -563,7 +563,7 @@ describe WalletService do
       end
 
       it 'skips warm wallet and spreads everything to cold wallet' do
-        expect(Wallet.active.withdraw.joins(:currencies).where(currencies: { id: deposit.currency_id }).count).to eq 3
+        expect(Wallet.active_retired.withdraw.joins(:currencies).where(currencies: { id: deposit.currency_id }).count).to eq 3
 
         expect(subject.map(&:as_json).map(&:symbolize_keys)).to contain_exactly(*expected_spread)
         expect(subject).to all(be_a(Peatio::Transaction))

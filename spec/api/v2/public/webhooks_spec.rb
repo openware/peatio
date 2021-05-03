@@ -11,7 +11,7 @@ describe API::V2::Public::Webhooks, type: :request do
             api_post '/api/v2/public/webhooks/opendax_cloud/deposit'
           }.not_to change { Deposit.count }
 
-          expect(Wallet.where(status: :active, kind: :deposit, gateway: 'opendax_cloud').count).to eq 0
+          expect(Wallet.where(status: %w[active retired], kind: :deposit, gateway: 'opendax_cloud').count).to eq 0
         end
       end
 
@@ -125,7 +125,7 @@ describe API::V2::Public::Webhooks, type: :request do
             api_post '/api/v2/public/webhooks/opendax_cloud/withdraw'
           }.not_to change { Withdraw.count }
 
-          expect(Wallet.where(status: :active, kind: :hot, gateway: 'opendax_cloud').count).to eq 0
+          expect(Wallet.where(status: %w[active retired], kind: :hot, gateway: 'opendax_cloud').count).to eq 0
         end
       end
 
@@ -219,7 +219,7 @@ describe API::V2::Public::Webhooks, type: :request do
           api_post '/api/v2/public/webhooks/opendax_cloud/deposit_address'
           expect(response.status).to eq 200
 
-          expect(Wallet.where(status: :active, kind: :deposit, gateway: 'opendax_cloud').count).to eq 0
+          expect(Wallet.where(status: %w[active retired], kind: :deposit, gateway: 'opendax_cloud').count).to eq 0
         end
       end
 
