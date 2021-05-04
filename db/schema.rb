@@ -368,18 +368,16 @@ ActiveRecord::Schema.define(version: 2021_04_26_083359) do
     t.bigint "maker_order_id", null: false
     t.bigint "taker_order_id", null: false
     t.string "market_id", limit: 20, null: false
-    t.string "market_type", default: "spot", null: false
     t.bigint "maker_id", null: false
     t.bigint "taker_id", null: false
     t.string "taker_type", limit: 20, default: "", null: false
     t.datetime "created_at", precision: 3, null: false
     t.datetime "updated_at", precision: 3, null: false
     t.index ["created_at"], name: "index_trades_on_created_at"
-    t.index ["maker_id", "market_type", "created_at"], name: "index_trades_on_maker_id_and_market_type_and_created_at"
-    t.index ["maker_id", "market_type"], name: "index_trades_on_maker_id_and_market_type"
     t.index ["maker_id"], name: "index_trades_on_maker_id"
     t.index ["maker_order_id"], name: "index_trades_on_maker_order_id"
-    t.index ["taker_id", "market_type"], name: "index_trades_on_taker_id_and_market_type"
+    t.index ["market_id", "created_at"], name: "index_trades_on_market_id_and_created_at"
+    t.index ["taker_id"], name: "index_trades_on_taker_id"
     t.index ["taker_order_id"], name: "index_trades_on_taker_order_id"
     t.index ["taker_type"], name: "index_trades_on_taker_type"
   end

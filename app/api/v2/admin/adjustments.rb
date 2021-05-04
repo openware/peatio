@@ -135,7 +135,7 @@ module API
               if member.present?
                 balance = member.get_account(account_number_hash[:currency_id]).balance
 
-                if adjustment.amount.abs() > balance && params[:action] != 'reject'
+                if adjustment.amount.abs() > balance
                   error!({ errors: ['admin.adjustment.user_insufficient_balance'] }, 422)
                 end
               end
