@@ -16,9 +16,8 @@ module API
       end
 
       def process_generic_event(request)
-        Wallet.where(status: :active, kind: :deposit, gateway: request.params[:adapter]).each do |w|
+        Wallet.active_retired.where(kind: :deposit, gateway: request.params[:adapter]).each do |w|
           service = w.service
-
           next unless service.adapter.respond_to?(:trigger_webhook_event)
 
           transactions = service.trigger_webhook_event(request)
@@ -54,7 +53,7 @@ module API
 
       def process_deposit_event(request)
         # For deposit events we use only Deposit wallets.
-        Wallet.where(status: :active, kind: :deposit, gateway: request.params[:adapter]).each do |w|
+        Wallet.active_retired.where(kind: :deposit, gateway: request.params[:adapter]).each do |w|
           service = w.service
 
           next unless service.adapter.respond_to?(:trigger_webhook_event)
@@ -72,7 +71,7 @@ module API
 
       def process_withdraw_event(request)
         # For withdraw events we use only Withdraw events.
-        Wallet.where(status: :active, kind: :hot, gateway: request.params[:adapter]).each do |w|
+        Wallet.active_retired.where(kind: :hot, gateway: request.params[:adapter]).each do |w|
           service = w.service
 
           next unless service.adapter.respond_to?(:trigger_webhook_event)

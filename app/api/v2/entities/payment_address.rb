@@ -33,7 +33,7 @@ module API
             type: String
           }
         ) do |pa|
-          pa.address.present? ? 'active' : 'pending'
+          pa.status
         end
       end
     end

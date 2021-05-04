@@ -18,6 +18,10 @@ class Wallet < ApplicationRecord
   enumerize :kind, in: ENUMERIZED_KINDS, scope: true
 
   SETTING_ATTRIBUTES = %i[ uri secret ].freeze
+  STATES = %w[active disabled retired].freeze
+  # active - system use active wallets for all user transactions transfers.
+  # retired - system use retired wallet only to accept deposits.
+  # disabled - system don't use disabled wallets in user transactions transfers.
 
   SETTING_ATTRIBUTES.each do |attribute|
     define_method attribute do
@@ -39,13 +43,14 @@ class Wallet < ApplicationRecord
   validates :name,    presence: true, uniqueness: true
   validates :address, presence: true
 
-  validates :status,  inclusion: { in: %w[active disabled] }
+  validates :status,  inclusion: { in: STATES }
 
   validates :gateway, inclusion: { in: ->(_){ Wallet.gateways.map(&:to_s) } }
 
   validates :max_balance, numericality: { greater_than_or_equal_to: 0 }
 
   scope :active,   -> { where(status: :active) }
+  scope :active_retired, -> { where(status: %w[active retired]) }
   scope :deposit,  -> { where(kind: kinds(deposit: true, values: true)) }
   scope :fee,      -> { where(kind: kinds(fee: true, values: true)) }
   scope :withdraw, -> { where(kind: kinds(withdraw: true, values: true)) }
@@ -105,6 +110,10 @@ class Wallet < ApplicationRecord
     end
 
     def deposit_wallet(currency_id)
+      Wallet.active_retired.deposit.joins(:currencies).where(currencies: { id: currency_id })
+    end
+
+    def active_deposit_wallet(currency_id)
       Wallet.active.deposit.joins(:currencies).find_by(currencies: { id: currency_id })
     end
   end

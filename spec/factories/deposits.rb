@@ -8,7 +8,7 @@ FactoryBot.define do
 
     factory :deposit_btc, class: Deposits::Coin do
       currency { Currency.find(:btc) }
-      address { Faker::Blockchain::Bitcoin.address }
+      address { create(:payment_address, :btc_address).address }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
       block_number { rand(1..1349999) }
@@ -21,7 +21,7 @@ FactoryBot.define do
     trait :deposit_btc do
       type { Deposits::Coin }
       currency { Currency.find(:btc) }
-      address { Faker::Blockchain::Bitcoin.address }
+      address { create(:payment_address, :btc_address).address  }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
@@ -30,7 +30,7 @@ FactoryBot.define do
       type { Deposits::Coin }
       currency { Currency.find(:eth) }
       member { create(:member, :level_3, :barong) }
-      address { Faker::Blockchain::Bitcoin.address }
+      address { create(:payment_address, :eth_address).address  }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
@@ -39,7 +39,7 @@ FactoryBot.define do
       type { Deposits::Coin }
       currency { Currency.find(:trst) }
       member { create(:member, :level_3, :barong) }
-      address { Faker::Blockchain::Bitcoin.address }
+      address { create(:payment_address, :trst_address).address  }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end
@@ -48,7 +48,7 @@ FactoryBot.define do
       type { Deposits::Coin }
       currency { Currency.find(:ring) }
       member { create(:member, :level_3, :barong) }
-      address { Faker::Blockchain::Bitcoin.address }
+      address { create(:payment_address, :trst_address).address  }
       txid { Faker::Lorem.characters(64) }
       txout { 0 }
     end

@@ -41,7 +41,7 @@ module API
             type: String
           }
         ) do |account, options|
-          wallet = Wallet.deposit_wallet(account.currency_id)
+          wallet = Wallet.active_deposit_wallet(account.currency_id)
           ::PaymentAddress.find_by(wallet: wallet, member: options[:current_user], remote: false)
         end
       end

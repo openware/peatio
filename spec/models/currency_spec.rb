@@ -237,7 +237,7 @@ describe Currency do
 
       context 'link_wallets' do
         let!(:coin) { Currency.find(:eth) }
-        let!(:wallet) { Wallet.deposit_wallet(:eth) }
+        let!(:wallet) { Wallet.deposit_wallet(:eth)[0] }
 
         context 'without parent id' do
           it 'should not create currency wallet' do
