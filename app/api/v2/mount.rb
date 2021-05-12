@@ -68,14 +68,7 @@ module API
                                   API::V2::Entities::Withdraw,
                                   API::V2::Entities::Ticker,
                                   API::V2::Entities::Ticker::TickerEntry
-                                ],
-                                security_definitions: {
-                                  Bearer: {
-                                    type: "apiKey",
-                                    name: "JWT",
-                                    in:   "header"
-                                  }
-                                }
+                                ]
 
       # Mount Management API after swagger. To separate swagger Management API doc.
       # TODO: Find better solution for separating swagger Management API.

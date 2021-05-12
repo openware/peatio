@@ -16,13 +16,6 @@
   "produces": [
     "application/json"
   ],
-  "securityDefinitions": {
-    "Bearer": {
-      "type": "apiKey",
-      "name": "JWT",
-      "in": "header"
-    }
-  },
   "host": "localhost:3000",
   "basePath": "/api/v2",
   "tags": [
