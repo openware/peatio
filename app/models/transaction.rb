@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 class Transaction < ApplicationRecord
   # == Constants ============================================================
 
-  STATUSES = %w[pending succeed].freeze
+  STATUSES = %w[pending succeed rejected failed].freeze
+  KINDS = %w[tx tx_prebuild].freeze
 
   # == Attributes ===========================================================
 
@@ -9,16 +12,48 @@ class Transaction < ApplicationRecord
 
   serialize :data, JSON unless Rails.configuration.database_support_json
 
+  include AASM
+  include AASM::Locking
+
+  aasm whiny_transitions: false, column: :status do
+    state :pending, initial: true
+    state :skipped
+    state :failed
+    state :succeed
+
+    event :confirm do
+      transitions from: :pending, to: :succeed
+      after do
+        record_expenses!
+      end
+    end
+
+    event :fail do
+      transitions from: :pending, to: :failed
+      after do
+        record_expenses!
+      end
+    end
+
+    event :reject do
+      transitions from: :pending, to: :rejected
+    end
+  end
+
   # == Relationships ========================================================
 
   belongs_to :reference, polymorphic: true
   belongs_to :currency, foreign_key: :currency_id
+  belongs_to :fee_currency, foreign_key: :fee_currency_id, class_name: 'Currency'
+  belongs_to :blockchain, foreign_key: :blockchain_key, primary_key: :key
 
   # == Validations ==========================================================
 
-  validates :currency, :amount, :from_address, :to_address, :status, presence: true
+  validates :currency, :blockchain, :amount, :from_address, :to_address, :status, presence: true
 
   validates :status, inclusion: { in: STATUSES }
+
+  validates :kind, inclusion: { in: KINDS }
 
   # == Scopes ===============================================================
 
@@ -26,14 +61,25 @@ class Transaction < ApplicationRecord
 
   after_initialize :initialize_defaults, if: :new_record?
 
-  # TODO: record expenses for succeed transactions
-
   # == Class Methods ========================================================
 
   # == Instance Methods =====================================================
 
   def initialize_defaults
-    self.status = :pending if status.blank?
+    self.fee_currency_id ||= currency_id
+  end
+
+  def record_expenses!
+    return unless fee?
+
+    Operations::Expense.create!({
+                                  code: 402,
+                                  currency_id: fee_currency_id,
+                                  reference_id: reference_id,
+                                  reference_type: reference_type,
+                                  debit: 0.0,
+                                  credit: fee
+                                })
   end
 end
 
@@ -41,7 +87,6 @@ end
 # Schema version: 20201207134745
 #
 # Table name: transactions
-#
 #  id             :bigint           not null, primary key
 #  currency_id    :string(255)      not null
 #  reference_type :string(255)

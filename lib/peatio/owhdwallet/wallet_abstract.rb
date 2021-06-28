@@ -1,3 +1,6 @@
+require 'pry'
+require 'pry-byebug'
+
 module OWHDWallet
   class WalletAbstract < Peatio::Wallet::Abstract
     DEFAULT_FEATURES = { skip_deposit_collection: false }.freeze
@@ -75,6 +78,7 @@ module OWHDWallet
         passphrase: wallet_secret
       })
 
+      binding.pry
       transaction.currency_id = native_currency_id if transaction.currency_id.blank?
       transaction.hash = response['tx']
       transaction.options = {}

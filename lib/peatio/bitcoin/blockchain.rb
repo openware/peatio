@@ -97,6 +97,7 @@ module Bitcoin
             { hash: tx_hash['txid'], txout: entry['n'],
               to_address: entry['scriptPubKey']['addresses'][0],
               amount: entry.fetch('value').to_d,
+              fee: 0.0,
               status: 'success' }
 
             # Build transaction for each currency belonging to blockchain.
