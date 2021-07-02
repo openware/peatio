@@ -2,7 +2,10 @@
 # frozen_string_literal: true
 
 source 'https://rubygems.org'
-git_source(:github) { |repo_slug| "https://github.com/#{repo_slug}" }
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
 
 ruby '~> 2.6'
 
@@ -52,7 +55,7 @@ gem 'rack-cors', '~> 1.0.6', require: false
 gem 'jwt-rack', '~> 0.1.0', require: false
 gem 'env-tweaks', '~> 1.0.0'
 gem 'vault', '~> 0.12', require: false
-gem 'vault-rails', git: 'http://github.com/rubykube/vault-rails'
+gem 'vault-rails', github: 'rubykube/vault-rails'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'net-http-persistent', '~> 3.0.1'
 gem 'influxdb', '~> 0.7.0'

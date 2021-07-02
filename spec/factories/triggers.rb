@@ -3,8 +3,11 @@
 
 FactoryBot.define do
   factory :trigger do
-    order     { create(:order_ask, :with_deposit_liability, :btcusd)}
-    order_type  { Trigger::TYPES.keys.sample }
-    value     { 1.1.to_d }
+    trigger_price { 0.11.to_d }
+    side { %i(buy sels).sample }
+    amount { 1.1.to_d }
+    price { 0.1.to_d }
+    order { create(:order_ask, :with_deposit_liability, :btcusd) }
+    status { Trigger::STATES.values.sample }
   end
 end
