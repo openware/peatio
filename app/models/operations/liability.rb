@@ -29,6 +29,22 @@ module Operations
         debit:          debit,
         credit:         credit }
     end
+
+    class << self
+      def to_csv
+        attributes = %w[id code currency_id member_id reference_type reference_id debit credit created_at updated_at]
+
+        CSV.generate(headers: true) do |csv|
+          csv << attributes
+
+          all.each do |trade|
+            data = attributes[0...-2].map { |attr| trade.send(attr) }
+            data += attributes[-2..-1].map { |attr| trade.send(attr).iso8601 }
+            csv << data
+          end
+        end
+      end
+    end
   end
 end
 

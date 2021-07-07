@@ -1,11 +1,16 @@
 # encoding: UTF-8
 # frozen_string_literal: true
 
+require 'csv'
+
 module API
   module V2
     module Admin
       class Operations < Grape::API
         helpers ::API::V2::Admin::Helpers
+
+        content_type :csv, 'text/csv'
+
         helpers do
           params :get_operations_params do
             optional :reference_type,
@@ -75,7 +80,11 @@ module API
             search = klass.ransack(ransack_params.merge(member_id_eq: member&.id))
             search.sorts = "#{params[:order_by]} #{params[:ordering]}"
 
-            present paginate(search.result, false), with: API::V2::Admin::Entities::Operation
+            if params[:format] == 'csv'
+              search.result
+            else
+              present paginate(search.result, false), with: API::V2::Admin::Entities::Operation
+            end
           end
         end
       end

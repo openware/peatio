@@ -155,6 +155,11 @@ describe API::V2::Admin::Operations, type: :request do
         expect(result.first.keys).to match_array expected
       end
 
+      it 'csv export' do
+        api_get'/api/v2/admin/liabilities', token: token, params: { format: :csv }
+        expect(response).to be_successful
+      end
+
       it 'filters by member uid' do
         api_get '/api/v2/admin/liabilities', token: token, params: { uid: member.uid }
         result = JSON.parse(response.body)
