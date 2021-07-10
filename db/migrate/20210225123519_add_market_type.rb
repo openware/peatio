@@ -24,6 +24,8 @@ class AddMarketType < ActiveRecord::Migration[5.2]
       t.timestamps
     end
 
+    Market.reset_column_information
+
     add_index(:markets, %i[base_unit quote_unit type], unique: true)
     add_index(:markets, %i[symbol type], unique: true)
     add_index(:markets, 'base_unit')
@@ -79,6 +81,8 @@ class AddMarketType < ActiveRecord::Migration[5.2]
       t.string 'state', limit: 32, default: 'enabled', null: false
       t.timestamps
     end
+
+    Market.reset_column_information
 
     change_column :markets, :id, :string, limit: 20
 

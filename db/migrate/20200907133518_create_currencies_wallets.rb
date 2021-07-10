@@ -2,6 +2,16 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
   def change
     reversible do |dir|
       dir.up do
+        change_column_default :currencies, :options, nil
+        case ActiveRecord::Base.connection.adapter_name
+        when 'Mysql2'
+          change_column :currencies, :options, :json
+        when 'PostgreSQL'
+          execute 'ALTER TABLE currencies ALTER COLUMN options TYPE json USING (options::json)'
+        else
+          raise "Unsupported adapter: #{ActiveRecord::Base.connection.adapter_name}"
+        end
+
         create_join_table :currencies, :wallets do |t|
           t.string :currency_id, index: true
           t.integer :wallet_id, index: true
@@ -27,20 +37,10 @@ class CreateCurrenciesWallets < ActiveRecord::Migration[5.2]
             pa.update!(wallet_id: wallet.id, member_id: ac.member_id)
           end
         end
-        change_column_default :currencies, :options, nil
         remove_column :wallets, :currency_id
         remove_index :payment_addresses, column: [:currency_id, :address]
         remove_column :payment_addresses, :currency_id
         remove_column :payment_addresses, :account_id
-
-        case ActiveRecord::Base.connection.adapter_name
-        when 'Mysql2'
-          change_column :currencies, :options, :json
-        when 'PostgreSQL'
-          execute 'ALTER TABLE currencies ALTER COLUMN options TYPE json USING (options::json)'
-        else
-          raise "Unsupported adapter: #{ActiveRecord::Base.connection.adapter_name}"
-        end
       end
 
       dir.down do
