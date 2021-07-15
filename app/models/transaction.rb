@@ -20,6 +20,8 @@ class Transaction < ApplicationRecord
 
   validates :status, inclusion: { in: STATUSES }
 
+  validates :txid, uniqueness: { scope: :currency_id }, if: :txid?
+
   # == Scopes ===============================================================
 
   # == Callbacks ============================================================
@@ -34,6 +36,10 @@ class Transaction < ApplicationRecord
 
   def initialize_defaults
     self.status = :pending if status.blank?
+  end
+
+  def assign_intermediate_txid!
+    self.txid = "#{SecureRandom.hex(10)}_#{txid}"
   end
 end
 

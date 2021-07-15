@@ -87,6 +87,11 @@ module Jobs
           return if withdraw.txid.blank?
 
           withdraw.save!
+
+          tx = Transaction.where(reference: withdraw)
+          tx.txid = withdraw.txid
+          tx.save!
+
           withdraw.dispatch!
         end
 

@@ -148,4 +148,23 @@ describe Workers::AMQP::WithdrawCoin do
       expect(processing_withdrawal.remote_id).to eq('d12331-12312d-34234')
     end
   end
+
+  context '2 withdrawals with the same tx_id' do
+    before do
+      WalletService.any_instance
+                   .expects(:load_balance!)
+                   .returns(withdrawal.amount)
+
+      WalletService.any_instance
+                   .expects(:build_withdrawal!)
+                   .with(instance_of(Withdraws::Coin))
+                   .raises(WalletService::TxidNotUniqError, 'Transaction txid already exists, saved with intermediate txid')
+    end
+
+    it 'returns true and dispatch withdrawal' do
+      Workers::AMQP::WithdrawCoin.new.process(processing_withdrawal.as_json)
+      expect(processing_withdrawal.reload.errored?).to be_truthy
+      expect(processing_withdrawal.txid).to eq(nil)
+    end
+  end
 end

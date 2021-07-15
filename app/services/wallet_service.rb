@@ -1,6 +1,8 @@
 class WalletService
   attr_reader :wallet, :adapter
 
+  TxidNotUniqError = Class.new(StandardError)
+
   def initialize(wallet)
     @wallet = wallet
     @adapter = Peatio::Wallet.registry[wallet.gateway.to_sym].new(wallet.settings.symbolize_keys)
@@ -216,7 +218,7 @@ class WalletService
     # Remove zero and skipped transactions from spread.
     spread.filter { |t| t.amount > 0 }.tap do |sp|
       unless sp.map(&:amount).sum == original_amount
-        raise Error, "Deposit spread failed deposit.amount != collection_spread.values.sum"
+        raise Error, 'Deposit spread failed deposit.amount != collection_spread.values.sum'
       end
     end
   end
@@ -224,6 +226,10 @@ class WalletService
   # Record blockchain transactions in DB
   def save_transaction(transaction, reference)
     transaction['txid'] = transaction.delete('hash')
-    Transaction.create!(transaction.merge(reference: reference))
+    tr = Transaction.create!(transaction.merge(reference: reference))
+  rescue ActiveRecord::RecordInvalid
+    tr.assign_intermediate_txid!
+    tr.save!
+    raise TxidNotUniqError, 'Transaction txid already exists, saved with intermediate txid'
   end
 end
